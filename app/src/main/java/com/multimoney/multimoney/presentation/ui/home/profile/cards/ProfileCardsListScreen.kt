@@ -83,13 +83,13 @@ fun ProfileCardsListContent(
         )
         Text(
             modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(id = R.string.payment_cards_list_title),
+            text = stringResource(id = string.payment_cards_list_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
         if (viewModel.uiState.isCardListEmpty) {
-            ProfileCardListEmptyState(viewModel)
+            ProfileCardListEmptyState()
         } else {
             ProfileCardList(viewModel)
         }
@@ -129,9 +129,7 @@ fun ProfileCardsListContent(
 
 @Composable
 @Preview
-fun ProfileCardListEmptyState(
-    viewModel: ProfileCardListViewModel = hiltViewModel()
-) {
+fun ProfileCardListEmptyState() {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -148,7 +146,7 @@ fun ProfileCardListEmptyState(
                 drawableResource = R.drawable.ic_visa_cards_empty_state
             )
             Text(
-                text = stringResource(id = R.string.payment_cards_list_empty_state_description),
+                text = stringResource(id = string.payment_cards_list_empty_state_description),
                 modifier = Modifier.padding(vertical = 25.dp, horizontal = 58.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.labelText,
@@ -163,8 +161,6 @@ fun ProfileCardListEmptyState(
 fun ProfileCardList(
     viewModel: ProfileCardListViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     viewModel.uiState.cardVDListVerified?.let { cardList ->
         if (cardList.isNotEmpty()) {
             CardListDetail(

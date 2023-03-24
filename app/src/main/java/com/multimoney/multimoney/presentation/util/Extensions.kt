@@ -325,13 +325,11 @@ fun Double.toCurrencyFormatWithoutNegatives(
     amountOfDecimals: Int = DEFAULT_AMOUNT_OF_DECIMALS
 ): String {
     val formatter = NumberFormat.getCurrencyInstance()
+    val regex = Regex(NUMBER_FORMAT_REGEX)
     formatter.maximumFractionDigits = amountOfDecimals
     // remove the default dollar symbol from the custom symbol property
-    return "$symbol${
-        formatter.format(this)
-            .replace(Dollar.symbol, "")
-            .replace("-", "")
-    }"
+    return "$symbol${regex.replace(formatter.format(this), "")}"
+        .replace("-", "")
 }
 
 fun String.getCardNumberOne() = this.substring(0, 4)

@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -153,7 +152,8 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
 
             viewModel.uiState.cardVisaDirect?.apply {
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 24.dp, start = 16.dp, end = 16.dp),
                     text = stringResource(id = string.payment_schedule_card_label_origin),
                     style = Typography.body1.copy(
                         color = MultimoneyTheme.colors.text,
@@ -177,7 +177,8 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
                     }
                 )
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(top = 32.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 32.dp, start = 16.dp, end = 16.dp),
                     text = stringResource(id = string.payment_schedule_card_label_date),
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.quickActionLabelColor
@@ -185,7 +186,8 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
                 )
 
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 8.dp, start = 16.dp, end = 16.dp),
                     text = stringResource(
                         id = string.payment_schedule_card_label_date_description,
                         viewModel.uiState.day
@@ -201,7 +203,8 @@ private fun PaymentScheduleCard(viewModel: PaymentScheduleCardViewModel) {
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnProgramClick) },
                 text = stringResource(id = string.payment_schedule_card_button),
-                modifier = Modifier.padding(bottom = 32.dp, top = 16.dp, start = 16.dp, end = 16.dp).fillMaxWidth()
+                modifier = Modifier.padding(bottom = 32.dp, top = 16.dp, start = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
                     .height(48.dp),
                 buttonType = PrimaryPrimary
             )
@@ -241,10 +244,13 @@ fun PaymentScheduleCardEmptyState(
     Column(
         modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize()
     ) {
-        TopNavBar(isLeftButtonVisible = false, onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) })
+        TopNavBar(
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBack) }
+        )
         Text(
             modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
-            text = stringResource(id = R.string.payment_schedule_card_title),
+            text = stringResource(id = string.payment_schedule_card_title),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
@@ -263,7 +269,7 @@ fun PaymentScheduleCardEmptyState(
                     drawableResource = drawable.ic_visa_cards_empty_state
                 )
                 Text(
-                    text = stringResource(id = R.string.payment_cards_list_empty_state_description),
+                    text = stringResource(id = string.payment_cards_list_empty_state_description),
                     modifier = Modifier.padding(vertical = 25.dp, horizontal = 58.dp),
                     style = Typography.body1,
                     color = MultimoneyTheme.colors.labelText,
@@ -283,7 +289,7 @@ fun PaymentScheduleCardEmptyState(
                     intent.putExtras(bundle)
                     addCardActivityResult.launch(intent)
                 },
-                text = stringResource(id = R.string.payment_cards_list_create),
+                text = stringResource(id = string.payment_cards_list_create),
                 modifier = Modifier
                     .padding(vertical = 40.dp, horizontal = 16.dp)
                     .fillMaxWidth()

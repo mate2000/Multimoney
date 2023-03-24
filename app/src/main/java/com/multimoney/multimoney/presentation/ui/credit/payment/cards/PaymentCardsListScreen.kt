@@ -135,12 +135,12 @@ fun PaymentCardsListContent(
                 .fillMaxSize()
         ) {
             TopNavBar(
-                onLeftButtonClick = { viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnNavigateBack) },
-                onRightButtonClick = { viewModel.onUIEvent(PaymentCardListViewModel.UIEvent.OnNavigateBackHome) }
+                onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
+                onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome) }
             )
             Text(
                 modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
-                text = stringResource(id = R.string.payment_cards_list_title),
+                text = stringResource(id = string.payment_cards_list_title),
                 style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText,
                 textAlign = TextAlign.Left
@@ -188,7 +188,7 @@ fun PaymentCardListEmptyState(
                 drawableResource = R.drawable.ic_visa_cards_empty_state
             )
             Text(
-                text = stringResource(id = R.string.payment_cards_list_empty_state_description),
+                text = stringResource(id = string.payment_cards_list_empty_state_description),
                 modifier = Modifier.padding(vertical = 25.dp, horizontal = 58.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.labelText,
@@ -207,7 +207,7 @@ fun PaymentCardListEmptyState(
                 intent.putExtras(bundle)
                 addCardActivityResult.launch(intent)
             },
-            text = stringResource(id = R.string.payment_cards_list_create),
+            text = stringResource(id = string.payment_cards_list_create),
             modifier = Modifier
                 .padding(vertical = 40.dp, horizontal = 16.dp)
                 .fillMaxWidth()
@@ -245,7 +245,7 @@ fun PaymentCardList(
         }
     }
     CustomButton(
-        text = stringResource(id = R.string.payment_cards_list_create),
+        text = stringResource(id = string.payment_cards_list_create),
         modifier = Modifier
             .padding(top = 18.dp)
             .fillMaxWidth(),

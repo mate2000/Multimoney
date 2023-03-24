@@ -434,7 +434,7 @@
     <string name="profile_terms_and_conditions_title_template" translatable="false">Términos y condiciones: %1$s</string>
     <string name="profile_terms_and_conditions_version_template" translatable="false">Versión: %1$s</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
-    <string name="profile_change_password" translatable="false">Cambio de contarseña</string>
+    <string name="profile_change_password" translatable="false">Cambio de contraseña</string>
     <string name="profile_notifications" translatable="false">Notificationes</string>
     <string name="profile_biometrics" translatable="false">Biométricos</string>
     <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
@@ -1342,7 +1342,7 @@
     <string name="automatic_payment_edit_bottom_sheet_delete_toast" translatable="false">Tu pago automático fue eliminado</string>
 
     <!-- Payment Cards List -->
-    <string name="payment_cards_list_empty_state_description" translatable="false">Agregá una tarjeta para que podás realizar tus abonos</string>
+    <string name="payment_cards_list_empty_state_description" translatable="false">Agrega una tarjeta para que puedas realizar tus abonos</string>
     <string name="payment_cards_list_create" translatable="false">Agregar tarjeta</string>
     <string name="payment_cards_list_title" translatable="false">Mis tarjetas</string>
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
@@ -1478,7 +1478,7 @@
 
     <!-- Currency Detail Screen -->
     <string name="currency_detail_title" translatable="false">Inversión en %s</string>
-    <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
+    <string name="currency_detail_daily_invest" translatable="false">Hoy %1s (%2s\%%)</string>
     <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
     <string name="currency_detail_see_all" translatable="false">Ver todos</string>
 

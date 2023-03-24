@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
@@ -88,7 +85,6 @@ fun MarketCurrencyDetailsScreen(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-
         viewModel.onUIEvent(OnSetPreviousInfo)
         viewModel.onUIEvent(OnGetCurrencyHistoricalPrices())
         viewModel.onUIEvent(OnGetCurrencyNews)
@@ -103,6 +99,7 @@ fun MarketCurrencyDetailsScreen(
         description = viewModel.uiState.selectedCryptoCoin?.description ?: "",
         currentPrice = viewModel.uiState.selectedCryptoCoin?.currentPrice ?: 0.0,
         urlImage = viewModel.uiState.selectedCryptoCoin?.url_image ?: "",
+        isLoading = viewModel.uiState.isLoading,
         onDateFilterSelected = { dateFilter ->
             viewModel.onUIEvent(
                 OnGetCurrencyHistoricalPrices(daysToSubtract = dateFilter)
@@ -133,7 +130,6 @@ fun MarketCurrencyDetailsScreen(
                 }
             ))
         },
-
         onNavigateToBuyCrypto = {
             if (viewModel.uiState.idBrand == Brand.ElSalvador.id) {
                 if (viewModel.uiState.shouldDisplayDisclaimer) {
@@ -197,6 +193,7 @@ fun MarketCurrencyDetailsScreenContent(
     description: String,
     currentPrice: Double,
     urlImage: String,
+    isLoading: Boolean = false,
     onDateFilterSelected: (Long) -> Unit = {},
     onOpenCryptoNew: (String) -> Unit = {},
     onNavigateToBuyCrypto: () -> Unit = {},
@@ -242,12 +239,12 @@ fun MarketCurrencyDetailsScreenContent(
             )
         }
     ) { paddingValues ->
-
         Column(
             modifier = Modifier
                 .background(color = MultimoneyTheme.colors.background)
                 .fillMaxSize()
                 .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
         ) {
             TopNavBar(
                 isRightButtonVisible = false,
@@ -286,13 +283,17 @@ fun MarketCurrencyDetailsScreenContent(
                 },
                 selected = selected
             )
-            if (selected.value) {
-                HistorySection(information = currencyNews?.information ?: "")
+            if (isLoading) {
+                MarketCurrencyDetailsScreenSkeleton()
             } else {
-                NewsSection(
-                    currencyNews = currencyNews?.result ?: emptyList(),
-                    onOpenCryptoNew = onOpenCryptoNew
-                )
+                if (selected.value) {
+                    HistorySection(information = currencyNews?.information ?: "")
+                } else {
+                    NewsSection(
+                        currencyNews = currencyNews?.result ?: emptyList(),
+                        onOpenCryptoNew = onOpenCryptoNew
+                    )
+                }
             }
         }
     }
@@ -303,7 +304,6 @@ fun MarketDetailsHeaderSection(
     descriptionCurrency: String,
     imageResource: String
 ) {
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
@@ -411,13 +411,14 @@ fun NewsSection(
     currencyNews: List<New>,
     onOpenCryptoNew: (String) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 8.dp, horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
     ) {
-        items(currencyNews) { new ->
+        currencyNews.forEach { new ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -457,13 +458,10 @@ fun HistorySection(information: String) {
     val textExpanded = remember { mutableStateOf(true) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
-
         Text(
             modifier = Modifier
                 .fillMaxWidth()

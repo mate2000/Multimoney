@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.data.util.DataStorePreferences
@@ -57,45 +56,45 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
-                homeViewModel = hiltViewModel<HomeViewModel>()
-                homeViewModel?.let {
-                    Navigation(it)
-                    LaunchedEffect(key1 = true) {
-                        obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
-                        if (dataStorePreferences.getDeviceId().first().isEmpty()) {
-                            val deviceId: String = getDeviceId(activity as MainActivity)
-                            if (deviceId.isEmpty()) {
-                                FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                                    saveToken(it.result)
-                                }.addOnCanceledListener {
-                                    saveToken(getDeviceId(activity = activity as MainActivity))
-                                }.addOnFailureListener {
-                                    saveToken(getDeviceId(activity = activity as MainActivity))
-                                }
-                            } else {
-                                saveToken(deviceId)
-                            }
-                        }
-                        isSessionAlreadyOpened.collectLatest {
-                            if (it) {
-                                signOut()
-                            }
-                        }
-                    }
+                Navigation {
+                    homeViewModel = it
+                }
 
-                    if (dialogParameters.value.isActive.value) {
-                        CustomDialog(
-                            title = stringResource(id = dialogParameters.value.titleResource),
-                            message = stringResource(
-                                id = dialogParameters.value.descriptionResource,
-                                dialogParameters.value.additionalText
-                            ).ifEmpty { dialogParameters.value.description },
-                            positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
-                            openDialogCustom = dialogParameters.value.isActive,
-                            onPositiveAction = dialogParameters.value.positiveAction,
-                            isCancelable = dialogParameters.value.isCancelable
-                        )
+                LaunchedEffect(key1 = true) {
+                    obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+                    if (dataStorePreferences.getDeviceId().first().isEmpty()) {
+                        val deviceId: String = getDeviceId(activity as MainActivity)
+                        if (deviceId.isEmpty()) {
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                                saveToken(it.result)
+                            }.addOnCanceledListener {
+                                saveToken(getDeviceId(activity = activity as MainActivity))
+                            }.addOnFailureListener {
+                                saveToken(getDeviceId(activity = activity as MainActivity))
+                            }
+                        } else {
+                            saveToken(deviceId)
+                        }
                     }
+                    isSessionAlreadyOpened.collectLatest {
+                        if (it) {
+                            signOut()
+                        }
+                    }
+                }
+
+                if (dialogParameters.value.isActive.value) {
+                    CustomDialog(
+                        title = stringResource(id = dialogParameters.value.titleResource),
+                        message = stringResource(
+                            id = dialogParameters.value.descriptionResource,
+                            dialogParameters.value.additionalText
+                        ).ifEmpty { dialogParameters.value.description },
+                        positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
+                        openDialogCustom = dialogParameters.value.isActive,
+                        onPositiveAction = dialogParameters.value.positiveAction,
+                        isCancelable = dialogParameters.value.isCancelable
+                    )
                 }
             }
         }

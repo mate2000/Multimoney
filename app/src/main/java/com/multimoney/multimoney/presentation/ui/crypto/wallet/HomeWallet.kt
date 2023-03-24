@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,7 +63,7 @@ import com.multimoney.multimoney.presentation.uielement.ShimmerItemView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlaces
+import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
@@ -81,12 +82,12 @@ fun HomeWallet(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
-
         walletViewModel.onUIEvent(OnGetUserInfo)
         walletViewModel.onUIEvent(OnGetBalanceClient)
         walletViewModel.onUIEvent(OnSetDateRange(FilterDateByDays.YESTERDAY.time))
     }
 
+    val focusManager = LocalFocusManager.current
     val isFocused = remember { mutableStateOf(false) }
     val searchQuery = remember { mutableStateOf("") }
     BackHandler {
@@ -128,7 +129,11 @@ fun HomeWallet(
                         value = searchQuery.value,
                         isRequired = false,
                         onValueChange = { searchQuery.value = it },
-                        keyboardActions = KeyboardActions.Default,
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                focusManager.clearFocus()
+                            }
+                        ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         leadingIconComposable = {
                             Icon(
@@ -181,7 +186,6 @@ fun HomeWallet(
             searchQuery = searchQuery,
         )
     }
-
 }
 
 @Composable
@@ -206,7 +210,6 @@ fun HomeWalletContent(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         AnimatedVisibility(isFocused.value.not()) {
             Column {
                 TopNavBar(
@@ -258,13 +261,11 @@ fun HomeWalletContent(
 
 @Composable
 fun WalletHeader() {
-
     Row(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
-
         Text(
             modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             text = stringResource(R.string.crypto_wallet_header_title),
@@ -320,7 +321,7 @@ fun BalanceSection(
                     id = R.string.currency_item_gain_or_losses_description,
                     gainsOrLossesSymbol,
                     gainsOrLosses.toCurrencyFormatWithoutNegatives(),
-                    percentage.roundToTwoDecimalPlaces()
+                    percentage.roundToTwoDecimalPlacesWithoutNegatives()
                 ),
                 style = Typography.body2.copy(color = graphicColor)
             )
@@ -383,7 +384,8 @@ fun MyCoinsSection(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 16.dp)
     ) {
-        filteredList.forEach { item ->
+        val amountOfItemsToShow = if (isFocused.value) filteredList.size else MINIMUM_AMOUNT_OF_COINS_TO_SHOW_SEARCH
+        filteredList.take(amountOfItemsToShow).forEach { item ->
             CurrencyItem(
                 imageUrl = item.url_image,
                 descriptionCurrency = item.descriptionCurrency,
@@ -410,3 +412,5 @@ fun ProfitSkeleton() {
         )
     }
 }
+
+const val MINIMUM_AMOUNT_OF_COINS_TO_SHOW_SEARCH = 3

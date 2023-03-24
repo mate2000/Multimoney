@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Preview(showSystemUi = false)
@@ -93,7 +94,7 @@ fun CryptoCurrencySendItem(
                         color = WhiteTransparency70
                     )
                     Text(
-                        text = "$available $asset",
+                        text = "${available.roundToEightDecimalPlaces()} $asset",
                         style = Typography.caption,
                         color = WhiteTransparency60
                     )

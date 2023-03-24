@@ -1,6 +1,8 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -39,6 +41,7 @@ import com.multimoney.domain.model.credit.CreditMovementsResult
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ConfigurationVersion
+import com.multimoney.domain.model.security.MiniCardsItem
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -110,6 +113,7 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
+import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
@@ -776,6 +780,51 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun onMiniCardClicked(
+        miniCard: MiniCardsItem,
+        openIntent: (Intent) -> Unit
+    ) {
+        if (miniCard.flow.isNotBlank()) {
+            when (miniCard.flow) {
+                MiniCardActionFlow.CREDIT.flow -> onNavigateToCreditScreen(
+                    uiState.userStatus?.infoCredit?.wording?.workflow ?: ""
+                )
+                MiniCardActionFlow.SMART.flow -> onNavigateToSmartFlow(
+                    smartStep = uiState.smartContent.second,
+                    comingFromCrypto = miniCard.type == CRYPTO_TYPE,
+                    onIntent = {
+                        openMiniCardDeepLink(
+                            openIntent,
+                            uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                        )
+                    }
+                )
+                MiniCardActionFlow.PAYOUT.flow -> onNavigateToDisbursement()
+                else -> Unit
+            }
+        }
+        else if (miniCard.deepLink.isNotBlank()) {
+            openMiniCardDeepLink(openIntent, miniCard.deepLink)
+        }
+    }
+
+    private fun openMiniCardDeepLink(
+        openIntent: (Intent) -> Unit,
+        deepLink: String
+    ) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(deepLink))
+            openIntent(intent)
+        } catch (exception: NullPointerException) {
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    descriptionResource = R.string.something_went_wrong,
+                    isActive = mutableStateOf(true)
+                )
+            )
+        }
+    }
+
     private fun onDeleteAutomaticPayment(onAcceptClick: () -> Unit) {
         uiState = uiState.copy(
             openDialog = DialogParameters(
@@ -1380,9 +1429,15 @@ class ProductViewModel @Inject constructor(
                 flow = uiEvent.flow,
                 onLoadingValueChange = uiEvent.onLoadingValueChange
             )
-            is OnMiniCardsClicked -> onQuickActionClicked(
-                flow = uiEvent.flow,
-                onLoadingValueChange = {}
+            is OnMiniCardsClicked -> onMiniCardClicked(
+                miniCard = uiEvent.miniCard,
+                openIntent = uiEvent.openIntent
+            )
+            is UIEvent.OnIntentFailure -> uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    descriptionResource = R.string.something_went_wrong,
+                    isActive = mutableStateOf(true)
+                )
             )
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
@@ -1497,10 +1552,14 @@ class ProductViewModel @Inject constructor(
         data class OnQuickActionClicked(
             val flow: String,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
-        ) :
-            UIEvent()
+        ) : UIEvent()
 
-        data class OnMiniCardsClicked(val flow: String) : UIEvent()
+        data class OnMiniCardsClicked(
+            val miniCard: MiniCardsItem,
+            val openIntent: (Intent) -> Unit
+        ) : UIEvent()
+
+        object OnIntentFailure : UIEvent()
         data class OnDeleteAutomaticPayment(val onAcceptClick: () -> Unit) : UIEvent()
         data class OnCreateMultimoneyVisa(val onLoadingValueChange: (isLoading: Boolean) -> Unit) :
             UIEvent()
@@ -1552,5 +1611,6 @@ class ProductViewModel @Inject constructor(
         const val DEFAULT_TYPE_STATE = "S"
         private const val CARD_INFORMATION_STATUS = 1
         const val SMART_CARD_NO_ACTION = "smart_card_no_action"
+        private const val CRYPTO_TYPE = "Crypto"
     }
 }

@@ -3,6 +3,7 @@ package com.multimoney.data.util
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.reflect.TypeToken
 import com.multimoney.data.base.BaseDataStorePreferences
@@ -584,6 +585,12 @@ class DataStorePreferences @Inject constructor(
         setData(FIREBASE_FCM_NAVIGATION_ROUTE, route)
 
     fun setNavigationRouteByNotification(): Flow<String> = getData(FIREBASE_FCM_NAVIGATION_ROUTE, "")
+
+    suspend fun clearData() {
+        dataStore.edit {
+            it.clear()
+        }
+    }
 
     companion object {
         private val WHATSAPP_LINK = stringPreferencesKey("whatsapp_link")

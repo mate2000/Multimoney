@@ -9,3 +9,4 @@ const val DUPLICATED_SESSION = 403
 const val ONE = 1
 const val TWO = 2
 const val SPACE = " "
+const val FIRST_INDEX = 0

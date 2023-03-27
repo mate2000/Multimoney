@@ -33,11 +33,13 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
+import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -123,6 +125,20 @@ fun SignUpPersonalDataScreen(
             onUIEvent(
                 SignUpViewModel.UIEvent.OnSetNavigation(
                     nextAction = {
+                        if(sharedViewModel.userData?.isNewUser == false) {
+                            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(sharedViewModel.userData))
+                        } else {
+                            if (sharedViewModel.userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
+                                viewModel.onUIEvent(
+                                    OnShowAnotherDeviceAlreadyRegisteredDialog {
+                                        viewModel.onSuccessValidation(sharedViewModel, sharedViewModel.userData)
+                                    }
+                                )
+                                sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
+                            } else {
+                                viewModel.onSuccessValidation(sharedViewModel, sharedViewModel.userData)
+                            }
+                        }
                         viewModel.onUIEvent(
                             OnNextActionClick(
                                 email = userData?.email ?: "",

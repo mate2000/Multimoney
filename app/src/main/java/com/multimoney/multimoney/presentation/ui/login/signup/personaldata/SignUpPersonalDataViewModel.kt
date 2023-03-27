@@ -21,6 +21,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -41,12 +42,15 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.ISO3_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.GtDocuments
 import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
@@ -654,6 +658,19 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
     }
 
+    private fun onShowAnotherDeviceAlreadyRegisteredDialog(onPositiveClick: () -> Unit) {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.sign_up_email_another_device_registered_dialog_title,
+                descriptionResource = string.sign_up_email_another_device_registered_dialog_description,
+                positiveResource = string.button_continue,
+                negativeResource = string.cancel,
+                isActive = mutableStateOf(true),
+                positiveAction = onPositiveClick
+            )
+        )
+    }
+
     data class UIState(
         val documentFormat: String = "",
         val countryList: ArrayList<String> = arrayListOf(),
@@ -676,7 +693,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val nameError: Pair<Boolean, Int> = Pair(false, 0),
         val lastNameError: Pair<Boolean, Int> = Pair(false, 0),
         val closeKeyboard: Boolean = false,
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -733,7 +751,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.user,
                 event.onLoadingValueChange
             )
-            is UIEvent.OnValidateForm -> isFormValid()
+            is OnValidateForm -> isFormValid()
+            is OnShowAnotherDeviceAlreadyRegisteredDialog -> onShowAnotherDeviceAlreadyRegisteredDialog(event.onPositiveClick)
         }
     }
 
@@ -810,6 +829,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         object OnValidateForm : UIEvent()
+        data class OnShowAnotherDeviceAlreadyRegisteredDialog(val onPositiveClick: () -> Unit) : UIEvent()
     }
 
     sealed class BaseEvent {

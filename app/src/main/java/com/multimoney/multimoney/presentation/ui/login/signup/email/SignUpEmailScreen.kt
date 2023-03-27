@@ -92,10 +92,10 @@ fun SignUpEmailScreen(
                         false
                     )
                 )
-                viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
                 if(userData?.isNewUser == false) {
                     sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(userData))
                 } else {
+                    viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
                     if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
                         viewModel.onUIEvent(
                             OnShowAnotherDeviceAlreadyRegisteredDialog {

@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
@@ -99,6 +100,15 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
                 }
             }
         }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (hasFocus) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
+        super.onWindowFocusChanged(hasFocus)
     }
 
     private fun saveToken(token: String) {

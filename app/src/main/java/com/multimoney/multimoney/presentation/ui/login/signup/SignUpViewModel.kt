@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.login.signup
 
+import android.content.Context
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -52,15 +53,17 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -355,7 +358,7 @@ class SignUpViewModel @Inject constructor(
                     getNavParam(PREVIOUS_SCREEN, Screen.SignUpScreen.baseRoute)
                 )
                 .plus(
-                    getNavParam(ID_BRAND, userData?.idBrand?:0)
+                    getNavParam(ID_BRAND, userData?.idBrand ?: 0)
                 )
                 .plus(
                     getNavParam(USER_DATA, encodeData(userData))
@@ -374,6 +377,29 @@ class SignUpViewModel @Inject constructor(
             whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
         }
     }
+
+    fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
+        if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toInt()) {
+            DialogParameters(
+                titleResource = if (this.userData?.idBrand == Brand.CostaRica.id) {
+                    string.sign_in_session_blacklisted_title_cr
+                } else {
+                    string.sign_in_session_blacklisted_title
+                },
+                descriptionResource = string.sign_in_session_blacklisted_message,
+                positiveResource = string.sign_in_session_blacklisted_contact_support,
+                positiveAction = {
+                    whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
+                },
+                isActive = mutableStateOf(true)
+            )
+        } else {
+            DialogParameters(
+                titleResource = string.error_empty,
+                description = userData?.message ?: "",
+                isActive = mutableStateOf(true)
+            )
+        }
 
     data class UIState(
         // Interactions
@@ -508,8 +534,8 @@ class SignUpViewModel @Inject constructor(
         object OnExit : UIEvent()
         data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
         data class OnUpdatePassword(val pass: String) : UIEvent()
-        data class OnCheckIfEmailExists(val userData: UserData?): UIEvent()
-        data class OnChangeRestartEvent(val shouldBeOnRestart : Boolean) : UIEvent()
+        data class OnCheckIfEmailExists(val userData: UserData?) : UIEvent()
+        data class OnChangeRestartEvent(val shouldBeOnRestart: Boolean) : UIEvent()
         object OnGetWhatsAppLink : UIEvent()
     }
 

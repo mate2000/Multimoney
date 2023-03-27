@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnInitializeResources
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -51,6 +52,7 @@ fun OnBoardingScreen(
     val context = LocalContext.current
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnInitializeResources, context)
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 

@@ -12,8 +12,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
+import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnInitializeResources
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
+import com.multimoney.multimoney.presentation.util.FIRST_INDEX
 import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -60,6 +62,15 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    private fun initializeResources(context: Context) {
+        val newValues = getStepContent(currentStep, context)
+        uiState = uiState.copy(
+            title = newValues[STEP_TITLE],
+            subtitle = newValues[STEP_SUBTITLE],
+            icon = newValues[STEP_ICON]
+        )
+    }
+
     private fun onPress(pressGestureScope: PointerInputScope, context: Context) {
         maxWidth = pressGestureScope.size.width
         viewModelScope.launch {
@@ -88,7 +99,7 @@ class OnBoardingViewModel @Inject constructor(
         STEP_ONE -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_1_1002, isLoggedIn = false)
-            when (context.resources.configuration.locale.isO3Country) {
+            when (context.resources.configuration.locales.get(FIRST_INDEX).isO3Country) {
                 ISO3_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_one_title,
                     R.string.onboarding_costa_rica_step_one_sub_title,
@@ -184,6 +195,7 @@ class OnBoardingViewModel @Inject constructor(
             is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
             is OnGoToNextScreen -> goToNextScreen(context)
             is OnPress -> onPress(event.pressGestureScope, context)
+            is OnInitializeResources -> initializeResources(context)
         }
     }
 
@@ -191,6 +203,7 @@ class OnBoardingViewModel @Inject constructor(
         data class OnNavigateToNextScreen(val screen: String) : UIEvent()
         data class OnPress(val pressGestureScope: PointerInputScope) : UIEvent()
         object OnGoToNextScreen : UIEvent()
+        object OnInitializeResources : UIEvent()
     }
 
     companion object {

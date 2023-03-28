@@ -237,7 +237,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             alertResultIconResource = R.drawable.ic_success_symbol,
             alertResultTitleResource = R.string.process_forgot_password_alert_success_title,
             alertResultDescriptionResource = R.string.process_forgot_password_alert_success_description,
-            alertResultButtonTextResource = R.string.common_go_home,
+            alertResultButtonTextResource = string.common_go_home,
             isLoading = false
         )
     }
@@ -246,20 +246,39 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         uiState = uiState.copy(
             isAlertResultVisible = true,
             alertResultIconResource = R.drawable.ic_error_symbol,
-            alertResultTitleResource = R.string.process_forgot_password_alert_failure_title,
-            alertResultDescriptionResource = if (idBrand == Brand.CostaRica.id) {
-                R.string.process_forgot_password_alert_failure_description
-            } else {
-                R.string.process_forgot_password_alert_failure_description_sv
-            },
-            alertResultButtonTextResource = if (isOtpFailure) {
-                R.string.process_forgot_password_alert_failure_button_try_again
-            } else {
-                R.string.common_go_home
-            },
+            alertResultTitleResource = getAlertResultText(isOtpFailure).first,
+            alertResultDescriptionResource = getAlertResultText(isOtpFailure).second,
+            alertResultButtonTextResource = getAlertResultText(isOtpFailure).third,
             isAlertResultOtpFailure = isOtpFailure,
             isLoading = false
         )
+    }
+
+    private fun getAlertResultText(isOtpFailure: Boolean): Triple<Int, Int, Int> {
+        return when {
+            isOtpFailure -> {
+                Triple(
+                    string.process_forgot_password_alert_failure_otp_title,
+                    if (idBrand == Brand.CostaRica.id) {
+                        string.process_forgot_password_alert_failure_otp_description_cr
+                    } else {
+                        string.process_forgot_password_alert_failure_otp_description_sv
+                    },
+                    string.process_forgot_password_alert_failure_button_try_again
+                )
+            }
+            else -> {
+                Triple(
+                    string.process_forgot_password_alert_failure_title,
+                    if (idBrand == Brand.CostaRica.id) {
+                        string.process_forgot_password_alert_failure_description
+                    } else {
+                        string.process_forgot_password_alert_failure_description_sv
+                    },
+                    string.common_go_home
+                )
+            }
+        }
     }
 
     private fun onPasswordSameAsPrevious(errorMessage: String?) {

@@ -30,7 +30,9 @@ class PasswordValidationHelper @Inject constructor(private val queryValidatePass
         value: String
     ): Pair<Boolean, Int> {
         return when {
-            haveMoreThanThreeConsecutiveLetterOrNumber(value) || haveMoreThanThreeSequentialLetterOrNumber(value) -> {
+            haveMoreThanThreeConsecutiveLetterOrNumber(value) || haveMoreThanThreeSequentialLetterOrNumber(
+                value
+            ) -> {
                 Pair(
                     true,
                     R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
@@ -52,10 +54,15 @@ class PasswordValidationHelper @Inject constructor(private val queryValidatePass
      */
     fun validateEqualPasswords(
         password: String,
-        confirmPassword: String
+        confirmPassword: String,
+        isSignup: Boolean = false
     ): Pair<Boolean, Int> =
         if (password.isNotEmpty() && confirmPassword.isNotEmpty() && confirmPassword != password) {
-            Pair(true, R.string.sign_up_password_confirm_password_error)
+            Pair(
+                true,
+                if (isSignup) R.string.sign_up_password_confirm_password_error
+                else R.string.process_forgot_password_new_password_confirmation_error
+            )
         } else {
             Pair(false, R.string.error_empty)
         }

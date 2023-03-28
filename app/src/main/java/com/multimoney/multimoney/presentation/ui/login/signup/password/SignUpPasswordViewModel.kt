@@ -154,7 +154,8 @@ class SignUpPasswordViewModel @Inject constructor(
             ),
             confirmPasswordError = passwordValidationHelper.validateEqualPasswords(
                 password = uiState.password,
-                confirmPassword = uiState.confirmPassword
+                confirmPassword = uiState.confirmPassword,
+                isSignup = true
             )
         )
 

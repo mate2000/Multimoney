@@ -98,7 +98,7 @@ fun RegisteredUserOtpOptionsContent(
             }
             CustomButton(
                 onClick = { onContinueClick() },
-                enable = uiState.isFormValid,
+                enable = uiState.otpOption.isNotBlank(),
                 text = stringResource(id = string.registered_user_otp_options_button),
                 modifier = Modifier
                     .padding(bottom = 20.dp)

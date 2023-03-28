@@ -31,13 +31,15 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.Payment
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnOpenDisclaimerDialog
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnProgramClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel.UIEvent.OnShowCloseConfirmationDialog
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDayFromString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class PaymentScheduleViewModel @Inject constructor(
@@ -238,6 +240,20 @@ class PaymentScheduleViewModel @Inject constructor(
         navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
     }
 
+    private fun onShowCloseConfirmationDialog() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.payment_schedule_close_dialog_title,
+                descriptionResource = R.string.payment_schedule_close_dialog_subtitle,
+                negativeResource = R.string.cancel,
+                positiveAction = {
+                    onAlertCloseClick()
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
     data class UIState(
         // Interactions
         val clientBankAccount: ClientBankAccount? = null,
@@ -262,6 +278,7 @@ class PaymentScheduleViewModel @Inject constructor(
             is OnEditBankAccount -> onEditBankAccount()
             is OnOpenDisclaimerDialog -> onOpenDisclaimerDialog()
             is OnNavigateBack -> onNavigateBack()
+            is OnShowCloseConfirmationDialog -> onShowCloseConfirmationDialog()
         }
     }
 
@@ -273,6 +290,7 @@ class PaymentScheduleViewModel @Inject constructor(
         object OnEditBankAccount : UIEvent()
         object OnOpenDisclaimerDialog : UIEvent()
         object OnNavigateBack : UIEvent()
+        object OnShowCloseConfirmationDialog : UIEvent()
     }
 
     companion object {

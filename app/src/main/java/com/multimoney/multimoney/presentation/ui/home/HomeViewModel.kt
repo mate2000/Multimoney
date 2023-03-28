@@ -899,8 +899,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    suspend fun getNotificationRoute() =
-        dataStorePreferences.setNavigationRouteByNotification().first()
+    suspend fun getNotificationRoute() {
+        setNotificationRoute(dataStorePreferences.setNavigationRouteByNotification().first())
+    }
 
     fun setNotificationRoute(route: String) {
         uiState = uiState.copy(
@@ -1011,6 +1012,7 @@ class HomeViewModel @Inject constructor(
             val miniCard: MiniCardsItem,
             val openIntent: (Intent) -> Unit
         ) : UIEvent()
+
         data class OnBottomNavigationItemClick(
             val innerNavHostController: NavHostController,
             val route: String
@@ -1070,6 +1072,7 @@ class HomeViewModel @Inject constructor(
             val miniCard: MiniCardsItem,
             val openIntent: (Intent) -> Unit
         )
+
         object OnShowAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnHideAutomaticPaymentEditBottomSheet : BaseEvent()
         object OnEditAutomaticPaymentEvent : BaseEvent()

@@ -250,7 +250,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun onHandleAddCardResponse(response: String, isError: Boolean) {
-        if (false) {
+        if (isError) {
             setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
         } else {
             onNavigateToVisaVerifyInformation(response)

@@ -77,17 +77,25 @@ fun CardNonPreApprovedCredit(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(
-                text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_title),
-                modifier = Modifier.padding(top = 14.dp),
-                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text
+            CustomInformativeChip(
+                text = stringResource(id = string.home_my_products_title_credit),
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+                shape = RoundedCornerShape(12.dp),
+                background = if (isSystemInDarkTheme()) {
+                    BlackTransparency20
+                } else {
+                    WhiteTransparency10
+                }
             )
             Text(
                 text = stringResource(
                     id = string.home_product_sv_non_pre_approved_credit_description
                 ),
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 20.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
@@ -594,7 +602,7 @@ fun OngoingCredit(
 sealed class CreditProcessStarted {
     object CreditStartProcessIncomplete : CreditProcessStarted()
     object CreditProcessOnFidoIncomplete : CreditProcessStarted()
-    object CreditProcessFirmIncomplete : CreditProcessStarted()
+    object CreditManualProcess : CreditProcessStarted()
     object CreditProcessFirmReject : CreditProcessStarted()
     object CreditProcessFirmMaxAttempts : CreditProcessStarted()
     object CreditProcessOnfidoReject : CreditProcessStarted()

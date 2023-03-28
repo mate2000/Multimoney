@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -33,11 +36,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -74,7 +75,7 @@ fun ProcessForgotPasswordScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val resendOtpToastText =
-        stringResource(id = R.string.process_forgot_password_resend_otp_toast)
+        stringResource(id = string.process_forgot_password_resend_otp_toast)
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     val coroutineScope = rememberCoroutineScope()
 
@@ -113,7 +114,11 @@ fun ProcessForgotPasswordScreen(
         onOtpValueChange = { value -> viewModel.onUIEvent(OnOtpValueChange(value)) },
         onResendClick = { viewModel.onUIEvent(OnResendOtpClick(focusManager)) },
         onNewPasswordValueChange = { value -> viewModel.onUIEvent(OnNewPasswordValueChange(value)) },
-        onNewPasswordConfirmationValueChange = { value -> viewModel.onUIEvent(OnNewPasswordConfirmationValueChange(value)) },
+        onNewPasswordConfirmationValueChange = { value ->
+            viewModel.onUIEvent(
+                OnNewPasswordConfirmationValueChange(value)
+            )
+        },
         onAlertButtonClick = { viewModel.onUIEvent(OnAlertButtonClick(focusManager)) },
         bottomSheetState = bottomSheetState,
         coroutineScope = coroutineScope
@@ -149,134 +154,133 @@ fun ProcessForgotPasswordContent(
     } else {
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .background(MultimoneyTheme.colors.background)
-                .fillMaxSize(),
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                TopNavBar(
-                    isLeftButtonVisible = false,
-                    onRightButtonClick = { onCloseClick() }
-                )
-                Text(
-                    text = stringResource(id = uiState.titleResource),
-                    modifier = Modifier.padding(top = 35.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-                OtpTextField(
-                    value = uiState.otp,
-                    onValueChange = { onOtpValueChange(it) },
-                    labelText = stringResource(id = R.string.process_forgot_password_otp_label),
-                    digits = ProcessForgotPasswordViewModel.OTP_TOTAL_DIGITS,
-                    placeHolder = stringResource(id = string.process_forgot_password_otp_placeholder),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp, start = 16.dp, end = 16.dp),
-                    isRequired = true,
-                    isRequiredMessage = stringResource(id = string.process_forgot_password_otp_required)
-                )
-                ClickableText(
-                    text = AnnotatedString(stringResource(id = string.process_forgot_password_resend_otp_button)),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                    style = Typography.body2.copy(
-                        textDecoration = TextDecoration.Underline,
-                        color = MultimoneyTheme.colors.textLink,
-                        textAlign = TextAlign.End
-                    ),
-                    onClick = { onResendClick() }
-                )
-                CustomOutlinedTextField(
-                    value = uiState.newPassword,
-                    onValueChange = {
-                        onNewPasswordValueChange(it)
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.clearFocus()
-                    }),
-                    labelText = stringResource(id = string.process_forgot_password_new_password_label),
-                    isPassword = true,
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                    isRequired = true,
-                    isRequiredMessage = stringResource(id = string.process_forgot_password_new_password_required),
-                    isError = uiState.newPasswordError.first,
-                    errorMessage = if (uiState.newPasswordError.first) {
-                        if (viewModel.uiState.newPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
-                            stringResource(
-                                id = R.string.sign_up_password_requirement_forbidden_words,
-                                viewModel.getForbiddenWords(viewModel.uiState.newPassword)
-                            )
-                        } else {
-                            stringResource(id = viewModel.uiState.newPasswordError.second)
-                        }
+            TopNavBar(
+                isLeftButtonVisible = false,
+                onRightButtonClick = { onCloseClick() }
+            )
+            Text(
+                text = stringResource(id = uiState.titleResource),
+                modifier = Modifier.padding(top = 35.dp, start = 16.dp, end = 16.dp),
+                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+            OtpTextField(
+                value = uiState.otp,
+                onValueChange = { onOtpValueChange(it) },
+                labelText = stringResource(id = string.process_forgot_password_otp_label),
+                digits = ProcessForgotPasswordViewModel.OTP_TOTAL_DIGITS,
+                placeHolder = stringResource(id = string.process_forgot_password_otp_placeholder),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = string.process_forgot_password_otp_required)
+            )
+            ClickableText(
+                text = AnnotatedString(stringResource(id = string.process_forgot_password_resend_otp_button)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                style = Typography.body2.copy(
+                    textDecoration = TextDecoration.Underline,
+                    color = MultimoneyTheme.colors.textLink,
+                    textAlign = TextAlign.End
+                ),
+                onClick = { onResendClick() }
+            )
+            CustomOutlinedTextField(
+                value = uiState.newPassword,
+                onValueChange = {
+                    onNewPasswordValueChange(it)
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }),
+                labelText = stringResource(id = string.process_forgot_password_new_password_label),
+                isPassword = true,
+                modifier = Modifier
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = string.process_forgot_password_new_password_required),
+                isError = uiState.newPasswordError.first,
+                errorMessage = if (uiState.newPasswordError.first) {
+                    if (viewModel.uiState.newPasswordError.second == string.sign_up_password_requirement_forbidden_words) {
+                        stringResource(
+                            id = string.sign_up_password_requirement_forbidden_words,
+                            viewModel.getForbiddenWords(viewModel.uiState.newPassword)
+                        )
                     } else {
-                        null
+                        stringResource(id = viewModel.uiState.newPasswordError.second)
                     }
-                )
-                CustomOutlinedTextField(
-                    value = uiState.newPasswordConfirmation,
-                    onValueChange = {
-                        onNewPasswordConfirmationValueChange(it)
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onDone = {
-                        focusManager.clearFocus()
-                    }),
-                    labelText = stringResource(id = string.process_forgot_password_new_password_confirmation_label),
-                    isPassword = true,
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp),
-                    isRequired = true,
-                    isRequiredMessage = stringResource(id = string.process_forgot_password_new_password_confirmation_required),
-                    isError = uiState.newPasswordConfirmationError.first,
-                    errorMessage = if (uiState.newPasswordConfirmationError.first) {
-                        if (viewModel.uiState.newPasswordConfirmationError.second == R.string.sign_up_password_requirement_forbidden_words) {
-                            stringResource(
-                                id = R.string.sign_up_password_requirement_forbidden_words,
-                                viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
-                            )
-                        } else {
-                            stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
-                        }
-                    } else {
-                        null
-                    }
-                )
-                FlowRow(
-                    Modifier
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                ) {
-                    PasswordRequirementLabels(
-                        text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
-                        state = uiState.eightCharactersMinimumState
-                    )
-                    PasswordRequirementLabels(
-                        text = stringResource(id = string.sign_up_password_requirement_one_uppercase),
-                        state = uiState.oneUppercaseState
-                    )
-                    PasswordRequirementLabels(
-                        text = stringResource(id = string.sign_up_password_requirement_one_lowercase),
-                        state = uiState.oneLowercaseState
-                    )
-                    PasswordRequirementLabels(
-                        text = stringResource(id = string.sign_up_password_requirement_one_number),
-                        state = uiState.oneNumberState
-                    )
-                    PasswordRequirementLabels(
-                        text = stringResource(id = string.sign_up_password_requirement_one_characer),
-                        state = uiState.oneCharacterState
-                    )
+                } else {
+                    null
                 }
+            )
+            CustomOutlinedTextField(
+                value = uiState.newPasswordConfirmation,
+                onValueChange = {
+                    onNewPasswordConfirmationValueChange(it)
+                },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                }),
+                labelText = stringResource(id = string.process_forgot_password_new_password_confirmation_label),
+                isPassword = true,
+                modifier = Modifier
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                isRequired = true,
+                isRequiredMessage = stringResource(id = string.process_forgot_password_new_password_confirmation_required),
+                isError = uiState.newPasswordConfirmationError.first,
+                errorMessage = if (uiState.newPasswordConfirmationError.first) {
+                    if (viewModel.uiState.newPasswordConfirmationError.second == string.sign_up_password_requirement_forbidden_words) {
+                        stringResource(
+                            id = string.sign_up_password_requirement_forbidden_words,
+                            viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
+                        )
+                    } else {
+                        viewModel.uiState.newPasswordConfirmationError.third.ifEmpty { stringResource(id = viewModel.uiState.newPasswordConfirmationError.second) }
+                    }
+                } else {
+                    null
+                }
+            )
+            FlowRow(
+                Modifier
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            ) {
+                PasswordRequirementLabels(
+                    text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
+                    state = uiState.eightCharactersMinimumState
+                )
+                PasswordRequirementLabels(
+                    text = stringResource(id = string.sign_up_password_requirement_one_uppercase),
+                    state = uiState.oneUppercaseState
+                )
+                PasswordRequirementLabels(
+                    text = stringResource(id = string.sign_up_password_requirement_one_lowercase),
+                    state = uiState.oneLowercaseState
+                )
+                PasswordRequirementLabels(
+                    text = stringResource(id = string.sign_up_password_requirement_one_number),
+                    state = uiState.oneNumberState
+                )
+                PasswordRequirementLabels(
+                    text = stringResource(id = string.sign_up_password_requirement_one_characer),
+                    state = uiState.oneCharacterState
+                )
             }
             CustomButton(
                 onClick = { onContinueClick() },

@@ -7,13 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.SignOutCommunicator
@@ -42,6 +40,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     lateinit var cognitoHelper: CognitoHelper
 
     var dialogParameters = mutableStateOf(DialogParameters())
+    var notificationState = mutableStateOf(false)
 
     var isSessionAlreadyOpened: Flow<Boolean> = flowOf(false)
 
@@ -49,53 +48,48 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     private var activity: AppCompatActivity? = null
 
-    private var homeViewModel: HomeViewModel? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity = this
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
-                homeViewModel = hiltViewModel<HomeViewModel>()
-                homeViewModel?.let {
-                    Navigation(it)
-                    LaunchedEffect(key1 = true) {
-                        obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
-                        if (dataStorePreferences.getDeviceId().first().isEmpty()) {
-                            val deviceId: String = getDeviceId(activity as MainActivity)
-                            if (deviceId.isEmpty()) {
-                                FirebaseMessaging.getInstance().token.addOnCompleteListener {
-                                    saveToken(it.result)
-                                }.addOnCanceledListener {
-                                    saveToken(getDeviceId(activity = activity as MainActivity))
-                                }.addOnFailureListener {
-                                    saveToken(getDeviceId(activity = activity as MainActivity))
-                                }
-                            } else {
-                                saveToken(deviceId)
+                Navigation(notificationState)
+                LaunchedEffect(key1 = true) {
+                    obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+                    if (dataStorePreferences.getDeviceId().first().isEmpty()) {
+                        val deviceId: String = getDeviceId(activity as MainActivity)
+                        if (deviceId.isEmpty()) {
+                            FirebaseMessaging.getInstance().token.addOnCompleteListener {
+                                saveToken(it.result)
+                            }.addOnCanceledListener {
+                                saveToken(getDeviceId(activity = activity as MainActivity))
+                            }.addOnFailureListener {
+                                saveToken(getDeviceId(activity = activity as MainActivity))
                             }
-                        }
-                        isSessionAlreadyOpened.collectLatest {
-                            if (it) {
-                                signOut()
-                            }
+                        } else {
+                            saveToken(deviceId)
                         }
                     }
+                    isSessionAlreadyOpened.collectLatest {
+                        if (it) {
+                            signOut()
+                        }
+                    }
+                }
 
-                    if (dialogParameters.value.isActive.value) {
-                        CustomDialog(
-                            title = stringResource(id = dialogParameters.value.titleResource),
-                            message = stringResource(
-                                id = dialogParameters.value.descriptionResource,
-                                dialogParameters.value.additionalText
-                            ).ifEmpty { dialogParameters.value.description },
-                            positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
-                            openDialogCustom = dialogParameters.value.isActive,
-                            onPositiveAction = dialogParameters.value.positiveAction,
-                            isCancelable = dialogParameters.value.isCancelable
-                        )
-                    }
+                if (dialogParameters.value.isActive.value) {
+                    CustomDialog(
+                        title = stringResource(id = dialogParameters.value.titleResource),
+                        message = stringResource(
+                            id = dialogParameters.value.descriptionResource,
+                            dialogParameters.value.additionalText
+                        ).ifEmpty { dialogParameters.value.description },
+                        positiveButtonText = stringResource(id = dialogParameters.value.positiveResource),
+                        openDialogCustom = dialogParameters.value.isActive,
+                        onPositiveAction = dialogParameters.value.positiveAction,
+                        isCancelable = dialogParameters.value.isCancelable
+                    )
                 }
             }
         }
@@ -128,7 +122,11 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            homeViewModel?.setNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+            notificationState.value = false
+            if (intent?.getStringExtra(ROUTE_KEY)?.isNotEmpty() == true) {
+                obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
+                notificationState.value = true
+            }
         }
         isAppInForeground = true
     }

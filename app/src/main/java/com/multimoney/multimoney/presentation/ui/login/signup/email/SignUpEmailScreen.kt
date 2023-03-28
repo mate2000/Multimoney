@@ -36,7 +36,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -86,7 +85,11 @@ fun SignUpEmailScreen(
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
         viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(userData?.idBrand ?: 0))
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnSetIdBrand(
+                        userData?.idBrand ?: 0
+                    )
+                )
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnLoadingValueChange(
                         false

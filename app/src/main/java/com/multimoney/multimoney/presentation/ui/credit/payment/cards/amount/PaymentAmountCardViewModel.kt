@@ -103,7 +103,6 @@ class PaymentAmountCardViewModel @Inject constructor(
         maximumPayment = savedStateHandle[MAXIMUM_PAYMENT] ?: 0.00F
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
         paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
-        onInitializeInteractionValues()
     }
 
     private fun onInitializeInteractionValues() {
@@ -152,6 +151,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     ).filter(AnnotatedString(uiState.currentAmountValueString)).text
 
     private fun onStart(alertResultTitle: String) {
+        onInitializeInteractionValues()
         this.alertResultTitle = alertResultTitle
         uiState = uiState.copy(
             card = savedStateHandle[CARD_SELECTED]

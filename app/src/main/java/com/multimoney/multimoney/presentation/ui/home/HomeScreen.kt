@@ -16,6 +16,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -59,7 +60,8 @@ fun HomeScreen(
     navController: NavHostController,
     onInnerNavigate: (innerNavController: NavHostController, NavEvent.InnerNavigate) -> Unit = { _, _ -> },
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    notificationState: MutableState<Boolean>
 ) {
     val activity = LocalContext.current.findActivity()
     val innerNavController = rememberNavController()
@@ -80,17 +82,19 @@ fun HomeScreen(
             }
         }
 
-        LaunchedEffect(key1 = viewModel.uiState.notificationRoute) {
-            if (viewModel.uiState.notificationRoute.isNotEmpty()) {
-                viewModel.onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
+        LaunchedEffect(key1 = notificationState.value) {
+            viewModel.getNotificationRoute()
+            if (viewModel.uiState.notificationRoute.isNotEmpty() && notificationState.value) {
+                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
                 if (shouldRestartFirebaseNotificationRoutePreferenceInHome(viewModel.uiState.notificationRoute)) {
                     viewModel.restartNotificationRoutePreference()
                 }
             }
         }
         LaunchedEffect(key1 = homeState) {
-            if (viewModel.getNotificationRoute().isNotEmpty()) {
-                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.getNotificationRoute())))
+            viewModel.getNotificationRoute()
+            if (viewModel.uiState.notificationRoute.isNotEmpty()) {
+                onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(getFirebaseNotificationRouteByRoute(viewModel.uiState.notificationRoute)))
             } else {
                 onUIEvent(HomeViewModel.UIEvent.OnSetHomeState(homeState))
             }
@@ -173,7 +177,8 @@ fun HomeScreen(
         viewModel.onUIEvent(HomeViewModel.UIEvent.OnHideUnlinkToast)
     }
     if (viewModel.uiState.releaseToastIsVisible) {
-        Toast.makeText(activity, stringResource(id = R.string.amount_exceeded_transaction_released), Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, stringResource(id = R.string.amount_exceeded_transaction_released), Toast.LENGTH_LONG)
+            .show()
         viewModel.onUIEvent(HomeViewModel.UIEvent.OnHideReleaseToast)
     }
 

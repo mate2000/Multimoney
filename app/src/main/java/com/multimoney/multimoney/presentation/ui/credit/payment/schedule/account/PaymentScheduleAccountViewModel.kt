@@ -9,7 +9,6 @@ import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -19,16 +18,14 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.PaymentScheduleViewModel
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class PaymentScheduleAccountViewModel @Inject constructor(
@@ -88,16 +85,17 @@ class PaymentScheduleAccountViewModel @Inject constructor(
 
     private fun onClientBankAccountSelected(clientBankAccount: ClientBankAccount?) = popAndNavigateTo(
         route = "${Screen.PaymentScheduleScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
-        encodeData(
-            clientBankAccount
-        )
+            encodeData(
+                clientBankAccount
+            )
         }/$paymentDate/${true}/$previousScreen/${false}",
         popTo = Screen.PaymentScheduleAccountScreen.baseRoute
     )
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleScreen.route, isRestart = false)
 
-    private fun onCloseClick() = navigateBack(popTo = Screen.PaymentScheduleScreen.route, isRestart = false, homeState = HomeState.COLLAPSED)
+    private fun onCloseClick() =
+        navigateBack(popTo = Screen.PaymentScheduleScreen.route, isRestart = false, homeState = HomeState.COLLAPSED)
 
     data class UIState(
         // Interactions
@@ -119,6 +117,6 @@ class PaymentScheduleAccountViewModel @Inject constructor(
         object OnCallQueryGetClientBankAccount : UIEvent()
         class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnCloseClick :UIEvent()
+        object OnCloseClick : UIEvent()
     }
 }

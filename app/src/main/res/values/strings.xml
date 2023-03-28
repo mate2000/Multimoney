@@ -434,7 +434,7 @@
     <string name="profile_terms_and_conditions_title_template" translatable="false">Términos y condiciones: %1$s</string>
     <string name="profile_terms_and_conditions_version_template" translatable="false">Versión: %1$s</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
-    <string name="profile_change_password" translatable="false">Cambio de contarseña</string>
+    <string name="profile_change_password" translatable="false">Cambio de contraseña</string>
     <string name="profile_notifications" translatable="false">Notificationes</string>
     <string name="profile_biometrics" translatable="false">Biométricos</string>
     <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
@@ -645,7 +645,8 @@
     <string name="credit_amount_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
     <string name="credit_amount_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
-    <string name="credit_amount_disbursement_exit_confirm_title" translatable="false">¿Seguro que querés abandonar el proceso?</string>
+    <string name="credit_amount_disbursement_exit_confirm_title_cr" translatable="false">¿Seguro que querés abandonar el proceso?</string>
+    <string name="credit_amount_disbursement_exit_confirm_title_sv" translatable="false">¿Seguro que quieres abandonar el proceso?</string>
     <string name="credit_amount_disbursement_exit_confirm_description" translatable="false">Deberás volver a ingresar todos tus datos para desembolsar tu disponible.</string>
 
     <!-- Credit Bank-->
@@ -1170,6 +1171,8 @@
     <string name="payment_schedule_error_alert_subtitle_two" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo más tarde.</string>
     <string name="payment_schedule_error_alert_button_one" translatable="false">Intentar</string>
     <string name="payment_schedule_error_alert_button_two" translatable="false">Ir al inicio</string>
+    <string name="payment_schedule_close_dialog_title" translatable="false">¿Estás seguro de que querés salir?</string>
+    <string name="payment_schedule_close_dialog_subtitle" translatable="false">Podés programar tu pago automático cuando querás.</string>
 
     <!-- Payment Schedule Account-->
     <string name="payment_schedule_account_title" translatable="false">Seleccioná una cuenta para programar tu pago</string>
@@ -1198,8 +1201,8 @@
     <!-- Disbursement Account-->
     <string name="disbursement_account_sv_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>
     <string name="disbursement_account_cr_title" translatable="false">¿En cúal cuenta IBAN querés \nrecibir tu dinero?</string>
-    <string name="disbursement_account_process_success_title" translatable="false">¡Tu solicitud fue \nenviada con éxito!</string>
-    <string name="disbursement_account_process_success_description" translatable="false">Te notificaremos cuando tu \ndesembolso haya sido realizado</string>
+    <string name="disbursement_account_process_success_title" translatable="false">Tu solicitud fue\nenviada\nexitosamente</string>
+    <string name="disbursement_account_process_success_description" translatable="false">Estamos verificando tus datos, pronto\nte daremos una respuesta.</string>
     <string name="disbursement_account_process_error_button" translatable="false">Ir al inicio</string>
     <string name="disbursement_account_max_number_disclaimer" translatable="false">Llegaste al máximo de cuentas registradas</string>
     <string name="disbursement_account_max_number_title" translatable="false">Máximo de cuentas registradas</string>
@@ -1478,7 +1481,7 @@
 
     <!-- Currency Detail Screen -->
     <string name="currency_detail_title" translatable="false">Inversión en %s</string>
-    <string name="currency_detail_daily_invest" translatable="false">Hoy %1$s (%2$s)</string>
+    <string name="currency_detail_daily_invest" translatable="false">Hoy %1s (%2s\%%)</string>
     <string name="currency_detail_my_movements" translatable="false">Mis movimientos</string>
     <string name="currency_detail_see_all" translatable="false">Ver todos</string>
 

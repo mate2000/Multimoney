@@ -21,9 +21,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.SemanticPositive400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -39,10 +41,13 @@ fun CurrencyItem(
     onClick: () -> Unit = {}
 ) {
     Column {
-        Column(modifier.paint(
-            painterResource(id = R.drawable.bg_cryptocurrency_enabled),
-            contentScale = ContentScale.FillBounds
-        ).clickable { onClick() }) {
+        Column(
+            modifier
+                .paint(
+                    painterResource(id = R.drawable.bg_cryptocurrency_enabled),
+                    contentScale = ContentScale.FillBounds
+                )
+                .clickable { onClick() }) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,9 +89,11 @@ fun CurrencyItem(
                             .padding(top = 2.dp)
                             .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        val gainOrLoss = percentageInvestedCurrency.contains(stringResource(id = R.string.crypto_losses_symbol))
+                        val symbol = if (gainOrLoss) "" else stringResource(id = R.string.crypto_gains_symbol)
                         Row {
                             Text(
-                                text = stringResource(id = R.string.dollar_symbol_value, priceOfTheDay),
+                                text = priceOfTheDay.toCurrencyFormat(),
                                 style = Typography.caption,
                                 color = WhiteTransparency60
                             )
@@ -94,14 +101,14 @@ fun CurrencyItem(
                                 modifier = Modifier.padding(start = 8.dp),
                                 text = stringResource(
                                     id = R.string.currency_item_percent_invested,
-                                    percentageInvestedCurrency
+                                    "${symbol}${percentageInvestedCurrency}"
                                 ),
                                 style = Typography.caption,
-                                color = SemanticPositive400
+                                color = if (gainOrLoss) SemanticNegative400 else SemanticPositive400
                             )
                         }
                         Text(
-                            text = "$available $asset",
+                            text = "${available.roundToEightDecimalPlaces()} $asset",
                             style = Typography.caption,
                             color = WhiteTransparency60
                         )

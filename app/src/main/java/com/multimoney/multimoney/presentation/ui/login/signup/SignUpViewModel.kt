@@ -395,8 +395,8 @@ class SignUpViewModel @Inject constructor(
             )
         } else {
             DialogParameters(
-                titleResource = string.error_empty,
-                description = userData?.message ?: "",
+                title = userData?.message.orEmpty(),
+                description = userData?.detail.orEmpty(),
                 isActive = mutableStateOf(true)
             )
         }

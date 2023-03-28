@@ -1466,7 +1466,7 @@
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
 
     <!-- Currency Item -->
-    <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
+    <string name="currency_item_dollar_symbol" translatable="false">%2s</string>
     <string name="currency_item_inside_parenthesis" translatable="false">(%1s)</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_receive_address_description" translatable="false">Dirección %1$s | %2$s</string>

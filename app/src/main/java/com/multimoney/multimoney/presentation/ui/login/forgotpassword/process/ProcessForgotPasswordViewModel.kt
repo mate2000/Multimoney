@@ -84,9 +84,8 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     }
 
     private fun validatePassword() {
-        val equalPassword = passwordValidationHelper.validateEqualPasswords(
-            password = uiState.newPassword,
-            confirmPassword = uiState.newPasswordConfirmation
+        val validatePassword = passwordValidationHelper.validateConsecutiveCharacter(
+            value = uiState.newPassword
         )
 
         uiState = uiState.copy(
@@ -95,10 +94,11 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            newPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
-                value = uiState.newPassword
-            ),
-            newPasswordConfirmationError = Triple(equalPassword.first, equalPassword.second, "")
+            newPasswordError = Triple(validatePassword.first, validatePassword.second, ""),
+            newPasswordConfirmationError = passwordValidationHelper.validateEqualPasswords(
+                password = uiState.newPassword,
+                confirmPassword = uiState.newPasswordConfirmation
+            )
         )
         resetValidationLabel(uiState.newPassword)
     }
@@ -145,8 +145,8 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun cleanErrors() {
         uiState = uiState.copy(
-            newPasswordConfirmationError = Triple(false, string.empty, ""),
-            newPasswordError = Pair(false, string.empty)
+            newPasswordError = Triple(false, string.empty, ""),
+            newPasswordConfirmationError = Pair(false, string.empty)
         )
     }
 
@@ -246,7 +246,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private fun onPasswordSameAsPrevious(errorMessage: String?) {
         uiState = uiState.copy(
             isLoading = false,
-            newPasswordConfirmationError = Triple(
+            newPasswordError = Triple(
                 true,
                 string.profile_settings_error_password_must_not_be_the_same,
                 errorMessage.orEmpty()
@@ -317,12 +317,12 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         val otp: String = "",
         val newPassword: String = "",
         val newPasswordConfirmation: String = "",
-        val newPasswordError: Pair<Boolean, Int> = Pair(false, string.sign_up_otp_code_not_valid),
-        val newPasswordConfirmationError: Triple<Boolean, Int, String> = Triple(
+        val newPasswordError: Triple<Boolean, Int, String> = Triple(
             false,
             string.sign_up_otp_code_not_valid,
             ""
         ),
+        val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(false, string.sign_up_otp_code_not_valid),
         var eightCharactersMinimumState: Boolean? = null,
         var oneUppercaseState: Boolean? = null,
         var oneLowercaseState: Boolean? = null,

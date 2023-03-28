@@ -74,21 +74,20 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     private fun validatePassword() {
-        val equalPassword = passwordValidationHelper.validateEqualPasswords(
-            password = uiState.newPassword,
-            confirmPassword = uiState.newPasswordConfirmation
+        val passwordValidate = passwordValidationHelper.validateConsecutiveCharacter(
+            value = uiState.newPassword
         )
-
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.newPassword),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            newPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
-                value = uiState.newPassword
-            ),
-            newPasswordConfirmationError = Triple(equalPassword.first, equalPassword.second, "")
+            newPasswordError = Triple(passwordValidate.first, passwordValidate.second, ""),
+            newPasswordConfirmationError = passwordValidationHelper.validateEqualPasswords(
+                password = uiState.newPassword,
+                confirmPassword = uiState.newPasswordConfirmation
+            )
         )
         resetValidationLabel(uiState.newPassword)
     }
@@ -135,8 +134,8 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun cleanErrors() {
         uiState = uiState.copy(
-            newPasswordConfirmationError = Triple(false, string.empty, ""),
-            newPasswordError = Pair(false, string.empty),
+            newPasswordConfirmationError = Pair(false, string.empty),
+            newPasswordError = Triple(false, string.empty, ""),
             currentPasswordError = Pair(false, string.empty)
         )
     }
@@ -206,12 +205,12 @@ class ChangePasswordViewModel @Inject constructor(
                     is InvalidPasswordException -> {
                         uiState.copy(
                             isLoading = false,
-                            newPasswordConfirmationError = Triple(
+                            newPasswordError = Triple(
                                 true,
                                 string.profile_settings_error_new_password_invalid,
                                 ""
                             ),
-                            newPasswordError = Pair(true, string.empty)
+                            newPasswordConfirmationError = Pair(true, string.empty)
                         )
                     }
                     else -> {
@@ -229,7 +228,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun onPasswordSameAsPrevious(errorDetail: String?) {
         uiState = uiState.copy(
-            newPasswordConfirmationError = Triple(
+            newPasswordError = Triple(
                 true,
                 string.profile_settings_error_password_must_not_be_the_same,
                 errorDetail.orEmpty()
@@ -304,12 +303,12 @@ class ChangePasswordViewModel @Inject constructor(
             false,
             string.sign_up_otp_code_not_valid
         ),
-        val newPasswordError: Pair<Boolean, Int> = Pair(false, string.sign_up_otp_code_not_valid),
-        val newPasswordConfirmationError: Triple<Boolean, Int, String> = Triple(
+        val newPasswordError: Triple<Boolean, Int, String> = Triple(
             false,
             string.sign_up_otp_code_not_valid,
             ""
         ),
+        val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(false, string.sign_up_otp_code_not_valid),
         val isButtonEnabled: Boolean = false,
         val idBrand: Int = 0,
         val pkUser: String = "",

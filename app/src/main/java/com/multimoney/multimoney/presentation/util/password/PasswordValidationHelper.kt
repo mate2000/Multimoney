@@ -27,13 +27,12 @@ class PasswordValidationHelper @Inject constructor(private val queryValidatePass
      * than three sequential characters (applies to numbers and letters) and has no forbidden words.
      */
     fun validateConsecutiveCharacter(
-        value: String,
-        password: String,
-        confirmPassword: String
+        value: String
     ): Pair<Boolean, Int> {
         return when {
-            haveMoreThanThreeConsecutiveLetterOrNumber(value) ||
-                    haveMoreThanThreeSequentialLetterOrNumber(value) -> {
+            haveMoreThanThreeConsecutiveLetterOrNumber(value) || haveMoreThanThreeSequentialLetterOrNumber(
+                value
+            ) -> {
                 Pair(
                     true,
                     R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
@@ -44,16 +43,29 @@ class PasswordValidationHelper @Inject constructor(private val queryValidatePass
                 Pair(true, R.string.sign_up_password_requirement_forbidden_words)
             }
 
-            (password.isNotEmpty() && confirmPassword.isNotEmpty() && confirmPassword != password) -> {
-                Pair(true, R.string.sign_up_password_confirm_password_error)
-            }
-
             else -> {
                 Pair(false, R.string.error_empty)
             }
         }
     }
 
+    /**
+     * Validate that passwords are the same
+     */
+    fun validateEqualPasswords(
+        password: String,
+        confirmPassword: String,
+        isSignup: Boolean = false
+    ): Pair<Boolean, Int> =
+        if (password.isNotEmpty() && confirmPassword.isNotEmpty() && confirmPassword != password) {
+            Pair(
+                true,
+                if (isSignup) R.string.sign_up_password_confirm_password_error
+                else R.string.process_forgot_password_new_password_confirmation_error
+            )
+        } else {
+            Pair(false, R.string.error_empty)
+        }
 
     /**
      * Validate if the password contains forbidden words and return a string with the forbidden words

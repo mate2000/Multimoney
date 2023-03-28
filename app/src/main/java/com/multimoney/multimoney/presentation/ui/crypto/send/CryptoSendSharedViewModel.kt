@@ -12,7 +12,6 @@ import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CRYPTO_ASSET
-import com.multimoney.multimoney.presentation.navigation.DESCRIPTION_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -42,18 +41,16 @@ class CryptoSendSharedViewModel @Inject constructor(
     var identification = ""
     var email = ""
     var asset: String? = savedStateHandle[CRYPTO_ASSET]
-    var assetDescription: String? = savedStateHandle[DESCRIPTION_CURRENCY] ?: ""
     val comingFromCurrencyDetails: Boolean = asset != null
 
-    private fun setUserData() {
+    private fun setUserData(balances: List<BalanceCryptoAccountItems>) {
         viewModelScope.launch {
             idBrand = dataStorePreferences.getIdBrand().first().toInt()
             pkUser = dataStorePreferences.getPkUser().first()
             identification = dataStorePreferences.getIdentification().first()
             email = dataStorePreferences.getUserEmail().first()
-            if (comingFromCurrencyDetails) {
-                uiState =
-                    uiState.copy(asset = asset ?: "", assetDescription = assetDescription ?: "")
+            if (comingFromCurrencyDetails && balances.isNotEmpty()) {
+                onCryptoSelected(balances.first { it.asset == asset })
             }
         }
     }
@@ -137,7 +134,7 @@ class CryptoSendSharedViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnGetUserInfo -> setUserData()
+            is UIEvent.OnGetUserInfo -> setUserData(event.balances)
             is UIEvent.OnPreviousStep -> previousStep()
             is UIEvent.OnNextStep -> nextStep()
             is UIEvent.OnSetCryptoAddress -> uiState = uiState.copy(destinationAddress = event.cryptoAddress)
@@ -167,7 +164,7 @@ class CryptoSendSharedViewModel @Inject constructor(
     }
 
     sealed interface UIEvent {
-        object OnGetUserInfo : UIEvent
+        data class OnGetUserInfo(val balances: List<BalanceCryptoAccountItems>) : UIEvent
         object OnPreviousStep : UIEvent
         object OnNextStep : UIEvent
         data class OnCryptoSelected(val cryptoAccount: BalanceCryptoAccountItems) : UIEvent

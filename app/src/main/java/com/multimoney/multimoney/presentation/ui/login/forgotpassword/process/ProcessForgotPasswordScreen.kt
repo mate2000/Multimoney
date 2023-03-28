@@ -74,8 +74,7 @@ fun ProcessForgotPasswordScreen(
     // Properties
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val resendOtpToastText =
-        stringResource(id = string.process_forgot_password_resend_otp_toast)
+    val resendOtpToastText = stringResource(id = string.process_forgot_password_resend_otp_toast)
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     val coroutineScope = rememberCoroutineScope()
 
@@ -251,7 +250,9 @@ fun ProcessForgotPasswordContent(
                             viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
                         )
                     } else {
-                        viewModel.uiState.newPasswordConfirmationError.third.ifEmpty { stringResource(id = viewModel.uiState.newPasswordConfirmationError.second) }
+                        viewModel.uiState.newPasswordConfirmationError.third.ifEmpty {
+                            stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
+                        }
                     }
                 } else {
                     null

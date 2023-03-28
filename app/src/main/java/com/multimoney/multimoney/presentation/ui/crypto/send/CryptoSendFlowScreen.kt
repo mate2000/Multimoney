@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoSendSteps
 import com.multimoney.data.util.catalog.SendCryptoStep
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.crypto.send.cryptoaddress.CryptoSendAddressScreen
@@ -32,11 +33,12 @@ fun CryptoSendFlow(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: CryptoSendSharedViewModel = hiltViewModel(),
     onNavigateToQrCodeScanner: () -> Unit = {},
-    qrCodeResult: String
+    qrCodeResult: String,
+    balances: List<BalanceCryptoAccountItems> = emptyList()
 ) {
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnGetUserInfo)
+        viewModel.onUIEvent(CryptoSendSharedViewModel.UIEvent.OnGetUserInfo(balances))
         viewModel.executeNavigation(
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate,

@@ -1617,6 +1617,9 @@
     <string name="process_forgot_password_alert_failure_description" translatable="false">Lo sentimos, volvé a intentar más \ntarde</string>
     <string name="process_forgot_password_alert_failure_description_sv" translatable="false">Lo sentimos, vuelve a intentar más tarde</string>
     <string name="process_forgot_password_alert_failure_button_try_again" translatable="false">Intentar nuevamente</string>
+    <string name="process_forgot_password_alert_failure_otp_title" translatable="false">Código incorrecto</string>
+    <string name="process_forgot_password_alert_failure_otp_description_cr" translatable="false">Intentá de nuevo o volvé a solicitar el código</string>
+    <string name="process_forgot_password_alert_failure_otp_description_sv" translatable="false">Intenta de nuevo o vuelve a solicitar el código</string>
 
     <!-- Crypto list currencies for purchase -->
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>

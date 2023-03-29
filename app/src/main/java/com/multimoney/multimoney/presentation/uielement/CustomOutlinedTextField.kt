@@ -29,6 +29,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -65,7 +67,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import kotlin.Int.Companion
+import com.multimoney.multimoney.presentation.util.password.EmptyTextToolbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -271,108 +273,114 @@ fun CustomOutlinedTextField(
             innerModifier = innerModifier.height(80.dp)
         }
 
-        // Display textField
-        OutlinedTextField(
-            modifier = innerModifier
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent {
-                    onFocusedTextField(it.isFocused)
-                    if (it.isFocused) {
-                        coroutineScope.launch {
-                            // This sends a request to all parents that asks them to scroll so
-                            // that this item is brought into view.
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
-            value = value ?: "",
-            shape = RoundedCornerShape(if (isTextArea) 32 else 50),
-            leadingIcon = leadingIcon?.let {
-                {
-                    Icon(
-                        painter = painterResource(id = it),
-                        contentDescription = "",
-                        modifier = Modifier.padding(start = 8.dp),
-                        tint = iconTintColor
-                    )
-                }
-            } ?: leadingIconComposable?.let {
-                { it(leadingIconComposableColor) }
-            },
-            trailingIcon = if (isPassword) {
-                {
-                    val image = if (passwordVisible) {
-                        passwordVisibleDebounce.value = true
-                        painterResource(id = R.drawable.ic_view_off)
-                    } else {
-                        painterResource(id = R.drawable.ic_view)
-                    }
+        val textToolbar = if (isPassword) EmptyTextToolbar else LocalTextToolbar.current
 
-                    IconButton(onClick = {
-                        passwordVisible = !passwordVisible
-                    }) {
+        CompositionLocalProvider(
+            LocalTextToolbar provides textToolbar
+        ) {
+            // Display textField
+            OutlinedTextField(
+                modifier = innerModifier
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .onFocusEvent {
+                        onFocusedTextField(it.isFocused)
+                        if (it.isFocused) {
+                            coroutineScope.launch {
+                                // This sends a request to all parents that asks them to scroll so
+                                // that this item is brought into view.
+                                bringIntoViewRequester.bringIntoView()
+                            }
+                        }
+                    },
+                value = value ?: "",
+                shape = RoundedCornerShape(if (isTextArea) 32 else 50),
+                leadingIcon = leadingIcon?.let {
+                    {
                         Icon(
-                            painter = image,
+                            painter = painterResource(id = it),
                             contentDescription = "",
-                            modifier = Modifier.padding(end = 8.dp),
+                            modifier = Modifier.padding(start = 8.dp),
                             tint = iconTintColor
                         )
                     }
-                }
-            } else {
-                trailingIcon?.let {
+                } ?: leadingIconComposable?.let {
+                    { it(leadingIconComposableColor) }
+                },
+                trailingIcon = if (isPassword) {
                     {
-                        IconButton(
-                            enabled = trailingIconActionEnabled,
-                            onClick = trailingIconAction
-                        ) {
+                        val image = if (passwordVisible) {
+                            passwordVisibleDebounce.value = true
+                            painterResource(id = R.drawable.ic_view_off)
+                        } else {
+                            painterResource(id = R.drawable.ic_view)
+                        }
+
+                        IconButton(onClick = {
+                            passwordVisible = !passwordVisible
+                        }) {
                             Icon(
-                                painter = painterResource(id = it),
+                                painter = image,
                                 contentDescription = "",
-                                modifier = Modifier.padding(trailingIconEndPadding),
-                                tint = trailingIconColor,
+                                modifier = Modifier.padding(end = 8.dp),
+                                tint = iconTintColor
                             )
                         }
                     }
-                }
-            },
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            onValueChange = {
-                activity?.onUserInteraction()
-                onValueChange(it)
-                textDebounce.value = it
-                if (isRequired) emptyError = it.isEmpty()
-            },
-            placeholder = {
-                Text(
-                    text = placeHolder,
-                    color = placeholderColor,
-                    style = Typography.body2
-                )
-            },
-            isError = isError || emptyError,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = backgroundColor,
-                focusedIndicatorColor = focusedIndicatorColor,
-                unfocusedIndicatorColor = unfocusedIndicatorColor,
-                errorIndicatorColor = textFieldStrokeErrorColor,
-                textColor = textColor,
-                cursorColor = textColor
-            ),
-            enabled = !isClickable && enabled,
-            visualTransformation = customTransformation
-                ?: if (passwordVisible || !isPassword) {
-                    VisualTransformation.None
-                } else PasswordVisualTransformation(),
-            textStyle = Typography.body2.copy(
-                color = WhiteTransparency90
-            ),
-            maxLines = if (isTextArea) 2 else maxLines,
-            singleLine = if (isTextArea) false else singleLine,
-            focusedBorderThickness = FOCUSED_BORDER_WIDTH,
-            unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
-        )
+                } else {
+                    trailingIcon?.let {
+                        {
+                            IconButton(
+                                enabled = trailingIconActionEnabled,
+                                onClick = trailingIconAction
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = it),
+                                    contentDescription = "",
+                                    modifier = Modifier.padding(trailingIconEndPadding),
+                                    tint = trailingIconColor,
+                                )
+                            }
+                        }
+                    }
+                },
+                keyboardOptions = keyboardOptions,
+                keyboardActions = keyboardActions,
+                onValueChange = {
+                    activity?.onUserInteraction()
+                    onValueChange(it)
+                    textDebounce.value = it
+                    if (isRequired) emptyError = it.isEmpty()
+                },
+                placeholder = {
+                    Text(
+                        text = placeHolder,
+                        color = placeholderColor,
+                        style = Typography.body2
+                    )
+                },
+                isError = isError || emptyError,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = backgroundColor,
+                    focusedIndicatorColor = focusedIndicatorColor,
+                    unfocusedIndicatorColor = unfocusedIndicatorColor,
+                    errorIndicatorColor = textFieldStrokeErrorColor,
+                    textColor = textColor,
+                    cursorColor = textColor
+                ),
+                enabled = !isClickable && enabled,
+                visualTransformation = customTransformation
+                    ?: if (passwordVisible || !isPassword) {
+                        VisualTransformation.None
+                    } else PasswordVisualTransformation(),
+                textStyle = Typography.body2.copy(
+                    color = WhiteTransparency90
+                ),
+                maxLines = if (isTextArea) 2 else maxLines,
+                singleLine = if (isTextArea) false else singleLine,
+                focusedBorderThickness = FOCUSED_BORDER_WIDTH,
+                unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH
+            )
+        }
 
         // This is required to execute the debounce
         val textDebounceFlowValue by textDebounceFlow.collectAsState("")

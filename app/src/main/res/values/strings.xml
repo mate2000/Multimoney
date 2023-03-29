@@ -142,8 +142,8 @@
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
     <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
     <string name="sign_in_session_blacklisted_title" translatable="false">¿No puedes entrar a MultiMoney?</string>
-    <string name="sign_in_session_blacklisted_message" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
-    <string name="sign_in_session_blocked_message" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_in_session_blacklisted_message_cr" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
+    <string name="sign_in_session_blacklisted_message_sv" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>

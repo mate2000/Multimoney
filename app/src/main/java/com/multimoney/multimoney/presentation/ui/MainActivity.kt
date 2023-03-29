@@ -10,6 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
@@ -31,7 +33,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), SignOutCommunicator {
+class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller.ProviderInstallListener {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer
@@ -52,15 +54,18 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     private var homeViewModel: HomeViewModel? = null
 
+    private var retryProviderInstall = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ProviderInstaller.installIfNeededAsync(this, this)
         activity = this
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
-                homeViewModel = hiltViewModel<HomeViewModel>()
-                homeViewModel?.let {
-                    Navigation(it)
+                homeViewModel = hiltViewModel()
+                homeViewModel?.let { viewModel ->
+                    Navigation(viewModel)
                     LaunchedEffect(key1 = true) {
                         obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
                         if (dataStorePreferences.getDeviceId().first().isEmpty()) {
@@ -170,7 +175,31 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     override fun isSessionDuplicated() = isSessionAlreadyOpened
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SECURITY_PROVIDER_UPDATE_REQUEST_CODE) retryProviderInstall = true
+    }
+
+    override fun onPostResume() {
+        super.onPostResume()
+        if (retryProviderInstall) ProviderInstaller.installIfNeededAsync(this, this)
+        retryProviderInstall = false
+    }
+
+    override fun onProviderInstallFailed(errorCode: Int, recoveryIntent: Intent?) {
+        GoogleApiAvailability.getInstance().apply {
+            if (isUserResolvableError(errorCode)) {
+                showErrorDialogFragment(this@MainActivity, errorCode, SECURITY_PROVIDER_UPDATE_REQUEST_CODE)
+            }
+        }
+    }
+
+    override fun onProviderInstalled() {
+        retryProviderInstall = false
+    }
+
     companion object {
         private const val ROUTE_KEY = "routeName"
+        private const val SECURITY_PROVIDER_UPDATE_REQUEST_CODE = 100
     }
 }

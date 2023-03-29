@@ -52,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.util.FIRST_INDEX
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -275,80 +276,80 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit = when (adjustEventType) {
-        AdjustEventType.SIGNUP_1_2001 -> {
-            suspend {
-                if (dataStorePreferences.isAdjustSingUp1EventRegister().first()) {
-                    registerAdjustEvent(
-                        adjustEventType = AdjustEventType.SIGNUP_1_2001,
-                        isLoggedIn = false,
-                        data = userData?.toJson() ?: ""
-                    )
-                    dataStorePreferences.isAdjustSingUp1EventRegister(false)
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit =
+        when (adjustEventType) {
+            AdjustEventType.SIGNUP_1_2001 -> {
+                suspend {
+                    if (dataStorePreferences.isAdjustSingUp1EventRegister().first()) {
+                        registerAdjustEvent(
+                            adjustEventType = AdjustEventType.SIGNUP_1_2001,
+                            isLoggedIn = false,
+                            data = userData?.toJson() ?: ""
+                        )
+                        dataStorePreferences.isAdjustSingUp1EventRegister(false)
+                    }
                 }
             }
-        }
-        AdjustEventType.SIGNUP_2_2002 -> {
-            suspend {
-                if (dataStorePreferences.isAdjustSingUp2EventRegister().first()) {
-                    registerAdjustEvent(
-                        adjustEventType = AdjustEventType.SIGNUP_2_2002,
-                        isLoggedIn = false,
-                        data = userData?.toJson() ?: ""
-                    )
-                    dataStorePreferences.isAdjustSingUp2EventRegister(false)
+            AdjustEventType.SIGNUP_2_2002 -> {
+                suspend {
+                    if (dataStorePreferences.isAdjustSingUp2EventRegister().first()) {
+                        registerAdjustEvent(
+                            adjustEventType = AdjustEventType.SIGNUP_2_2002,
+                            isLoggedIn = false,
+                            data = userData?.toJson() ?: ""
+                        )
+                        dataStorePreferences.isAdjustSingUp2EventRegister(false)
+                    }
                 }
             }
-        }
-        AdjustEventType.SIGNUP_3_2003 -> {
-            suspend {
-                if (dataStorePreferences.isAdjustSingUp3EventRegister().first()) {
-                    registerAdjustEvent(
-                        adjustEventType = AdjustEventType.SIGNUP_3_2003,
-                        isLoggedIn = false,
-                        data = userData?.toJson() ?: ""
-                    )
-                    dataStorePreferences.isAdjustSingUp3EventRegister(false)
+            AdjustEventType.SIGNUP_3_2003 -> {
+                suspend {
+                    if (dataStorePreferences.isAdjustSingUp3EventRegister().first()) {
+                        registerAdjustEvent(
+                            adjustEventType = AdjustEventType.SIGNUP_3_2003,
+                            isLoggedIn = false,
+                            data = userData?.toJson() ?: ""
+                        )
+                        dataStorePreferences.isAdjustSingUp3EventRegister(false)
+                    }
                 }
             }
-        }
-        AdjustEventType.SIGNUP_4_2004 -> {
-            suspend {
-                if (dataStorePreferences.isAdjustSingUp4EventRegister().first()) {
-                    registerAdjustEvent(
-                        adjustEventType = AdjustEventType.SIGNUP_4_2004,
-                        isLoggedIn = false,
-                        data = userData?.toJson() ?: ""
-                    )
-                    dataStorePreferences.isAdjustSingUp4EventRegister(false)
+            AdjustEventType.SIGNUP_4_2004 -> {
+                suspend {
+                    if (dataStorePreferences.isAdjustSingUp4EventRegister().first()) {
+                        registerAdjustEvent(
+                            adjustEventType = AdjustEventType.SIGNUP_4_2004,
+                            isLoggedIn = false,
+                            data = userData?.toJson() ?: ""
+                        )
+                        dataStorePreferences.isAdjustSingUp4EventRegister(false)
+                    }
                 }
             }
-        }
-        AdjustEventType.SIGNUP_5_2007 -> {
-            suspend {
-                if (dataStorePreferences.isAdjustSingUp5EventRegister().first()) {
-                    registerAdjustEvent(
-                        adjustEventType = AdjustEventType.SIGNUP_5_2007,
-                        isLoggedIn = false,
-                        data = userData?.toJson() ?: ""
-                    )
-                    dataStorePreferences.isAdjustSingUp5EventRegister(false)
+            AdjustEventType.SIGNUP_5_2007 -> {
+                suspend {
+                    if (dataStorePreferences.isAdjustSingUp5EventRegister().first()) {
+                        registerAdjustEvent(
+                            adjustEventType = AdjustEventType.SIGNUP_5_2007,
+                            isLoggedIn = false,
+                            data = userData?.toJson() ?: ""
+                        )
+                        dataStorePreferences.isAdjustSingUp5EventRegister(false)
+                    }
                 }
             }
-        }
-        AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001 -> {
-            suspend {
-                registerAdjustEvent(
-                    adjustEventType = AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001,
-                    isLoggedIn = false,
-                    data = userData?.toJson() ?: "",
-                    applyAdjust = false
-                )
+            AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001 -> {
+                suspend {
+                    registerAdjustEvent(
+                        adjustEventType = AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001,
+                        isLoggedIn = false,
+                        data = userData?.toJson() ?: "",
+                        applyAdjust = false
+                    )
+                }
             }
+            else -> suspend {}
         }
-
-        else -> suspend {}
-    }
 
     private fun navigateToRegisteredUser(userData: UserData?) {
         onChangeRestartEvent(true)
@@ -379,14 +380,19 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
-        if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toInt()) {
+        if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
+            val country = context.resources.configuration.locales.get(FIRST_INDEX).isO3Country
             DialogParameters(
-                titleResource = if (this.userData?.idBrand == Brand.CostaRica.id) {
+                titleResource = if (country == ISO3_COSTA_RICA) {
                     string.sign_in_session_blacklisted_title_cr
                 } else {
                     string.sign_in_session_blacklisted_title
                 },
-                descriptionResource = string.sign_in_session_blacklisted_message,
+                descriptionResource = if (country == ISO3_COSTA_RICA) {
+                    string.sign_in_session_blacklisted_message_cr
+                } else {
+                    string.sign_in_session_blacklisted_message_sv
+                },
                 positiveResource = string.sign_in_session_blacklisted_contact_support,
                 positiveAction = {
                     whatsAppLink?.let { context.openWhatsAppDeepLink(it) }

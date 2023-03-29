@@ -52,6 +52,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
+import com.multimoney.multimoney.presentation.util.FIRST_INDEX
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -379,14 +380,19 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
-        if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toInt()) {
+        if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
+            val country = context.resources.configuration.locales.get(FIRST_INDEX).isO3Country
             DialogParameters(
-                titleResource = if (this.userData?.idBrand == Brand.CostaRica.id) {
+                titleResource = if (country == ISO3_COSTA_RICA) {
                     string.sign_in_session_blacklisted_title_cr
                 } else {
                     string.sign_in_session_blacklisted_title
                 },
-                descriptionResource = string.sign_in_session_blacklisted_message_cr,
+                descriptionResource = if (country == ISO3_COSTA_RICA) {
+                    string.sign_in_session_blacklisted_message_cr
+                } else {
+                    string.sign_in_session_blacklisted_message_sv
+                },
                 positiveResource = string.sign_in_session_blacklisted_contact_support,
                 positiveAction = {
                     whatsAppLink?.let { context.openWhatsAppDeepLink(it) }

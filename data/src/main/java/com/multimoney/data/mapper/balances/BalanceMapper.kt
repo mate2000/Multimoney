@@ -12,7 +12,7 @@ import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
 
 private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
-    summary = resumen.map {
+    summary = resumen?.map {
         Summary(
             idCurrency = it.id_Moneda,
             currency = it.moneda,

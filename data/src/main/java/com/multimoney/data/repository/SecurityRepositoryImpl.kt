@@ -15,6 +15,7 @@ import com.multimoney.domain.model.security.CountryPhoneCodes
 import com.multimoney.domain.model.security.MiniCards
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.security.PhoneValidation
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
@@ -31,9 +32,9 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.repository.SecurityRepository
-import kotlinx.coroutines.flow.Flow
 import java.io.Serializable
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class SecurityRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -514,6 +515,25 @@ class SecurityRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun mutationPhoneValidation(
+        phone: String?,
+        identification: String?,
+        idBrand: Int
+    ): Flow<MultimoneyResult<PhoneValidation?>> = fetchData(
+        apolloCall = graphqlApi.mutationPhoneValidation(
+            phone,
+            identification,
+            idBrand
+        ),
+        apolloCallMapper = { data ->
+            if (data.phoneValidation.status == null || data.phoneValidation.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
+
     override suspend fun mutationChangePhone(
         identification: String,
         phone: String,
@@ -523,7 +543,7 @@ class SecurityRepositoryImpl @Inject constructor(
         user: String
     ): Flow<MultimoneyResult<ChangePhone>> =
         fetchData(
-            apolloCall = graphqlApi.mutationChangePhone(identification, phone,countryCode, pkUser, idBrand,user),
+            apolloCall = graphqlApi.mutationChangePhone(identification, phone, countryCode, pkUser, idBrand, user),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())
             }

@@ -36,7 +36,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -86,27 +85,17 @@ fun SignUpEmailScreen(
         viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnValidateForm)
         viewModel.onValidateUserExistsEvent.collect { event ->
             event.onSuccess { userData ->
-                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(userData?.idBrand ?: 0))
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnSetIdBrand(
+                        userData?.idBrand ?: 0
+                    )
+                )
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnLoadingValueChange(
                         false
                     )
                 )
-                if(userData?.isNewUser == false) {
-                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(userData))
-                } else {
-                    viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
-                    if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
-                        viewModel.onUIEvent(
-                            OnShowAnotherDeviceAlreadyRegisteredDialog {
-                                viewModel.onSuccessValidation(context, sharedViewModel, userData)
-                            }
-                        )
-                        sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
-                    } else {
-                        viewModel.onSuccessValidation(context, sharedViewModel, userData)
-                    }
-                }
+                viewModel.onSuccessValidation(context, sharedViewModel, userData)
             }.onMessage {
                 viewModel.onUIEvent(
                     SignUpEmailViewModel.UIEvent.OnHandleUserStatus(

@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
-
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.BackHandler
@@ -90,7 +89,6 @@ fun SignInOTPScreen(
         viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
     }
 
-
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
@@ -109,7 +107,7 @@ fun SignInOTPScreen(
                 viewModel.onUIEvent(
                     SignInOTPViewModel.UIEvent.OnNavigateBack
                 )
-            },
+            }
         )
     }
     if (viewModel.uiState.isAlertResultVisible) {
@@ -137,8 +135,7 @@ fun SignInOTPScreen(
         val status = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
         when (status.statusCode) {
             CommonStatusCodes.SUCCESS -> {
-                val messageIntent =
-                    extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+                val messageIntent = extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
                 launchSmsActivityResult.launch(messageIntent)
             }
         }
@@ -152,7 +149,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        val (topNavBar, otpField, titleText, headerText, timerText, continueButton, statusText) = createRefs()
+        val (topNavBar, otpField, titleText, headerText, timerText, continueButton) = createRefs()
 
         TopNavBar(
             modifier = Modifier.constrainAs(topNavBar) {
@@ -185,7 +182,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
                 id = viewModel.uiState.weSentYouACodeTextResource,
                 viewModel.uiState.phoneNumber
             ),
-            style = Typography.body2.copy(color = MultimoneyTheme.colors.titleText),
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.titleText)
         )
 
         OtpTextField(

@@ -68,8 +68,8 @@ android {
 
     buildTypes {
         production {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             applicationIdSuffix ".cr"
             signingConfig signingConfigs.production
             matchingFallbacks = ['release']

@@ -2,15 +2,12 @@ package com.multimoney.multimoney.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
@@ -31,7 +28,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller.ProviderInstallListener {
+class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer
@@ -51,11 +48,8 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
 
     private var activity: AppCompatActivity? = null
 
-    private var retryProviderInstall = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ProviderInstaller.installIfNeededAsync(this, this)
         activity = this
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
@@ -99,15 +93,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
                 }
             }
         }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        if (hasFocus) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        } else {
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        }
-        super.onWindowFocusChanged(hasFocus)
     }
 
     private fun saveToken(token: String) {
@@ -173,31 +158,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
 
     override fun isSessionDuplicated() = isSessionAlreadyOpened
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SECURITY_PROVIDER_UPDATE_REQUEST_CODE) retryProviderInstall = true
-    }
-
-    override fun onPostResume() {
-        super.onPostResume()
-        if (retryProviderInstall) ProviderInstaller.installIfNeededAsync(this, this)
-        retryProviderInstall = false
-    }
-
-    override fun onProviderInstallFailed(errorCode: Int, recoveryIntent: Intent?) {
-        GoogleApiAvailability.getInstance().apply {
-            if (isUserResolvableError(errorCode)) {
-                showErrorDialogFragment(this@MainActivity, errorCode, SECURITY_PROVIDER_UPDATE_REQUEST_CODE)
-            }
-        }
-    }
-
-    override fun onProviderInstalled() {
-        retryProviderInstall = false
-    }
-
     companion object {
         private const val ROUTE_KEY = "routeName"
-        private const val SECURITY_PROVIDER_UPDATE_REQUEST_CODE = 100
     }
 }

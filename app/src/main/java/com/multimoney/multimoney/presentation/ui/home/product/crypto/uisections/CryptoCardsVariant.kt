@@ -28,8 +28,8 @@ import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.calculateGainLoses
-import com.multimoney.multimoney.presentation.util.roundToTwoDecimalPlacesWithoutNegatives
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
 @Composable
 fun CryptoCardDiscoverCrypto(
@@ -227,7 +227,7 @@ fun CryptoCardWithBalance(
                         calculateGainLoses(
                             cryptoBalance,
                             clientCryptoBalanceHistory
-                        ).roundToTwoDecimalPlacesWithoutNegatives()
+                        ).toCurrencyFormatWithoutNegatives()
                     ),
                     textStyle = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold,

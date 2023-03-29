@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.QR_CODE_RESULT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendFlow
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.qrcodescanner.QrCodeScannerScreen
 
 fun NavGraphBuilder.cryptoSendNavGraph(
@@ -31,8 +34,16 @@ fun NavGraphBuilder.cryptoSendNavGraph(
                 type = NavType.StringType
             }
         )
-    ) {
+    ) { backStackEntry ->
+        val parent = remember(backStackEntry) {
+            navController.getBackStackEntry(Screen.HomeScreen.route)
+        }
+        val viewModel = hiltViewModel<HomeViewModel>(parent)
+        // this is to avoid sending the list of balances every time we navigate to this flow, only when we come from the details
+        val comingFromDetails = backStackEntry.arguments?.getString(CRYPTO_ASSET) != null
+        val balances = viewModel.uiState.balance?.balanceCryptoAccount?.items ?: emptyList()
         CryptoSendFlow(
+            balances = if (comingFromDetails) balances else emptyList(),
             qrCodeResult = navController.currentBackStackEntry?.savedStateHandle?.get<String>(
                 QR_CODE_RESULT
             ) ?: "",

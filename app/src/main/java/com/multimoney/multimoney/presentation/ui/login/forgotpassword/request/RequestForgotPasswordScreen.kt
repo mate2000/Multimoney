@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -26,11 +25,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordViewModel.UIEvent.OnChangePasswordClick
@@ -57,7 +54,6 @@ fun RequestForgotPasswordScreen(
 ) {
     // Properties
     val focusManager = LocalFocusManager.current
-    val activity = LocalContext.current.findActivity() as FragmentActivity
 
     LaunchedEffect(true) {
         viewModel.apply {
@@ -80,7 +76,7 @@ fun RequestForgotPasswordScreen(
         onNavigateBack = { viewModel.onUIEvent(OnNavigateBack(focusManager)) },
         onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) },
         onChangePasswordClick = { viewModel.onUIEvent(OnChangePasswordClick) },
-        onContinueClick = { viewModel.onUIEvent(OnContinueClick(activity, focusManager)) }
+        onContinueClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) }
     )
 }
 
@@ -89,7 +85,7 @@ fun RequestForgotPasswordScreen(
 fun RequestForgotPasswordContent(
     focusManager: FocusManager = LocalFocusManager.current,
     email: String = "",
-    emailError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
+    emailError: Pair<Boolean, Int> = Pair(false, string.error_empty),
     isFormValid: Boolean = false,
     isLoading: Boolean = false,
     isAlertResultVisible: Boolean = false,
@@ -116,7 +112,7 @@ fun RequestForgotPasswordContent(
                     style = Typography.body1.toSpanStyle().copy(color = MultimoneyTheme.colors.labelText)
                 ) { append(stringResource(id = string.request_forgot_password_success_description)) }
             },
-            buttonTextResource = R.string.request_forgot_password_success_button,
+            buttonTextResource = string.request_forgot_password_success_button,
             onLeftButtonClick = { onNavigateBack() },
             onRightButtonClick = { onCloseClick() },
             onButtonClick = { onChangePasswordClick() }
@@ -134,13 +130,13 @@ fun RequestForgotPasswordContent(
                     onRightButtonClick = { onCloseClick() }
                 )
                 Text(
-                    text = stringResource(id = R.string.request_forgot_password_title),
+                    text = stringResource(id = string.request_forgot_password_title),
                     modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp),
                     style = Typography.h6.copy(fontWeight = FontWeight.SemiBold, fontSize = 22.sp),
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = stringResource(id = R.string.request_forgot_password_subtitle),
+                    text = stringResource(id = string.request_forgot_password_subtitle),
                     modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
                     style = Typography.subtitle1,
                     color = MultimoneyTheme.colors.subTitleText

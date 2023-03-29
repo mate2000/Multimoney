@@ -848,9 +848,10 @@ class GraphqlApi @Inject constructor(
         pkUser: Int,
         password: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        actionSecurity:Int
     ): ApolloCall<ValidationSecurityQuery.Data> =
-        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand))
+        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand, actionSecurity))
             .fetchPolicy(
                 FetchPolicy.NetworkOnly
             )

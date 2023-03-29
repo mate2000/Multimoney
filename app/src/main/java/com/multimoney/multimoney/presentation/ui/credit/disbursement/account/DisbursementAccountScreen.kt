@@ -2,11 +2,11 @@ package com.multimoney.multimoney.presentation.ui.credit.disbursement.account
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +26,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnHideDisbursementBottomSheet
 import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
@@ -109,7 +109,7 @@ fun PaymentAccountContent(
             Column {
                 TopNavBar(
                     onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-                    onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome) }
+                    onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) }
                 )
                 Text(
                     modifier = Modifier.padding(top = 42.dp, start = 16.dp, end = 16.dp, bottom = 20.dp),
@@ -126,8 +126,10 @@ fun PaymentAccountContent(
                         title = stringResource(id = viewModel.uiState.openDialog.titleResource),
                         message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
                         positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+                        negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
                         openDialogCustom = viewModel.uiState.openDialog.isActive,
-                        onPositiveAction = viewModel.uiState.openDialog.positiveAction
+                        onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+                        onNegativeAction = viewModel.uiState.openDialog.negativeAction
                     )
                 }
             }
@@ -157,8 +159,6 @@ fun PaymentAccountContent(
 fun PaymentAccountList(
     viewModel: DisbursementAccountViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-
     viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 16.dp, end = 16.dp)) {
             items(clientBankAccountList) { clientBankAccount ->

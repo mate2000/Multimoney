@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
@@ -29,6 +30,8 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.Pr
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnResendOtpClick
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.None
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlyValidate
 import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
@@ -67,10 +70,10 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private fun onStart() {
         uiState = when (idBrand) {
             Brand.CostaRica.id -> {
-                uiState.copy(titleResource = R.string.process_forgot_password_title)
+                uiState.copy(titleResource = string.process_forgot_password_title)
             }
             else -> {
-                uiState.copy(titleResource = R.string.process_forgot_password_title_sv)
+                uiState.copy(titleResource = string.process_forgot_password_title_sv)
             }
         }
     }
@@ -80,8 +83,10 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         navigateBack(popTo = previousScreen ?: "", isRestart = false)
     }
 
-    private fun validatePassword(isConfirmPassword: Boolean = false) {
-        val password = if (isConfirmPassword) uiState.newPasswordConfirmation else uiState.newPassword
+    private fun validatePassword() {
+        val validatePassword = passwordValidationHelper.validateConsecutiveCharacter(
+            value = uiState.newPassword
+        )
 
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.newPassword),
@@ -89,36 +94,14 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            newPasswordConfirmationError = validatePasswordAreTheSame()
+            newPasswordError = Triple(validatePassword.first, validatePassword.second, ""),
+            newPasswordConfirmationError = passwordValidationHelper.validateEqualPasswords(
+                password = uiState.newPassword,
+                confirmPassword = uiState.newPasswordConfirmation
+            )
         )
-
-        uiState = if (!isConfirmPassword) {
-            uiState.copy(
-                newPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.newPassword,
-                    confirmPassword = uiState.newPasswordConfirmation
-                )
-            )
-        } else {
-            uiState.copy(
-                newPasswordConfirmationError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.newPassword,
-                    confirmPassword = uiState.newPasswordConfirmation
-                )
-            )
-        }
-
         resetValidationLabel(uiState.newPassword)
     }
-
-    private fun validatePasswordAreTheSame() =
-        if (uiState.newPassword.isNotEmpty() && uiState.newPasswordConfirmation.isNotEmpty() && uiState.newPasswordConfirmation != uiState.newPassword) {
-            Pair(true, R.string.process_forgot_password_new_password_confirmation_error)
-        } else {
-            Pair(false, R.string.error_empty)
-        }
 
     private fun resetValidationLabel(password: String) {
         if (password.isEmpty()) {
@@ -133,10 +116,11 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     }
 
     private fun isFormValid(): Boolean {
-        return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
-            uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.newPassword) &&
-            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first && otp.trim()
-            .isNotEmpty() && otp.trim().length == OTP_TOTAL_DIGITS
+        return (uiState.oneLowercaseState ?: false) && (uiState.oneUppercaseState ?: false) &&
+            (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
+            passwordHasMinimumCharacters(uiState.newPassword) && uiState.newPasswordConfirmation == uiState.newPassword &&
+            !uiState.newPasswordConfirmationError.first && otp.trim().isNotEmpty() &&
+            otp.trim().length == OTP_TOTAL_DIGITS && uiState.newPasswordError.first.not()
     }
 
     private fun onOtpValueChange(value: String) {
@@ -155,14 +139,14 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun onNewPasswordConfirmationValueChange(password: String?) {
         uiState = uiState.copy(newPasswordConfirmation = password.toString())
-        validatePassword(isConfirmPassword = true)
+        validatePassword()
         uiState = uiState.copy(isFormValid = isFormValid())
     }
 
     private fun cleanErrors() {
         uiState = uiState.copy(
-            newPasswordConfirmationError = Pair(false, R.string.empty),
-            newPasswordError = Pair(false, R.string.empty)
+            newPasswordError = Triple(false, string.empty, ""),
+            newPasswordConfirmationError = Pair(false, string.empty)
         )
     }
 
@@ -172,12 +156,13 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             idBrand = idBrand,
             pkUser = pkUser,
             user = email,
-            password = uiState.newPassword
+            password = uiState.newPassword,
+            actionSecurity = OnlyValidate.actionSecurity
         ).collectLatest { result ->
             result.onSuccess {
                 onConfirmResetPassword()
             }.onMessage {
-                onPasswordSameAsPrevious()
+                onPasswordSameAsPrevious(it?.messageError?.detail)
             }.onFailure {
                 onAlertFailure()
             }.onLoading {
@@ -186,21 +171,54 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun onConfirmResetPassword() = Amplify.Auth.confirmResetPassword(uiState.newPassword, uiState.otp, {
-        registerAdjustEvent(AdjustEventType.FORGOT_CONFIRM_CORRECT_PASSWORD_4001, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
-        registerAdjustEvent(AdjustEventType.FORGOT_SUCCESS_4004, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
+    private fun callSavePassword() = executeUseCase {
+        queryValidationSecurityUseCase.invoke(
+            idBrand = idBrand,
+            pkUser = pkUser,
+            user = email,
+            password = uiState.newPassword,
+            actionSecurity = None.actionSecurity
+        ).collectLatest { result ->
+            result.onSuccess {
+                successResetPassword()
+            }.onMessage {
+                successResetPassword()
+            }.onFailure {
+                successResetPassword()
+            }
+        }
+    }
+
+    private fun onConfirmResetPassword() =
+        Amplify.Auth.confirmResetPassword(uiState.newPassword, uiState.otp, {
+            callSavePassword()
+        }, {
+            onAlertFailure(it.message == OTP_ERROR_MESSAGE)
+        })
+
+    private fun successResetPassword() {
+        registerAdjustEvent(
+            AdjustEventType.FORGOT_CONFIRM_CORRECT_PASSWORD_4001,
+            isLoggedIn = false,
+            applyAdjust = false,
+            data = EmailDto(email).toJson()
+        )
+        registerAdjustEvent(
+            AdjustEventType.FORGOT_SUCCESS_4004,
+            isLoggedIn = false,
+            applyAdjust = false,
+            data = EmailDto(email).toJson()
+        )
         onAlertSuccess()
-    }, {
-        onAlertFailure(it.message == OTP_ERROR_MESSAGE)
-    })
+    }
 
     private fun onAlertSuccess() {
         uiState = uiState.copy(
             isAlertResultVisible = true,
             alertResultIconResource = R.drawable.ic_success_symbol,
-            alertResultTitleResource = R.string.process_forgot_password_alert_success_title,
-            alertResultDescriptionResource = R.string.process_forgot_password_alert_success_description,
-            alertResultButtonTextResource = R.string.common_go_home,
+            alertResultTitleResource = string.process_forgot_password_alert_success_title,
+            alertResultDescriptionResource = string.process_forgot_password_alert_success_description,
+            alertResultButtonTextResource = string.common_go_home,
             isLoading = false
         )
     }
@@ -209,28 +227,48 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         uiState = uiState.copy(
             isAlertResultVisible = true,
             alertResultIconResource = R.drawable.ic_error_symbol,
-            alertResultTitleResource = R.string.process_forgot_password_alert_failure_title,
-            alertResultDescriptionResource = if (idBrand == Brand.CostaRica.id) {
-                R.string.process_forgot_password_alert_failure_description
-            } else {
-                R.string.process_forgot_password_alert_failure_description_sv
-            },
-            alertResultButtonTextResource = if (isOtpFailure) {
-                R.string.process_forgot_password_alert_failure_button_try_again
-            } else {
-                R.string.common_go_home
-            },
+            alertResultTitleResource = getAlertResultText(isOtpFailure).first,
+            alertResultDescriptionResource = getAlertResultText(isOtpFailure).second,
+            alertResultButtonTextResource = getAlertResultText(isOtpFailure).third,
             isAlertResultOtpFailure = isOtpFailure,
             isLoading = false
         )
     }
 
-    private fun onPasswordSameAsPrevious() {
+    private fun getAlertResultText(isOtpFailure: Boolean): Triple<Int, Int, Int> {
+        return when {
+            isOtpFailure -> {
+                Triple(
+                    string.process_forgot_password_alert_failure_otp_title,
+                    if (idBrand == Brand.CostaRica.id) {
+                        string.process_forgot_password_alert_failure_otp_description_cr
+                    } else {
+                        string.process_forgot_password_alert_failure_otp_description_sv
+                    },
+                    string.process_forgot_password_alert_failure_button_try_again
+                )
+            }
+            else -> {
+                Triple(
+                    string.process_forgot_password_alert_failure_title,
+                    if (idBrand == Brand.CostaRica.id) {
+                        string.process_forgot_password_alert_failure_description
+                    } else {
+                        string.process_forgot_password_alert_failure_description_sv
+                    },
+                    string.common_go_home
+                )
+            }
+        }
+    }
+
+    private fun onPasswordSameAsPrevious(errorMessage: String?) {
         uiState = uiState.copy(
             isLoading = false,
-            newPasswordConfirmationError = Pair(
+            newPasswordError = Triple(
                 true,
-                R.string.profile_settings_error_password_must_not_be_the_same
+                string.profile_settings_error_password_must_not_be_the_same,
+                errorMessage.orEmpty()
             )
         )
     }
@@ -246,7 +284,12 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun onResendOtpClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        registerAdjustEvent(AdjustEventType.FORGOT_RESEND_OTP_4002, isLoggedIn = false, applyAdjust = false, data = EmailDto(email).toJson())
+        registerAdjustEvent(
+            AdjustEventType.FORGOT_RESEND_OTP_4002,
+            isLoggedIn = false,
+            applyAdjust = false,
+            data = EmailDto(email).toJson()
+        )
         if (idBrand == Brand.Default.id) {
             emitBaseEvent(OnResendOtpToastEvent)
         } else {
@@ -278,7 +321,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     private fun onValidatePasswordStructure() = executeUseCase {
         val userPk: Int = if (pkUser.isNotBlank()) {
-            pkUser.toInt()
+            pkUser.toIntOrNull() ?: 0
         } else {
             0
         }
@@ -289,21 +332,25 @@ class ProcessForgotPasswordViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val titleResource: Int = R.string.empty,
+        val titleResource: Int = string.empty,
         val otp: String = "",
         val newPassword: String = "",
         val newPasswordConfirmation: String = "",
-        val newPasswordError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
-        val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
+        val newPasswordError: Triple<Boolean, Int, String> = Triple(
+            false,
+            string.sign_up_otp_code_not_valid,
+            ""
+        ),
+        val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(false, string.sign_up_otp_code_not_valid),
         var eightCharactersMinimumState: Boolean? = null,
         var oneUppercaseState: Boolean? = null,
         var oneLowercaseState: Boolean? = null,
         var oneNumberState: Boolean? = null,
         var oneCharacterState: Boolean? = null,
         val alertResultIconResource: Int = R.drawable.ic_success_symbol,
-        val alertResultTitleResource: Int = R.string.empty,
-        val alertResultDescriptionResource: Int = R.string.empty,
-        val alertResultButtonTextResource: Int = R.string.empty,
+        val alertResultTitleResource: Int = string.empty,
+        val alertResultDescriptionResource: Int = string.empty,
+        val alertResultButtonTextResource: Int = string.empty,
         val isFormValid: Boolean = false,
         val isLoading: Boolean = false,
         val isAlertResultVisible: Boolean = false,
@@ -333,7 +380,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
         data class OnNewPasswordValueChange(val value: String) : UIEvent()
         data class OnNewPasswordConfirmationValueChange(val value: String) : UIEvent()
         object OnStart : UIEvent()
-        object OnValidatePasswordStructure: UIEvent()
+        object OnValidatePasswordStructure : UIEvent()
     }
 
     sealed class BaseEvent {

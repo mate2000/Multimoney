@@ -39,6 +39,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.password.R
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnValidForm
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlySave
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getCountryCodeByIdBrand
@@ -127,9 +128,10 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     }
 
     private fun isFormValid(): Boolean {
-        return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false && uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(
-            uiState.password
-        ) && (uiState.confirmPassword == uiState.password) && !uiState.confirmPasswordError.first
+        return (uiState.oneLowercaseState ?: false) && (uiState.oneUppercaseState ?: false) &&
+            (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
+            passwordHasMinimumCharacters(uiState.password) && (uiState.confirmPassword == uiState.password) &&
+            !uiState.confirmPasswordError.first && uiState.passwordError.first.not()
     }
 
     private fun onPasswordValueChange(password: String) {
@@ -140,38 +142,25 @@ class RegisteredUserPasswordViewModel @Inject constructor(
 
     private fun onConfirmPasswordValueChange(confirmPassword: String) {
         uiState = uiState.copy(confirmPassword = confirmPassword)
-        validatePassword(isConfirmPassword = true)
+        validatePassword()
         uiState = uiState.copy(isContinueEnabled = isFormValid())
     }
 
-    private fun validatePassword(isConfirmPassword: Boolean = false) {
-        val password = if (isConfirmPassword) uiState.confirmPassword else uiState.password
-
+    private fun validatePassword() {
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.password),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneCharacterState = passwordHasSpecialCharacterValidation(uiState.password) && uiState.password.isNotEmpty(),
+            passwordError = passwordValidationHelper.validateConsecutiveCharacter(
+                value = uiState.password
+            ),
+            confirmPasswordError = passwordValidationHelper.validateEqualPasswords(
+                password = uiState.password,
+                confirmPassword = uiState.confirmPassword
+            )
         )
-
-        uiState = if (!isConfirmPassword) {
-            uiState.copy(
-                passwordError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.password,
-                    confirmPassword = uiState.confirmPassword
-                )
-            )
-        } else {
-            uiState.copy(
-                confirmPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.password,
-                    confirmPassword = uiState.confirmPassword
-                )
-            )
-        }
 
         resetValidationLabel(uiState.password)
     }
@@ -203,7 +192,8 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             pkUser = userData?.pkUser ?: "",
             password = uiState.password,
             user = userData?.email ?: "",
-            idBrand = idBrand
+            idBrand = idBrand,
+            actionSecurity = OnlySave.actionSecurity
         ).collectLatest { result ->
             result.onSuccess {
                 viewModelScope.launch {
@@ -221,7 +211,10 @@ class RegisteredUserPasswordViewModel @Inject constructor(
                         firstName = userData?.firstName ?: "",
                         secondName = userData?.secondName ?: "",
                         lastName = userData?.firstLastName ?: "",
-                        phone = "${if (userData?.countryCode.isNullOrEmpty()) getCountryCodeByIdBrand(idBrand) else userData?.countryCode}${userData?.phoneNumber}",
+                        phone = "${
+                        if (userData?.countryCode.isNullOrEmpty()) getCountryCodeByIdBrand(idBrand)
+                        else userData?.countryCode
+                        }${userData?.phoneNumber}",
                         identification = userData?.identification ?: "",
                         pkUser = userData?.pkUser ?: "0",
                         status = userData?.userStatus ?: "",
@@ -487,7 +480,10 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             )
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
             is OnCallPasswordSave -> callQuerySavePassword()
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(uiEvent.value, uiEvent.showDialog)
+            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
+                uiEvent.value,
+                uiEvent.showDialog
+            )
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,

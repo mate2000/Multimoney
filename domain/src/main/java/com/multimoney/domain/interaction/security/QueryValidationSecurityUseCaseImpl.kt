@@ -10,8 +10,9 @@ class QueryValidationSecurityUseCaseImpl(val securityRepository: SecurityReposit
         pkUser: String,
         password: String,
         user: String,
-        idBrand: Int
+        idBrand: Int,
+        actionSecurity: Int
     ): Flow<MultimoneyResult<ValidateSecurity?>> = securityRepository.queryValidationSecurity(
-        pkUser, password, user, idBrand
+        pkUser, password, user, idBrand, actionSecurity
     )
 }

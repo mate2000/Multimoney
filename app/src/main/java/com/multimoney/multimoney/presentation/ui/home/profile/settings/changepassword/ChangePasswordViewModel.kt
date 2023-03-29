@@ -13,7 +13,9 @@ import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.multimoney.R
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
@@ -24,6 +26,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREE
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordViewModel.UIEvent.OnNavigateToForgotPassword
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.None
+import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlyValidate
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
@@ -43,7 +47,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase,
     private val cognitoHelper: CognitoHelper,
     private val mmCountDownTimer: MMCountDownTimer,
@@ -69,35 +73,22 @@ class ChangePasswordViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-    private fun validatePassword(isConfirmPassword: Boolean = false) {
-        val password = if (isConfirmPassword) uiState.newPasswordConfirmation else uiState.newPassword
-
+    private fun validatePassword() {
+        val passwordValidate = passwordValidationHelper.validateConsecutiveCharacter(
+            value = uiState.newPassword
+        )
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.newPassword),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
-            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty()
+            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.newPassword) && uiState.newPassword.isNotEmpty(),
+            newPasswordError = Triple(passwordValidate.first, passwordValidate.second, ""),
+            newPasswordConfirmationError = passwordValidationHelper.validateEqualPasswords(
+                password = uiState.newPassword,
+                confirmPassword = uiState.newPasswordConfirmation
+            )
         )
-
-        uiState = if (!isConfirmPassword) {
-            uiState.copy(
-                newPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.newPassword,
-                    confirmPassword = uiState.newPasswordConfirmation
-                )
-            )
-        } else {
-            uiState.copy(
-                newPasswordConfirmationError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.newPassword,
-                    confirmPassword = uiState.newPasswordConfirmation
-                )
-            )
-        }
-
         resetValidationLabel(uiState.newPassword)
     }
 
@@ -114,9 +105,11 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     private fun isFormValid(): Boolean {
-        return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
-            uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.newPassword) &&
-            (uiState.newPasswordConfirmation == uiState.newPassword) && !uiState.newPasswordConfirmationError.first && uiState.currentPassword.isNotEmpty()
+        return (uiState.oneLowercaseState ?: false) && (uiState.oneUppercaseState ?: false) &&
+            (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
+            passwordHasMinimumCharacters(uiState.newPassword) && uiState.newPasswordConfirmation == uiState.newPassword &&
+            !uiState.newPasswordConfirmationError.first && uiState.currentPassword.isNotEmpty() &&
+            uiState.currentPasswordError.first.not()
     }
 
     private fun onNewPasswordValueChange(password: String?) {
@@ -127,37 +120,66 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun onNewPasswordConfirmationValueChange(password: String?) {
         uiState = uiState.copy(newPasswordConfirmation = password.toString())
-        validatePassword(isConfirmPassword = true)
+        validatePassword()
         uiState = uiState.copy(isButtonEnabled = isFormValid())
     }
 
     private fun onCurrentPasswordValueChange(password: String?) {
         uiState = uiState.copy(
             currentPassword = password.toString(),
-            currentPasswordError = Pair(false, R.string.empty)
+            currentPasswordError = Pair(false, string.empty)
         )
         uiState = uiState.copy(isButtonEnabled = isFormValid())
     }
 
     private fun cleanErrors() {
         uiState = uiState.copy(
-            newPasswordConfirmationError = Pair(false, R.string.empty),
-            newPasswordError = Pair(false, R.string.empty),
-            currentPasswordError = Pair(false, R.string.empty)
+            newPasswordConfirmationError = Pair(false, string.empty),
+            newPasswordError = Triple(false, string.empty, ""),
+            currentPasswordError = Pair(false, string.empty)
         )
     }
 
-    private fun onUpdatePassword() = executeUseCase {
+    private fun onValidatePassword() = executeUseCase {
         cleanErrors()
         onUpdateLoadingState(true)
         queryValidationSecurityUseCase.invoke(
             idBrand = uiState.idBrand,
             pkUser = uiState.pkUser,
             user = uiState.userName,
-            password = uiState.newPassword
+            password = uiState.newPassword,
+            actionSecurity = OnlyValidate.actionSecurity
         ).collectLatest { result ->
             onPasswordSaveEvents.emit(result)
         }
+    }
+
+    private fun onSavePassword() = executeUseCase {
+        queryValidationSecurityUseCase.invoke(
+            idBrand = uiState.idBrand,
+            pkUser = uiState.pkUser,
+            user = uiState.userName,
+            password = uiState.newPassword,
+            actionSecurity = None.actionSecurity
+        ).collectLatest { result ->
+            result.onSuccess {
+                onChangedSuccess()
+            }.onFailure {
+                onChangedSuccess()
+            }
+        }
+    }
+
+    private fun onChangedSuccess() {
+        registerAdjustEvent(
+            AdjustEventType.SETTINGS_CHANGE_PASSWORD_SUCCESS_8002,
+            applyAdjust = false,
+            data = BaseEventDataDto(user = uiState.userName, idBrand = uiState.idBrand).toJson()
+        )
+        updateCognitoStatus(
+            string.profile_settings_password_modified
+        )
+        uiState = uiState.copy(isLoading = false)
     }
 
     private fun updateCognitoStatus(message: Int) = executeUseCase {
@@ -168,38 +190,35 @@ class ChangePasswordViewModel @Inject constructor(
         Amplify.Auth.updatePassword(
             uiState.currentPassword,
             uiState.newPassword,
+            { onSavePassword() },
             {
-                registerAdjustEvent(AdjustEventType.SETTINGS_CHANGE_PASSWORD_SUCCESS_8002, applyAdjust = false, data = BaseEventDataDto(user = uiState.userName, idBrand = uiState.idBrand).toJson())
-                updateCognitoStatus(
-                    R.string.profile_settings_password_modified
-                )
-                uiState = uiState.copy(isLoading = false)
-            },
-            {
-                uiState = uiState.copy(isLoading = false)
                 uiState = when (it) {
                     is NotAuthorizedException -> {
                         uiState.copy(
+                            isLoading = false,
                             currentPasswordError = Pair(
                                 true,
-                                R.string.profile_settings_error_wrong_current_password
+                                string.profile_settings_error_wrong_current_password
                             )
                         )
                     }
                     is InvalidPasswordException -> {
                         uiState.copy(
-                            newPasswordConfirmationError = Pair(
+                            isLoading = false,
+                            newPasswordError = Triple(
                                 true,
-                                R.string.profile_settings_error_new_password_invalid
+                                string.profile_settings_error_new_password_invalid,
+                                ""
                             ),
-                            newPasswordError = Pair(true, R.string.empty)
+                            newPasswordConfirmationError = Pair(true, string.empty)
                         )
                     }
                     else -> {
                         uiState.copy(
+                            isLoading = false,
                             isAlertResultVisible = true,
-                            alertResultTitle = R.string.profile_settings_error_we_could_not_change_your_password,
-                            alertResultDescription = R.string.profile_settings_error_we_are_sorry_try_again_later
+                            alertResultTitle = string.profile_settings_error_we_could_not_change_your_password,
+                            alertResultDescription = string.profile_settings_error_we_are_sorry_try_again_later
                         )
                     }
                 }
@@ -207,11 +226,12 @@ class ChangePasswordViewModel @Inject constructor(
         )
     }
 
-    private fun onPasswordSameAsPrevious() {
+    private fun onPasswordSameAsPrevious(errorDetail: String?) {
         uiState = uiState.copy(
-            newPasswordConfirmationError = Pair(
+            newPasswordError = Triple(
                 true,
-                R.string.profile_settings_error_password_must_not_be_the_same
+                string.profile_settings_error_password_must_not_be_the_same,
+                errorDetail.orEmpty()
             )
         )
     }
@@ -238,12 +258,18 @@ class ChangePasswordViewModel @Inject constructor(
     )
 
     private fun onAlertButtonClick() = when (previousScreen) {
-        Screen.ProfileSettingsScreen.baseRoute -> navigateBack(Screen.HomeScreen.route, isRestart = true)
+        Screen.ProfileSettingsScreen.baseRoute -> navigateBack(
+            Screen.HomeScreen.route,
+            isRestart = true
+        )
         else -> signOut()
     }
 
     private fun onNavigateBack() = when (previousScreen) {
-        Screen.ProfileSettingsScreen.baseRoute -> navigateBack(Screen.ProfileSettingsScreen.route, false)
+        Screen.ProfileSettingsScreen.baseRoute -> navigateBack(
+            Screen.ProfileSettingsScreen.route,
+            false
+        )
         else -> signOut()
     }
 
@@ -275,13 +301,14 @@ class ChangePasswordViewModel @Inject constructor(
         val newPasswordConfirmation: String = "",
         val currentPasswordError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.sign_up_otp_code_not_valid
+            string.sign_up_otp_code_not_valid
         ),
-        val newPasswordError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
-        val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(
+        val newPasswordError: Triple<Boolean, Int, String> = Triple(
             false,
-            R.string.sign_up_otp_code_not_valid
+            string.sign_up_otp_code_not_valid,
+            ""
         ),
+        val newPasswordConfirmationError: Pair<Boolean, Int> = Pair(false, string.sign_up_otp_code_not_valid),
         val isButtonEnabled: Boolean = false,
         val idBrand: Int = 0,
         val pkUser: String = "",
@@ -295,8 +322,8 @@ class ChangePasswordViewModel @Inject constructor(
         var oneNumberState: Boolean? = null,
         var oneCharacterState: Boolean? = null,
         var isAlertResultVisible: Boolean = false,
-        var alertResultTitle: Int = R.string.empty,
-        var alertResultDescription: Int = R.string.empty
+        var alertResultTitle: Int = string.empty,
+        var alertResultDescription: Int = string.empty
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -307,9 +334,9 @@ class ChangePasswordViewModel @Inject constructor(
                 event.password
             )
             is UIEvent.OnCurrentPasswordValueChange -> onCurrentPasswordValueChange(event.password)
-            is UIEvent.OnUpdatePassword -> onUpdatePassword()
+            is UIEvent.OnValidatePassword -> onValidatePassword()
             is UIEvent.OnCallCognitoUpdatePassword -> onCallCognitoUpdatePassword()
-            is UIEvent.OnPasswordSameAsPrevious -> onPasswordSameAsPrevious()
+            is UIEvent.OnPasswordSameAsPrevious -> onPasswordSameAsPrevious(event.errorDetail)
             is UIEvent.OnUpdateLocallyStoredPassword -> onUpdateLocallyStoredPassword()
             is UIEvent.OnUpdateLoadingState -> onUpdateLoadingState(event.state)
             is UIEvent.OnShowAlertDialog -> onShowAlertDialog()
@@ -338,13 +365,13 @@ class ChangePasswordViewModel @Inject constructor(
 
         object OnNavigateBack : UIEvent()
         object OnAlertButtonClick : UIEvent()
-        object OnPasswordSameAsPrevious : UIEvent()
+        data class OnPasswordSameAsPrevious(val errorDetail: String?) : UIEvent()
         object OnShowAlertDialog : UIEvent()
         object OnCallCognitoUpdatePassword : UIEvent()
         object OnUpdateLocallyStoredPassword : UIEvent()
-        object OnUpdatePassword : UIEvent()
+        object OnValidatePassword : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
-        object OnValidatePasswordStructure: UIEvent()
+        object OnValidatePasswordStructure : UIEvent()
     }
 
     companion object {

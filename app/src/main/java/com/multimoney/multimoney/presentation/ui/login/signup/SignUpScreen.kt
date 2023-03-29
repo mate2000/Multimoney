@@ -159,7 +159,7 @@ fun SignUpScreen(
 
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource).ifEmpty { viewModel.uiState.openDialog.title },
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),

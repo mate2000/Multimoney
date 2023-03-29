@@ -284,7 +284,7 @@ ext {
     ]
 
     // Slider
-    slider_version = "7f5a7a56b9c4e04247c455ef62ed14d7f7bafc97"
+    slider_version = "282dd44ed970911b4834f497af98cf115c637848"
     slider = [
             slider: "com.github.SmartToolFactory:Compose-Colorful-Sliders:$slider_version"
     ]

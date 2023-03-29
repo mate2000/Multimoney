@@ -222,7 +222,10 @@ class SignInViewModel @Inject constructor(
                 ),
                 isLoading = false
             )
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true ->
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true -> {
+            viewModelScope.launch {
+                dataStorePreferences.clearData()
+            }
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.SessionBlocked,
                 openDialog = DialogParameters(
@@ -232,18 +235,25 @@ class SignInViewModel @Inject constructor(
                 ),
                 isLoading = false
             )
+        }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
-            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true ->
+                authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+            viewModelScope.launch {
+                dataStorePreferences.clearData()
+            }
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.isO3Country == SignUpViewModel.ISO3_COSTA_RICA) string.sign_in_session_blacklisted_title_cr else string.sign_in_session_blacklisted_title,
+                    titleResource = if (uiState.isO3Country == SignUpViewModel.ISO3_COSTA_RICA)
+                            string.sign_in_session_blacklisted_title_cr
+                        else string.sign_in_session_blacklisted_title,
                     descriptionResource = string.sign_in_session_blacklisted_message_sv,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
                 ),
                 isLoading = false
             )
+        }
         else -> callQueryValidationUserExistsUseCase()
     }
 

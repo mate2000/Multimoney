@@ -20,7 +20,7 @@ import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -100,8 +100,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 Nationalities.ElSalvadorDui.country -> uiState.identificationValueType.isNotBlank() && uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.ElSalvadorDui.documentSize || uiState.personalDocumentValue.length == Nationalities.ElSalvadorCarne.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 Nationalities.Guatemala.country -> uiState.identificationValueType.isNotBlank() && uiState.personalDocumentValue.isNotBlank() && (uiState.personalDocumentValue.length == Nationalities.Guatemala.documentSize) && !uiState.personalIdError.first && uiState.firstNameValue.isNotBlank() && uiState.firstLastNameValue.isNotBlank()
                 Nationalities.CostaRicaId.country -> uiState.personalDocumentValue.isNotBlank() &&
-                        (uiState.personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || uiState.personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
-                        !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && ((uiState.firstNameValue.isNotEmpty() && uiState.firstLastNameValue.isNotEmpty()) || uiState.dataInformationClient?.name?.isNotEmpty() == true)
+                    (uiState.personalDocumentValue.length == Nationalities.CostaRicaId.documentSize || uiState.personalDocumentValue.length == Nationalities.CostaRicaDimex.documentSize) &&
+                    !uiState.personalIdError.first && uiState.identificationValueType.isNotBlank() && ((uiState.firstNameValue.isNotEmpty() && uiState.firstLastNameValue.isNotEmpty()) || uiState.dataInformationClient?.name?.isNotEmpty() == true)
                 else -> false
             }
         )
@@ -163,7 +163,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         } else {
             validCarne(
                 sizeRequired = Nationalities.ElSalvadorCarne.documentSize,
-                errorMessage = R.string.sign_up_personal_data_id_not_valid,
+                errorMessage = string.sign_up_personal_data_id_not_valid,
                 personalDocumentValue.length
             )
         }
@@ -188,7 +188,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun validateGtDocument(user: String): Pair<Boolean, Int> {
         val status = validId(
             Nationalities.Guatemala.documentSize,
-            R.string.sign_up_personal_data_id_not_valid,
+            string.sign_up_personal_data_id_not_valid,
             uiState.personalDocumentValue.length
         )
         if (status.first.not()) {
@@ -214,7 +214,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     ): Pair<Boolean, Int> {
         val status = validId(
             if (uiState.identificationValueType == CrDocuments.IdDocument.document) Nationalities.CostaRicaId.documentSize else Nationalities.CostaRicaDimex.documentSize,
-            R.string.sign_up_personal_data_id_not_valid,
+            string.sign_up_personal_data_id_not_valid,
             uiState.personalDocumentValue.length
         )
         if (status.first.not()) {
@@ -259,7 +259,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     uiState = uiState.copy(
                         personalIdError = Pair(
                             uiState.nationalityValue == Nationalities.CostaRicaId.country,
-                            R.string.sign_up_personal_data_id_not_valid
+                            string.sign_up_personal_data_id_not_valid
                         ),
                         isLoading = false,
                         dataInformationClient = null,
@@ -272,7 +272,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     )
                     emitBaseEvent(OnFormValidateCompleted(false))
                     emitBaseEvent(IsLoading(false))
-
                 }
                 result.onLoading {
                     emitBaseEvent(IsLoading(true))
@@ -433,9 +432,9 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun cleanUIForNationality() {
         uiState = uiState.copy(
             identificationValueType = "",
-            personalIdError = Pair(false, R.string.sign_up_personal_data_id_required),
-            nameError = Pair(false, R.string.sign_up_personal_data_id_required),
-            lastNameError = Pair(false, R.string.sign_up_personal_data_id_required),
+            personalIdError = Pair(false, string.sign_up_personal_data_id_required),
+            nameError = Pair(false, string.sign_up_personal_data_id_required),
+            lastNameError = Pair(false, string.sign_up_personal_data_id_required),
             personalDocumentValue = "",
             firstNameValue = "",
             secondNameValue = "",
@@ -460,7 +459,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onIdentificationTypeValueChange(documentType: String) {
         uiState = uiState.copy(
             userRegistered = true,
-            personalIdError = Pair(false, R.string.empty),
+            personalIdError = Pair(false, string.empty),
             dataInformationClient = null
         )
         getDocumentLength(documentType)
@@ -529,7 +528,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onUpdateAllNamesInShareViewModel()
     }
 
-    fun getFullName(): String =
+    private fun getFullName(): String =
         if (uiState.firstNameValue.isEmpty()) {
             uiState.dataInformationClient?.name ?: ""
         } else {
@@ -569,7 +568,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     else -> validateGtDocument(email ?: "")
                 }
             } else {
-                Pair(false, R.string.error_empty)
+                Pair(false, string.error_empty)
             }
         )
         isFormValid()
@@ -598,7 +597,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                     idBrand = idBrand,
                     user = userData?.email ?: "",
                     pkSuvLogUserEventMobile = 0,
-                    fkSuvMtrUser = userData?.pkUser?.toInt() ?: 0,
+                    fkSuvMtrUser = userData?.pkUser?.toIntOrNull() ?: 0,
                     platform = ANDROID_LABEL,
                     uuid = dataStorePreferences.getDeviceId().first(),
                     deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
@@ -681,7 +680,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         val dataInformationClient: ClientInfoCr? = null,
         val personalIdError: Pair<Boolean, Int> = Pair(
             false,
-            R.string.sign_up_personal_data_id_required
+            string.sign_up_personal_data_id_required
         ),
         val userRegistered: Boolean = true,
         val nameError: Pair<Boolean, Int> = Pair(false, 0),

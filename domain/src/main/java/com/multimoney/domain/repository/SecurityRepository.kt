@@ -12,6 +12,7 @@ import com.multimoney.domain.model.security.CountryPhoneCodes
 import com.multimoney.domain.model.security.MiniCards
 import com.multimoney.domain.model.security.OnfidoCheckProcess
 import com.multimoney.domain.model.security.OnfidoToken
+import com.multimoney.domain.model.security.PhoneValidation
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
@@ -252,4 +253,10 @@ interface SecurityRepository {
         longitude: String,
         tokenNotificationsPush: String
     ): Flow<MultimoneyResult<UserEventMobileSave>>
+
+    suspend fun mutationPhoneValidation(
+        phone: String?,
+        identification: String?,
+        idBrand: Int
+    ): Flow<MultimoneyResult<PhoneValidation?>>
 }

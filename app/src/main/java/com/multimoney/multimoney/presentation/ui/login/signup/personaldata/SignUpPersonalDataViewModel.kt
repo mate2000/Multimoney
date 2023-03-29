@@ -40,7 +40,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondLastNameChange
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnSecondNameChange
-import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
@@ -60,12 +59,11 @@ import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -530,7 +528,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         onUpdateAllNamesInShareViewModel()
     }
 
-    fun getFullName(): String =
+    private fun getFullName(): String =
         if (uiState.firstNameValue.isEmpty()) {
             uiState.dataInformationClient?.name ?: ""
         } else {
@@ -666,19 +664,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         }
     }
 
-    private fun onShowAnotherDeviceAlreadyRegisteredDialog(onPositiveClick: () -> Unit) {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = string.sign_up_email_another_device_registered_dialog_title,
-                descriptionResource = string.sign_up_email_another_device_registered_dialog_description,
-                positiveResource = string.button_continue,
-                negativeResource = string.cancel,
-                isActive = mutableStateOf(true),
-                positiveAction = onPositiveClick
-            )
-        )
-    }
-
     data class UIState(
         val documentFormat: String = "",
         val countryList: ArrayList<String> = arrayListOf(),
@@ -760,7 +745,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.onLoadingValueChange
             )
             is OnValidateForm -> isFormValid()
-            is OnShowAnotherDeviceAlreadyRegisteredDialog -> onShowAnotherDeviceAlreadyRegisteredDialog(event.onPositiveClick)
         }
     }
 
@@ -837,7 +821,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
             UIEvent()
 
         object OnValidateForm : UIEvent()
-        data class OnShowAnotherDeviceAlreadyRegisteredDialog(val onPositiveClick: () -> Unit) : UIEvent()
     }
 
     sealed class BaseEvent {

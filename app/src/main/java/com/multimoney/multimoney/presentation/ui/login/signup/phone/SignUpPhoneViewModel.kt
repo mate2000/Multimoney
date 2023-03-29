@@ -6,31 +6,47 @@ import androidx.compose.runtime.setValue
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.MOBILE
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SignUpPhoneViewModel @Inject constructor(
-    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase
+    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase,
+    private val mutationPhoneValidationUseCase: MutationPhoneValidationUseCase
 ) : BaseViewModel(false) {
 
     // UIState
     var uiState by mutableStateOf(UIState())
         private set
 
-    private fun onSetupDefaultCountry(idBrand: Int) {
-        uiState = uiState.copy(idBrand = idBrand)
+    private var onLoadingValueChange: (isLoading: Boolean) -> Unit = {}
+    private var onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit = { _, _ -> }
+
+    private fun onSetupShareEvents(
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) {
+        this.onLoadingValueChange = onLoadingValueChange
+        this.onFailureWithDialog = onFailureWithDialog
+    }
+
+    private fun onSetupDefaultCountry(idBrand: Int, identification: String?) {
+        uiState = uiState.copy(idBrand = idBrand, identification = identification)
         uiState = when (uiState.idBrand) {
             Brand.Guatemala.id -> uiState.copy(currentBrand = Brand.Guatemala)
             Brand.ElSalvador.id -> uiState.copy(currentBrand = Brand.ElSalvador)
@@ -54,23 +70,26 @@ class SignUpPhoneViewModel @Inject constructor(
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData.invoke()
         callQueryGetCountryPhoneCodes(uiState.idBrand, onFailure)
-        isFormValid(phoneCode)
+        if (phoneNumber.isBlank()) {
+            emitBaseEvent(OnFormValidateCompleted(false))
+        }
     }
 
-    private fun isFormValid(countryCode: String) = emitBaseEvent(
-        OnFormValidateCompleted(
-            when {
-                uiState.phoneCode.isBlank() || uiState.phoneNumber.isBlank() -> false
-                isPhoneNumberValid(
-                    phone = uiState.phoneNumber,
-                    fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
-                    countryCode = countryCode,
-                    phoneNumberType = MOBILE
-                ).not() -> false
-                else -> true
-            }
-        )
-    )
+    private fun isFormValid(countryCode: String) {
+        val isPhoneValid = when {
+            uiState.phoneCode.isBlank() || uiState.phoneNumber.isBlank() -> false
+            isPhoneNumberValid(
+                phone = uiState.phoneNumber,
+                fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
+                countryCode = countryCode,
+                phoneNumberType = MOBILE
+            ).not() -> false
+            else -> true
+        }
+        if (isPhoneValid) {
+            onCallMutationPhoneValidation()
+        }
+    }
 
     private fun onUserPhoneValueChanged(
         phoneNumber: String,
@@ -80,7 +99,7 @@ class SignUpPhoneViewModel @Inject constructor(
         uiState =
             uiState.copy(
                 phoneNumber = phoneNumber,
-                phoneNumberError = Pair(false, R.string.error_empty)
+                phoneNumberError = Triple(false, string.error_empty, "")
             )
         isFormValid(countryCode)
         updateUserInfoPhone.invoke()
@@ -94,7 +113,7 @@ class SignUpPhoneViewModel @Inject constructor(
         uiState = uiState.copy(
             phoneCode = phoneCode,
             phoneNumber = "",
-            phoneNumberError = Pair(false, R.string.error_empty)
+            phoneNumberError = Triple(false, string.error_empty, "")
         )
         isFormValid(countryCode)
         updateUserCountryCode.invoke()
@@ -107,11 +126,11 @@ class SignUpPhoneViewModel @Inject constructor(
                 countryCode = countryCode,
                 phoneNumberType = MOBILE
             ).not()
-        ) uiState = uiState.copy(phoneNumberError = Pair(true, R.string.sign_up_phone_not_valid))
+        ) uiState = uiState.copy(phoneNumberError = Triple(true, string.sign_up_phone_not_valid, ""))
     }
 
     private fun clearPhoneError() {
-        uiState = uiState.copy(phoneNumberError = Pair(false, R.string.error_empty))
+        uiState = uiState.copy(phoneNumberError = Triple(false, string.error_empty, ""))
     }
 
     private fun onNextActionClick(
@@ -149,6 +168,41 @@ class SignUpPhoneViewModel @Inject constructor(
             }
         }
 
+    private fun onCallMutationPhoneValidation() {
+        executeUseCase {
+            mutationPhoneValidationUseCase.invoke(
+                uiState.phoneNumber, uiState.identification, uiState.idBrand
+            ).collectLatest {
+                it.onSuccess {
+                    onLoadingValueChange(false)
+                    emitBaseEvent(
+                        OnFormValidateCompleted(true)
+                    )
+                }.onMessage { phoneError ->
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(
+                        phoneNumberError = Triple(
+                            true,
+                            string.sign_up_phone_not_valid,
+                            phoneError?.message ?: ""
+                        )
+                    )
+                    emitBaseEvent(
+                        OnFormValidateCompleted(false)
+                    )
+                }.onFailure { error ->
+                    onFailureWithDialog(
+                        false, DialogParameters(
+                            description = error.getError().orEmpty()
+                        )
+                    )
+                }.onLoading {
+                    onLoadingValueChange(true)
+                }
+            }
+        }
+    }
+
     private fun onSetUpIdBrand(idBrand: Int) {
         uiState = uiState.copy(idBrand = idBrand)
     }
@@ -161,13 +215,15 @@ class SignUpPhoneViewModel @Inject constructor(
         // Fields
         val phoneCode: String = "",
         val phoneNumber: String = "",
-        val phoneNumberError: Pair<Boolean, Int> = Pair(
+        val phoneNumberError: Triple<Boolean, Int, String> = Triple(
             false,
-            R.string.sign_up_phone_not_valid
+            string.sign_up_phone_not_valid,
+            ""
         ),
         val countriesList: MutableList<CountryData>? = null,
         val countryCode: String? = null,
         val idBrand: Int = 0,
+        val identification: String? = "",
         val selectedCountry: CountryData? = null,
         val isAlertResultVisible: Boolean = false,
         val currentBrand: Brand = Brand.CostaRica
@@ -199,7 +255,9 @@ class SignUpPhoneViewModel @Inject constructor(
             )
             is UIEvent.OnSetUpIdBrand -> onSetUpIdBrand(event.idBrand)
             is UIEvent.OnQueryError -> onQueryError()
-            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(event.idBrand)
+            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(event.idBrand, event.identification)
+            is UIEvent.OnSetupSharedEvents -> onSetupShareEvents(event.onLoadingValueChange, event.onFailureWithDialog)
+
         }
     }
 
@@ -233,7 +291,11 @@ class SignUpPhoneViewModel @Inject constructor(
         object OnClearPhoneError : UIEvent()
         object OnQueryError : UIEvent()
         data class OnSetUpIdBrand(val idBrand: Int) : UIEvent()
-        data class OnSetupDefaultCountry(val idBrand: Int) : UIEvent()
+        data class OnSetupDefaultCountry(val idBrand: Int, val identification: String?) : UIEvent()
+        data class OnSetupSharedEvents(
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {

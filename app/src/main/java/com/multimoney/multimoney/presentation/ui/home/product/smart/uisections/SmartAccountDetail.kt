@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 fun SmartAccountDetail(
@@ -90,10 +91,9 @@ fun SmartAccountDetail(
                 label = stringResource(id = string.smart_account_detail_total_balance_label),
                 value = {
                     Text(
-                        text = stringResource(
-                            currencySymbolValue,
-                            account?.totalBalance.toString()
-                        ),
+                        text = account?.gainedInterest?.toCurrencyFormat(
+                            stringResource(id = currencySymbolValue.getCurrencySymbol())
+                        ) ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,
                             fontWeight = FontWeight.SemiBold

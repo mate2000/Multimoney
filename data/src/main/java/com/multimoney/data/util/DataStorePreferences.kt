@@ -587,9 +587,7 @@ class DataStorePreferences @Inject constructor(
     fun setNavigationRouteByNotification(): Flow<String> = getData(FIREBASE_FCM_NAVIGATION_ROUTE, "")
 
     suspend fun clearData() {
-        dataStore.edit {
-            it.clear()
-        }
+        dataStore.edit { it.clear() }
     }
 
     companion object {

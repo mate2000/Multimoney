@@ -275,6 +275,9 @@ fun CustomOutlinedTextField(
 
         val textToolbar = if (isPassword) EmptyTextToolbar else LocalTextToolbar.current
 
+        // Wrapping TextField in a CompositionLocalProvider to disable long press context menu
+        // when field is intended for password by providing a custom empty menu to comply with
+        // MSTG-STORAGE-7
         CompositionLocalProvider(
             LocalTextToolbar provides textToolbar
         ) {

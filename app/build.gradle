@@ -125,6 +125,7 @@ dependencies {
     implementation google_services.auth
     implementation google_services.auth_api_phone
     implementation google_services.tag_manager
+    implementation google_services.base
 
     // Activity
     implementation activity.compose

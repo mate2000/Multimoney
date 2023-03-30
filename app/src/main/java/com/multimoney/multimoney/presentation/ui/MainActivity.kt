@@ -1,9 +1,11 @@
 package com.multimoney.multimoney.presentation.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +55,10 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
 
     private var retryProviderInstall = false
 
+    private val providerUpdateResult = registerForActivityResult(StartIntentSenderForResult()) {
+        if (it.resultCode != Activity.RESULT_OK) retryProviderInstall = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ProviderInstaller.installIfNeededAsync(this, this)
@@ -101,6 +107,8 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
         }
     }
 
+    // This function adds FLAG_SECURE when the app goes to the background to prevent screenshots
+    // being taken from the apps drawer and hide the contents when not in full view.
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         if (hasFocus) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
@@ -173,11 +181,6 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
 
     override fun isSessionDuplicated() = isSessionAlreadyOpened
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SECURITY_PROVIDER_UPDATE_REQUEST_CODE) retryProviderInstall = true
-    }
-
     override fun onPostResume() {
         super.onPostResume()
         if (retryProviderInstall) ProviderInstaller.installIfNeededAsync(this, this)
@@ -187,7 +190,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
     override fun onProviderInstallFailed(errorCode: Int, recoveryIntent: Intent?) {
         GoogleApiAvailability.getInstance().apply {
             if (isUserResolvableError(errorCode)) {
-                showErrorDialogFragment(this@MainActivity, errorCode, SECURITY_PROVIDER_UPDATE_REQUEST_CODE)
+                showErrorDialogFragment(this@MainActivity, errorCode, providerUpdateResult, null)
             }
         }
     }
@@ -198,6 +201,5 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
 
     companion object {
         private const val ROUTE_KEY = "routeName"
-        private const val SECURITY_PROVIDER_UPDATE_REQUEST_CODE = 100
     }
 }

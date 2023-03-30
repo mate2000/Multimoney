@@ -1,0 +1,13 @@
+mutation PhoneValidation($phone: String!, $identification: String!, $idBrand: Int!){
+  phoneValidation(
+    phoneValidationInputType: {
+      phone: $phone
+      identification: $identification
+      idBrand: $idBrand
+    }
+  ) {
+    status
+    message
+    detail
+  }
+}

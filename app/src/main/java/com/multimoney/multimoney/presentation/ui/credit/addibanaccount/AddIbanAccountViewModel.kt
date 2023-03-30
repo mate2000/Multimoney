@@ -85,7 +85,7 @@ class AddIbanAccountViewModel @Inject constructor(
         if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
             uiState = uiState.copy(
                 isFormValid = false,
-                accountNumber = bankAccount,
+                accountNumber = bankAccount.replace(Brand.CostaRica.iban, ""),
                 accountError = if (bankAccount.length < IBAN_MAX_LENGTH) {
                     Pair(true, R.string.iban_account_error)
                 } else {
@@ -107,7 +107,7 @@ class AddIbanAccountViewModel @Inject constructor(
     private fun validateIbanAccount() = executeUseCase {
         uiState = uiState.copy(accountInformation = Pair(true, R.string.iban_account_loading))
         queryValidateBankAccountUseCase(
-            account = "${Brand.CostaRica.iban}${uiState.accountNumber}",
+            account = "${Brand.CostaRica.iban}${uiState.accountNumber.replace(Brand.CostaRica.iban, "")}",
             identification = identification.orEmpty(),
             queryType = getQueryType(),
             user = user.orEmpty(),
@@ -164,7 +164,7 @@ class AddIbanAccountViewModel @Inject constructor(
             user = user ?: "",
             idBrand = idBrand ?: Brand.CostaRica.id,
             identification = identification ?: "",
-            accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber),
+            accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber.replace(Brand.CostaRica.iban, "")),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
             nameAccount = validateAccount?.name ?: "",
             country = Brand.CostaRica.countryCode,
@@ -201,7 +201,7 @@ class AddIbanAccountViewModel @Inject constructor(
         mutationSaveClientBankAccountUseCase(
             idClient = idClient?.toLong() ?: 0,
             idBank = validateAccount?.bankId ?: 0,
-            accountNumber = "${Brand.CostaRica.iban}${uiState.accountNumber}",
+            accountNumber = "${Brand.CostaRica.iban}${uiState.accountNumber.replace(Brand.CostaRica.iban, "")}",
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id ?: 0,
             idAccountType = null,
             idLoanClient = idLoanClient?.toLong() ?: 0,
@@ -224,6 +224,7 @@ class AddIbanAccountViewModel @Inject constructor(
             }
         }
     }
+
     private fun onContinueClick() = executeUseCase {
         when (previousScreen) {
             Screen.DisbursementAccountScreen.baseRoute,

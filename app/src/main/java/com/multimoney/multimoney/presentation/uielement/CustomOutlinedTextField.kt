@@ -67,6 +67,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.util.TWO
 import com.multimoney.multimoney.presentation.util.password.EmptyTextToolbar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -378,7 +379,7 @@ fun CustomOutlinedTextField(
                 textStyle = Typography.body2.copy(
                     color = WhiteTransparency90
                 ),
-                maxLines = if (isTextArea) 2 else maxLines,
+                maxLines = if (isTextArea) TWO else maxLines,
                 singleLine = if (isTextArea) false else singleLine,
                 focusedBorderThickness = FOCUSED_BORDER_WIDTH,
                 unfocusedBorderThickness = UNFOCUSED_BORDER_WIDTH

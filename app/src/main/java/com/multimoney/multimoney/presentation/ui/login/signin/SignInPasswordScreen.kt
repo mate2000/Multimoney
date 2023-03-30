@@ -99,7 +99,6 @@ fun SignInWithPassword(
             } else {
                 val biometricManager = BiometricManager.from(context)
                 val canAuthenticate = biometricManager.canAuthenticate(BIOMETRIC_WEAK)
-                context.packageManager.hasSystemFeature(PackageManager.FEATURE_FINGERPRINT)
                 if (canAuthenticate == BIOMETRIC_SUCCESS) {
                     CustomCheckBox(
                         checked = viewModel.uiState.isFingerprintChecked,

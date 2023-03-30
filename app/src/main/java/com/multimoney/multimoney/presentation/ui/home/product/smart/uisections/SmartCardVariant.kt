@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.util.SPACE
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
@@ -119,7 +120,7 @@ fun CardInactiveSmartProduct(
 fun CardSmartProduct(
     currency: String = "",
     profitTotal: Double? = 0.0,
-    profitMonthly: String = "",
+    profitMonthly: Double? = 0.0,
     currentMonth: String = ""
 ) {
     Column(
@@ -179,8 +180,11 @@ fun CardSmartProduct(
                     Text(
                         text = stringResource(
                             id = R.string.smart_card_monthly_profit_label,
-                            stringResource(id = currency.getCurrencySymbol()),
-                            profitMonthly,
+                            profitMonthly?.toCurrencyFormat(
+                                stringResource(id = currency.getCurrencySymbol()).plus(
+                                    SPACE
+                                )
+                            ) ?: "",
                             currentMonth
                         ),
                         modifier = Modifier.padding(start = 4.dp),

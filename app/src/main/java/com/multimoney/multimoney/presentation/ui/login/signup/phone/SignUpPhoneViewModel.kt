@@ -70,9 +70,7 @@ class SignUpPhoneViewModel @Inject constructor(
         uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
         signUpStartData.invoke()
         callQueryGetCountryPhoneCodes(uiState.idBrand, onFailure)
-        if (phoneNumber.isBlank()) {
-            emitBaseEvent(OnFormValidateCompleted(false))
-        }
+        emitBaseEvent(OnFormValidateCompleted(phoneNumber.isNotBlank()))
     }
 
     private fun isFormValid(countryCode: String) {
@@ -88,6 +86,8 @@ class SignUpPhoneViewModel @Inject constructor(
         }
         if (isPhoneValid) {
             onCallMutationPhoneValidation()
+        } else {
+            emitBaseEvent(OnFormValidateCompleted(false))
         }
     }
 

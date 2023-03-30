@@ -269,6 +269,8 @@ dependencies {
     // Google Zxing
     implementation google_zxing
 
+    // Splash screen
+    implementation android_core_splash
 }
 
 dexguard {

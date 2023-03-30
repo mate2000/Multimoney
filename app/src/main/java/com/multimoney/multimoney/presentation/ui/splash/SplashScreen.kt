@@ -45,14 +45,7 @@ fun SplashScreen(duration: Long, navigateToNextScreen: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LaunchedEffect(key1 = true) {
-            delay(duration)
             navigateToNextScreen()
         }
-        CustomImage(
-            modifier = Modifier
-                .width(200.dp)
-                .height(72.dp),
-            drawableResource = R.drawable.ic_logo_multimoney2
-        )
     }
 }

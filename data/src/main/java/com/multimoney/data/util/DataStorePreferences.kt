@@ -586,11 +586,17 @@ class DataStorePreferences @Inject constructor(
 
     fun setNavigationRouteByNotification(): Flow<String> = getData(FIREBASE_FCM_NAVIGATION_ROUTE, "")
 
+    suspend fun isSignUpFlow(isSignUpFlow: Boolean) =
+        setData(IS_SIGN_UP_FLOW_KEY, isSignUpFlow)
+
+    fun isSignUpFlow(): Flow<Boolean> = getData(IS_SIGN_UP_FLOW_KEY, false)
+
     suspend fun clearData() {
         dataStore.edit { it.clear() }
     }
 
     companion object {
+        private val IS_SIGN_UP_FLOW_KEY = booleanPreferencesKey("is_sign_up_flow_key")
         private val WHATSAPP_LINK = stringPreferencesKey("whatsapp_link")
         private val UNIQUE_ID = stringPreferencesKey("unique_id")
         private val DEVICE_ID = stringPreferencesKey("device_id")

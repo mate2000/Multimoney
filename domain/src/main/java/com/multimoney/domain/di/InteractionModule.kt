@@ -204,6 +204,8 @@ import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUs
 import com.multimoney.domain.interaction.security.MutationOnFidoInitialProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCase
 import com.multimoney.domain.interaction.security.MutationOnfidoCheckProcessUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCase
+import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCase
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
@@ -234,6 +236,8 @@ import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
+import com.multimoney.domain.interaction.security.QueryGetTokenUseCase
+import com.multimoney.domain.interaction.security.QueryGetTokenUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
@@ -390,6 +394,16 @@ class InteractionModule {
     @Singleton
     fun provideMutationUserEventMobileSaveUseCase(securityRepository: SecurityRepository): MutationUserEventMobileSaveUseCase =
         MutationUserEventMobileSaveUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetTokenUseCase(securityRepository: SecurityRepository): QueryGetTokenUseCase =
+        QueryGetTokenUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationPhoneValidationUseCase(securityRepository: SecurityRepository): MutationPhoneValidationUseCase =
+        MutationPhoneValidationUseCaseImpl(securityRepository)
 
     // Balance
 

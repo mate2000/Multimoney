@@ -20,7 +20,7 @@ fun ApprovedByOnfidoScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
-    viewModel: ApprovedByOnfidoViewModel = hiltViewModel(),
+    viewModel: ApprovedByOnfidoViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(

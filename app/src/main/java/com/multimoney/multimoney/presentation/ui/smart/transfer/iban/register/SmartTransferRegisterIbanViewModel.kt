@@ -32,8 +32,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class SmartTransferRegisterIbanViewModel @Inject constructor(
@@ -68,13 +68,14 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     }
 
     private fun onAccountValueValueChange(bankAccount: String) {
-        if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
+        val bankAccountFormatted = bankAccount.replace(Brand.CostaRica.iban, "")
+        if (bankAccountFormatted.isDigitsOnly() && bankAccountFormatted.length <= IBAN_MAX_LENGTH) {
             uiState = uiState.copy(
-                ibanAccountNumber = bankAccount,
+                ibanAccountNumber = bankAccountFormatted,
                 accountValidationError = null,
                 accountError = Pair(false, R.string.empty)
             )
-            if (bankAccount.length == AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
+            if (bankAccountFormatted.length == AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
                 validateIbanAccount()
             } else {
                 isFormValid()
@@ -83,7 +84,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
     }
 
     private fun onAccountValueCompleted() {
-        val bankAccount = uiState.ibanAccountNumber
+        val bankAccount = uiState.ibanAccountNumber.replace(Brand.CostaRica.iban, "")
         uiState = uiState.copy(
             accountError = if (bankAccount.length < AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
                 Pair(true, R.string.smart_iban_register_account_length_error)
@@ -100,7 +101,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         )
         // To validate non personal accounts we have to pass the identification as empty
         queryValidateBankAccountUseCase(
-            account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber}",
+            account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber.replace(Brand.CostaRica.iban, "")}",
             identification = "",
             queryType = null,
             user = user.orEmpty(),

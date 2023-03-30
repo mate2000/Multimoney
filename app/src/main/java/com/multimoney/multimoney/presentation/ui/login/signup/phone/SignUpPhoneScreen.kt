@@ -15,14 +15,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnFailureWithDialog
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnLoadingValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
-import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.UIEvent.OnSetupSharedEvents
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -39,6 +40,14 @@ fun SignUpPhoneScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
+        viewModel.onUIEvent(OnSetupSharedEvents(
+            onLoadingValueChange = {
+                sharedViewModel.onUIEvent(OnLoadingValueChange(it))
+            },
+            onFailureWithDialog = { isLoading, dialogParameters ->
+                sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+            }
+        ))
         sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         sharedViewModel.apply {
             onUIEvent(
@@ -80,11 +89,11 @@ fun SignUpPhoneScreen(
         }
     }
 
-
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             SignUpPhoneViewModel.UIEvent.OnSetupDefaultCountry(
-                sharedViewModel.idBrand ?: 0
+                sharedViewModel.idBrand ?: 0,
+                sharedViewModel.userData?.identification
             )
         )
         viewModel.uiState.selectedCountry?.let { countryData ->
@@ -155,7 +164,7 @@ fun SignUpPhoneScreen(
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
             isError = viewModel.uiState.phoneNumberError.first,
-            errorMessage = stringResource(id = viewModel.uiState.phoneNumberError.second),
+            errorMessage = viewModel.uiState.phoneNumberError.third.ifEmpty { stringResource(id = viewModel.uiState.phoneNumberError.second) },
             defaultCountry = getLibCountries.find { it.countryCode == viewModel.uiState.currentBrand.countryCode }
                 ?: getLibCountries.first(),
             pickedCountry = {

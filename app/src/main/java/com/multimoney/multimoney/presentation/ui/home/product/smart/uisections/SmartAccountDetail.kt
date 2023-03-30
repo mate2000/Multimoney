@@ -22,7 +22,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetailItem
 import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
-import com.multimoney.multimoney.presentation.util.getCurrencySymbolValue
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
@@ -40,8 +39,6 @@ fun SmartAccountDetail(
             val clientLabel = stringResource(id = string.credit_detail_client)
             var accountLabel = stringResource(string.credit_detail_iban)
             val currencySymbol = account?.currencyCode?.getCurrencySymbol() ?: string.empty
-            val currencySymbolValue =
-                account?.currencyCode?.getCurrencySymbolValue() ?: string.empty
 
             if (uiState.idBrand == Brand.CostaRica.id.toString()) {
                 CreditDetailItem(
@@ -92,7 +89,7 @@ fun SmartAccountDetail(
                 value = {
                     Text(
                         text = account?.gainedInterest?.toCurrencyFormat(
-                            stringResource(id = currencySymbolValue.getCurrencySymbol())
+                            stringResource(id = currencySymbol)
                         ) ?: "",
                         style = Typography.body2.copy(
                             color = MultimoneyTheme.colors.text,

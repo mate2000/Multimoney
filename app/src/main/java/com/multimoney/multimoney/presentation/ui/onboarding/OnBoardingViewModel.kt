@@ -1,7 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.onboarding
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

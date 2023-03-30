@@ -247,7 +247,9 @@ fun ChangePasswordContent(
                                 viewModel.getForbiddenWords(viewModel.uiState.newPassword)
                             )
                         } else {
-                            stringResource(id = viewModel.uiState.newPasswordError.second)
+                            viewModel.uiState.newPasswordError.third.ifEmpty {
+                                stringResource(id = viewModel.uiState.newPasswordError.second)
+                            }
                         }
                     } else {
                         null
@@ -277,14 +279,7 @@ fun ChangePasswordContent(
                     isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
                     isError = viewModel.uiState.newPasswordConfirmationError.first,
                     errorMessage = if (viewModel.uiState.newPasswordConfirmationError.first) {
-                        if (viewModel.uiState.newPasswordConfirmationError.second == R.string.sign_up_password_requirement_forbidden_words) {
-                            stringResource(
-                                id = R.string.sign_up_password_requirement_forbidden_words,
-                                viewModel.getForbiddenWords(viewModel.uiState.newPasswordConfirmation)
-                            )
-                        } else {
-                            viewModel.uiState.newPasswordConfirmationError.third.ifEmpty { stringResource(id = viewModel.uiState.newPasswordConfirmationError.second) }
-                        }
+                        stringResource(id = viewModel.uiState.newPasswordConfirmationError.second)
                     } else {
                         null
                     }

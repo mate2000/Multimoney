@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.multimoney.multimoney.R
 
 data class DialogParameters(
+    val title: String = "",
     val titleResource: Int = R.string.empty,
     val description: String = "",
     val descriptionResource: Int = R.string.empty,

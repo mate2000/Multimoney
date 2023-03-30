@@ -4,6 +4,7 @@ import com.apollographql.apollo3.ApolloCall
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.Optional
 import com.apollographql.apollo3.cache.normalized.FetchPolicy
+import com.apollographql.apollo3.cache.normalized.FetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteGetQuery
@@ -96,6 +97,7 @@ import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMuta
 import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
 import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
+import com.multimoney.data.networking.graphql.apollomodel.PhoneValidationMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
 import com.multimoney.data.networking.graphql.apollomodel.ProcessLocalTransferMutation
@@ -1046,7 +1048,20 @@ class GraphqlApi @Inject constructor(
                 serialNumber,
                 user
             )
-        )
+        ).fetchPolicy(NetworkOnly)
+
+    fun mutationPhoneValidation(
+        phone: String?,
+        identification: String?,
+        idBrand: Int
+    ): ApolloCall<PhoneValidationMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            PhoneValidationMutation(
+                phone ?: "",
+                identification ?: "",
+                idBrand
+            )
+        ).fetchPolicy(NetworkOnly)
 
     fun queryGetToken(): ApolloCall<GetTokenQuery.Data> =
         apolloAuthorizedClient.query(GetTokenQuery()).fetchPolicy(FetchPolicy.NetworkOnly)

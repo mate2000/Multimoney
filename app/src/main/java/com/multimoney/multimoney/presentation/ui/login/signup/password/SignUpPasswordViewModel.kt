@@ -15,7 +15,6 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
@@ -42,12 +41,12 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
@@ -96,22 +95,23 @@ class SignUpPasswordViewModel @Inject constructor(
         this.biometricDialogFailureDescription = biometricDialogFailureDescription
         uiState = uiState.copy(
             titleResource = if (idBrand == Brand.CostaRica.id) {
-                R.string.sign_up_password_title_cr
+                string.sign_up_password_title_cr
             } else {
-                R.string.sign_up_password_title
+                string.sign_up_password_title
             }
         )
     }
 
     private fun isFormValid(): Boolean {
-        return uiState.oneLowercaseState ?: false && uiState.oneUppercaseState ?: false && uiState.oneNumberState ?: false &&
-                uiState.oneCharacterState ?: false && passwordHasMinimumCharacters(uiState.password) &&
-                (uiState.confirmPassword == uiState.password) && !uiState.confirmPasswordError.first
+        return (uiState.oneLowercaseState ?: false) && (uiState.oneUppercaseState ?: false) &&
+            (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
+            passwordHasMinimumCharacters(uiState.password) && uiState.confirmPassword == uiState.password &&
+            !uiState.confirmPasswordError.first && uiState.passwordError.first.not()
     }
 
     private fun onSetupDeviceInfo(
         deviceName: String,
-        deviceType: String,
+        deviceType: String
     ) {
         viewModelScope.launch {
             deviceId = dataStorePreferences.getDeviceId().first()
@@ -138,38 +138,27 @@ class SignUpPasswordViewModel @Inject constructor(
         onContinueEnable: (isEnable: Boolean) -> Unit
     ) {
         uiState = uiState.copy(confirmPassword = confirmPassword)
-        validatePassword(isConfirmPassword = true)
+        validatePassword()
         onContinueEnable(isFormValid())
     }
 
-    private fun validatePassword(isConfirmPassword: Boolean = false) {
-        val password = if (isConfirmPassword) uiState.confirmPassword else uiState.password
-
+    private fun validatePassword() {
         uiState = uiState.copy(
             eightCharactersMinimumState = passwordHasMinimumCharacters(uiState.password),
             oneUppercaseState = passwordHasAUppercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneLowercaseState = passwordHasALowercaseLetterValidation(uiState.password) && uiState.password.isNotEmpty(),
             oneNumberState = passwordHasANumberValidation(uiState.password) && uiState.password.isNotEmpty(),
-            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.password) && uiState.password.isNotEmpty()
+            oneCharacterState = passwordHasSpecialCharacterValidation(uiState.password) && uiState.password.isNotEmpty(),
+            passwordError = passwordValidationHelper.validateConsecutiveCharacter(
+                value = uiState.password
+            ),
+            confirmPasswordError = passwordValidationHelper.validateEqualPasswords(
+                password = uiState.password,
+                confirmPassword = uiState.confirmPassword,
+                isSignup = true
+            )
         )
 
-        uiState = if (!isConfirmPassword) {
-            uiState.copy(
-                passwordError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.password,
-                    confirmPassword = uiState.confirmPassword
-                )
-            )
-        } else {
-            uiState.copy(
-                confirmPasswordError = passwordValidationHelper.validateConsecutiveCharacter(
-                    value = password,
-                    password = uiState.password,
-                    confirmPassword = uiState.confirmPassword
-                )
-            )
-        }
         resetValidationLabel(uiState.password)
     }
 
@@ -229,7 +218,7 @@ class SignUpPasswordViewModel @Inject constructor(
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_IDENTIFICATION) to identification,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_PK_USER) to pkUser,
             AuthUserAttributeKey.custom(COGNITO_CUSTOM_STATUS) to status,
-            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to idBrand.toString(),
+            AuthUserAttributeKey.custom(COGNITO_CUSTOM_ID_BRAND) to idBrand.toString()
         )
         val metaData = mapOf(
             COGNITO_DEVICE_ID to deviceId,
@@ -239,7 +228,7 @@ class SignUpPasswordViewModel @Inject constructor(
             COGNITO_DEVICE_NAME to deviceName,
             COGNITO_APP_VERSION to appVersion,
             COGNITO_IS_EMULATOR to isEmulator.toString(),
-            COGNITO_IP_ADDRESS to ipAddress,
+            COGNITO_IP_ADDRESS to ipAddress
         )
 
         val options = AWSCognitoAuthSignUpOptions.builder().validationData(metaData)
@@ -364,15 +353,16 @@ class SignUpPasswordViewModel @Inject constructor(
         }
     }
 
-    private fun onValidatePasswordStructure(idBrand: Int, pkUser: Int, user: String) = executeUseCase {
-        passwordValidationHelper.getValidatePasswordStructure(idBrand, pkUser, user)
-    }
+    private fun onValidatePasswordStructure(idBrand: Int, pkUser: Int, user: String) =
+        executeUseCase {
+            passwordValidationHelper.getValidatePasswordStructure(idBrand, pkUser, user)
+        }
 
     fun getForbiddenWords(value: String): String = passwordValidationHelper.getForbiddenWords(value)
 
     data class UIState(
         // Fields
-        val titleResource: Int = R.string.empty,
+        val titleResource: Int = string.empty,
         var password: String = "",
         var passwordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         var confirmPassword: String = "",
@@ -429,16 +419,6 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.showDialog,
                 uiEvent.idBrand
             )
-            is OnCallPasswordSave -> callQuerySavePassword(
-                uiEvent.pkUser,
-                uiEvent.user,
-                uiEvent.idBrant
-            )
-            is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
-                uiEvent.value,
-                uiEvent.showDialog,
-                uiEvent.idBrand
-            )
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
@@ -453,7 +433,7 @@ class SignUpPasswordViewModel @Inject constructor(
             is UIEvent.OnValidatePasswordStructure -> onValidatePasswordStructure(
                 uiEvent.idBrand,
                 uiEvent.pkUser,
-                uiEvent.user,
+                uiEvent.user
             )
         }
     }

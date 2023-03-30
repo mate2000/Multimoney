@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import com.amplifyframework.core.Amplify
 import com.multimoney.data.util.DataStorePreferences
@@ -96,7 +95,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
         )
     }
 
-    private fun callQueryValidationUserExistsUseCase(activity: FragmentActivity) =
+    private fun callQueryValidationUserExistsUseCase() =
         executeUseCase {
             queryValidateUserExistsUseCase(
                 email = uiState.email,
@@ -129,10 +128,15 @@ class RequestForgotPasswordViewModel @Inject constructor(
         }
     )
 
-    private fun onContinueClick(activity: FragmentActivity, focusManager: FocusManager) {
+    private fun onContinueClick(focusManager: FocusManager) {
         focusManager.clearFocus()
-        registerAdjustEvent(AdjustEventType.FORGOT_CONFIRM_EMAIL_4000, isLoggedIn = false, applyAdjust = false, data = EmailDto(uiState.email).toJson())
-        callQueryValidationUserExistsUseCase(activity)
+        registerAdjustEvent(
+            AdjustEventType.FORGOT_CONFIRM_EMAIL_4000,
+            isLoggedIn = false,
+            applyAdjust = false,
+            data = EmailDto(uiState.email).toJson()
+        )
+        callQueryValidationUserExistsUseCase()
     }
 
     private fun onChangePasswordClick() = popAndNavigateTo(
@@ -166,7 +170,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack(uiEvent.focusManager)
             is OnCloseClick -> onCloseClick(uiEvent.focusManager)
-            is OnContinueClick -> onContinueClick(uiEvent.activity, uiEvent.focusManager)
+            is OnContinueClick -> onContinueClick(uiEvent.focusManager)
             is OnChangePasswordClick -> onChangePasswordClick()
             is OnEmailValueChange -> onEmailValueChange(uiEvent.value)
             is OnValidateEmail -> isEmailValid()
@@ -176,7 +180,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnNavigateBack(val focusManager: FocusManager) : UIEvent()
         data class OnCloseClick(val focusManager: FocusManager) : UIEvent()
-        data class OnContinueClick(val activity: FragmentActivity, val focusManager: FocusManager) : UIEvent()
+        data class OnContinueClick(val focusManager: FocusManager) : UIEvent()
         object OnChangePasswordClick : UIEvent()
         data class OnEmailValueChange(val value: String) : UIEvent()
         object OnValidateEmail : UIEvent()

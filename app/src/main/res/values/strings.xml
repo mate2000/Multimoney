@@ -142,8 +142,8 @@
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
     <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
     <string name="sign_in_session_blacklisted_title" translatable="false">¿No puedes entrar a MultiMoney?</string>
-    <string name="sign_in_session_blacklisted_message" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
-    <string name="sign_in_session_blocked_message" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_in_session_blacklisted_message_cr" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
+    <string name="sign_in_session_blacklisted_message_sv" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
     <string name="sign_in_dialog_exit_button" translatable="false">Salir</string>
     <string name="sign_in_dialog_sign_in_here_button" translatable="false">Iniciar sesión aquí</string>
@@ -1466,7 +1466,7 @@
     <string name="profile_help_error_button_label" translatable="false">Regresar</string>
 
     <!-- Currency Item -->
-    <string name="currency_item_dollar_symbol" translatable="false">$%2s</string>
+    <string name="currency_item_dollar_symbol" translatable="false">%2s</string>
     <string name="currency_item_inside_parenthesis" translatable="false">(%1s)</string>
     <string name="currency_item_description" translatable="false">%1$s (%2$s)</string>
     <string name="currency_receive_address_description" translatable="false">Dirección %1$s | %2$s</string>
@@ -1617,6 +1617,9 @@
     <string name="process_forgot_password_alert_failure_description" translatable="false">Lo sentimos, volvé a intentar más \ntarde</string>
     <string name="process_forgot_password_alert_failure_description_sv" translatable="false">Lo sentimos, vuelve a intentar más tarde</string>
     <string name="process_forgot_password_alert_failure_button_try_again" translatable="false">Intentar nuevamente</string>
+    <string name="process_forgot_password_alert_failure_otp_title" translatable="false">Código incorrecto</string>
+    <string name="process_forgot_password_alert_failure_otp_description_cr" translatable="false">Intentá de nuevo o volvé a solicitar el código</string>
+    <string name="process_forgot_password_alert_failure_otp_description_sv" translatable="false">Intenta de nuevo o vuelve a solicitar el código</string>
 
     <!-- Crypto list currencies for purchase -->
     <string name="crypt_list_purchase_title" translatable="false">¿Cuál moneda querés comprar?</string>

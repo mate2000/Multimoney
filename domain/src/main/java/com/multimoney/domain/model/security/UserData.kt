@@ -18,7 +18,7 @@ data class UserData(
     var identification: String? = null,
     val strIdIdentification: String? = null,
     val idIdentification: Int? = null,
-    var countryCode: String? = null,
+    var countryCode: String? = "",
     var currentStep: String? = null,
     var userStatus: String? = null,
     var isNewUser: Boolean? = null,

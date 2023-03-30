@@ -60,7 +60,6 @@ fun SignUpEmailScreen(
             SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(
                     SignUpEmailViewModel.UIEvent.OnNextActionClick(
-                        activity = activity,
                         nextStepAction = {
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnNextStep

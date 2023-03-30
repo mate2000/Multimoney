@@ -95,8 +95,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun getCountryCode(context: Context) = if(context.getUserCountry() == "") DEFAULT_REGION
-        else context.getUserCountry()
+    private fun getCountryCode(context: Context) = context.getUserCountry().ifBlank{ DEFAULT_REGION }
 
     private fun getStepContent(step: Int, context: Context): List<Int> = when (step) {
         STEP_ONE -> {

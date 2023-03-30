@@ -4,12 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
 import com.multimoney.domain.interaction.security.QueryValidateUserStatusUseCase
-import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -27,8 +26,8 @@ import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.ui.smart.origination.onfidoscenarios.onfidoapproved.ApprovedByOnfidoViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class ApprovedByOnfidoViewModel @Inject constructor(
@@ -62,7 +61,11 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     }
 
     private fun onNavigateToHome() =
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.COLLAPSED)
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.COLLAPSED
+        )
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
@@ -93,7 +96,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
                     cryptoStatus = validateUserStatus?.infoCrypto?.status ?: 0,
                     cardStatus = validateUserStatus?.infoVirtualCard?.status ?: 0
                 )
-                uiState.copy(userStatus = validateUserStatus)
+                uiState = uiState.copy(userStatus = validateUserStatus)
             }
             result.onFailure {
                 onFailure(it)
@@ -173,23 +176,37 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     }
 
     private fun navigateToHomeCrypto() {
-        navigateBack(popTo = Screen.HomeScreen.route, isRestart = true, homeState = HomeState.EXPANDED)
+        navigateBack(
+            popTo = Screen.HomeScreen.route,
+            isRestart = true,
+            homeState = HomeState.EXPANDED
+        )
     }
 
     private fun navigateToFirstSavingTransfer() {
         if (idBrand == Brand.CostaRica.id) {
-            navigateTo("${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${encodeData(userSmartAccounts)}/$pkUser/$idBrand/$identification/$idClient/$idLoanClient")
+            navigateTo(
+                "${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${encodeData(userSmartAccounts)}/" +
+                    "$pkUser/$idBrand/$identification/$idClient/$idLoanClient"
+            )
         } else {
-            navigateTo("${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(userSmartAccounts?.firstOrNull())}")
+            navigateTo(
+                "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(userSmartAccounts?.firstOrNull())}/" +
+                    encodeData(uiState.userStatus?.infoUser)
+            )
         }
     }
 
     private fun onSetUpDialog() {
         uiState = uiState.copy(
-            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title else R.string.approved_sign_by_onfido_title,
-            alertButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_discover_crypto else R.string.approved_by_onfido_buttton_text,
-            alertMessageResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_description else R.string.empty,
-            alertSecondButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_saving_smart else R.string.finalize
+            alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title
+            else R.string.approved_sign_by_onfido_title,
+            alertButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_discover_crypto
+            else R.string.approved_by_onfido_buttton_text,
+            alertMessageResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_description
+            else R.string.empty,
+            alertSecondButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_saving_smart
+            else R.string.finalize
         )
     }
 
@@ -201,7 +218,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         val alertMessageResource: Int = R.string.empty,
         val alertButtonTextResource: Int = R.string.approved_by_onfido_buttton_text,
         val alertSecondButtonTextResource: Int = R.string.finalize,
-        var userStatus: ValidateUserStatus? = null,
+        var userStatus: ValidateUserStatus? = null
     )
 
     sealed class UIEvent {
@@ -209,6 +226,6 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         object OnFirsButtonClick : UIEvent()
         object OnSecondButtonClick : UIEvent()
         object OnCallQueryGetUserStatusInfo : UIEvent()
-        object OnSetUpDialogData: UIEvent()
+        object OnSetUpDialogData : UIEvent()
     }
 }

@@ -16,6 +16,7 @@ import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
+import com.multimoney.domain.model.security.Token
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserEventMobileSave
 import com.multimoney.domain.model.security.UserPhoneMobileSave
@@ -252,4 +253,6 @@ interface SecurityRepository {
         longitude: String,
         tokenNotificationsPush: String
     ): Flow<MultimoneyResult<UserEventMobileSave>>
+
+    suspend fun queryGetToken(): Flow<MultimoneyResult<Token>>
 }

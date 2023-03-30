@@ -38,9 +38,9 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
         )
     },
     creditLimit = limite_credito,
-    creditLimitLabel = limite_credito_label,
-    creditNumber = pagare,
-    term = plazo,
+    creditLimitLabel = limite_credito_label.orEmpty(),
+    creditNumber = pagare.orEmpty(),
+    term = plazo.orEmpty(),
     applyAutomaticDebit = aplica_Debito_Aut,
     automaticDebitEnabled = debito_Aut_Activo,
     expiredAutomaticDebitCard = expired_Debito_Aut_Card

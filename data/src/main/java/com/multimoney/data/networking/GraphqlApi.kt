@@ -75,6 +75,7 @@ import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetSmartAccountsQuery
+import com.multimoney.data.networking.graphql.apollomodel.GetTokenQuery
 import com.multimoney.data.networking.graphql.apollomodel.GetTransferCommissionQuery
 import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
 import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
@@ -1061,6 +1062,9 @@ class GraphqlApi @Inject constructor(
                 idBrand
             )
         ).fetchPolicy(NetworkOnly)
+
+    fun queryGetToken(): ApolloCall<GetTokenQuery.Data> =
+        apolloAuthorizedClient.query(GetTokenQuery()).fetchPolicy(FetchPolicy.NetworkOnly)
 
     // SmartAccount
     fun queryGetCoreBankMovements(
@@ -2605,7 +2609,9 @@ class GraphqlApi @Inject constructor(
         idBrand: Int
     ): ApolloCall<ValidatePasswordStructureQuery.Data> = apolloAuthorizedClient.query(
         ValidatePasswordStructureQuery(
-            pkUser, user, idBrand
+            pkUser,
+            user,
+            idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 }

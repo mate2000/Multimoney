@@ -236,6 +236,8 @@ import com.multimoney.domain.interaction.security.QueryGetCountryUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsImpl
 import com.multimoney.domain.interaction.security.QueryGetQuickActionsUseCase
+import com.multimoney.domain.interaction.security.QueryGetTokenUseCase
+import com.multimoney.domain.interaction.security.QueryGetTokenUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCase
 import com.multimoney.domain.interaction.security.QueryMiniCardsUseCaseImpl
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
@@ -392,6 +394,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationUserEventMobileSaveUseCase(securityRepository: SecurityRepository): MutationUserEventMobileSaveUseCase =
         MutationUserEventMobileSaveUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryGetTokenUseCase(securityRepository: SecurityRepository): QueryGetTokenUseCase =
+        QueryGetTokenUseCaseImpl(securityRepository)
 
     @Provides
     @Singleton

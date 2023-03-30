@@ -93,6 +93,8 @@ class SignInViewModel @Inject constructor(
         onUserPasswordValueChange("")
         viewModelScope.launch(Dispatchers.IO) { ipAddress = getIPAddress() ?: "" }
         viewModelScope.launch {
+            dataStorePreferences.setAuthToken("")
+            dataStorePreferences.isSignUpFlow(true)
             deviceId = dataStorePreferences.getDeviceId().first()
             uniqueId = dataStorePreferences.getUniqueId().first()
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()

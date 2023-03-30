@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
             MultimoneyTheme {
                 Navigation(notificationState)
                 LaunchedEffect(key1 = true) {
+                    dataStorePreferences.isSignUpFlow(true)
                     obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")
                     if (dataStorePreferences.getDeviceId().first().isEmpty()) {
                         val deviceId: String = getDeviceId(activity as MainActivity)

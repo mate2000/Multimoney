@@ -60,13 +60,18 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 fun PaymentScheduleCardListScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: PaymentScheduleCardListViewModel = hiltViewModel()
+    viewModel: PaymentScheduleCardListViewModel = hiltViewModel(),
+    isRestart: Boolean = true
 ) {
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnStart)
+            isOnRestart = isRestart
+            if (isOnRestart) {
+                executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
+                onUIEvent(OnStart)
+                isOnRestart = false
+            }
         }
     }
     PaymentScheduleAccountContent(viewModel)

@@ -15,15 +15,15 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnInitializeResources
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
-import com.multimoney.multimoney.presentation.util.FIRST_INDEX
-import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
-import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
@@ -95,17 +95,19 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    private fun getCountryCode(context: Context) = context.getUserCountry().ifBlank{ DEFAULT_REGION }
+
     private fun getStepContent(step: Int, context: Context): List<Int> = when (step) {
         STEP_ONE -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_1_1002, isLoggedIn = false)
-            when (context.resources.configuration.locales.get(FIRST_INDEX).isO3Country) {
-                ISO3_COSTA_RICA -> listOf(
+            when (getCountryCode(context)) {
+                SIM_CODE_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_one_title,
                     R.string.onboarding_costa_rica_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
                 )
-                ISO3_GUATEMALA -> listOf(
+                SIM_CODE_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_one_title,
                     R.string.onboarding_guatemala_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
@@ -120,13 +122,13 @@ class OnBoardingViewModel @Inject constructor(
         STEP_TWO -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_2_1003, isLoggedIn = false)
-            when (context.resources.configuration.locale.isO3Country) {
-                ISO3_COSTA_RICA -> listOf(
+            when (getCountryCode(context)) {
+                SIM_CODE_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_two_title,
                     R.string.onboarding_costa_rica_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
                 )
-                ISO3_GUATEMALA -> listOf(
+                SIM_CODE_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_two_title,
                     R.string.onboarding_guatemala_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
@@ -141,13 +143,13 @@ class OnBoardingViewModel @Inject constructor(
         else -> {
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_3_1004, isLoggedIn = false)
-            when (context.resources.configuration.locale.isO3Country) {
-                ISO3_COSTA_RICA -> listOf(
+            when (getCountryCode(context)) {
+                SIM_CODE_COSTA_RICA -> listOf(
                     R.string.onboarding_costa_rica_step_three_title,
                     R.string.onboarding_costa_rica_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
-                ISO3_GUATEMALA -> listOf(
+                SIM_CODE_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_three_title,
                     R.string.onboarding_guatemala_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
@@ -215,5 +217,6 @@ class OnBoardingViewModel @Inject constructor(
         const val STEP_ICON = 2
         const val TOTAL_PRESS_TIME = 300
         const val QUARTER = 4
+        const val DEFAULT_REGION = "sv"
     }
 }

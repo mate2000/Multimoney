@@ -31,7 +31,7 @@ class ForceUpdateViewModel @Inject constructor(
 
     private fun getTextResources() {
         viewModelScope.launch {
-            uiState = when (dataStorePreferences.getIdBrand().firstOrNull()?.ifEmpty { 0 } ?: 0) {
+            uiState = when (dataStorePreferences.getIdBrand().firstOrNull()?.ifEmpty { Brand.CostaRica.id } ?: Brand.CostaRica.id) {
                 Brand.CostaRica.id -> uiState.copy(
                     titleResource = R.string.force_update_title_cr,
                     messageResource = R.string.force_update_message_cr

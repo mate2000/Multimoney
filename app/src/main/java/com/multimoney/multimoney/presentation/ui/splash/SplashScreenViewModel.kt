@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.splash
 
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
 import com.multimoney.domain.model.util.onFailure
@@ -34,7 +35,7 @@ class SplashScreenViewModel @Inject constructor(
             idBrand = if (dataStorePreferences.getIdBrand().firstOrNull()?.isNotEmpty() == true) {
                 dataStorePreferences.getIdBrand().first().toInt()
             } else {
-                0
+                Brand.CostaRica.id
             }
         ).collectLatest { result ->
             result.onSuccess {

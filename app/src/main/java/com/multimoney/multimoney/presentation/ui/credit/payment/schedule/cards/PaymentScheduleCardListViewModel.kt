@@ -217,7 +217,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
                 getNavParam(ID_BRAND, infoUser?.idBrand ?: 0)
             )
             .plus(
-                getNavParam(PREVIOUS_SCREEN, Screen.ProfileCardListScreen.baseRoute)
+                getNavParam(PREVIOUS_SCREEN, Screen.PaymentScheduleCardListScreen.baseRoute)
             )
             .plus(
                 getNavParam(ADD_CARD_RESPONSE, response)

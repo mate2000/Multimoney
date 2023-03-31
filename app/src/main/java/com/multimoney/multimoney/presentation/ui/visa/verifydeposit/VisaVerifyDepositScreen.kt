@@ -33,10 +33,10 @@ import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDe
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnBackClick
-import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnDoNotSeeClick
+import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnMicroDepositValueChange
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnResendClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnStart
@@ -80,6 +80,7 @@ fun VisaVerifyDepositScreen(
     viewModel.apply {
         VisaVerifyDepositContent(
             uiState = uiState,
+            shouldShowExitButton = shouldShowExitButton(),
             onMicroDepositValueChange = { value -> onUIEvent(OnMicroDepositValueChange(value)) },
             onDoNotSeeClick = { onUIEvent(OnDoNotSeeClick) },
             onResendClick = { onUIEvent(OnResendClick) },
@@ -99,6 +100,7 @@ fun VisaVerifyDepositScreen(
 @Preview
 fun VisaVerifyDepositContent(
     uiState: UIState = UIState(),
+    shouldShowExitButton: Boolean = true,
     onMicroDepositValueChange: (String) -> Unit = {},
     onDoNotSeeClick: () -> Unit = {},
     onResendClick: () -> Unit = {},
@@ -117,6 +119,7 @@ fun VisaVerifyDepositContent(
                 descriptionString = alertResultDescription,
                 buttonTextResource = alertResultButtonResource,
                 isLeftButtonVisible = false,
+                isRightButtonVisible = shouldShowExitButton,
                 onRightButtonClick = { onAlertCloseClick() },
                 onButtonClick = { onAlertButtonClick() }
             )

@@ -26,10 +26,10 @@ import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDe
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnBackClick
-import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnDoNotSeeClick
+import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnMicroDepositValueChange
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnResendClick
 import com.multimoney.multimoney.presentation.ui.visa.verifydeposit.VisaVerifyDepositViewModel.UIEvent.OnStart
@@ -39,11 +39,6 @@ import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -52,6 +47,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class VisaVerifyDepositViewModel @Inject constructor(
@@ -70,8 +70,8 @@ class VisaVerifyDepositViewModel @Inject constructor(
     private var idCard: String = ""
     private var user: String = ""
     private var idBrand: Int = 0
-    private var previousScreen = ""
     private var whatsAppLink: String? = ""
+    var previousScreen = ""
 
     init {
         identification = savedStateHandle[IDENTIFICATION] ?: ""
@@ -223,6 +223,31 @@ class VisaVerifyDepositViewModel @Inject constructor(
         isRestart = false
     )
 
+    private fun onNavigateBackPaymentCardList() = navigateBack(
+        popTo = Screen.PaymentCardsListScreen.route,
+        isRestart = true
+    )
+
+    private fun onNavigateBackSmartCards() = navigateBack(
+        popTo = Screen.SmartPaymentCardsScreenSV.route,
+        isRestart = true
+    )
+
+    private fun onNavigateBackProfile() = navigateBack(
+        popTo = Screen.ProfileCardListScreen.route,
+        isRestart = true
+    )
+
+    private fun onNavigateBackScheduleCard() = navigateBack(
+        popTo = Screen.PaymentScheduleCardScreen.route,
+        isRestart = true
+    )
+
+    private fun onNavigateBackScheduleCardList() = navigateBack(
+        popTo = Screen.PaymentScheduleCardListScreen.route,
+        isRestart = true
+    )
+
     private fun onCloseClick() {
         uiState = uiState.copy(
             dialogParameters = DialogParameters(
@@ -297,17 +322,58 @@ class VisaVerifyDepositViewModel @Inject constructor(
             isAlertResultVisible = true,
             isAlertResultSuccess = true,
             alertResultIconResource = R.drawable.ic_success_symbol,
-            alertResultTitleResource = R.string.visa_direct_verify_deposit_alert_success_title,
+            alertResultTitleResource = getAlertTitleResource(),
             alertResultDescription = "",
             alertResultDescriptionResource = R.string.empty,
-            alertResultButtonResource = if (previousScreen == Screen.PaymentCardsListScreen.baseRoute) {
-                R.string.visa_direct_verify_deposit_alert_success_button_from_payment
-            } else {
-                R.string.visa_direct_verify_deposit_alert_success_button_from_smart
-            },
+            alertResultButtonResource = getAlertButtonResource(),
             isLoading = false
         )
     }
+
+    private fun getAlertButtonResource() =
+        when (previousScreen) {
+            Screen.PaymentCardsListScreen.baseRoute,
+            Screen.PaymentScheduleCardScreen.baseRoute,
+            Screen.PaymentScheduleCardListScreen.baseRoute -> {
+                R.string.visa_direct_verify_deposit_alert_success_button_from_payment
+            }
+            Screen.ProfileCardListScreen.baseRoute -> {
+                R.string.visa_direct_verify_deposit_alert_success_button_from_profile
+            }
+            Screen.SmartPaymentCardsScreenSV.baseRoute -> {
+                R.string.visa_direct_verify_deposit_alert_success_button_from_smart
+            }
+            else -> {
+                R.string.button_continue
+            }
+        }
+
+    private fun getAlertTitleResource() =
+        when (previousScreen) {
+            Screen.PaymentCardsListScreen.baseRoute,
+            Screen.PaymentScheduleCardScreen.baseRoute,
+            Screen.PaymentScheduleCardListScreen.baseRoute -> {
+                R.string.visa_direct_verify_deposit_alert_success_title_payment
+            }
+            Screen.SmartPaymentCardsScreenSV.baseRoute -> {
+                R.string.visa_direct_verify_deposit_alert_success_title_smart
+            }
+            else -> {
+                R.string.visa_direct_verify_deposit_alert_success_title_profile
+            }
+        }
+
+    fun shouldShowExitButton() =
+        when (previousScreen) {
+            Screen.PaymentCardsListScreen.baseRoute,
+            Screen.PaymentScheduleCardScreen.baseRoute,
+            Screen.PaymentScheduleCardListScreen.baseRoute -> {
+                false
+            }
+            else -> {
+                true
+            }
+        }
 
     fun logEvents(adjustEventType: AdjustEventType) {
         viewModelScope.launch {
@@ -348,6 +414,40 @@ class VisaVerifyDepositViewModel @Inject constructor(
         dataStorePreferences.isAdjustAddCardVerifiedEventRegister(true)
     }
 
+    private fun onAlertButtonClick() {
+        when (previousScreen) {
+            Screen.PaymentCardsListScreen.baseRoute -> {
+                onNavigateBackPaymentCardList()
+            }
+            Screen.PaymentScheduleCardScreen.baseRoute -> {
+                onNavigateBackScheduleCard()
+            }
+            Screen.PaymentScheduleCardListScreen.baseRoute -> {
+                onNavigateBackScheduleCardList()
+            }
+            Screen.ProfileCardListScreen.baseRoute -> {
+                onNavigateBackProfile()
+            }
+            Screen.SmartPaymentCardsScreenSV.baseRoute -> {
+                onNavigateBackSmartCards()
+            }
+            else -> {
+                onNavigateBackHome()
+            }
+        }
+    }
+
+    private fun onAlertCloseClick() {
+        when (previousScreen) {
+            Screen.ProfileCardListScreen.baseRoute -> {
+                onNavigateBackProfile()
+            }
+            else -> {
+                onNavigateBackHome()
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         val microDeposit: String = "",
@@ -380,8 +480,8 @@ class VisaVerifyDepositViewModel @Inject constructor(
             is OnBackClick -> onBackClick()
             is OnCloseClick -> onCloseClick()
             is OnContinueClick -> onContinueClick()
-            is OnAlertCloseClick -> onCloseClick()
-            is OnAlertButtonClick -> onCloseClick()
+            is OnAlertCloseClick -> onAlertCloseClick()
+            is OnAlertButtonClick -> onAlertButtonClick()
             is OnGetWhatsAppLink -> onGetWhatsAppLink()
         }
     }

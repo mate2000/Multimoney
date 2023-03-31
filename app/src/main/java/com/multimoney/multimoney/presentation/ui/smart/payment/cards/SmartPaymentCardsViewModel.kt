@@ -34,9 +34,9 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -81,7 +81,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
         }
     }
 
-    private fun onAddCard(enabled: Boolean){
+    private fun onAddCard(enabled: Boolean) {
         uiState = uiState.copy(
             isAddCardEnabled = enabled
         )
@@ -133,7 +133,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
                 getNavParam(ID_BRAND, infoUser?.idBrand ?: 0)
             )
             .plus(
-                getNavParam(PREVIOUS_SCREEN, Screen.ProfileCardListScreen.baseRoute)
+                getNavParam(PREVIOUS_SCREEN, Screen.SmartPaymentCardsScreenSV.baseRoute)
             )
             .plus(
                 getNavParam(ADD_CARD_RESPONSE, response)

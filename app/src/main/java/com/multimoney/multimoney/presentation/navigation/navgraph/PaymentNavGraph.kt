@@ -285,7 +285,8 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
             )
         }
         composable(
@@ -316,7 +317,8 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
             )
         }
         composable(

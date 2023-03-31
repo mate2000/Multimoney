@@ -365,4 +365,7 @@ ext {
     webkit = [
             webkit   : "org.webkit:android-jsc:$webkit_version"
     ]
+
+    android_core_splash_version = "1.0.0"
+    android_core_splash = "androidx.core:core-splashscreen:$android_core_splash_version"
 }

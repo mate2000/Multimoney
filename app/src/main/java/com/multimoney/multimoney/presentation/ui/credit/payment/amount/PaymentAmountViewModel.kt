@@ -194,17 +194,18 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun onAmountValueChange(value: String) {
         if (value.isValidAmount()) {
+            val convertedValue = value.toDoubleOrNull()?.roundToInt()
             uiState = uiState.copy(
                 currentAmountValueString = value,
-                isMinimumSelected = value.isNotEmpty() && value.toInt() == minimumPayment,
-                isMaximumSelected = value.isNotEmpty() && value.toInt() == maximumPayment,
+                isMinimumSelected = value.isNotEmpty() && value.toIntOrNull() == minimumPayment,
+                isMaximumSelected = value.isNotEmpty() && value.toIntOrNull() == maximumPayment,
                 enableButton = (
-                    value.isNotEmpty() && value.toInt() <= maximumPayment &&
-                        value.isNotEmpty() && value.toInt() > PAYMENT_MUST_HIGHER_THAN_VALUE
-                    ),
-                currentAmountError = if (value.isNotEmpty() && value.toInt() > maximumPayment) {
+                        convertedValue != null && convertedValue <= maximumPayment &&
+                                convertedValue > PAYMENT_MUST_HIGHER_THAN_VALUE
+                        ),
+                currentAmountError = if (convertedValue != null && convertedValue > maximumPayment) {
                     Pair(true, R.string.payment_amount_amount_max_error)
-                } else if (value.isNotEmpty() && value.toInt() <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
+                } else if (convertedValue != null && convertedValue <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
                     Pair(true, R.string.payment_amount_amount_min_error)
                 } else {
                     Pair(false, R.string.empty)
@@ -251,12 +252,14 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun formattedExchangeRateLabel() = uiState.exchangeRateLabel.formattedTwoDecimalsNumber().toString()
 
-    fun getFormattedCurrency() =
-        if (uiState.currentAmountValueString.isNotEmpty() && uiState.currentAmountValueString.toInt() > maximumPayment) {
+    fun getFormattedCurrency() : Any {
+        val convertedValue = uiState.currentAmountValueString.toDoubleOrNull()?.roundToInt()
+        return if (convertedValue != null && convertedValue > maximumPayment) {
             uiState.maximumPaymentLabel
         } else {
             PAYMENT_MUST_HIGHER_THAN_VALUE
         }
+    }
 
     private fun onCallQueryGetExchangeRate() = executeUseCase {
         queryGetExchangeRateCreditUseCase.invoke(
@@ -408,8 +411,8 @@ class PaymentAmountViewModel @Inject constructor(
 
     fun getCurrentAmountFormatted() =
         "${uiState.currency}${
-        uiState.currentAmountValueString
-            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+            uiState.currentAmountValueString
+                .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getExchangeRateFormatted() =

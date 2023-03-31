@@ -11,15 +11,16 @@ import com.multimoney.data.R
 import com.multimoney.data.networking.GraphqlApi
 import com.multimoney.data.util.CertificateUtil
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.security.QueryGetTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -64,8 +65,24 @@ class NetworkingModule {
         return ApolloClient.Builder()
             .serverUrl(BuildConfig.API_URL + SCHEMA_GRAPHQL)
             .webSocketServerUrl(BuildConfig.WEBSOCKET_URL + SCHEMA_GRAPHQL)
-            .addHttpInterceptor(AuthorizationInterceptor(dataStorePreferences))
+            .addHttpInterceptor(AuthorizationInterceptor(dataStorePreferences, GraphqlApi(refreshTokenApolloAuthorizedClientProvider(certificateUtil))))
             .normalizedCache(sqlNormalizedCacheFactory)
+            .okHttpClient(
+                authOkHttpClientProvider(
+                    certificateUtil
+                )
+            )
+            .build()
+    }
+
+    private fun refreshTokenApolloAuthorizedClientProvider(
+        certificateUtil: CertificateUtil
+    ): ApolloClient {
+        return ApolloClient.Builder()
+            .serverUrl(BuildConfig.API_URL + SCHEMA_GRAPHQL)
+            .webSocketServerUrl(BuildConfig.WEBSOCKET_URL + SCHEMA_GRAPHQL)
+            .addHttpHeader(HEADER_CLIENT_ID, BuildConfig.CLIENT_ID)
+            .addHttpHeader(HEADER_CLIENT_SECRET, BuildConfig.CLIENT_SECRET)
             .okHttpClient(
                 authOkHttpClientProvider(
                     certificateUtil
@@ -93,5 +110,7 @@ class NetworkingModule {
         const val TIMEOUT = 120L
         const val APOLLO_DB = "multimoney_apollo_graphql_db"
         const val SCHEMA_GRAPHQL = "graphql"
+        const val HEADER_CLIENT_ID = "X-Client-Id"
+        const val HEADER_CLIENT_SECRET = "X-Client-Secret"
     }
 }

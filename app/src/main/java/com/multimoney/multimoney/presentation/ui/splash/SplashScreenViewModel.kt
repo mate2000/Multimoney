@@ -96,8 +96,4 @@ class SplashScreenViewModel @Inject constructor(
         object OnNavigateToNextScreen : UIEvent()
         object OnCallQueryGetConfigurationVersion : UIEvent()
     }
-
-    companion object {
-        const val SPLASH_DURATION = 2000L
-    }
 }

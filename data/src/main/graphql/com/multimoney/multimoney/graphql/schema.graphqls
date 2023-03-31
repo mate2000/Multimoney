@@ -1755,45 +1755,45 @@ input AccountTransfer365DtoInput {
 }
 
 type PromissoryNoteMobile {
-  fk_Suv_Cat_Marca: Short!
+  fk_Suv_Cat_Marca: Short
 
-  id_Prestamo: Long!
+  id_Prestamo: Long
 
-  pagare: String!
+  pagare: String
 
-  saldo_Actual: Decimal!
+  saldo_Actual: Decimal
 
-  moneda: String!
+  moneda: String
 
-  resumen: [PromissoryNoteResumeMobile!]!
+  resumen: [PromissoryNoteResumeMobile!]
 
-  limite_credito: String!
+  limite_credito: String
 
-  limite_credito_label: String!
+  limite_credito_label: String
 
-  aplicaAumentoLinea: Boolean!
+  aplicaAumentoLinea: Boolean
 
-  comision_desembolso: String!
+  comision_desembolso: String
 
-  tasa_interes: String!
+  tasa_interes: String
 
-  plazo: String!
+  plazo: String
 
-  desc_producto: String!
+  desc_producto: String
 
-  saldo_monto_cancelar: Decimal!
+  saldo_monto_cancelar: Decimal
 
-  id_Producto_Principal: Short!
+  id_Producto_Principal: Short
 
-  moneda_Default: String!
+  moneda_Default: String
 
-  compra_Dolares: Decimal!
+  compra_Dolares: Decimal
 
-  venta_Dolares: Decimal!
+  venta_Dolares: Decimal
 
-  orden_Presentacion: Int!
+  orden_Presentacion: Int
 
-  puede_Ampliar: Boolean!
+  puede_Ampliar: Boolean
 
   micro_Credito: Boolean
 
@@ -1802,6 +1802,12 @@ type PromissoryNoteMobile {
   aplica_Debito_Aut: Boolean!
 
   expired_Debito_Aut_Card: Boolean
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input balanceCreditInput {
@@ -1818,6 +1824,12 @@ type CheckAccount {
   accounts: [CheckAccountResult!]
 
   request: RequestResult!
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input checkAccountInput {
@@ -1884,6 +1896,12 @@ type CardInformation {
   eSTADO: String
 
   rEMISION: Boolean
+
+  status: Int
+
+  message: String
+
+  detail: String
 }
 
 input balanceCardInformationInput {
@@ -5112,6 +5130,8 @@ input PinProcessDtoInput {
   email: String!
 
   cellphone: String!
+
+  flowOrigin: Int
 
   idBrand: Int
 

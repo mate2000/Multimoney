@@ -3,7 +3,7 @@
 
     <style name="Theme.SplashTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/black</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_screen_v31</item>
         <item name="postSplashScreenTheme">@style/Theme.Multimoney</item>
     </style>
 

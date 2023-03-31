@@ -10,8 +10,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 fun MmWebView(url: String, context: Context) {
     AndroidView(factory = {
         WebView(context).apply {
+            clearCache(true)
             webViewClient = WebViewClient()
             settings.javaScriptEnabled = true
+            settings.allowFileAccess = false
             loadUrl(url)
         }
     })
@@ -21,7 +23,9 @@ fun MmWebView(url: String, context: Context) {
 fun MmWebViewHtml(html: String, context: Context) {
     AndroidView(factory = {
         WebView(context).apply {
+            clearCache(true)
             webViewClient = WebViewClient()
+            settings.allowFileAccess = false
             loadData(formatHtmlToDarkMode(html), MIME_TYPE, HTML_ENCODING)
         }
     })

@@ -12,7 +12,7 @@ import com.multimoney.domain.model.balance.CardInformation
 import com.multimoney.domain.model.balance.Summary
 
 private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
-    summary = resumen.map {
+    summary = resumen?.map {
         Summary(
             idCurrency = it.id_Moneda,
             currency = it.moneda,
@@ -38,9 +38,9 @@ private fun BalanceQuery.BalanceCredit.mapToDomainModel() = BalanceCredit(
         )
     },
     creditLimit = limite_credito,
-    creditLimitLabel = limite_credito_label,
-    creditNumber = pagare,
-    term = plazo,
+    creditLimitLabel = limite_credito_label.orEmpty(),
+    creditNumber = pagare.orEmpty(),
+    term = plazo.orEmpty(),
     applyAutomaticDebit = aplica_Debito_Aut,
     automaticDebitEnabled = debito_Aut_Activo,
     expiredAutomaticDebitCard = expired_Debito_Aut_Card

@@ -54,7 +54,7 @@ class IbanAccountViewModel @Inject constructor(
     ) {
         saveCreditStepsHelper.saveStepOneCR(
             user,
-            "${Brand.CostaRica.iban}${uiState.accountNumber}"
+            "${Brand.CostaRica.iban}${uiState.accountNumber.replace(Brand.CostaRica.iban, "")}"
         )
         nextStepAction()
     }
@@ -63,21 +63,22 @@ class IbanAccountViewModel @Inject constructor(
         bankAccount: String,
         onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
     ) {
-        if (bankAccount.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
-            uiState = if (bankAccount.length in 1..IBAN_MAX_LENGTH.minus(1)) {
+        val bankAccountFormatted = bankAccount.replace(Brand.CostaRica.iban, "")
+        if (bankAccountFormatted.isDigitsOnly() && bankAccount.length <= IBAN_MAX_LENGTH) {
+            uiState = if (bankAccountFormatted.length in 1..IBAN_MAX_LENGTH.minus(1)) {
                 onValidForm(false)
                 uiState.copy(
-                    accountNumber = bankAccount,
+                    accountNumber = bankAccountFormatted,
                     accountError = Pair(true, R.string.iban_account_error)
                 )
             } else {
                 uiState.copy(
-                    accountNumber = bankAccount,
+                    accountNumber = bankAccountFormatted,
                     accountError = Pair(false, R.string.empty),
                     validationError = null
                 )
             }
-            if (bankAccount.length == IBAN_MAX_LENGTH) {
+            if (bankAccountFormatted.length == IBAN_MAX_LENGTH) {
                 validateIbanAccount { response ->
                     onFailureWithDialog(
                         false,
@@ -100,7 +101,7 @@ class IbanAccountViewModel @Inject constructor(
             uiState = uiState.copy(accountError = Pair(false, R.string.iban_account_loading))
 
             queryValidateBankAccountUseCase(
-                "$idBrandIban${uiState.accountNumber}",
+                "$idBrandIban${uiState.accountNumber.replace(Brand.CostaRica.iban, "")}",
                 identification,
                 BankAccountType.Credit.value,
                 email,
@@ -146,7 +147,7 @@ class IbanAccountViewModel @Inject constructor(
             user = user,
             idBrand = idBrand,
             identification = identification,
-            accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber),
+            accountNumber = Brand.CostaRica.iban.plus(uiState.accountNumber.replace(Brand.CostaRica.iban, "")),
             idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
             nameAccount = validateAccount?.name ?: "",
             country = Brand.CostaRica.countryCode,
@@ -202,8 +203,8 @@ class IbanAccountViewModel @Inject constructor(
         onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
     ) {
         val ibanNumber = list?.find { it?.description == SaveCreditStepsHelper.ACCOUNT_NUMBER }
-        uiState = uiState.copy(accountNumber = ibanNumber?.value ?: "")
-        if (uiState.accountNumber.isNotEmpty()) {
+        uiState = uiState.copy(accountNumber = ibanNumber?.value?.replace(Brand.CostaRica.iban, "") ?: "")
+        if (uiState.accountNumber.replace(Brand.CostaRica.iban, "").isNotEmpty()) {
             validateIbanAccount { response ->
                 onFailureWithDialog(
                     false,

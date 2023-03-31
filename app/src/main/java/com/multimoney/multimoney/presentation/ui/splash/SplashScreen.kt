@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnNavigateToNextScreen
+import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnCallQueryGetConfigurationVersion
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LockScreenOrientation
 import com.multimoney.multimoney.presentation.util.NavEvent
@@ -31,7 +31,7 @@ fun SplashScreen(
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
     SplashScreen(duration = SplashScreenViewModel.SPLASH_DURATION) {
-        viewModel.onUIEvent(OnNavigateToNextScreen)
+        viewModel.onUIEvent(OnCallQueryGetConfigurationVersion)
     }
 }
 

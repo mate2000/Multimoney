@@ -1837,4 +1837,12 @@
     <string name="amount_exceeded_release_error_message" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
     <string name="amount_exceeded_release_error_button" translatable="false">Ir al inicio</string>
     <string name="amount_exceeded_transaction_released" translatable="false">Transacción liberada exitosamente</string>
+
+    <!-- Force Update -->
+    <string name="force_update_button_label" translatable="false">Actualizar</string>
+    <string name="force_update_title_cr" translatable="false">Actualizá tu app</string>
+    <string name="force_update_title_gt_sv" translatable="false">Actualiza tu app</string>
+    <string name="force_update_message_cr" translatable="false">Para ingresar a tu app, actualizá</string>
+    <string name="force_update_message_gt_sv" translatable="false">Para ingresar a tu app, actualiza</string>
+    <string name="force_update_intent_package" translatable="false">com.android.vending</string>
 </resources>

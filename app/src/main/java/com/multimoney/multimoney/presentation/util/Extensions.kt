@@ -79,6 +79,22 @@ fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {
     }
 }
 
+fun Context.openGooglePlayStoreDeepLink(link: String, onFailure: () -> Unit = {}) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(link)
+            setPackage(resources.getString(R.string.force_update_intent_package))
+        }
+        this.startActivity(intent)
+    } catch (nullException: NullPointerException) {
+        onFailure()
+    } catch (security: SecurityException) {
+        onFailure()
+    } catch (noActivity: ActivityNotFoundException) {
+        onFailure()
+    }
+}
+
 fun Context.openMapsLink(locationAddress: String) {
     val mapsIntentUri = Uri.parse(locationAddress)
     val mapIntent = Intent(Intent.ACTION_VIEW, mapsIntentUri)

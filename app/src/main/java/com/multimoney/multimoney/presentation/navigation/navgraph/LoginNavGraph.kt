@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navtype.login.UserDataNavType
+import com.multimoney.multimoney.presentation.ui.forceupdate.ForceUpdateScreen
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailScreen
@@ -39,6 +40,15 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.SplashScreen.route) {
             SplashScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(route = Screen.ForceUpdateScreen.route) {
+            ForceUpdateScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }

@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Notice
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 
 @Composable
 @Preview
@@ -99,10 +100,7 @@ fun CryptoCurrencyMovementItem(
                             contentDescription = null
                         )
                         Text(
-                            text = stringResource(
-                                id = R.string.currency_item_dollar_symbol,
-                                movement.quoteAmount
-                            ),
+                            text = movement.quoteAmount.toDouble().toCurrencyFormat(),
                             style = Typography.subtitle1
                                 .copy(
                                     color = MultimoneyTheme.colors.text,
@@ -129,7 +127,18 @@ fun CryptoCurrencyMovementItem(
                         width = 1.dp,
                         color = MultimoneyTheme.colors.cryptoActionButtonEnable
                     ),
-                    onClick = { onReleaseTransactionClick(cryptoCurrencyMovement) }
+                    /* temporal solution while the design is finished,
+                         this is to avoid sending the user to the release transaction screen when month limit is exceeded*/
+                    enabled = cryptoCurrencyMovement.monthLimitExceeded.not(),
+                    onClick = {
+                        onReleaseTransactionClick(cryptoCurrencyMovement)
+                        // real solution
+                        /* (cryptoCurrencyMovement.monthLimitExceeded) {
+                            // go to month limit exceeded error screen
+                        } else {
+                            onReleaseTransactionClick(cryptoCurrencyMovement)
+                        }*/
+                    }
                 ) {
                     Text(
                         textAlign = TextAlign.Center,

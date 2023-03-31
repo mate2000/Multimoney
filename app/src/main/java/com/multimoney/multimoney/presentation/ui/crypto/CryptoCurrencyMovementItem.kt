@@ -100,7 +100,7 @@ fun CryptoCurrencyMovementItem(
                             contentDescription = null
                         )
                         Text(
-                            text = movement.quoteAmount.toDouble().toCurrencyFormat(),
+                            text = movement.quoteAmount.toDoubleOrNull()?.toCurrencyFormat().orEmpty(),
                             style = Typography.subtitle1
                                 .copy(
                                     color = MultimoneyTheme.colors.text,
@@ -130,15 +130,7 @@ fun CryptoCurrencyMovementItem(
                     /* temporal solution while the design is finished,
                          this is to avoid sending the user to the release transaction screen when month limit is exceeded*/
                     enabled = cryptoCurrencyMovement.monthLimitExceeded.not(),
-                    onClick = {
-                        onReleaseTransactionClick(cryptoCurrencyMovement)
-                        // real solution
-                        /* (cryptoCurrencyMovement.monthLimitExceeded) {
-                            // go to month limit exceeded error screen
-                        } else {
-                            onReleaseTransactionClick(cryptoCurrencyMovement)
-                        }*/
-                    }
+                    onClick = { onReleaseTransactionClick(cryptoCurrencyMovement) }
                 ) {
                     Text(
                         textAlign = TextAlign.Center,

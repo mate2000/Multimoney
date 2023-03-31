@@ -43,18 +43,25 @@ fun String.stringToIntegerFormat(separator: String? = null): String =
         this
     }
 
-// Format String to Integer decimal format
+// Format String to Double decimal format
 fun String.stringToDoubleFormat(separator: String? = null): String =
     if (isNotEmpty() && isValidAmount() && separator == null) {
-        DecimalFormat(DOUBLE_FORMAT).format(toDouble())
+        DecimalFormat(
+            DOUBLE_FORMAT,
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        ).format(toDouble())
     } else if (isNotEmpty() && isValidAmount() && separator != null) {
-        DecimalFormat(DOUBLE_FORMAT.replace(DOUBLE_FORMAT_SEPARATOR, separator)).format(toDouble())
+        DecimalFormat(
+            DOUBLE_FORMAT.replace(DOUBLE_FORMAT_SEPARATOR, separator),
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        ).format(toDouble())
     } else {
         this
     }
 
+// Using US locale to avoid crash converting to double when locale decimal separator is a comma
 fun Double.formattedTwoDecimalsNumber(): Double =
-    String.format(TWO_DECIMALS_FORMAT, this).toDouble()
+    String.format(Locale.US, TWO_DECIMALS_FORMAT, this).toDouble()
 
 fun String.isValidAmount() = DECIMAL_FORMAT_REGEX.matches(this)
 

@@ -20,6 +20,7 @@ import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
 import com.multimoney.domain.model.security.SendPinProcess
+import com.multimoney.domain.model.security.Token
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.security.UserEventMobileSave
 import com.multimoney.domain.model.security.UserPhoneMobileSave
@@ -514,6 +515,17 @@ class SecurityRepositoryImpl @Inject constructor(
                 Success(data.mapToDomainModel())
             }
         )
+
+    override suspend fun queryGetToken(): Flow<MultimoneyResult<Token>> = fetchData(
+        apolloCall = graphqlApi.queryGetToken(),
+        apolloCallMapper = { data ->
+            if (data.token.status == null || data.token.status == 0) {
+                Success(data.mapToDomainModel())
+            } else {
+                Message(data.mapToDomainModel())
+            }
+        }
+    )
 
     override suspend fun mutationPhoneValidation(
         phone: String?,

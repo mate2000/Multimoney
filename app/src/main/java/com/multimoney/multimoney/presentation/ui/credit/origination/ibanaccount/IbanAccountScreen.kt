@@ -156,8 +156,13 @@ fun IbanAccountScreen(
                 startIcon = R.drawable.ic_bank_account,
                 title = viewModel.validateAccount?.bankName ?: "",
                 subtitle = getMaskedAccount(
-                    viewModel.uiState.accountNumber,
-                    stringResource(id = R.string.payment_account_masked_text)
+                    accountNumber = viewModel.uiState.accountNumber,
+                    maskedText = stringResource(id = R.string.payment_account_masked_text),
+                    prefix = if (sharedViewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                        Brand.CostaRica.iban
+                    } else {
+                        Brand.Default.iban
+                    }
                 ),
                 endIcon = R.drawable.ic_edit_green,
                 onEndIconClick = {

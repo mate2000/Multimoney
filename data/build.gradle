@@ -23,6 +23,8 @@ android {
         buildConfigField "String", "WEBSOCKET_URL", websocketUrl
         buildConfigField "String", "DATA_STORE_KEY", dataStoreKey
         buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", dataStoreBiometricKey
+        buildConfigField "String", "CLIENT_ID", clientId
+        buildConfigField "String", "CLIENT_SECRET", clientSecret
     }
 
     buildTypes {

@@ -107,6 +107,12 @@ class HomeViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
+    init {
+        viewModelScope.launch {
+            dataStorePreferences.isSignUpFlow(false)
+        }
+    }
+
     private fun onsetUserData() {
         apiCallCount = 0
         viewModelScope.launch {

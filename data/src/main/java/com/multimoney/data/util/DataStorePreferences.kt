@@ -3,6 +3,7 @@ package com.multimoney.data.util
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.reflect.TypeToken
 import com.multimoney.data.base.BaseDataStorePreferences
@@ -589,6 +590,10 @@ class DataStorePreferences @Inject constructor(
         setData(IS_SIGN_UP_FLOW_KEY, isSignUpFlow)
 
     fun isSignUpFlow(): Flow<Boolean> = getData(IS_SIGN_UP_FLOW_KEY, false)
+
+    suspend fun clearData() {
+        dataStore.edit { it.clear() }
+    }
 
     companion object {
         private val IS_SIGN_UP_FLOW_KEY = booleanPreferencesKey("is_sign_up_flow_key")

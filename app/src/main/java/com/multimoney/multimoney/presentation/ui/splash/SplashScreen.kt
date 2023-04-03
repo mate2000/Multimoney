@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnCallQueryGetConfigurationVersion
@@ -20,12 +21,15 @@ fun SplashScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
+    // Properties
+    val context = LocalContext.current
+
     LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
     SplashScreen {
-        viewModel.onUIEvent(OnCallQueryGetConfigurationVersion)
+        viewModel.onUIEvent(OnCallQueryGetConfigurationVersion(context))
     }
 }
 

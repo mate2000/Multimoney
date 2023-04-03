@@ -37,17 +37,14 @@ fun ForceUpdateScreen(
 ) {
 
     // Properties
-
     val context = LocalContext.current
 
     //Navigation
-
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
     }
 
     // View
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,6 +89,7 @@ fun ForceUpdateScreen(
         )
     }
 
+    // Block Device Back Button
     BackHandler {
 
     }

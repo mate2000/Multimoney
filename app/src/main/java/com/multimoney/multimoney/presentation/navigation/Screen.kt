@@ -144,7 +144,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // LoginNavGraph Screens
     object SplashScreen : Screen("splash_screen")
-    object ForceUpdateScreen : Screen("force_update_screen")
+
+    object ForceUpdateScreen : Screen(
+        "force_update_screen?$ID_BRAND={$ID_BRAND}",
+        "force_update_screen"
+    )
+
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen :
         Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")

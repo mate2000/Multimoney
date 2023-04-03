@@ -47,7 +47,11 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.ForceUpdateScreen.route) {
+        composable(
+            route = Screen.ForceUpdateScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )) {
             ForceUpdateScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -109,7 +113,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     DEFAULT_STEP
                 )
                     ?: DEFAULT_STEP,
-                idBrand = navController.currentBackStackEntry?.arguments?.getInt(ID_BRAND,0),
+                idBrand = navController.currentBackStackEntry?.arguments?.getInt(ID_BRAND, 0),
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -238,8 +242,14 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             RegisteredUserOtpOptionsScreen(
                 onNavigate = { navController.navigate(it.route) },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

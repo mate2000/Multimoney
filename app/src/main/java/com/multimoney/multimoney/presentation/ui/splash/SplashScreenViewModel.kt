@@ -1,24 +1,26 @@
 package com.multimoney.multimoney.presentation.ui.splash
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryGetConfigurationVersionUseCase
 import com.multimoney.domain.model.util.catalog.ConfigurationPlatform
 import com.multimoney.domain.model.util.onFailure
-import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.splash.SplashScreenViewModel.UIEvent.OnCallQueryGetConfigurationVersion
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,24 +30,17 @@ class SplashScreenViewModel @Inject constructor(
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase
 ) : BaseViewModel(false) {
 
-    private fun callQueryGetConfigurationVersion() = executeUseCase {
+    private fun callQueryGetConfigurationVersion(context: Context) = executeUseCase {
         queryGetConfigurationVersionUseCase.invoke(
             platform = ConfigurationPlatform.Android.value,
             appVersion = BuildConfig.VERSION_NAME,
-            idBrand = if (dataStorePreferences.getIdBrand().firstOrNull()?.isNotEmpty() == true) {
-                dataStorePreferences.getIdBrand().first().toInt()
-            } else {
-                Brand.CostaRica.id
-            }
+            idBrand = getIdBrand(context)
         ).collectLatest { result ->
             result.onSuccess {
                 navigateToNextScreen()
             }
             result.onFailure {
-                navigateToForceUpdateScreen()
-            }
-            result.onLoading {
-
+                navigateToForceUpdateScreen(getIdBrand(context))
             }
         }
     }
@@ -64,10 +59,12 @@ class SplashScreenViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToForceUpdateScreen() {
+    private fun navigateToForceUpdateScreen(idBrand: Int) {
         registerSplashEvent()
         popAndNavigateTo(
-            route = Screen.ForceUpdateScreen.route,
+            route = Screen.ForceUpdateScreen.baseRoute.plus(
+                getNavParam(ID_BRAND, idBrand)
+            ),
             popTo = Screen.SplashScreen.route
         )
     }
@@ -85,15 +82,24 @@ class SplashScreenViewModel @Inject constructor(
         }
     }
 
+    private fun getIdBrand(context: Context): Int {
+        var idBrand = Brand.CostaRica.id
+        val countryCode = context.getUserCountry()
+        if (countryCode.isNotEmpty()) {
+            idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
+        }
+        return idBrand
+    }
+
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnNavigateToNextScreen -> navigateToNextScreen()
-            is OnCallQueryGetConfigurationVersion -> callQueryGetConfigurationVersion()
+            is OnCallQueryGetConfigurationVersion -> callQueryGetConfigurationVersion(event.context)
         }
     }
 
     sealed class UIEvent {
         object OnNavigateToNextScreen : UIEvent()
-        object OnCallQueryGetConfigurationVersion : UIEvent()
+        data class OnCallQueryGetConfigurationVersion(val context: Context) : UIEvent()
     }
 }

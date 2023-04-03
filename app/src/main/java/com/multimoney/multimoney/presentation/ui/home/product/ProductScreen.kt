@@ -74,6 +74,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSaveFirebaseToke
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateCollapsedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
@@ -120,21 +121,28 @@ fun ProductScreen(
     val context = LocalContext.current
     val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
 
-    viewModel.onUIEvent(
-        OnSetUserData(
-            idBrand = sharedViewModel.uiState.idBrand,
-            balanceCredit = sharedViewModel.uiState.balance,
-            pkUser = sharedViewModel.uiState.pkUser,
-            identification = sharedViewModel.uiState.identification,
-            email = sharedViewModel.uiState.email,
-            userName = sharedViewModel.uiState.userName,
-            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-            configurationVersion = sharedViewModel.uiState.configurationVersion,
-            productPageList = sharedViewModel.uiState.productPageList,
-            smartMovements = sharedViewModel.uiState.smartMovementsList,
-            creditMovements = sharedViewModel.uiState.creditMovementsList
+    LaunchedEffect(sharedViewModel.uiState) {
+        viewModel.onUIEvent(
+            OnSetUserData(
+                idBrand = sharedViewModel.uiState.idBrand,
+                balanceCredit = sharedViewModel.uiState.balance,
+                pkUser = sharedViewModel.uiState.pkUser,
+                identification = sharedViewModel.uiState.identification,
+                email = sharedViewModel.uiState.email,
+                userName = sharedViewModel.uiState.userName,
+                validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+                configurationVersion = sharedViewModel.uiState.configurationVersion,
+                productPageList = sharedViewModel.uiState.productPageList,
+                smartMovements = sharedViewModel.uiState.smartMovementsList,
+                creditMovements = sharedViewModel.uiState.creditMovementsList
+            )
         )
-    )
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnSaveFirebaseToke)
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
         viewModel.onUIEvent(OnNoVoConfig)

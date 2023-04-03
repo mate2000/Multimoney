@@ -32,24 +32,19 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
-import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -58,6 +53,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class SignInOTPViewModel @Inject constructor(
@@ -179,14 +180,14 @@ class SignInOTPViewModel @Inject constructor(
             registerAdjustEvent(
                 adjustEventType = AdjustEventType.SECURITY_LOGIN_RESEND_OTP_CHANGE_DEVICE_9004,
                 isLoggedIn = false,
-                data = EmailDto(email).toJson() ?: "",
+                data = EmailDto(email).toJson(),
                 applyAdjust = false
             )
         } else {
             registerAdjustEvent(
                 adjustEventType = AdjustEventType.SECURITY_LOGIN_OTP_BY_CALL_CHANGE_DEVICE_9005,
                 isLoggedIn = false,
-                data = EmailDto(email).toJson() ?: "",
+                data = EmailDto(email).toJson(),
                 applyAdjust = false
             )
         }
@@ -305,8 +306,8 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     private fun onSetupResources(context: Context) {
-        uiState = when (context.resources.configuration.locale.isO3Country) {
-            ISO3_COSTA_RICA -> {
+        uiState = when (context.getUserCountry().ifBlank { SIM_CODE_COSTA_RICA }) {
+            SIM_CODE_COSTA_RICA -> {
                 uiState.copy(
                     weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,
                     dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle_cr

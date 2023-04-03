@@ -22,7 +22,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
@@ -30,15 +29,14 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.ISO3_COSTA_RICA
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
@@ -52,7 +50,6 @@ fun SignUpEmailScreen(
     // Properties
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
-    val activity = LocalContext.current.findActivity() as FragmentActivity
 
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(OnShowCloseIcon(false))
@@ -95,7 +92,7 @@ fun SignUpEmailScreen(
                         false
                     )
                 )
-                if(userData?.isNewUser == false) {
+                if (userData?.isNewUser == false) {
                     sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnCheckIfEmailExists(userData))
                 } else {
                     viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
@@ -193,7 +190,10 @@ fun SignUpEmailScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = if (sharedViewModel.uiState.isO3Country == ISO3_COSTA_RICA) string.sign_up_email_header else string.sign_up_email_header_sv),
+            labelText = stringResource(
+                if (sharedViewModel.uiState.country == SIM_CODE_COSTA_RICA) string.sign_up_email_header
+                else string.sign_up_email_header_sv
+            ),
             placeHolder = stringResource(id = string.sign_up_email_placeholder),
             modifier = Modifier.padding(top = 24.dp),
             isRequired = true,

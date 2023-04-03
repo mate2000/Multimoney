@@ -44,9 +44,9 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnUpdateAllNames
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateDocument
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnValidateForm
-import com.multimoney.multimoney.presentation.util.ISO3_COSTA_RICA
-import com.multimoney.multimoney.presentation.util.ISO3_EL_SALVADOR
-import com.multimoney.multimoney.presentation.util.ISO3_GUATEMALA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.CrDocuments
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.GtDocuments
@@ -59,11 +59,11 @@ import com.multimoney.multimoney.presentation.util.validDui
 import com.multimoney.multimoney.presentation.util.validId
 import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPersonalDataViewModel @Inject constructor(
@@ -108,14 +108,14 @@ class SignUpPersonalDataViewModel @Inject constructor(
     )
 
     private fun setDefaultCountry(
-        iso3Country: String,
+        country: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
-        val deviceCountry = when (iso3Country) {
-            ISO3_COSTA_RICA -> Brand.CostaRica
-            ISO3_GUATEMALA -> Brand.Guatemala
-            ISO3_EL_SALVADOR -> Brand.ElSalvador
+        val deviceCountry = when (country) {
+            SIM_CODE_COSTA_RICA -> Brand.CostaRica
+            SIM_CODE_GUATEMALA -> Brand.Guatemala
+            SIM_CODE_EL_SALVADOR -> Brand.ElSalvador
             else -> Brand.Default
         }
         onSuccessCountry?.countryList?.find {
@@ -403,7 +403,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
         firstLastName: String,
         secondLastName: String,
         fullName: String,
-        iso3Country: String,
+        country: String,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
         onLoadingValueChange: (isLoading: Boolean) -> Unit
     ) {
@@ -411,7 +411,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             deviceId = dataStorePreferences.getDeviceId().first()
         }
         if (nationality.isEmpty()) setDefaultCountry(
-            iso3Country,
+            country,
             updateNationality,
             onLoadingValueChange
         )
@@ -701,7 +701,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 event.firstLastName,
                 event.secondLastName,
                 event.fullName,
-                event.iso3Country,
+                event.country,
                 event.updateNationality,
                 event.onLoadingValueChange
             )
@@ -758,7 +758,7 @@ class SignUpPersonalDataViewModel @Inject constructor(
             val firstLastName: String,
             val secondLastName: String,
             val fullName: String,
-            val iso3Country: String,
+            val country: String,
             val updateNationality: (nationality: String, idBrand: Int) -> Unit,
             val onLoadingValueChange: (isLoading: Boolean) -> Unit
         ) : UIEvent()

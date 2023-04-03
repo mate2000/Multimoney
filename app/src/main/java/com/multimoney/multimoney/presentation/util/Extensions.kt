@@ -38,14 +38,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
-
 
 fun Context.getUserCountry(): String {
     try {
@@ -283,12 +282,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-            Build.MODEL
-        } else {
-            "${Build.MANUFACTURER} ${Build.MODEL}"
-        }
-        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+        Build.MODEL
+    } else {
+        "${Build.MANUFACTURER} ${Build.MODEL}"
+    }
+    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -336,12 +335,10 @@ fun String.getCardNumberOne() = this.substring(0, 4)
 fun String.getCardNumberTwo() = this.substring(4, 8)
 fun String.getCardNumberThree() = this.substring(8, 12)
 fun String.getCardNumberFour() = this.substring(12, 16)
-fun String.formatExpirationDate() = if (this.length == 3) {
-    this.plus("0").plus(this.first()).plus("/").plus(this.takeLast(2))
-} else if (this.length == 4) {
-    this.take(2).plus("/").plus(this.takeLast(2))
-} else {
-    this
+fun String.formatExpirationDate() = when (this.length) {
+    3 -> this.plus("0").plus(this.first()).plus("/").plus(this.takeLast(2))
+    4 -> this.take(2).plus("/").plus(this.takeLast(2))
+    else -> this
 }
 
 fun String?.encodeURLToUTF(): String = URLEncoder.encode(
@@ -437,7 +434,6 @@ fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
         AddVisaCardErrors.EditFailed.value -> AddVisaCardErrors.EditFailed
         else -> AddVisaCardErrors.Default
     }
-
 
 /**
  * Format a phone number with a  "+Code Number" structure when you have

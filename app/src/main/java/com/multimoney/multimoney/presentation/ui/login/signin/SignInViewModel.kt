@@ -28,8 +28,8 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -179,7 +179,8 @@ class SignInViewModel @Inject constructor(
                                             } else {
                                                 uiState = uiState.copy(isLoading = false)
                                                 if (uiState.isFingerprintChecked) {
-                                                    uiState = uiState.copy(configureBiometric = true)
+                                                    uiState =
+                                                        uiState.copy(configureBiometric = true)
                                                 } else {
                                                     navigateToHome()
                                                 }
@@ -239,17 +240,17 @@ class SignInViewModel @Inject constructor(
             )
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
-                authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.isO3Country == SignUpViewModel.ISO3_COSTA_RICA)
-                            string.sign_in_session_blacklisted_title_cr
-                        else string.sign_in_session_blacklisted_title,
-                    descriptionResource = string.sign_in_session_blacklisted_message_sv,
+                    titleResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_session_blacklisted_title_cr
+                    else string.sign_in_session_blacklisted_title,
+                    descriptionResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_session_blacklisted_message_cr
+                    else string.sign_in_session_blacklisted_message_sv,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
                 ),
@@ -516,20 +517,20 @@ class SignInViewModel @Inject constructor(
     private fun onFingerprintCheckedChanged(
         value: Boolean,
         showDialog: Boolean,
-        is03Country: String
+        country: String
     ) {
         uiState = uiState.copy(
             isFingerprintChecked = value,
-            openDialog = getBiometricsDialogParameters(is03Country, showDialog)
+            openDialog = getBiometricsDialogParameters(country, showDialog)
         )
     }
 
     private fun getBiometricsDialogParameters(
-        is03Country: String,
+        country: String,
         showDialog: Boolean
     ): DialogParameters {
-        return when (is03Country) {
-            ISO3_COSTA_RICA -> {
+        return when (country) {
+            SIM_CODE_COSTA_RICA -> {
                 DialogParameters(
                     titleResource = string.active_biometric_title_cr,
                     descriptionResource = string.active_biometric_message_cr,
@@ -540,7 +541,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
-                                is03Country
+                                country
                             )
                         )
                     },
@@ -549,7 +550,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                is03Country
+                                country
                             )
                         )
                     },
@@ -558,7 +559,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                is03Country
+                                country
                             )
                         )
                     },
@@ -576,7 +577,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
-                                is03Country
+                                country
                             )
                         )
                     },
@@ -585,7 +586,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                is03Country
+                                country
                             )
                         )
                     },
@@ -594,7 +595,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                is03Country
+                                country
                             )
                         )
                     },
@@ -697,7 +698,7 @@ class SignInViewModel @Inject constructor(
         val isLoading: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val toastIsVisible: Boolean = false,
-        val isO3Country: String = "",
+        val country: String = "",
         val linkWhatsapp: String = "",
         val errorCode: CognitoErrorCode? = null
     )
@@ -722,7 +723,7 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
                 event.showDialog,
-                event.is03Country
+                event.country
             )
 
             is UIEvent.OnStart -> onStart(
@@ -737,9 +738,7 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
             is UIEvent.OnNavigateToSignUp -> onNavigateToSignUp()
             is UIEvent.OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
-            is UIEvent.OnUpdateIso3Country ->
-                uiState =
-                    uiState.copy(isO3Country = event.iso3Country)
+            is UIEvent.OnUpdateCountry -> uiState = uiState.copy(country = event.country)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
             is UIEvent.OnSetCountryCode -> setCountryCode(event.countryCode)
         }
@@ -770,7 +769,7 @@ class SignInViewModel @Inject constructor(
         data class OnFingerprintCheckedChanged(
             val value: Boolean,
             val showDialog: Boolean,
-            val is03Country: String
+            val country: String
         ) : UIEvent()
 
         data class OnStart(
@@ -784,7 +783,7 @@ class SignInViewModel @Inject constructor(
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
-        data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
+        data class OnUpdateCountry(val country: String) : UIEvent()
         data class OnOpenWhatsappLink(val context: Context) : UIEvent()
         data class OnSetCountryCode(val countryCode: String) : UIEvent()
     }
@@ -799,7 +798,6 @@ class SignInViewModel @Inject constructor(
         const val DEVICE_NAME = "DeviceName"
         const val IP_ADDRESS = "IpAddress"
         const val FORCE = "Force"
-        const val ISO3_COSTA_RICA = "CRI"
         const val GUEST_USER = "guest_user"
     }
 }

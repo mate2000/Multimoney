@@ -27,14 +27,13 @@ import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.Companion.SIGN_UP_INDICATOR_TOTAL_STEPS
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnMoveToStep
-import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateIso3Country
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateCountry
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.idverification.SignUpIdVerificationScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpScreen
@@ -50,6 +49,8 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.getUserCountry
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -63,7 +64,7 @@ fun SignUpScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val coroutineScope = rememberCoroutineScope()
-    val actualStep = if(isRestart) step else DEFAULT_STEP
+    val actualStep = if (isRestart) step else DEFAULT_STEP
 
     if (step != DEFAULT_STEP) {
         viewModel.onUIEvent(SignUpViewModel.UIEvent.OnSetIdBrand(idBrand = idBrand ?: 0))
@@ -74,10 +75,10 @@ fun SignUpScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnUpdateIso3Country(context.resources.configuration.locale.isO3Country))
+            onUIEvent(OnUpdateCountry(context.getUserCountry().ifBlank { SIM_CODE_COSTA_RICA }))
             onUIEvent(OnGetWhatsAppLink)
             if (actualStep != DEFAULT_STEP) {
-                onUIEvent(OnMoveToStep(actualStep.toInt()))
+                onUIEvent(OnMoveToStep(actualStep.toIntOrNull() ?: 0))
             }
         }
     }

@@ -179,8 +179,9 @@ class SignInViewModel @Inject constructor(
                                             } else {
                                                 uiState = uiState.copy(isLoading = false)
                                                 if (uiState.isFingerprintChecked) {
-                                                    uiState =
-                                                        uiState.copy(configureBiometric = true)
+                                                    uiState = uiState.copy(
+                                                        configureBiometric = true
+                                                    )
                                                 } else {
                                                     navigateToHome()
                                                 }

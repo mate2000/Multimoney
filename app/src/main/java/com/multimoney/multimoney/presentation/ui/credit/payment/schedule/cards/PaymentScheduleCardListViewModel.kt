@@ -41,6 +41,9 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_APPLICATION_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_ENDPOINT
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGORY
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -392,17 +395,4 @@ class PaymentScheduleCardListViewModel @Inject constructor(
         data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
     }
 
-    companion object {
-        const val RESULT_CODE_PROCESS_FINISHED = 200
-        const val RESULT_CODE_PROCESS_INCOMPLETE = 400
-        const val RESPONSE_VALUE = "response_value_key"
-        const val RESPONSE_IS_ERROR = "response_error_key"
-        const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
-        const val APPLICATION_NAME = "applicationName"
-        const val VISA_USER_NAME = "userName"
-        const val VISA_USER_PASS = "userPassword"
-        const val ENDPOINT = "endpoint"
-        const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
-        const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"
-    }
 }

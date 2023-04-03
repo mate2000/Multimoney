@@ -30,14 +30,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.ReactActivity
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.APPLICATION_NAME
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.ENDPOINT
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.RESPONSE_VALUE
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.RESPONSE_IS_ERROR
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.VISA_USER_NAME
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.Companion.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnAddCard
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
@@ -54,6 +46,14 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.VisaUtils.APPLICATION_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.ENDPOINT
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESPONSE_IS_ERROR
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESPONSE_VALUE
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESULT_CODE_PROCESS_FINISHED
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESULT_CODE_PROCESS_INCOMPLETE
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_USER_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_USER_PASS
 
 @Composable
 fun SmartPaymentCardsScreen(

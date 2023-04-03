@@ -70,11 +70,15 @@ android {
         production {
             minifyEnabled true
             shrinkResources true
+            crunchPngs false
             applicationIdSuffix ".cr"
             signingConfig signingConfigs.production
             matchingFallbacks = ['release']
         }
         staging {
+            minifyEnabled true
+            shrinkResources true
+            crunchPngs false
             applicationIdSuffix ""
             testCoverageEnabled true
             signingConfig signingConfigs.production
@@ -104,6 +108,9 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+        jniLibs {
+            useLegacyPackaging = false
         }
     }
 }

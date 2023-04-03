@@ -176,7 +176,8 @@ fun ProcessForgotPasswordContent(
                 placeHolder = stringResource(id = string.process_forgot_password_otp_placeholder),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 24.dp, start = 16.dp, end = 16.dp),
+                    .padding(top = 24.dp),
+                labelModifier = Modifier.padding(start = 16.dp, end = 16.dp),
                 isRequired = true,
                 isRequiredMessage = stringResource(id = string.process_forgot_password_otp_required)
             )

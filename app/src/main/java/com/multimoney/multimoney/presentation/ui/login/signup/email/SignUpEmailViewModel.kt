@@ -74,7 +74,7 @@ class SignUpEmailViewModel @Inject constructor(
 
     private fun isDataChanged() = previousUserEmail != uiState.userEmail
 
-    private fun callQueryValidationUserExistsUseCase(email: String, activity: FragmentActivity) =
+    private fun callQueryValidationUserExistsUseCase(email: String) =
         executeUseCase {
             queryValidateUserExistsUseCase(
                 email = email,
@@ -84,11 +84,10 @@ class SignUpEmailViewModel @Inject constructor(
             }
         }
 
-    private fun onNextActionClick(activity: FragmentActivity, nextStepAction: () -> Unit) {
+    private fun onNextActionClick(nextStepAction: () -> Unit) {
         if (isDataChanged() || isUserStatusIncomplete.not()) {
             callQueryValidationUserExistsUseCase(
-                uiState.userEmail,
-                activity
+                uiState.userEmail
             )
         } else {
             nextStepAction.invoke()
@@ -214,7 +213,7 @@ class SignUpEmailViewModel @Inject constructor(
         when (event) {
             is OnStart -> onStart(event.userCompletedDialogDescription, event.linkWhatsapp, event.blockedMessage)
             is OnValidateForm -> isFormValid()
-            is OnNextActionClick -> onNextActionClick(event.activity, event.nextStepAction)
+            is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnHandleUserStatus -> onHandleUserState(
                 event.previousStepAction,
                 event.onLoadingValueChange,
@@ -234,7 +233,7 @@ class SignUpEmailViewModel @Inject constructor(
             val blockedMessage: String
         ) : UIEvent()
 
-        data class OnNextActionClick(val activity: FragmentActivity, val nextStepAction: () -> Unit) : UIEvent()
+        data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
 
         data class OnHandleUserStatus(
             val context: Context,

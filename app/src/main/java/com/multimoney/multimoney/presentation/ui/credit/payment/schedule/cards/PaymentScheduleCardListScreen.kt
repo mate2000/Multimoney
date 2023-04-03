@@ -30,14 +30,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.ReactActivity
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.APPLICATION_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.ENDPOINT
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESPONSE_IS_ERROR
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESPONSE_VALUE
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.VISA_USER_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.Companion.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCardSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardListViewModel.UIEvent.OnHandleAddCardResponse
@@ -54,19 +46,32 @@ import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.VisaUtils.APPLICATION_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.ENDPOINT
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESPONSE_IS_ERROR
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESPONSE_VALUE
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESULT_CODE_PROCESS_FINISHED
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESULT_CODE_PROCESS_INCOMPLETE
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_USER_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 
 @Composable
 fun PaymentScheduleCardListScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
-    viewModel: PaymentScheduleCardListViewModel = hiltViewModel()
+    viewModel: PaymentScheduleCardListViewModel = hiltViewModel(),
+    isRestart: Boolean = true
 ) {
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnStart)
+            isOnRestart = isRestart
+            if (isOnRestart) {
+                executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
+                onUIEvent(OnStart)
+                isOnRestart = false
+            }
         }
     }
     PaymentScheduleAccountContent(viewModel)

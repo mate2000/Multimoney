@@ -144,10 +144,12 @@ ext {
     google_services_ads_version = "17.0.1"
     google_services_auth_version = "20.1.0"
     google_services_auth_api_phone_version = "18.0.1"
+    google_services_base_version = "18.2.0"
     tag_manager_version = "18.0.2"
 
     google_services = [
             plugin        : "com.google.gms:google-services:${google_services_version}",
+            base          : "com.google.android.gms:play-services-base:${google_services_base_version}",
             ads           : "com.google.android.gms:play-services-ads-identifier:${google_services_ads_version}",
             auth          : "com.google.android.gms:play-services-auth:$google_services_auth_version",
             auth_api_phone: "com.google.android.gms:play-services-auth-api-phone:$google_services_auth_api_phone_version",
@@ -365,4 +367,7 @@ ext {
     webkit = [
             webkit   : "org.webkit:android-jsc:$webkit_version"
     ]
+
+    android_core_splash_version = "1.0.0"
+    android_core_splash = "androidx.core:core-splashscreen:$android_core_splash_version"
 }

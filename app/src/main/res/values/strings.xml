@@ -983,7 +983,7 @@
     <string name="smart_card_balance" translatable="false">Saldo</string>
     <string name="smart_card_smart_title" translatable="false">Smart</string>
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
-    <string name="smart_card_monthly_profit_label" translatable="false">%1$s %2$s ganancia %3$s</string>
+    <string name="smart_card_monthly_profit_label" translatable="false">%1$s ganancia %2$s</string>
 
 
     <!-- Smart Evercita Escenario-->
@@ -1743,9 +1743,12 @@
     <string name="visa_direct_verify_deposit_dialog_do_not_see_title" translatable="false">¿No ves el movimiento?</string>
     <string name="visa_direct_verify_deposit_dialog_do_not_see_description" translatable="false">La transferencia puede durar unos minutos en reflejarse. Si no puedes ver el movimiento, contacta a tu banco.</string>
     <string name="visa_direct_verify_deposit_micro_deposit_placeholder" translatable="false">0</string>
-    <string name="visa_direct_verify_deposit_alert_success_title" translatable="false">¡Tu tarjeta fue agregada\ny verificada con éxito!</string>
-    <string name="visa_direct_verify_deposit_alert_success_button_from_payment" translatable="false">Continuar con abono</string>
-    <string name="visa_direct_verify_deposit_alert_success_button_from_smart" translatable="false">Continuar con desembolso</string>
+    <string name="visa_direct_verify_deposit_alert_success_title_payment" translatable="false">¡Tu tarjeta fue agregada\ny verificada con éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_title_smart" translatable="false">¡Tu tarjeta fue verificada\ny agregada con éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_title_profile" translatable="false">¡Tu tarjeta fue verificada\ncon éxito!</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_payment" translatable="false">Continuar con pago</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_smart" translatable="false">Continuar</string>
+    <string name="visa_direct_verify_deposit_alert_success_button_from_profile" translatable="false">Ver mis tarjetas</string>
     <string name="visa_direct_verify_deposit_alert_error_title" translatable="false">¡Oh no! Hubo un error</string>
     <string name="visa_direct_verify_deposit_alert_error_description" translatable="false">Contáctanos para darte\nmás información</string>
     <string name="visa_direct_verify_deposit_alert_error_button" translatable="false">Ir al inicio</string>

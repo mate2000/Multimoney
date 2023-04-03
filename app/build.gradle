@@ -85,9 +85,6 @@ android {
             matchingFallbacks = ['debug']
         }
         debug {
-            minifyEnabled true
-            shrinkResources true
-            crunchPngs false
             applicationIdSuffix ""
             testCoverageEnabled true
             signingConfig signingConfigs.production
@@ -135,6 +132,7 @@ dependencies {
     implementation google_services.auth
     implementation google_services.auth_api_phone
     implementation google_services.tag_manager
+    implementation google_services.base
 
     // Activity
     implementation activity.compose
@@ -279,6 +277,8 @@ dependencies {
     // Google Zxing
     implementation google_zxing
 
+    // Splash screen
+    implementation android_core_splash
 }
 
 dexguard {

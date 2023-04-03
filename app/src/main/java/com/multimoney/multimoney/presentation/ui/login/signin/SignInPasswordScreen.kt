@@ -1,5 +1,9 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
+import android.content.pm.PackageManager
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
+import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -93,14 +97,26 @@ fun SignInWithPassword(
                     onClick = { onSignInWithBiometricLink() }
                 )
             } else {
-                CustomCheckBox(
-                    checked = viewModel.uiState.isFingerprintChecked,
-                    onCheckedChange = { viewModel.onUIEvent(OnFingerprintCheckedChanged(it, it, context.resources.configuration.locale.isO3Country)) },
-                    text = stringResource(id = R.string.sign_in_activate_fingerprint),
-                    modifier = Modifier
-                        .padding(top = 51.dp)
-                        .absoluteOffset((-12).dp, 0.dp)
-                )
+                val biometricManager = BiometricManager.from(context)
+                val canAuthenticate = biometricManager.canAuthenticate(BIOMETRIC_WEAK)
+                if (canAuthenticate == BIOMETRIC_SUCCESS) {
+                    CustomCheckBox(
+                        checked = viewModel.uiState.isFingerprintChecked,
+                        onCheckedChange = {
+                            viewModel.onUIEvent(
+                                OnFingerprintCheckedChanged(
+                                    it,
+                                    it,
+                                    context.resources.configuration.locale.isO3Country
+                                )
+                            )
+                        },
+                        text = stringResource(id = R.string.sign_in_activate_fingerprint),
+                        modifier = Modifier
+                            .padding(top = 51.dp)
+                            .absoluteOffset((-12).dp, 0.dp)
+                    )
+                }
             }
         }
         CustomButton(

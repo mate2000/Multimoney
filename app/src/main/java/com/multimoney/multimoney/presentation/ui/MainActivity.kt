@@ -1,13 +1,19 @@
 package com.multimoney.multimoney.presentation.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.res.stringResource
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.security.ProviderInstaller
 import com.google.firebase.messaging.FirebaseMessaging
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.multimoney.presentation.navigation.navgraph.Navigation
@@ -28,7 +34,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), SignOutCommunicator {
+class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller.ProviderInstallListener {
 
     @Inject
     lateinit var mmCountDownTimer: MMCountDownTimer
@@ -48,8 +54,16 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
 
     private var activity: AppCompatActivity? = null
 
+    private var retryProviderInstall = false
+
+    private val providerUpdateResult = registerForActivityResult(StartIntentSenderForResult()) {
+        if (it.resultCode != Activity.RESULT_OK) retryProviderInstall = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        ProviderInstaller.installIfNeededAsync(this, this)
         activity = this
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
@@ -94,6 +108,17 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
                 }
             }
         }
+    }
+
+    // This function adds FLAG_SECURE when the app goes to the background to prevent screenshots
+    // being taken from the apps drawer and hide the contents when not in full view.
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        if (hasFocus) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
+        super.onWindowFocusChanged(hasFocus)
     }
 
     private fun saveToken(token: String) {
@@ -158,6 +183,24 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator {
     }
 
     override fun isSessionDuplicated() = isSessionAlreadyOpened
+
+    override fun onPostResume() {
+        super.onPostResume()
+        if (retryProviderInstall) ProviderInstaller.installIfNeededAsync(this, this)
+        retryProviderInstall = false
+    }
+
+    override fun onProviderInstallFailed(errorCode: Int, recoveryIntent: Intent?) {
+        GoogleApiAvailability.getInstance().apply {
+            if (isUserResolvableError(errorCode)) {
+                showErrorDialogFragment(this@MainActivity, errorCode, providerUpdateResult, null)
+            }
+        }
+    }
+
+    override fun onProviderInstalled() {
+        retryProviderInstall = false
+    }
 
     companion object {
         private const val ROUTE_KEY = "routeName"

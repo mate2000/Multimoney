@@ -81,16 +81,6 @@ fun VisaCardScreen(
     }
 
     // Navigation
-
-    viewModel.apply {
-        isOnRestart = isRestart
-        LaunchedEffect(isOnRestart) {
-            if (isOnRestart) {
-                onUIEvent(UIEvent.OnCallNovoGetFavoriteCard)
-                isOnRestart = false
-            }
-        }
-    }
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(

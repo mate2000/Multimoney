@@ -34,10 +34,13 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnHandleAddCardResponse
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStopTimer
-import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnResumeTimer
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_APPLICATION_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_ENDPOINT
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGORY
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
@@ -81,7 +84,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
         }
     }
 
-    private fun onAddCard(enabled: Boolean){
+    private fun onAddCard(enabled: Boolean) {
         uiState = uiState.copy(
             isAddCardEnabled = enabled
         )
@@ -133,7 +136,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
                 getNavParam(ID_BRAND, infoUser?.idBrand ?: 0)
             )
             .plus(
-                getNavParam(PREVIOUS_SCREEN, Screen.ProfileCardListScreen.baseRoute)
+                getNavParam(PREVIOUS_SCREEN, Screen.SmartPaymentCardsScreenSV.baseRoute)
             )
             .plus(
                 getNavParam(ADD_CARD_RESPONSE, response)
@@ -314,17 +317,5 @@ class SmartPaymentCardsViewModel @Inject constructor(
         data class OnAddCard(val enabled: Boolean) : UIEvent()
     }
 
-    companion object {
-        const val RESULT_CODE_PROCESS_FINISHED = 200
-        const val RESULT_CODE_PROCESS_INCOMPLETE = 400
-        const val RESPONSE_VALUE = "response_value_key"
-        const val RESPONSE_IS_ERROR = "response_error_key"
-        const val VISA_DIRECT_CATEGORY = "VISA_DIRECT"
-        const val APPLICATION_NAME = "applicationName"
-        const val VISA_USER_NAME = "userName"
-        const val VISA_USER_PASS = "userPassword"
-        const val ENDPOINT = "endpoint"
-        const val SEARCH_KEY_ENDPOINT = "FTT_SERVER_VISADIRECT"
-        const val SEARCH_KEY_APPLICATION_NAME = "APPLICATIONNAME_VISADIRECT"
-    }
+
 }

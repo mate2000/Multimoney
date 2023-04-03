@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
-import android.content.pm.PackageManager
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
 import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
@@ -34,10 +33,11 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
-fun SignInWithPassword(
+fun SignInPasswordScreen(
     viewModel: SignInViewModel,
     focusManager: FocusManager,
     modifier: Modifier = Modifier,
@@ -107,7 +107,7 @@ fun SignInWithPassword(
                                 OnFingerprintCheckedChanged(
                                     it,
                                     it,
-                                    context.resources.configuration.locale.isO3Country
+                                    context.getUserCountry()
                                 )
                             )
                         },

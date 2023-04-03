@@ -44,7 +44,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import com.multimoney.multimoney.presentation.util.FIRST_INDEX
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
@@ -80,8 +79,8 @@ fun SignInScreen(
                 )
             )
             onUIEvent(
-                SignInViewModel.UIEvent.OnUpdateIso3Country(
-                    context.resources.configuration.locales.get(FIRST_INDEX).isO3Country
+                SignInViewModel.UIEvent.OnUpdateCountry(
+                    context.getUserCountry()
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))
@@ -218,7 +217,7 @@ fun SignInContent(
                 }
             )
         } else {
-            SignInWithPassword(
+            SignInPasswordScreen(
                 viewModel = viewModel,
                 focusManager = focusManager,
                 onForgotPasswordClick = {

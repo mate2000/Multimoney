@@ -25,7 +25,6 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -42,6 +41,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
 @Composable
@@ -94,7 +94,7 @@ fun SignUpPersonalDataScreen(
                                 firstLastName = userData?.firstLastName ?: "",
                                 secondLastName = userData?.secondLastName ?: "",
                                 fullName = userData?.fullName ?: "",
-                                iso3Country = context.resources.configuration.locale.isO3Country,
+                                country = context.getUserCountry(),
                                 updateNationality = { nationality, idBrand ->
                                     sharedViewModel.onUIEvent(
                                         OnNationalityValueChange(nationality, idBrand)
@@ -150,7 +150,10 @@ fun SignUpPersonalDataScreen(
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
-                        openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(it, context)
+                        openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(
+                            it,
+                            context
+                        )
                     )
                 )
             }.onFailure {
@@ -176,7 +179,7 @@ fun SignUpPersonalDataScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 40.dp),
-            text = stringResource(id = R.string.sign_up_personal_data_nationality_header),
+            text = stringResource(id = string.sign_up_personal_data_nationality_header),
             style = Typography.h6.copy(
                 color = MultimoneyTheme.colors.titleText,
                 fontWeight = FontWeight.SemiBold,
@@ -208,9 +211,9 @@ fun SignUpPersonalDataScreen(
                     )
                 )
             },
-            labelText = stringResource(id = R.string.sign_up_personal_data_nationality),
+            labelText = stringResource(id = string.sign_up_personal_data_nationality),
             value = viewModel.uiState.nationalityValue,
-            placeHolder = stringResource(id = R.string.sign_up_personal_data_nationality_placeholder)
+            placeHolder = stringResource(id = string.sign_up_personal_data_nationality_placeholder)
         )
         when (viewModel.uiState.nationalityValue) {
             Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()

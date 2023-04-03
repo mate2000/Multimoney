@@ -52,11 +52,12 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
-import com.multimoney.multimoney.presentation.util.FIRST_INDEX
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
@@ -381,17 +382,17 @@ class SignUpViewModel @Inject constructor(
 
     fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
         if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
-            val country = context.resources.configuration.locales.get(FIRST_INDEX).isO3Country
+            val country = context.getUserCountry()
             DialogParameters(
-                titleResource = if (country == ISO3_COSTA_RICA) {
-                    string.sign_in_session_blacklisted_title_cr
+                titleResource = if (country == SIM_CODE_COSTA_RICA) {
+                    string.sign_up_session_blacklisted_title_cr
                 } else {
-                    string.sign_in_session_blacklisted_title
+                    string.sign_up_session_blacklisted_title
                 },
-                descriptionResource = if (country == ISO3_COSTA_RICA) {
-                    string.sign_in_session_blacklisted_message_cr
+                descriptionResource = if (country == SIM_CODE_COSTA_RICA) {
+                    string.sign_up_session_blacklisted_message_cr
                 } else {
-                    string.sign_in_session_blacklisted_message_sv
+                    string.sign_up_session_blacklisted_message_sv
                 },
                 positiveResource = string.sign_in_session_blacklisted_contact_support,
                 positiveAction = {
@@ -417,7 +418,7 @@ class SignUpViewModel @Inject constructor(
         val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(
             ModalBottomSheetValue.Hidden
         ),
-        val isO3Country: String = "",
+        val country: String = "",
         val shouldChangeOnRestart: Boolean = false
     )
 
@@ -435,8 +436,7 @@ class SignUpViewModel @Inject constructor(
             is OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is OnOpenDialogValueChange -> uiState = uiState.copy(openDialog = event.openDialog)
             is OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+                uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnNextStep -> nextStep()
             is OnUseDataValueChange -> {
                 if (event.idBrand != null) {
@@ -448,8 +448,7 @@ class SignUpViewModel @Inject constructor(
             is OnPreviousStep -> previousStep()
             is OnPhoneNumberValueChange -> onPhoneNumberChange(event.phoneNumber)
             is OnSharedIdentificationValueChange ->
-                userData =
-                    userData?.copy(identification = event.identificationValue)
+                userData = userData?.copy(identification = event.identificationValue)
             is OnNationalityValueChange -> onNationalityChange(event.nationality, event.idBrand)
             is OnCountryCountryCodeValueChange -> onCountryCodeChange(
                 event.countryCode,
@@ -476,7 +475,8 @@ class SignUpViewModel @Inject constructor(
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
-            is UIEvent.OnUpdateIso3Country -> uiState = uiState.copy(isO3Country = event.iso3Country)
+            is UIEvent.OnUpdateCountry ->
+                uiState = uiState.copy(country = event.country)
             is UIEvent.OnUpdatePassword -> pass = event.pass
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
@@ -538,7 +538,7 @@ class SignUpViewModel @Inject constructor(
         object OnShowPasswordBottomSheet : UIEvent()
         data class OnSetIdBrand(val idBrand: Int) : UIEvent()
         object OnExit : UIEvent()
-        data class OnUpdateIso3Country(val iso3Country: String) : UIEvent()
+        data class OnUpdateCountry(val country: String) : UIEvent()
         data class OnUpdatePassword(val pass: String) : UIEvent()
         data class OnCheckIfEmailExists(val userData: UserData?) : UIEvent()
         data class OnChangeRestartEvent(val shouldBeOnRestart: Boolean) : UIEvent()
@@ -548,6 +548,5 @@ class SignUpViewModel @Inject constructor(
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
-        const val ISO3_COSTA_RICA = "CRI"
     }
 }

@@ -169,12 +169,16 @@
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
     <string name="sign_up_general_close_dialog_title" translatable="false">¿Estás seguro de que quieres salir? ¡Ya casi terminamos!</string>
-
     <string name="sign_up_close_dialog_description" translatable="false">Puedes retomar el registro cuando quieras</string>
     <string name="sign_up_close_dialog_positive_button_text" translatable="false">Salir</string>
     <string name="sign_up_close_dialog_negative_button_text" translatable="false">Cancelar</string>
     <string name="sign_in_error_alert_dialog" translatable="false">Parece que hubo un error</string>
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
+    <string name="sign_up_session_blacklisted_title_cr" translatable="false">No podés realizar el registro</string>
+    <string name="sign_up_session_blacklisted_title" translatable="false">No puedes realizar el registro</string>
+    <string name="sign_up_session_blacklisted_message_cr" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
+    <string name="sign_up_session_blacklisted_message_sv" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
+
 
     <!-- Sign Up Costa rica-->
     <string name="sign_up_general_close_dialog_title_costa_rica" translatable="false">¿Estás seguro de que querés salir? ¡Ya casi terminamos!</string>

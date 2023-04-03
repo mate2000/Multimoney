@@ -21,9 +21,9 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
@@ -95,7 +95,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun getCountryCode(context: Context) = context.getUserCountry().ifBlank{ DEFAULT_REGION }
+    private fun getCountryCode(context: Context) = context.getUserCountry()
 
     private fun getStepContent(step: Int, context: Context): List<Int> = when (step) {
         STEP_ONE -> {
@@ -167,7 +167,10 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
             if (dataStorePreferences.isAdjustSingUpButtonClickedEventRegister().first()) {
-                registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_FIRST_BUTTON_CLICKED_2000, isLoggedIn = false)
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_FIRST_BUTTON_CLICKED_2000,
+                    isLoggedIn = false
+                )
                 dataStorePreferences.isAdjustSingUpButtonClickedEventRegister(false)
             }
 
@@ -217,6 +220,5 @@ class OnBoardingViewModel @Inject constructor(
         const val STEP_ICON = 2
         const val TOTAL_PRESS_TIME = 300
         const val QUARTER = 4
-        const val DEFAULT_REGION = "sv"
     }
 }

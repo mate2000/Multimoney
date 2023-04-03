@@ -101,6 +101,7 @@ import kotlinx.coroutines.launch
 fun OtpTextField(
     modifier: Modifier = Modifier,
     labelText: String? = null,
+    labelModifier: Modifier = Modifier,
     value: String = "",
     placeHolder: String = "",
     isValueFromSms: Boolean = false,
@@ -210,7 +211,8 @@ fun OtpTextField(
             Text(
                 text = labelText,
                 color = labelColor,
-                style = Typography.body2
+                style = Typography.body2,
+                modifier = labelModifier
             )
         }
         Row(

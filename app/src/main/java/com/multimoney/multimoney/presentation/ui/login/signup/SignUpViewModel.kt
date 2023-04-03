@@ -53,7 +53,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
-import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -383,7 +382,7 @@ class SignUpViewModel @Inject constructor(
 
     fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
         if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
-            val country = context.getUserCountry().ifBlank { SIM_CODE_EL_SALVADOR }
+            val country = context.getUserCountry()
             DialogParameters(
                 titleResource = if (country == SIM_CODE_COSTA_RICA) {
                     string.sign_up_session_blacklisted_title_cr

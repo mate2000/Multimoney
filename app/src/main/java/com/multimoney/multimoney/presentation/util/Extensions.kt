@@ -59,9 +59,9 @@ fun Context.getUserCountry(): String {
             }
         }
     } catch (e: Exception) {
-        return ""
+        return SIM_CODE_COSTA_RICA
     }
-    return ""
+    return SIM_CODE_COSTA_RICA
 }
 
 fun Context.openWhatsAppDeepLink(link: String, onFailure: () -> Unit = {}) {

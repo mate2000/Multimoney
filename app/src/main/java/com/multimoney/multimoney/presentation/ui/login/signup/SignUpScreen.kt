@@ -49,7 +49,6 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.StepProgressBar
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.getUserCountry
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -75,7 +74,7 @@ fun SignUpScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(OnUpdateCountry(context.getUserCountry().ifBlank { SIM_CODE_COSTA_RICA }))
+            onUIEvent(OnUpdateCountry(context.getUserCountry()))
             onUIEvent(OnGetWhatsAppLink)
             if (actualStep != DEFAULT_STEP) {
                 onUIEvent(OnMoveToStep(actualStep.toIntOrNull() ?: 0))

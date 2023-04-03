@@ -306,7 +306,7 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     private fun onSetupResources(context: Context) {
-        uiState = when (context.getUserCountry().ifBlank { SIM_CODE_COSTA_RICA }) {
+        uiState = when (context.getUserCountry()) {
             SIM_CODE_COSTA_RICA -> {
                 uiState.copy(
                     weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,

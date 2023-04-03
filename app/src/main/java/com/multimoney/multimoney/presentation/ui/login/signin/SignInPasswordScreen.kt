@@ -33,7 +33,6 @@ import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UI
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 
@@ -108,7 +107,7 @@ fun SignInPasswordScreen(
                                 OnFingerprintCheckedChanged(
                                     it,
                                     it,
-                                    context.getUserCountry().ifBlank { SIM_CODE_COSTA_RICA }
+                                    context.getUserCountry()
                                 )
                             )
                         },

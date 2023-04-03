@@ -45,7 +45,6 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.getDeviceName
@@ -81,7 +80,7 @@ fun SignInScreen(
             )
             onUIEvent(
                 SignInViewModel.UIEvent.OnUpdateCountry(
-                    context.getUserCountry().ifBlank { SIM_CODE_EL_SALVADOR }
+                    context.getUserCountry()
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))

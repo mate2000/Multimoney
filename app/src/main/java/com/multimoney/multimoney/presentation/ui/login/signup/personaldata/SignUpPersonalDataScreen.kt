@@ -39,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignU
 import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getUserCountry
@@ -95,7 +94,7 @@ fun SignUpPersonalDataScreen(
                                 firstLastName = userData?.firstLastName ?: "",
                                 secondLastName = userData?.secondLastName ?: "",
                                 fullName = userData?.fullName ?: "",
-                                country = context.getUserCountry().ifBlank { SIM_CODE_COSTA_RICA },
+                                country = context.getUserCountry(),
                                 updateNationality = { nationality, idBrand ->
                                     sharedViewModel.onUIEvent(
                                         OnNationalityValueChange(nationality, idBrand)
@@ -151,7 +150,10 @@ fun SignUpPersonalDataScreen(
                 sharedViewModel.onUIEvent(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
-                        openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(it, context)
+                        openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(
+                            it,
+                            context
+                        )
                     )
                 )
             }.onFailure {

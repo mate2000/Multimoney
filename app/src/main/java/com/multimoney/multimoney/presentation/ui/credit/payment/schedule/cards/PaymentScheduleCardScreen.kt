@@ -33,14 +33,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.ReactActivity
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.APPLICATION_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.ENDPOINT
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESPONSE_IS_ERROR
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESPONSE_VALUE
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESULT_CODE_PROCESS_FINISHED
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.RESULT_CODE_PROCESS_INCOMPLETE
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.VISA_USER_NAME
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.Companion.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnAlertCloseClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.PaymentScheduleCardViewModel.UIEvent.OnCloseClick
@@ -62,6 +54,14 @@ import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.VisaUtils.APPLICATION_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.ENDPOINT
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESPONSE_IS_ERROR
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESPONSE_VALUE
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESULT_CODE_PROCESS_FINISHED
+import com.multimoney.multimoney.presentation.util.VisaUtils.RESULT_CODE_PROCESS_INCOMPLETE
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_USER_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_USER_PASS
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 
 @Composable

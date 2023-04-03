@@ -139,7 +139,7 @@ fun ProductScreen(
         )
     }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(sharedViewModel.uiState.idBrand) {
         viewModel.onUIEvent(OnSaveFirebaseToke)
     }
 
@@ -530,15 +530,17 @@ fun ProductHeaderExpanded(
     viewModel: ProductViewModel,
     backPressed: () -> Unit
 ) {
-    HorizontalPager(
-        count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
-        state = state,
-        userScrollEnabled = false
-    ) { page ->
-        when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
-            ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
-            ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
-            ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
+    if (viewModel.uiState.expandedProductPageList.isNullOrEmpty().not()) {
+        HorizontalPager(
+            count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) { page ->
+            when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
+                ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
+                ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
+                ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
+            }
         }
     }
 }

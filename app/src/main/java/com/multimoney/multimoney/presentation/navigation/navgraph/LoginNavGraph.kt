@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navtype.login.UserDataNavType
+import com.multimoney.multimoney.presentation.ui.forceupdate.ForceUpdateScreen
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.ProcessForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.forgotpassword.request.RequestForgotPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailScreen
@@ -39,6 +40,19 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
     ) {
         composable(route = Screen.SplashScreen.route) {
             SplashScreen(
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(
+            route = Screen.ForceUpdateScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) { type = NavType.IntType }
+            )) {
+            ForceUpdateScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
@@ -99,7 +113,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     DEFAULT_STEP
                 )
                     ?: DEFAULT_STEP,
-                idBrand = navController.currentBackStackEntry?.arguments?.getInt(ID_BRAND,0),
+                idBrand = navController.currentBackStackEntry?.arguments?.getInt(ID_BRAND, 0),
                 onNavigate = {
                     navController.navigate(it.route)
                 },
@@ -228,8 +242,14 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             RegisteredUserOtpOptionsScreen(
                 onNavigate = { navController.navigate(it.route) },
                 onPopBackStack = {
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
-                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
                     navController.popBackStack(
                         route = it.popTo,
                         inclusive = false,

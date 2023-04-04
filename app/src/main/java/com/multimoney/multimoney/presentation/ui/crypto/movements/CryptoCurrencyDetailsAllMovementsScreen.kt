@@ -14,16 +14,16 @@ fun CryptoCurrencyDetailsAllMovementsScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {}
 ) {
-
     LaunchedEffect(true) {
-        cryptoMovementsViewModel.executeNavigation(
-            onPopBackStack = onPopBackStack,
-            onNavigate = onNavigate,
-            onPopAndNavigate = onPopAndNavigate
-        )
-
-        cryptoMovementsViewModel.onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnGetUserInfo)
-        cryptoMovementsViewModel.onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.GetCryptoMovements)
+        cryptoMovementsViewModel.apply {
+            executeNavigation(
+                onPopBackStack = onPopBackStack,
+                onNavigate = onNavigate,
+                onPopAndNavigate = onPopAndNavigate
+            )
+            onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnGetUserInfo)
+            onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.GetCryptoMovements)
+        }
     }
 
     BackHandler {
@@ -31,10 +31,15 @@ fun CryptoCurrencyDetailsAllMovementsScreen(
     }
     CryptoMovementsScreenContent(
         cryptoMovements = cryptoMovementsViewModel.uiState.cryptoMovements,
-        onBackPressed = { cryptoMovementsViewModel.onUIEvent(CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnNavigateBack) },
+        onBackPressed = {
+            cryptoMovementsViewModel.onUIEvent(
+                CryptoCurrencyDetailsAllMovementsScreenViewModel.UIEvent.OnNavigateBack
+            )
+        },
         onNavigateToReleaseTransaction = {
             cryptoMovementsViewModel.onUIEvent(
                 OnNavigateToReleaseTransaction(it)
-        )}
+            )
+        }
     )
 }

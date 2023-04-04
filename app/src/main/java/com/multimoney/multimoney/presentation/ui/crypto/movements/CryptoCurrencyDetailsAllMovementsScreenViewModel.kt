@@ -60,7 +60,10 @@ class CryptoCurrencyDetailsAllMovementsScreenViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoCurrencyDetailsAllMovementsScreen.baseRoute}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+                .plus("/${cryptoItem?.monthLimitExceeded}")
+                .plus("/${Screen.CryptoCurrencyDetailsAllMovementsScreen.baseRoute}")
+        )
     }
 
     data class UIState(

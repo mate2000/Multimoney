@@ -71,7 +71,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                 assetDescription = marketCryptoCoin?.description,
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
-                assetImageBaseUrl = marketCryptoCoin?.url_image,
+                assetImageBaseUrl = marketCryptoCoin?.urlImage,
                 shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
             )
         }
@@ -266,7 +266,7 @@ class PurchaseCryptoSharedViewModel @Inject constructor(
                     asset = event.selectedCrypto.baseAsset,
                     assetDescription = event.selectedCrypto.description,
                     cryptoNetWork = event.selectedCrypto.cryptoNetwork,
-                    assetImageBaseUrl = event.selectedCrypto.url_image,
+                    assetImageBaseUrl = event.selectedCrypto.urlImage,
                     market = event.selectedCrypto.baseAsset.plus(CurrencyType.Dollar.disbursementValue)
                 )
             }

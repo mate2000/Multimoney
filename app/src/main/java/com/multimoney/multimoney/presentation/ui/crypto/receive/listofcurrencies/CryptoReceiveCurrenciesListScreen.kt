@@ -324,7 +324,7 @@ fun ListOfCoinsSection(
         items(filteredListByQuery) { cryptoCoin ->
             cryptoCoin.amountchange?.let {
                 MarketCurrencyItem(
-                    imageUrl = cryptoCoin.url_image,
+                    imageUrl = cryptoCoin.urlImage,
                     descriptionCurrency = cryptoCoin.description,
                     asset = cryptoCoin.baseAsset,
                     amountChange = it,

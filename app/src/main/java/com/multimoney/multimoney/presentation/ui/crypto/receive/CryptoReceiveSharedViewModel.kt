@@ -43,7 +43,7 @@ class CryptoReceiveSharedViewModel @Inject constructor(
 
             uiState = uiState.copy(
             asset = marketCryptoCoin?.baseAsset,
-            imageUrl = marketCryptoCoin?.url_image,
+            imageUrl = marketCryptoCoin?.urlImage,
             assetDescription = marketCryptoCoin?.description,
             cryptoNetWork = marketCryptoCoin?.cryptoNetwork
             )
@@ -87,7 +87,7 @@ class CryptoReceiveSharedViewModel @Inject constructor(
             is UIEvent.OnCryptoSelected -> {
                 uiState = uiState.copy(
                     asset = event.selectedCrypto.baseAsset,
-                    imageUrl = event.selectedCrypto.url_image,
+                    imageUrl = event.selectedCrypto.urlImage,
                     assetDescription = event.selectedCrypto.description,
                     cryptoNetWork = event.selectedCrypto.cryptoNetwork
                 )

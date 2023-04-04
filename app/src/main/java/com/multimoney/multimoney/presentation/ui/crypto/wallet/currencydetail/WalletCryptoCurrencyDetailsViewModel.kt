@@ -167,14 +167,14 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     private fun onNavigateToSelectAccount() {
         navigateTo(
             "${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoWalletDetailsScreen.baseRoute}?$ITEM_CRYPTO_MARKET=${
-            encodeData(
-                MarketCryptoCoin(
-                    description = uiState.cryptoItem?.descriptionCurrency ?: "",
-                    baseAsset = uiState.cryptoItem?.asset ?: "",
-                    url_image = uiState.cryptoItem?.url_image ?: "",
-                    cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                encodeData(
+                    MarketCryptoCoin(
+                        description = uiState.cryptoItem?.descriptionCurrency ?: "",
+                        baseAsset = uiState.cryptoItem?.asset ?: "",
+                        urlImage = uiState.cryptoItem?.url_image ?: "",
+                        cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
+                    )
                 )
-            )
             }"
         )
     }
@@ -186,7 +186,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                     MarketCryptoCoin(
                         description = uiState.cryptoItem?.descriptionCurrency ?: "",
                         baseAsset = uiState.cryptoItem?.asset ?: "",
-                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        urlImage = uiState.cryptoItem?.url_image ?: "",
                         cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
                     )
                 )
@@ -231,7 +231,11 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoWalletDetailsScreen.baseRoute}")
+        navigateTo(
+            "${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+                .plus("/${cryptoItem?.monthLimitExceeded}")
+                .plus("/${Screen.CryptoWalletDetailsScreen.baseRoute}")
+        )
     }
 
     private fun onNavigateToSendCrypto() {
@@ -242,7 +246,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
-            url_image = uiState.cryptoItem?.url_image ?: "",
+            urlImage = uiState.cryptoItem?.url_image ?: "",
             cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
         ))}")
     }

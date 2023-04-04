@@ -121,23 +121,21 @@ fun ProductScreen(
     val context = LocalContext.current
     val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
 
-    LaunchedEffect(sharedViewModel.uiState) {
-        viewModel.onUIEvent(
-            OnSetUserData(
-                idBrand = sharedViewModel.uiState.idBrand,
-                balanceCredit = sharedViewModel.uiState.balance,
-                pkUser = sharedViewModel.uiState.pkUser,
-                identification = sharedViewModel.uiState.identification,
-                email = sharedViewModel.uiState.email,
-                userName = sharedViewModel.uiState.userName,
-                validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-                configurationVersion = sharedViewModel.uiState.configurationVersion,
-                productPageList = sharedViewModel.uiState.productPageList,
-                smartMovements = sharedViewModel.uiState.smartMovementsList,
-                creditMovements = sharedViewModel.uiState.creditMovementsList
-            )
+    viewModel.onUIEvent(
+        OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList,
+            smartMovements = sharedViewModel.uiState.smartMovementsList,
+            creditMovements = sharedViewModel.uiState.creditMovementsList
         )
-    }
+    )
 
     LaunchedEffect(sharedViewModel.uiState.idBrand) {
         viewModel.onUIEvent(OnSaveFirebaseToke)
@@ -566,31 +564,33 @@ fun ProductContent(
             val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
             val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
 
-            when (viewModel.uiState.productPageList?.get(page)?.product) {
-                ProductType.Credit.value -> CreditContent(viewModel = viewModel)
-                ProductType.Smart.value -> SmartContent(
-                    viewModel = viewModel,
-                    viewModel.uiState.productPageList?.get(page)?.productSmartIndex ?: 0
-                )
-                ProductType.Crypto.value -> CryptoContent(
-                    userStatus = viewModel.uiState.userStatus,
-                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    cryptoEmptyState = profileEnable,
-                    clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
-                    openSmartCryptoAction = {
-                        viewModel.onUIEvent(
-                            OnNavigateToSmartOriginationFlow(
-                                comingFromCrypto = true,
-                                smartStep = viewModel.uiState.smartContent.second,
-                                onIntent = {
-                                    context.openWhatsAppDeepLink(
-                                        viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
-                                    )
-                                }
+            if (viewModel.uiState.productPageList.isNullOrEmpty().not()) {
+                when (viewModel.uiState.productPageList?.get(page)?.product) {
+                    ProductType.Credit.value -> CreditContent(viewModel = viewModel)
+                    ProductType.Smart.value -> SmartContent(
+                        viewModel = viewModel,
+                        viewModel.uiState.productPageList?.get(page)?.productSmartIndex ?: 0
+                    )
+                    ProductType.Crypto.value -> CryptoContent(
+                        userStatus = viewModel.uiState.userStatus,
+                        cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                        cryptoEmptyState = profileEnable,
+                        clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                        openSmartCryptoAction = {
+                            viewModel.onUIEvent(
+                                OnNavigateToSmartOriginationFlow(
+                                    comingFromCrypto = true,
+                                    smartStep = viewModel.uiState.smartContent.second,
+                                    onIntent = {
+                                        context.openWhatsAppDeepLink(
+                                            viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                        )
+                                    }
+                                )
                             )
-                        )
-                    }
-                )
+                        }
+                    )
+                }
             }
         }
         Row(

@@ -52,7 +52,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowPasswordBottomSheet
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
-import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -384,15 +384,15 @@ class SignUpViewModel @Inject constructor(
         if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
             val country = context.getUserCountry()
             DialogParameters(
-                titleResource = if (country == SIM_CODE_COSTA_RICA) {
-                    string.sign_up_session_blacklisted_title_cr
-                } else {
+                titleResource = if (country == SIM_CODE_EL_SALVADOR) {
                     string.sign_up_session_blacklisted_title
-                },
-                descriptionResource = if (country == SIM_CODE_COSTA_RICA) {
-                    string.sign_up_session_blacklisted_message_cr
                 } else {
+                    string.sign_up_session_blacklisted_title_cr
+                },
+                descriptionResource = if (country == SIM_CODE_EL_SALVADOR) {
                     string.sign_up_session_blacklisted_message_sv
+                } else {
+                    string.sign_up_session_blacklisted_message_cr
                 },
                 positiveResource = string.sign_in_session_blacklisted_contact_support,
                 positiveAction = {

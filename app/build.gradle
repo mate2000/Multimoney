@@ -76,11 +76,12 @@ android {
             matchingFallbacks = ['release']
         }
         staging {
+            minifyEnabled true
+            shrinkResources true
             crunchPngs false
             applicationIdSuffix ""
             testCoverageEnabled true
             signingConfig signingConfigs.production
-            matchingFallbacks = ['debug']
         }
         debug {
             applicationIdSuffix ""

@@ -76,8 +76,6 @@ android {
             matchingFallbacks = ['release']
         }
         staging {
-            minifyEnabled true
-            shrinkResources true
             crunchPngs false
             applicationIdSuffix ""
             testCoverageEnabled true

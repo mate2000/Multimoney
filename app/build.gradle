@@ -68,20 +68,17 @@ android {
 
     buildTypes {
         production {
-            minifyEnabled true
-            shrinkResources true
             crunchPngs false
             applicationIdSuffix ".cr"
             signingConfig signingConfigs.production
             matchingFallbacks = ['release']
         }
         staging {
-            minifyEnabled true
-            shrinkResources true
             crunchPngs false
             applicationIdSuffix ""
             testCoverageEnabled true
             signingConfig signingConfigs.production
+            matchingFallbacks = ['debug']
         }
         debug {
             applicationIdSuffix ""

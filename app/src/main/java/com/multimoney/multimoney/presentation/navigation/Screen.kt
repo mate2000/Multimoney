@@ -123,6 +123,7 @@ const val STATUS_CRYPTO = "status_crypto"
 const val CARD_STATUS = "card_status"
 const val CRYPTO_ASSET = "asset"
 const val ID_TRANSACTION = "id_transaction"
+const val MOVEMENT_MONTH_LIMIT_EXCEEDED = "movement_month_limit_exceeded"
 const val DESCRIPTION_CURRENCY = "description_currency"
 const val CONTACTS = "contacts"
 const val USER_DATA = "user_data"
@@ -696,7 +697,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object QrCodeScannerScreen : Screen(route = "qr_code_scanner_screen")
 
     object ReleaseTransactionScreen : Screen(
-        route = "release_transaction/{$CRYPTO_ASSET}/{$ID_TRANSACTION}/{$PREVIOUS_SCREEN}",
+        route = "release_transaction/{$CRYPTO_ASSET}/{$ID_TRANSACTION}/{$MOVEMENT_MONTH_LIMIT_EXCEEDED}/{$PREVIOUS_SCREEN}",
         baseRoute = "release_transaction"
 
     )

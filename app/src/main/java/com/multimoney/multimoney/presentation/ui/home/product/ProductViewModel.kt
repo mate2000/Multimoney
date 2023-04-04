@@ -1173,7 +1173,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.HomeScreen.route}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+            .plus("/${cryptoItem?.monthLimitExceeded}")
+            .plus("/${Screen.HomeScreen.route}")
+        )
     }
 
     private fun registerAdjustCryptoHomeFirstTimeEvent() = viewModelScope.launch {

@@ -121,25 +121,23 @@ fun ProductScreen(
     val context = LocalContext.current
     val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
 
-    LaunchedEffect(sharedViewModel.uiState) {
-        viewModel.onUIEvent(
-            OnSetUserData(
-                idBrand = sharedViewModel.uiState.idBrand,
-                balanceCredit = sharedViewModel.uiState.balance,
-                pkUser = sharedViewModel.uiState.pkUser,
-                identification = sharedViewModel.uiState.identification,
-                email = sharedViewModel.uiState.email,
-                userName = sharedViewModel.uiState.userName,
-                validateUserStatus = sharedViewModel.uiState.validateUserStatus,
-                configurationVersion = sharedViewModel.uiState.configurationVersion,
-                productPageList = sharedViewModel.uiState.productPageList,
-                smartMovements = sharedViewModel.uiState.smartMovementsList,
-                creditMovements = sharedViewModel.uiState.creditMovementsList
-            )
+    viewModel.onUIEvent(
+        OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList,
+            smartMovements = sharedViewModel.uiState.smartMovementsList,
+            creditMovements = sharedViewModel.uiState.creditMovementsList
         )
-    }
+    )
 
-    LaunchedEffect(true) {
+    LaunchedEffect(sharedViewModel.uiState.idBrand) {
         viewModel.onUIEvent(OnSaveFirebaseToke)
     }
 
@@ -182,7 +180,7 @@ fun ProductScreen(
                                 event.flow,
                                 onLoadingValueChange = {
                                     sharedViewModel.onUIEvent(
-                                        HomeViewModel.UIEvent.OnLoadingValueChanged(
+                                        UIEvent.OnLoadingValueChanged(
                                             it
                                         )
                                     )
@@ -256,7 +254,7 @@ fun ProductScreen(
         footerPagerState.scrollToPage(contentPagerState.currentPage)
         viewModel.onUIEvent(OnUpdateCollapsedPage(contentPagerState.currentPage))
         if (viewModel.uiState.productPageList?.isNotEmpty() == true && viewModel.uiState.isExpanded.not()) {
-            val currentProductPage = viewModel.uiState.productPageList?.get(contentPagerState.currentPage)
+            val currentProductPage = viewModel.uiState.productPageList?.getOrNull(contentPagerState.currentPage)
             if (currentProductPage?.enabled == true) {
                 val currentExpandedProductPageIndex =
                     viewModel.uiState.expandedProductPageList?.indexOfFirst { it.index == currentProductPage.index }
@@ -530,15 +528,17 @@ fun ProductHeaderExpanded(
     viewModel: ProductViewModel,
     backPressed: () -> Unit
 ) {
-    HorizontalPager(
-        count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
-        state = state,
-        userScrollEnabled = false
-    ) { page ->
-        when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
-            ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
-            ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
-            ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
+    if (viewModel.uiState.expandedProductPageList.isNullOrEmpty().not()) {
+        HorizontalPager(
+            count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) {
+            when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
+                ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
+                ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
+                ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
+            }
         }
     }
 }
@@ -562,33 +562,36 @@ fun ProductContent(
             // verify if the user has crypto or crypto movements to show the card empty state
             val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
             val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
-            val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+            val profileEnable =
+                !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
 
-            when (viewModel.uiState.productPageList?.get(page)?.product) {
-                ProductType.Credit.value -> CreditContent(viewModel = viewModel)
-                ProductType.Smart.value -> SmartContent(
-                    viewModel = viewModel,
-                    viewModel.uiState.productPageList?.get(page)?.productSmartIndex ?: 0
-                )
-                ProductType.Crypto.value -> CryptoContent(
-                    userStatus = viewModel.uiState.userStatus,
-                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
-                    cryptoEmptyState = profileEnable,
-                    clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
-                    openSmartCryptoAction = {
-                        viewModel.onUIEvent(
-                            OnNavigateToSmartOriginationFlow(
-                                comingFromCrypto = true,
-                                smartStep = viewModel.uiState.smartContent.second,
-                                onIntent = {
-                                    context.openWhatsAppDeepLink(
-                                        viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
-                                    )
-                                }
+            if (viewModel.uiState.productPageList.isNullOrEmpty().not()) {
+                when (viewModel.uiState.productPageList?.getOrNull(page)?.product) {
+                    ProductType.Credit.value -> CreditContent(viewModel = viewModel)
+                    ProductType.Smart.value -> SmartContent(
+                        viewModel = viewModel,
+                        viewModel.uiState.productPageList?.getOrNull(page)?.productSmartIndex ?: 0
+                    )
+                    ProductType.Crypto.value -> CryptoContent(
+                        userStatus = viewModel.uiState.userStatus,
+                        cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                        cryptoEmptyState = profileEnable,
+                        clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                        openSmartCryptoAction = {
+                            viewModel.onUIEvent(
+                                OnNavigateToSmartOriginationFlow(
+                                    comingFromCrypto = true,
+                                    smartStep = viewModel.uiState.smartContent.second,
+                                    onIntent = {
+                                        context.openWhatsAppDeepLink(
+                                            viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                        )
+                                    }
+                                )
                             )
-                        )
-                    }
-                )
+                        }
+                    )
+                }
             }
         }
         Row(
@@ -629,11 +632,11 @@ fun ProductContentExpanded(
             val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
             val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
 
-            when (viewModel.uiState.expandedProductPageList?.get(page)?.product) {
+            when (viewModel.uiState.expandedProductPageList?.getOrNull(page)?.product) {
                 ProductType.Credit.value -> CreditContent(viewModel = viewModel)
                 ProductType.Smart.value -> SmartContent(
                     viewModel = viewModel,
-                    viewModel.uiState.expandedProductPageList?.get(page)?.productSmartIndex ?: 0
+                    viewModel.uiState.expandedProductPageList?.getOrNull(page)?.productSmartIndex ?: 0
                 )
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
@@ -685,7 +688,7 @@ fun ProductFooter(
         state = state,
         userScrollEnabled = false
     ) {
-        when (viewModel.uiState.productPageList?.get(viewModel.uiState.collapsedPage)?.product) {
+        when (viewModel.uiState.productPageList?.getOrNull(viewModel.uiState.collapsedPage)?.product) {
             ProductType.Credit.value -> CreditFooter(
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,
@@ -699,7 +702,7 @@ fun ProductFooter(
                     viewModel.onUIEvent(
                         OnCreateMultimoneyVisa(onLoadingValueChange = {
                             sharedViewModel.onUIEvent(
-                                HomeViewModel.UIEvent.OnLoadingValueChanged(
+                                UIEvent.OnLoadingValueChanged(
                                     it
                                 )
                             )
@@ -724,15 +727,15 @@ fun ProductFooterExpanded(
         count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
         state = state,
         userScrollEnabled = false
-    ) { page ->
-        when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
+    ) {
+        when (viewModel.uiState.expandedProductPageList?.getOrNull(viewModel.uiState.expandedPage)?.product) {
             ProductType.Credit.value -> CreditFooterExpanded(
                 viewModel = viewModel,
                 sharedViewModel = sharedViewModel
             )
             ProductType.Smart.value -> SmartFooterExpanded(
                 viewModel = viewModel,
-                viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.productSmartIndex ?: 0
+                viewModel.uiState.expandedProductPageList?.getOrNull(viewModel.uiState.expandedPage)?.productSmartIndex ?: 0
             )
             ProductType.Crypto.value -> CryptoFooterExpanded(
                 userStatus = viewModel.uiState.userStatus,
@@ -777,7 +780,7 @@ fun ProductCtaFooterExpanded(
         count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
         state = state,
         userScrollEnabled = false
-    ) { page ->
+    ) {
         when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
             ProductType.Credit.value -> CreditCtaFooterExpanded(
                 viewModel = viewModel,
@@ -863,9 +866,7 @@ fun TipBox(content: @Composable () -> Unit) {
     Box(
         modifier = Modifier
             .size(152.dp, 140.dp)
-            .padding(
-                end = 12.dp
-            )
+            .padding(end = 12.dp)
     ) {
         CustomImage(
             drawableResource = R.drawable.ic_tip_background,

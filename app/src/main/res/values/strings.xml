@@ -141,7 +141,7 @@
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
     <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
-    <string name="sign_in_session_blacklisted_title" translatable="false">¿No puedes entrar a MultiMoney?</string>
+    <string name="sign_in_session_blacklisted_title_sv" translatable="false">¿No puedes entrar a MultiMoney?</string>
     <string name="sign_in_session_blacklisted_message_cr" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
     <string name="sign_in_session_blacklisted_message_sv" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_in_session_open_here_close_another" translatable="false">Al ingresar aquí, cerrarás la sesión que se encuentra abierta en otro dispositivo</string>
@@ -1838,10 +1838,18 @@
     <string name="amount_exceeded_platform" translatable="false">¿Desde qué plataforma se realizó el envío? </string>
     <string name="amount_exceeded_reason" translatable="false">¿Cuál fue el motivo de envío?</string>
     <string name="amount_exceeded_button" translatable="false">Liberar depósito</string>
-    <string name="amount_exceeded_dialog_title" translatable="false">Recibiste cripto</string>
-    <string name="amount_exceeded_dialog_message" translatable="false">Se te han transferido más de $10,000, te contactaremos para verificar el origen de fondos y que puedas recibir el dinero.</string>
+    <string name="amount_exceeded_dialog_title" translatable="false">Estamos validando algunos datos!</string>
+    <string name="amount_exceeded_dialog_message" translatable="false">Nos comunicaremos contigo para verificar el origen de fondos y liberar la transferencia.</string>
     <string name="amount_exceeded_release_error_title" translatable="false">¡Oh no! Hubo un error al liberar el despósito</string>
     <string name="amount_exceeded_release_error_message" translatable="false">Lo sentimos, volvé a intentarlo más tarde</string>
-    <string name="amount_exceeded_release_error_button" translatable="false">Ir al inicio</string>
+    <string name="amount_exceeded_release_error_button" translatable="false">Entendido</string>
     <string name="amount_exceeded_transaction_released" translatable="false">Transacción liberada exitosamente</string>
+
+    <!-- Force Update -->
+    <string name="force_update_button_label" translatable="false">Actualizar</string>
+    <string name="force_update_title_cr" translatable="false">Actualizá tu app</string>
+    <string name="force_update_title_gt_sv" translatable="false">Actualiza tu app</string>
+    <string name="force_update_message_cr" translatable="false">Para ingresar a tu app, actualizá</string>
+    <string name="force_update_message_gt_sv" translatable="false">Para ingresar a tu app, actualiza</string>
+    <string name="force_update_intent_package" translatable="false">com.android.vending</string>
 </resources>

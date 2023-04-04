@@ -305,7 +305,7 @@ fun ListOfCoinsSection(
         }
         items(filteredList) { cryptoCoin ->
             MarketCurrencyItem(
-                imageUrl = cryptoCoin.url_image,
+                imageUrl = cryptoCoin.urlImage,
                 descriptionCurrency = cryptoCoin.description,
                 asset = cryptoCoin.baseAsset,
                 amountChange = cryptoCoin.amountchange ?: "",

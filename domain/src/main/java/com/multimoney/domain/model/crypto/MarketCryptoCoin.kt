@@ -11,7 +11,7 @@ data class MarketCryptoCoin(
     val percentChange: String? = null,
     val priority: Int? = null,
     val currentPrice: Double? = null,
-    val url_image: String,
+    val urlImage: String,
     val historico: Boolean? = null,
     val cryptoNetwork: String
 ) : Parcelable

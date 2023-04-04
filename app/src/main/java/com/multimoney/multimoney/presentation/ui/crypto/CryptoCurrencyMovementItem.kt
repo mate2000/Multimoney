@@ -127,9 +127,6 @@ fun CryptoCurrencyMovementItem(
                         width = 1.dp,
                         color = MultimoneyTheme.colors.cryptoActionButtonEnable
                     ),
-                    /* temporal solution while the design is finished,
-                         this is to avoid sending the user to the release transaction screen when month limit is exceeded*/
-                    enabled = cryptoCurrencyMovement.monthLimitExceeded.not(),
                     onClick = { onReleaseTransactionClick(cryptoCurrencyMovement) }
                 ) {
                     Text(

@@ -2,11 +2,11 @@ package com.multimoney.multimoney.util
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.util.Log
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.QRCodeWriter
+import timber.log.Timber
 
 object QRCodeGenerator {
 
@@ -30,7 +30,7 @@ object QRCodeGenerator {
             val writer = QRCodeWriter()
             return writer.encode(text, BarcodeFormat.QR_CODE, size, size)
         } catch (e: WriterException) {
-            Log.e(TAG, "Error generating QR code: ${e.message}")
+            Timber.e(TAG, "Error generating QR code: ${e.message}")
         }
         return null
     }

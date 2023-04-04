@@ -100,7 +100,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnValidateUserSuccess
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.SmartSubscriptionManager
@@ -203,15 +202,16 @@ class ProductViewModel @Inject constructor(
         this.idClient = validateUserStatus?.infoUser?.idClient ?: 0
         setBalance(balanceCredit)
         setValidateUserStatus(validateUserStatus)
-        uiState = uiState.copy(idBrand = idBrand)
         this.smartMovementsList = smartMovements
         this.creditMovements = creditMovements
-        viewModelScope.launch {
-            whatsAppLink = preferences.getWhatsAppLink().first()
-            uiState = uiState.copy(
-                shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
-                isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
-            )
+        if (whatsAppLink.isEmpty()) {
+            viewModelScope.launch {
+                whatsAppLink = preferences.getWhatsAppLink().first()
+                uiState = uiState.copy(
+                    shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
+                    isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
+                )
+            }
         }
     }
 
@@ -1177,7 +1177,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.HomeScreen.route}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+            .plus("/${cryptoItem?.monthLimitExceeded}")
+            .plus("/${Screen.HomeScreen.route}")
+        )
     }
 
     private fun registerAdjustCryptoHomeFirstTimeEvent() = viewModelScope.launch {
@@ -1378,7 +1381,6 @@ class ProductViewModel @Inject constructor(
                 isExpanded = uiEvent.isExpanded
             )
             is OnBalanceSuccess -> balanceCredit = uiEvent.balance
-            is OnValidateUserSuccess -> setValidateUserStatus(uiEvent.userStatus)
             is OnNavigateToCreditScreen -> onNavigateToCreditScreen(uiEvent.workflow)
             is OnNavigateToSmartOriginationFlow -> onNavigateToSmartFlow(
                 smartStep = uiEvent.smartStep,
@@ -1492,7 +1494,6 @@ class ProductViewModel @Inject constructor(
         data class OnUpdateIsBackPressed(val isBackPressed: Boolean) : UIEvent()
         data class OnUpdateIsExpanded(val isExpanded: Boolean) : UIEvent()
         data class OnBalanceSuccess(val balance: Balance) : UIEvent()
-        data class OnValidateUserSuccess(val userStatus: ValidateUserStatus) : UIEvent()
         data class OnMaxAttemptsCardClick(
             val whatsAppLink: String,
             val context: Context

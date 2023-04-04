@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SourceIncomeOptionsViewModel @Inject constructor(
     private val queryGeneralEconomicActivityUseCase: QueryGeneralEconomicActivityUseCase,
-    private val dataStorePreferences: DataStorePreferences,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     // UIState
@@ -31,7 +31,7 @@ class SourceIncomeOptionsViewModel @Inject constructor(
         val user = dataStorePreferences.getUserEmail().first()
         val brandId = dataStorePreferences.getIdBrand().first()
 
-        queryGeneralEconomicActivityUseCase(user, brandId.toInt()).collectLatest {
+        queryGeneralEconomicActivityUseCase(user, brandId.toIntOrNull() ?: 0).collectLatest {
             it.onSuccess { result ->
                 uiState = uiState.copy(
                     generalEconomicActivityList = result?.resultList?.sortedBy { item -> item?.iconCode },
@@ -55,7 +55,7 @@ class SourceIncomeOptionsViewModel @Inject constructor(
         // Interactions
         val generalEconomicActivityList: List<GeneralEconomicActivity?>? = listOf(),
         val isLoading: Boolean = false,
-        val openDialog: DialogParameters = DialogParameters(),
+        val openDialog: DialogParameters = DialogParameters()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -73,7 +73,7 @@ class SellCryptoSharedViewModel @Inject constructor(
                 assetDescription = marketCryptoCoin?.description,
                 market = marketCryptoCoin?.baseAsset?.plus(abvCurrency),
                 cryptoNetWork = marketCryptoCoin?.cryptoNetwork,
-                assetImageBaseUrl = marketCryptoCoin?.url_image
+                assetImageBaseUrl = marketCryptoCoin?.urlImage
             )
         }
         if (idBrand == Brand.ElSalvador.id) {

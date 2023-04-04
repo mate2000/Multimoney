@@ -62,7 +62,7 @@ class AmountExceededViewModel @Inject constructor(
             is UIEvent.OnPlatformNameChange -> onPlatformNameChanged(event.platformName)
             is UIEvent.OnReasonChange -> onReasonChanged(event.reason)
             is UIEvent.OnReleaseDeposit -> onReleaseDeposit()
-            is UIEvent.OnNavigateToHome -> navigateToHome()
+            is UIEvent.OnNavigateToHome -> navigateToHome(event.emitBaseEvent)
             is UIEvent.OnCloseAlert -> {
                 uiState = uiState.copy(isAlertResultVisible = false)
             }
@@ -85,26 +85,29 @@ class AmountExceededViewModel @Inject constructor(
             ).collectLatest { result ->
                 uiState = uiState.copy(isLoading = false)
                 result.onSuccess {
-                    it.hasError?.let {
+                    if (it.hasError == true) {
                         uiState = uiState.copy(isAlertResultVisible = true)
+                        return@onSuccess
                     }
                     if (it.withHeld) {
                         uiState = uiState.copy(isAmountExceeded = true)
-                    } else {
-                        navigateToHome()
+                        return@onSuccess
                     }
+                    navigateToHome()
                 }
                 result.onFailure {
                     uiState = uiState.copy(isAlertResultVisible = true)
+                    return@onFailure
                 }
             }
         }
-        navigateToHome()
     }
 
-    private fun navigateToHome() {
+    private fun navigateToHome(emitBaseEvent: Boolean = true) {
         navigateBack(Screen.HomeScreen.route, false)
-        emitBaseEvent(Any())
+        if (emitBaseEvent) {
+            emitBaseEvent(Any())
+        }
     }
 
     private fun onReasonChanged(reason: String) {
@@ -123,8 +126,7 @@ class AmountExceededViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        val previousScreen = savedStateHandle.get<String>(PREVIOUS_SCREEN)
-        when (previousScreen) {
+        when (savedStateHandle.get<String>(PREVIOUS_SCREEN)) {
             Screen.CryptoHomeAllMovementsScreen.baseRoute -> {
                 navigateBack(
                     popTo = Screen.CryptoHomeAllMovementsScreen.route,
@@ -158,7 +160,7 @@ class AmountExceededViewModel @Inject constructor(
         data class OnPlatformNameChange(val platformName: String) : UIEvent
         data class OnReasonChange(val reason: String) : UIEvent
         object OnReleaseDeposit : UIEvent
-        object OnNavigateToHome : UIEvent
+        data class OnNavigateToHome(val emitBaseEvent: Boolean) : UIEvent
         object OnCloseAlert : UIEvent
         object OnSetUserData : UIEvent
         object OnNavigateBack : UIEvent

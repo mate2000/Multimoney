@@ -187,7 +187,7 @@ fun ListCryptoBody(
     LazyColumn(content = {
         items(filteredList) {
             CryptoCurrencyPurchaseItem(
-                imageUrl = it.url_image,
+                imageUrl = it.urlImage,
                 descriptionCurrency = it.description,
                 asset = it.baseAsset,
                 priceOfTheDay = it.currentPrice.toString().toDouble().formatWithComma(),

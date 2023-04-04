@@ -171,7 +171,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                     MarketCryptoCoin(
                         description = uiState.cryptoItem?.descriptionCurrency ?: "",
                         baseAsset = uiState.cryptoItem?.asset ?: "",
-                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        urlImage = uiState.cryptoItem?.url_image ?: "",
                         cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
                     )
                 )
@@ -186,7 +186,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
                     MarketCryptoCoin(
                         description = uiState.cryptoItem?.descriptionCurrency ?: "",
                         baseAsset = uiState.cryptoItem?.asset ?: "",
-                        url_image = uiState.cryptoItem?.url_image ?: "",
+                        urlImage = uiState.cryptoItem?.url_image ?: "",
                         cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: ""
                     )
                 )
@@ -246,7 +246,7 @@ class WalletCryptoCurrencyDetailsViewModel @Inject constructor(
         navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${user}/${uiState.idBrand}?$ITEM_CRYPTO_MARKET=${encodeData(MarketCryptoCoin(
             description = uiState.cryptoItem?.descriptionCurrency ?: "",
             baseAsset = uiState.cryptoItem?.asset ?: "",
-            url_image = uiState.cryptoItem?.url_image ?: "",
+            urlImage = uiState.cryptoItem?.url_image ?: "",
             cryptoNetwork = uiState.cryptoItem?.cryptoNetwork ?: "",
         ))}")
     }

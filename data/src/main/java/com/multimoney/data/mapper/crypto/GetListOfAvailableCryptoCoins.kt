@@ -15,7 +15,7 @@ fun GetAvailableListOfCryptoCoinsQuery.CryptoMarketPrice.mapToDomainModel() = Ma
     percentChange = percentChange,
     priority = priority.toString().toInt(),
     currentPrice = currentPrice.toString().toDouble(),
-    url_image = url_image,
+    urlImage = url_image,
     historico = historico,
     cryptoNetwork = crypto_network.orEmpty()
 )

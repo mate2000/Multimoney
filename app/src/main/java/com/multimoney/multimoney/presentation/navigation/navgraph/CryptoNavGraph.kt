@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.ID_TRANSACTION
+import com.multimoney.multimoney.presentation.navigation.MOVEMENT_MONTH_LIMIT_EXCEEDED
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
 import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
 import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
@@ -348,6 +349,11 @@ fun NavGraphBuilder.cryptoNavGraph(
                     defaultValue = null
                     type = NavType.StringType
                 },
+                navArgument(MOVEMENT_MONTH_LIMIT_EXCEEDED) {
+                    nullable = false
+                    defaultValue = false
+                    type = NavType.BoolType
+                },
                 navArgument(PREVIOUS_SCREEN) {
                     nullable = true
                     defaultValue = null
@@ -359,6 +365,7 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navController.getBackStackEntry(Screen.HomeScreen.route)
             }
             val viewModel = hiltViewModel<HomeViewModel>(parentEntry)
+            val amountLimitExceeded = backStackEntry.arguments?.getBoolean(MOVEMENT_MONTH_LIMIT_EXCEEDED) ?: false
 
             AmountExceededFormScreen(
                 onPopAndNavigate = {
@@ -381,7 +388,8 @@ fun NavGraphBuilder.cryptoNavGraph(
                         saveState = false
                     )
                 },
-                sharedViewModel = viewModel
+                sharedViewModel = viewModel,
+                amountExceeded = amountLimitExceeded
             )
         }
     }

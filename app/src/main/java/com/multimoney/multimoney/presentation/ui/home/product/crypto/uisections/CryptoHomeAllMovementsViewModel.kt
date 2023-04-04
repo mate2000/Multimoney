@@ -14,7 +14,6 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
-import com.multimoney.multimoney.presentation.ui.crypto.movements.CryptoCurrencyDetailsAllMovementsScreenViewModel
 import com.multimoney.multimoney.presentation.util.FilterDate
 import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
@@ -56,7 +55,10 @@ class CryptoHomeAllMovementsViewModel  @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}/${Screen.CryptoHomeAllMovementsScreen.baseRoute}")
+        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+            .plus("/${cryptoItem?.monthLimitExceeded}")
+            .plus("/${Screen.CryptoHomeAllMovementsScreen.baseRoute}")
+        )
     }
 
     data class UIState(

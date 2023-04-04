@@ -29,34 +29,31 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.SellCryptoStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
+import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
-import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnSetUserData
-import com.multimoney.multimoney.presentation.util.NavEvent
-import com.multimoney.multimoney.presentation.ui.crypto.transferin.AmountExceededViewModel.UIEvent.OnNavigateBack
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
-import kotlinx.coroutines.flow.collectLatest
-
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun AmountExceededFormScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: AmountExceededViewModel = hiltViewModel(),
-    sharedViewModel: HomeViewModel
+    sharedViewModel: HomeViewModel,
+    amountExceeded: Boolean = false
 ) {
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         viewModel.onUIEvent(OnSetUserData)
 
         viewModel.executeNavigation(
@@ -73,122 +70,128 @@ fun AmountExceededFormScreen(
         viewModel.onUIEvent(OnNavigateBack)
     }
 
-
-    Scaffold(
-        backgroundColor = MultimoneyTheme.colors.background,
-        topBar = {
-            TopNavBar(
-                isLeftButtonVisible = true,
-                isRightButtonVisible = false,
-                onLeftButtonClick = {
-                    focusManager.clearFocus()
-                    viewModel.onUIEvent(OnNavigateBack)
-                },
-            )
-        }) {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.amount_exceeded_title),
-                    style = Typography.h6.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.text
-                    )
+    if (amountExceeded) {
+        LimitExceededDialog {
+            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
+        }
+    } else {
+        Scaffold(
+            backgroundColor = MultimoneyTheme.colors.background,
+            topBar = {
+                TopNavBar(
+                    isLeftButtonVisible = true,
+                    isRightButtonVisible = false,
+                    onLeftButtonClick = {
+                        focusManager.clearFocus()
+                        viewModel.onUIEvent(OnNavigateBack)
+                    },
                 )
-                Row(modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.Top) {
-                    Icon(
-                        modifier = Modifier.padding(end = 8.dp),
-                        tint = MultimoneyTheme.colors.textInformation,
-                        imageVector = ImageVector.vectorResource(id = R.drawable.info_blue_icon),
-                        contentDescription = null
-                    )
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = stringResource(R.string.amount_exceeded_message),
-                        style = Typography.body2.copy(
+                        text = stringResource(R.string.amount_exceeded_title),
+                        style = Typography.h6.copy(
+                            fontWeight = FontWeight.SemiBold,
                             color = MultimoneyTheme.colors.text
                         )
                     )
-                }
-                CustomOutlinedTextField(
-                    value = viewModel.uiState.name,
-                    onValueChange = {
-                        viewModel.onUIEvent(
-                            AmountExceededViewModel.UIEvent.OnNameChange(
-                                it
+                    Row(modifier = Modifier.padding(top = 8.dp), verticalAlignment = Alignment.Top) {
+                        Icon(
+                            modifier = Modifier.padding(end = 8.dp),
+                            tint = MultimoneyTheme.colors.textInformation,
+                            imageVector = ImageVector.vectorResource(id = R.drawable.info_blue_icon),
+                            contentDescription = null
+                        )
+                        Text(
+                            text = stringResource(R.string.amount_exceeded_message),
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.text
                             )
                         )
-                    },
-                    labelText = stringResource(R.string.amount_exceeded_name),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    modifier = Modifier.padding(top = 24.dp)
-                )
-                CustomOutlinedTextField(
-                    value = viewModel.uiState.platformName,
-                    onValueChange = {
-                        viewModel.onUIEvent(
-                            AmountExceededViewModel.UIEvent.OnPlatformNameChange(
-                                it
+                    }
+                    CustomOutlinedTextField(
+                        value = viewModel.uiState.name,
+                        onValueChange = {
+                            viewModel.onUIEvent(
+                                AmountExceededViewModel.UIEvent.OnNameChange(
+                                    it
+                                )
                             )
-                        )
-                    },
-                    labelText = stringResource(R.string.amount_exceeded_platform),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    modifier = Modifier.padding(top = 24.dp)
-                )
-                CustomOutlinedTextField(
-                    value = viewModel.uiState.reason,
-                    onValueChange = {
-                        viewModel.onUIEvent(
-                            AmountExceededViewModel.UIEvent.OnReasonChange(
-                                it
+                        },
+                        labelText = stringResource(R.string.amount_exceeded_name),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }),
+                        modifier = Modifier.padding(top = 24.dp)
+                    )
+                    CustomOutlinedTextField(
+                        value = viewModel.uiState.platformName,
+                        onValueChange = {
+                            viewModel.onUIEvent(
+                                AmountExceededViewModel.UIEvent.OnPlatformNameChange(
+                                    it
+                                )
                             )
-                        )
-                    },
-                    labelText = stringResource(R.string.amount_exceeded_reason),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }),
-                    modifier = Modifier.padding(top = 24.dp)
-                )
+                        },
+                        labelText = stringResource(R.string.amount_exceeded_platform),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }),
+                        modifier = Modifier.padding(top = 24.dp)
+                    )
+                    CustomOutlinedTextField(
+                        value = viewModel.uiState.reason,
+                        onValueChange = {
+                            viewModel.onUIEvent(
+                                AmountExceededViewModel.UIEvent.OnReasonChange(
+                                    it
+                                )
+                            )
+                        },
+                        labelText = stringResource(R.string.amount_exceeded_reason),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }),
+                        modifier = Modifier.padding(top = 24.dp)
+                    )
 
+                }
+                CustomButton(
+                    text = stringResource(id = R.string.amount_exceeded_button),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    onClick = {
+                        focusManager.clearFocus()
+                        viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnReleaseDeposit)
+                    },
+                    buttonType = CustomButtonType.PrimaryPrimary,
+                    enable = viewModel.uiState.isFormValid
+                )
             }
-            CustomButton(
-                text = stringResource(id = R.string.amount_exceeded_button),
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
-                    .fillMaxWidth()
-                    .height(48.dp),
-                onClick = {
-                    focusManager.clearFocus()
-                    viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnReleaseDeposit)
-                },
-                buttonType = CustomButtonType.PrimaryPrimary,
-                enable = viewModel.uiState.isFormValid
-            )
+            LoadingIndicator(viewModel.uiState.isLoading)
         }
-        LoadingIndicator(viewModel.uiState.isLoading)
     }
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
@@ -200,13 +203,13 @@ fun AmountExceededFormScreen(
                 viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnCloseAlert)
             },
             onButtonClick = {
-                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
+                viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
             }
         )
     }
     if (viewModel.uiState.isAmountExceeded) {
         LimitExceededDialog {
-            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome)
+            viewModel.onUIEvent(AmountExceededViewModel.UIEvent.OnNavigateToHome(false))
         }
     }
 }

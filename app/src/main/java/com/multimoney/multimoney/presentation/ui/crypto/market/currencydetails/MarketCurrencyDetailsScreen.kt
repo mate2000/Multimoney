@@ -98,7 +98,7 @@ fun MarketCurrencyDetailsScreen(
         currencyNews = viewModel.uiState.currencyNews,
         description = viewModel.uiState.selectedCryptoCoin?.description ?: "",
         currentPrice = viewModel.uiState.selectedCryptoCoin?.currentPrice ?: 0.0,
-        urlImage = viewModel.uiState.selectedCryptoCoin?.url_image ?: "",
+        urlImage = viewModel.uiState.selectedCryptoCoin?.urlImage ?: "",
         isLoading = viewModel.uiState.isLoading,
         onDateFilterSelected = { dateFilter ->
             viewModel.onUIEvent(

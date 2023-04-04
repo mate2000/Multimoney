@@ -114,20 +114,23 @@ fun SmartTransferIbanScreen(
 @Composable
 fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
     LazyColumn(modifier = Modifier.padding(top = 24.dp, start = 16.dp, end = 16.dp)) {
-        items(viewModel.uiState.sinpeAccountList) { account ->
+        items(
+            viewModel.uiState.sinpeAccountList.sortedBy { aCHFavoriteAccount ->
+                aCHFavoriteAccount?.description.orEmpty()
+            }
+        ) { account ->
             CustomInfoButton(
-                title = account?.nameAccount ?: "",
-                subtitle = account?.bank ?: "",
+                title = account?.description.orEmpty(),
+                subtitle = account?.destinationBankDescription.orEmpty(),
                 subtitle2 = getMaskedAccountIban(
-                    account?.sinpeAccount ?: "",
-                    stringResource(id = string.payment_account_masked_text)
+                    account?.accountNumber.orEmpty()
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(top = 12.dp),
                 endIcon = drawable.ic_options,
-                startIcon = account?.currencyId?.getCurrencyFromId()?.accountIcon,
+                startIcon = account?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
                     viewModel.onUIEvent(OnAccountClick(account))
                 }

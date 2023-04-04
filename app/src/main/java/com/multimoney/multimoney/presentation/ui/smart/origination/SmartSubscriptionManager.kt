@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.smart.origination
 
-import android.util.Log
 import com.multimoney.domain.interaction.accountsmart.SubscriptionAccountSmartContractUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartContractResult
 import com.multimoney.domain.model.util.error.HttpError
@@ -33,9 +32,9 @@ class SmartSubscriptionManager(var subscriptionSmartContractEventUseCase: Subscr
                         if (smartContract?.currentStep == CreditSubscriptionStep.LinkGenerated.step) {
                             evicertiaLink = smartContract.link
                         }
-                        Log.d("SmartSubscriptionManager", "smartContract: $smartContract")
+                        Timber.d("SmartSubscriptionManager", "smartContract: $smartContract")
                     }.onFailure {
-                        Log.d("SmartSubscriptionManager", "smartContract ERROR!: $it")
+                        Timber.d("SmartSubscriptionManager", "smartContract ERROR!: $it")
                         if (numAttemptsToStartSubscription < MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION) {
                             startSmartSubscription(idSysRequest, idBrand)
                             numAttemptsToStartSubscription++

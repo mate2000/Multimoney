@@ -142,7 +142,7 @@ class OnBoardingViewModel @Inject constructor(
                 SIM_CODE_MEXICO -> listOf(
                     R.string.onboarding_mexico_step_two_title,
                     R.string.onboarding_mexico_step_two_sub_title,
-                    R.drawable.ic_onboarding_step_one
+                    R.drawable.ic_onboarding_step_two
                 )
                 else -> listOf(
                     R.string.onboarding_costa_rica_step_two_title,
@@ -168,7 +168,7 @@ class OnBoardingViewModel @Inject constructor(
                 SIM_CODE_MEXICO -> listOf(
                     R.string.onboarding_mexico_step_three_title,
                     R.string.onboarding_mexico_step_three_sub_title,
-                    R.drawable.ic_onboarding_step_one
+                    R.drawable.ic_onboarding_step_three
                 )
                 else -> listOf(
                     R.string.onboarding_costa_rica_step_three_title,

@@ -1700,6 +1700,10 @@
     <string name="registered_user_otp_code_placeholder" translatable="false">0</string>
     <string name="registered_user_otp_code_required" translatable="false">Código de verificación requerido</string>
 
+    <!-- Profile cards -->
+    <string name="profile_cards_empty_state_cr" translatable="false">No tenés tarjetas registradas</string>
+    <string name="profile_cards_empty_state_sv" translatable="false">No tienes tarjetas registradas</string>
+
     <!-- Profile -> My Cards -> Edit Card -->
     <string name="profile_my_cards_edit_card_title" translatable="false">Editar tarjeta</string>
     <string name="profile_my_cards_edit_card_nickname_label" translatable="false">Apodo de la tarjeta</string>

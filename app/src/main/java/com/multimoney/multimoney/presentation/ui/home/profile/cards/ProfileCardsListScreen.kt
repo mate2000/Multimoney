@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.extension.findActivity
@@ -89,7 +90,7 @@ fun ProfileCardsListContent(
             textAlign = TextAlign.Left
         )
         if (viewModel.uiState.isCardListEmpty) {
-            ProfileCardListEmptyState()
+            ProfileCardListEmptyState(if (viewModel.idBrand == Brand.CostaRica.id) string.profile_cards_empty_state_cr else string.profile_cards_empty_state_sv)
         } else {
             ProfileCardList(viewModel)
         }
@@ -129,7 +130,7 @@ fun ProfileCardsListContent(
 
 @Composable
 @Preview
-fun ProfileCardListEmptyState() {
+fun ProfileCardListEmptyState(title: Int = string.empty) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -146,7 +147,7 @@ fun ProfileCardListEmptyState() {
                 drawableResource = R.drawable.ic_visa_cards_empty_state
             )
             Text(
-                text = stringResource(id = string.payment_cards_list_empty_state_description),
+                text = stringResource(id = title),
                 modifier = Modifier.padding(vertical = 25.dp, horizontal = 58.dp),
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.labelText,

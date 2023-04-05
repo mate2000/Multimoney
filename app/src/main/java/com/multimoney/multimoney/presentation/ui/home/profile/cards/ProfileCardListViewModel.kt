@@ -59,7 +59,7 @@ class ProfileCardListViewModel @Inject constructor(
 
     // Stateless
     private var user: String = ""
-    private var idBrand: Int = 0
+    var idBrand: Int = 0
     private var identification: String? = null
     private var origin: String = ""
 

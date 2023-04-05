@@ -6,12 +6,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.SMART_CARD_NO_ACTION
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardInactiveSmartProduct
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.CardSmartProduct
+import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartProcessStarted
 import com.multimoney.multimoney.presentation.uielement.CustomProductBackground
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
@@ -37,6 +39,7 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
                             it?.textOne.toString(),
                             it?.textTwo.toString(),
                             it?.cTA.toString(),
+                            getSmartProcessType(step),
                             step != SMART_CARD_NO_ACTION
                         ) {
                             if (step != SMART_CARD_NO_ACTION) {
@@ -73,4 +76,13 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
             }
         }
     }
+}
+
+fun getSmartProcessType(workflow: String) = when (workflow) {
+    SmartWorkflow.SMART_INITIAL_CARD.workflow -> SmartProcessStarted.SmartInitialProcess
+    SmartWorkflow.SMART_STEP_PENDING.workflow -> SmartProcessStarted.SmartStartProcessIncomplete
+    SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> SmartProcessStarted.SmartProcessOnFidoIncomplete
+    SmartWorkflow.SMART_CONTRACT_PROCESS.workflow -> SmartProcessStarted.SmartProcessFirmIncomplete
+    SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow -> SmartProcessStarted.SmartProcessOnfidoReject
+    else -> null
 }

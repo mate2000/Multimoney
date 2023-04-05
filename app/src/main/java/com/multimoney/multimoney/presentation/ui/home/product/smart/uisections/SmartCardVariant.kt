@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SmartWorkflow
 import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency16
@@ -49,49 +50,49 @@ fun CardInactiveSmartProduct(
     textOne: String = "",
     textTwo: String = "",
     cTA: String = "",
+    type: SmartProcessStarted? = SmartProcessStarted.SmartInitialProcess,
     showAction: Boolean = true,
     onClick: () -> Unit = {}
 ) {
+    val backgroundShip: Color = if (isSystemInDarkTheme()) {
+        BlackTransparency20
+    } else {
+        WhiteTransparency10
+    }
+    val startIcon = getSmartCardStartIcon(type)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 12.dp)
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp, bottom = 12.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) { onClick.invoke() }
     ) {
-        Row(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .background(BlackTransparency16),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            CustomImage(
-                modifier = Modifier
-                    .padding(start = 12.dp, end = 6.dp),
-                drawableResource = R.drawable.ic_alert_outlined
-            )
-            Text(
-                modifier = Modifier
-                    .padding(end = 12.dp, top = 4.dp),
-                text = stringResource(id = R.string.smart_card_smart_title),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+        CustomInformativeChip(
+            text = stringResource(id = R.string.smart_card_smart_title),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text
-            )
-        }
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = backgroundShip,
+            startIcon = startIcon,
+            startIconTint = MultimoneyTheme.colors.iconColor
+        )
         Text(
             text = textOne,
-            modifier = Modifier.padding(top = 12.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText
         )
         Text(
             text = textTwo,
-            modifier = Modifier.padding(top = 4.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.caption,
             color = MultimoneyTheme.colors.text
         )
         if (showAction) {
@@ -246,109 +247,20 @@ fun CardSmartFirmedAndOnfidoPending() {
     }
 }
 
-@Composable
-@Preview
-fun CardWithSmartInProcess(
-    type: SmartProcessStarted = SmartProcessStarted.SmartProcessOnfidoReject,
-    idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {},
-    wording: Wording? = Wording("", "", "")
-) {
-    val notDefinedValue = stringResource(id = R.string.not_defined)
-    var chipText = R.string.home_product_process_smart_label
-    val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
-    val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
-    val actionText: String? = wording?.cTA?.filter { wording.textTwo != notDefinedValue }
-    var startIcon = R.drawable.ic_time
-
-    val backgroundShip: Color = if (isSystemInDarkTheme()) {
-        BlackTransparency20
-    } else {
-        WhiteTransparency10
-    }
-    when (type) {
-        SmartProcessStarted.SmartStartProcessIncomplete -> {
-            chipText = R.string.smart_card_smart_title
-            startIcon = R.drawable.ic_warning
-        }
-        SmartProcessStarted.SmartProcessOnFidoIncomplete -> {
-            startIcon = R.drawable.ic_warning
-        }
-        SmartProcessStarted.SmartProcessOnfidoReject -> {
-            startIcon = R.drawable.ic_warning
-        }
-        SmartProcessStarted.CreditProcessCreateAccountFailure -> {
-            startIcon = R.drawable.ic_warning
-        }
-        else -> Unit
-    }
-
-    Column(
-        modifier = Modifier
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action.invoke()
-            }
-    ) {
-        CustomInformativeChip(
-            text = stringResource(id = chipText),
-            textStyle = Typography.body2.copy(
-                fontWeight = FontWeight.SemiBold,
-                color = MultimoneyTheme.colors.text
-            ),
-            modifier = Modifier.padding(top = 12.dp),
-            shape = RoundedCornerShape(12.dp),
-            background = backgroundShip,
-            startIcon = startIcon,
-            startIconTint = MultimoneyTheme.colors.iconColor
-        )
-        Text(
-            text = title,
-            modifier = Modifier.padding(top = 14.dp),
-            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.text
-        )
-        Text(
-            text = description,
-            modifier = Modifier.padding(top = 8.dp),
-            style = Typography.caption,
-            color = MultimoneyTheme.colors.text
-        )
-        actionText?.let {
-            if (it.isNotBlank()) {
-                CustomImage(
-                    modifier = Modifier
-                        .padding(top = 21.dp)
-                        .align(Alignment.CenterHorizontally),
-                    drawableResource = R.drawable.ic_chevron_up
-                )
-
-                Text(
-                    text = actionText,
-                    modifier = Modifier
-                        .padding(bottom = 12.dp)
-                        .align(Alignment.CenterHorizontally),
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text,
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
-    }
+fun getSmartCardStartIcon(type: SmartProcessStarted?) = when (type) {
+    SmartProcessStarted.SmartInitialProcess -> 0
+    SmartProcessStarted.SmartStartProcessIncomplete,
+    SmartProcessStarted.SmartProcessFirmIncomplete -> R.drawable.ic_time
+    SmartProcessStarted.SmartProcessOnFidoIncomplete,
+    SmartProcessStarted.SmartProcessOnfidoReject -> R.drawable.ic_warning
+    else -> R.drawable.ic_warning
 }
 
 sealed class SmartProcessStarted {
+    object SmartInitialProcess: SmartProcessStarted()
     object SmartStartProcessIncomplete : SmartProcessStarted()
     object SmartProcessOnFidoIncomplete : SmartProcessStarted()
-    object CreditProcessFirmIncomplete : SmartProcessStarted()
-    object CreditProcessFirmReject : SmartProcessStarted()
-    object CreditProcessFirmMaxAttempts : SmartProcessStarted()
+    object SmartProcessFirmIncomplete : SmartProcessStarted()
     object SmartProcessOnfidoReject : SmartProcessStarted()
-    object SmartProcessOnfidoMaxAttempts : SmartProcessStarted()
     object CreditProcessCreateAccountFailure : SmartProcessStarted()
 }

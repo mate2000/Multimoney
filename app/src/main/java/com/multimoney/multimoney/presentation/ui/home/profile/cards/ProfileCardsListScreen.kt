@@ -144,7 +144,7 @@ fun ProfileCardListEmptyState(title: Int = string.empty) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CustomImage(
-                drawableResource = R.drawable.ic_visa_cards_empty_state
+                drawableResource = R.drawable.ic_card_empty_state
             )
             Text(
                 text = stringResource(id = title),

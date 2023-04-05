@@ -86,7 +86,7 @@ val Typography = Typography(
     caption = TextStyle(
         fontFamily = PoppinsFontFamily,
         fontWeight = FontWeight.W400,
-        fontSize = 12.sp,
+        fontSize = 13.sp,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         ),

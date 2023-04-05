@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.test.subscription
 
-import android.util.Log
 import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCase
 import com.multimoney.domain.interaction.credit.SubscriptionCreditContractEventUseCase
 import com.multimoney.domain.model.credit.CreditContractEvent
@@ -10,6 +9,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @HiltViewModel
 class SubscriptionViewModel @Inject constructor(
@@ -29,10 +29,10 @@ class SubscriptionViewModel @Inject constructor(
                 creditContractEvent.currentStep ?: ""
             ).collectLatest { result ->
                 result.onSuccess {
-                    Log.wtf("Subscription Diego", "Success")
+                    Timber.wtf("Subscription Diego", "Success")
                 }
                 result.onFailure { httpError ->
-                    Log.wtf("Subscription Diego", httpError.getError())
+                    Timber.wtf("Subscription Diego", httpError.getError())
                 }
             }
         }
@@ -45,9 +45,9 @@ class SubscriptionViewModel @Inject constructor(
                 10
             ).collectLatest { result ->
                 result.onSuccess {
-                    Log.wtf("Subscription", "Subscription connected")
+                    Timber.wtf("Subscription", "Subscription connected")
                 }.onFailure {
-                    Log.wtf("Subscription", "Subscription error connection")
+                    Timber.wtf("Subscription", "Subscription error connection")
                 }
             }
         }

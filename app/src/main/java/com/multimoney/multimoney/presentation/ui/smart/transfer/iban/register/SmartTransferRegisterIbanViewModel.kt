@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
 import com.multimoney.domain.model.accountsmart.IbanAccountID
 import com.multimoney.domain.model.accountsmart.SmartAccountID
@@ -37,8 +37,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SmartTransferRegisterIbanViewModel @Inject constructor(
-    private val queryValidateBankAccountUseCase: QueryValidateBankAccountUseCase,
-    private val mutationSaveSinpeAccountUseCase: MutationSaveSinpeAccountUseCase,
+    private val queryValidateBankAccount: QueryValidateBankAccountUseCase,
+    private val mutationAddACHAccount: MutationAddACHAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -100,7 +100,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             validationFinish = false
         )
         // To validate non personal accounts we have to pass the identification as empty
-        queryValidateBankAccountUseCase(
+        queryValidateBankAccount(
             account = "${Brand.CostaRica.iban}${uiState.ibanAccountNumber.replace(Brand.CostaRica.iban, "")}",
             identification = "",
             queryType = null,
@@ -192,24 +192,24 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             }
         )
     }
-
     private fun onContinueButtonClick() = executeUseCase {
-        mutationSaveSinpeAccountUseCase(
-            user = user ?: "",
+        mutationAddACHAccount(
             idBrand = idBrand ?: Brand.CostaRica.id,
-            identification = identification ?: "",
+            user = user ?: "",
             accountNumber = Brand.CostaRica.iban.plus(uiState.ibanAccountNumber),
-            idCurrency = validateAccount?.currency?.getCurrencyFromId()?.id?.toLong() ?: 0,
-            nameAccount = if (uiState.addFavorite) {
+            titularName = if (uiState.addFavorite) {
                 uiState.favoriteName.ifBlank { validateAccount?.name ?: "" }
             } else {
                 validateAccount?.name ?: ""
             },
-            country = Brand.CostaRica.countryCode,
-            idAccount = null,
-            option = null,
-            email = uiState.email,
-            isFavorite = uiState.addFavorite
+            isFavorite = uiState.addFavorite,
+            typeAccountId = 0,
+            identificationNumber = identification ?: "",
+            destinationBankId = validateAccount?.bankId ?: 0,
+            identificationTypeAccount = validateAccount?.identification?.toIntOrNull() ?: 0,
+            destinationCurrencyId = validateAccount?.currency?.toIntOrNull() ?: 0,
+            document = uiState.documentNumber,
+            description = uiState.favoriteName.ifBlank { validateAccount?.name ?: "" }
         ).collectLatest {
             it.onSuccess {
                 uiState = uiState.copy(isLoading = false)

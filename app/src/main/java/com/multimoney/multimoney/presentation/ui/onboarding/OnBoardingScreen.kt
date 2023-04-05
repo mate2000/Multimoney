@@ -94,7 +94,7 @@ fun OnBoardingScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .weight(
-                        0.14f,
+                        0.15f,
                         false
                     ),
                 style = Typography.h3.copy(

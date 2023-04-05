@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
-import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -248,10 +248,10 @@ class SignInViewModel @Inject constructor(
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_session_blacklisted_title_cr
-                    else string.sign_in_session_blacklisted_title,
-                    descriptionResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_session_blacklisted_message_cr
-                    else string.sign_in_session_blacklisted_message_sv,
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                    else string.sign_in_session_blacklisted_title_cr,
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                    else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
                 ),
@@ -531,10 +531,10 @@ class SignInViewModel @Inject constructor(
         showDialog: Boolean
     ): DialogParameters {
         return when (country) {
-            SIM_CODE_COSTA_RICA -> {
+            SIM_CODE_EL_SALVADOR -> {
                 DialogParameters(
-                    titleResource = string.active_biometric_title_cr,
-                    descriptionResource = string.active_biometric_message_cr,
+                    titleResource = string.active_biometric_title,
+                    descriptionResource = string.active_biometric_message,
                     positiveResource = string.active_biometric_positive_button_label,
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {
@@ -569,8 +569,8 @@ class SignInViewModel @Inject constructor(
             }
             else -> {
                 DialogParameters(
-                    titleResource = string.active_biometric_title,
-                    descriptionResource = string.active_biometric_message,
+                    titleResource = string.active_biometric_title_cr,
+                    descriptionResource = string.active_biometric_message_cr,
                     positiveResource = string.active_biometric_positive_button_label,
                     negativeResource = string.active_biometric_negative_button_label,
                     positiveAction = {

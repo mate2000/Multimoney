@@ -15,7 +15,7 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnInitializeResources
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnNavigateToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
-import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_MEXICO
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -103,9 +103,9 @@ class OnBoardingViewModel @Inject constructor(
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingOne)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_1_1002, isLoggedIn = false)
             when (getCountryCode(context)) {
-                SIM_CODE_COSTA_RICA -> listOf(
-                    R.string.onboarding_costa_rica_step_one_title,
-                    R.string.onboarding_costa_rica_step_one_sub_title,
+                SIM_CODE_EL_SALVADOR -> listOf(
+                    R.string.onboarding_el_salvador_step_one_title,
+                    R.string.onboarding_el_salvador_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
                 )
                 SIM_CODE_GUATEMALA -> listOf(
@@ -119,8 +119,8 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
                 else -> listOf(
-                    R.string.onboarding_el_salvador_step_one_title,
-                    R.string.onboarding_el_salvador_step_one_sub_title,
+                    R.string.onboarding_costa_rica_step_one_title,
+                    R.string.onboarding_costa_rica_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
                 )
             }
@@ -129,9 +129,9 @@ class OnBoardingViewModel @Inject constructor(
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingTwo)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_2_1003, isLoggedIn = false)
             when (getCountryCode(context)) {
-                SIM_CODE_COSTA_RICA -> listOf(
-                    R.string.onboarding_costa_rica_step_two_title,
-                    R.string.onboarding_costa_rica_step_two_sub_title,
+                SIM_CODE_EL_SALVADOR -> listOf(
+                    R.string.onboarding_el_salvador_step_two_title,
+                    R.string.onboarding_el_salvador_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
                 )
                 SIM_CODE_GUATEMALA -> listOf(
@@ -145,8 +145,8 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
                 else -> listOf(
-                    R.string.onboarding_el_salvador_step_two_title,
-                    R.string.onboarding_el_salvador_step_two_sub_title,
+                    R.string.onboarding_costa_rica_step_two_title,
+                    R.string.onboarding_costa_rica_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
                 )
             }
@@ -155,14 +155,14 @@ class OnBoardingViewModel @Inject constructor(
             provideFireBaseEventHelper.logEvent(FireBaseEvents.OnboardingThree)
             registerAdjustEvent(AdjustEventType.ON_BOARDING_3_1004, isLoggedIn = false)
             when (getCountryCode(context)) {
-                SIM_CODE_COSTA_RICA -> listOf(
-                    R.string.onboarding_costa_rica_step_three_title,
-                    R.string.onboarding_costa_rica_step_three_sub_title,
-                    R.drawable.ic_onboarding_step_three
-                )
                 SIM_CODE_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_three_title,
                     R.string.onboarding_guatemala_step_three_sub_title,
+                    R.drawable.ic_onboarding_step_three
+                )
+                SIM_CODE_EL_SALVADOR -> listOf(
+                    R.string.onboarding_el_salvador_step_three_title,
+                    R.string.onboarding_el_salvador_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
                 SIM_CODE_MEXICO -> listOf(
@@ -171,10 +171,11 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
                 else -> listOf(
-                    R.string.onboarding_el_salvador_step_three_title,
-                    R.string.onboarding_el_salvador_step_three_sub_title,
+                    R.string.onboarding_costa_rica_step_three_title,
+                    R.string.onboarding_costa_rica_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
+
             }
         }
     }

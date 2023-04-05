@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
+import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
+import com.multimoney.domain.model.accountsmart.ACHAccount
+import com.multimoney.domain.model.accountsmart.ACHAccountFull
 import com.multimoney.domain.model.accountsmart.IbanAccountID
-import com.multimoney.domain.model.accountsmart.SinpeAccount
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -33,7 +35,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SmartTransferIbanViewModel @Inject constructor(
-    private val queryListSinpeAccountUseCaseImpl: QueryListSinpeAccountUseCase,
+    private val queryACHTransferFavoriteListUseCase: QueryACHTransferFavoriteListUseCase,
+    private val queryACHTransferFavoriteGetUseCase: QueryACHTransferFavoriteGetUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -57,31 +60,27 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun onCallListSinpeAccounts() = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
+        queryACHTransferFavoriteListUseCase.invoke(
             user = user,
-            identification = identification ?: "",
-            idBrand = idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = "",
-            isFavorite = true
+            idBrand = idBrand.toIntOrNull() ?: 0,
+            isFavorite = true,
+            identificationNumber = identification.orEmpty()
         ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                uiState = uiState.copy(
-                    isLoading = false,
-                    sinpeAccountList = listOf()
-                )
-                accountList?.data?.let {
-                    uiState = uiState.copy(
-                        sinpeAccountList = uiState.sinpeAccountList + it
-                    )
+            result.onSuccess { achResult ->
+                uiState = uiState.copy(sinpeAccountList = listOf()) // Reset list
+                achResult?.data?.let { accounts ->
+                    if (accounts.isEmpty()) {
+                        navigateToAddIbanAccount()
+                    } else {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            sinpeAccountList = uiState.sinpeAccountList + accounts
+                        )
+                    }
                 }
                 callNoFavoritesListSinpeAccount()
             }
-            result.onFailure {
-                uiState = uiState.copy(isLoading = false)
-                onFailure(it)
-            }
+            result.onFailure { onFailure(it) }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
@@ -89,31 +88,25 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun callNoFavoritesListSinpeAccount() = executeUseCase {
-        queryListSinpeAccountUseCaseImpl.invoke(
+        queryACHTransferFavoriteListUseCase.invoke(
             user = user,
-            identification = identification ?: "",
-            idBrand = idBrand.toInt(),
-            country = "",
-            idAccount = 0,
-            accountNumber = "",
-            isFavorite = false
+            idBrand = idBrand.toIntOrNull() ?: 0,
+            isFavorite = false,
+            identificationNumber = identification.orEmpty()
         ).collectLatest { result ->
-            result.onSuccess { accountList ->
-                uiState = uiState.copy(isLoading = false)
-                if (accountList?.data?.isEmpty() == true) {
-                    navigateToAddIbanAccount()
-                } else {
-                    accountList?.data?.let {
+            result.onSuccess { achResult ->
+                achResult?.data?.let { accounts ->
+                    if (accounts.isEmpty()) {
+                        navigateToAddIbanAccount()
+                    } else {
                         uiState = uiState.copy(
-                            sinpeAccountList = uiState.sinpeAccountList + it
+                            isLoading = false,
+                            sinpeAccountList = uiState.sinpeAccountList + accounts
                         )
                     }
                 }
             }
-            result.onFailure {
-                uiState = uiState.copy(isLoading = false)
-                onFailure(it)
-            }
+            result.onFailure { onFailure(it) }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
             }
@@ -147,16 +140,36 @@ class SmartTransferIbanViewModel @Inject constructor(
         )
     }
 
-    private fun onAccountClick(selectedSinpeAccount: SinpeAccount?) {
+    private fun onAccountClick(selectedAccount: ACHAccount?) {
+        selectedAccount?.let {
+            executeUseCase {
+                queryACHTransferFavoriteGetUseCase.invoke(
+                    user,
+                    idBrand.toIntOrNull() ?: 0,
+                    selectedAccount.accountForAchTransferId ?: 0
+                ).collectLatest { result ->
+                    result.onSuccess { achAccountFull ->
+                        uiState = uiState.copy(isLoading = false)
+                        navigateToIbanAmount(achAccountFull)
+                    }
+                    result.onFailure { onFailure(it) }
+                    result.onLoading { uiState = uiState.copy(isLoading = true) }
+                }
+            }
+        }
+    }
+
+    private fun navigateToIbanAmount(fullAccount: ACHAccountFull?) {
         val ibanAccount = encodeData(
             IbanAccountID(
-                bank = selectedSinpeAccount?.bank,
-                clientIdentification = selectedSinpeAccount?.clientIdentification,
-                sinpeAccount = selectedSinpeAccount?.sinpeAccount,
-                currencyId = selectedSinpeAccount?.currencyId,
-                nameAccount = selectedSinpeAccount?.nameAccount
+                bank = fullAccount?.destinationBankDescription,
+                clientIdentification = fullAccount?.identificationNumberAccount,
+                sinpeAccount = fullAccount?.accountNumber,
+                currencyId = fullAccount?.destinationAccountCurrencyId,
+                nameAccount = fullAccount?.titularName
             )
         )
+
         navigateTo(
             "${Screen.SmartTransferAmountScreen.baseRoute}/" +
                 "${encodeData(smartAccount)}/$ibanAccount/" +
@@ -167,7 +180,7 @@ class SmartTransferIbanViewModel @Inject constructor(
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
-        var sinpeAccountList: List<SinpeAccount?> = listOf()
+        var sinpeAccountList: List<ACHAccount?> = listOf()
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -183,6 +196,6 @@ class SmartTransferIbanViewModel @Inject constructor(
         object OnNavigateBack : UIEvent()
         object OnAddAccountClick : UIEvent()
         object OnCallListSinpeAccounts : UIEvent()
-        data class OnAccountClick(val account: SinpeAccount?) : UIEvent()
+        data class OnAccountClick(val account: ACHAccount?) : UIEvent()
     }
 }

@@ -50,7 +50,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
-    //Stateless
+    // Stateless
     private var idBrand = 0
     private var user = ""
     private var smartAccount: SmartAccountID? = null
@@ -259,18 +259,18 @@ class SmartAdd365AccountViewModel @Inject constructor(
                 uiState.type == null -> false
                 uiState.personalIdError.first -> false
                 transferType == SmartTransferTypes.SmartToOtherBank.id &&
-                        uiState.isAccountNumberError -> false
+                    uiState.isAccountNumberError -> false
                 transferType == SmartTransferTypes.SmartToOtherBank.id &&
-                        uiState.accountNumber.isEmpty() -> false
+                    uiState.accountNumber.isEmpty() -> false
                 uiState.names.isEmpty() -> false
                 uiState.lastNames.isEmpty() -> false
                 uiState.document == null -> false
                 uiState.bank == null -> false
                 uiState.documentNumber.isEmpty() -> false
                 transferType == SmartTransferTypes.SmartToMobile.id &&
-                        uiState.phoneNumber.isEmpty() -> false
+                    uiState.phoneNumber.isEmpty() -> false
                 transferType == SmartTransferTypes.SmartToMobile.id &&
-                        uiState.isPhoneNumberError -> false
+                    uiState.isPhoneNumberError -> false
                 else -> true
             }
         )
@@ -293,7 +293,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
-                    encodeData(smartAccount)
+                encodeData(smartAccount)
                 }/${encodeData(account)}/$transferType/${Screen.SmartAdd365AccountScreen.baseRoute}"
             )
         }
@@ -330,11 +330,12 @@ class SmartAdd365AccountViewModel @Inject constructor(
                         accountTypeId = account?.idTypeAccount?.toString() ?: uiState.type?.typeId.toString(),
                         isFavorite = account?.isFavorite ?: uiState.isFavorite,
                         identification = uiState.documentNumber,
-                        destinationType = account?.identificationTypeAccount?.toString().takeIf { it != "0" } ?: uiState.document?.value
+                        destinationType = account?.identificationTypeAccount?.toString()
+                            .takeIf { it != "0" } ?: uiState.document?.value
                     )
                     navigateTo(
                         "${Screen.SmartTransfer365EditAmountScreen.baseRoute}/${
-                            encodeData(smartAccount)
+                        encodeData(smartAccount)
                         }/${encodeData(savedAccount)}/$transferType/${Screen.SmartAdd365AccountScreen.baseRoute}"
                     )
                 }
@@ -345,7 +346,7 @@ class SmartAdd365AccountViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        val screen = when ( previousScreen) {
+        val screen = when (previousScreen) {
             Screen.SmartSelectSendingTypeScreen.baseRoute -> Screen.SmartSelectSendingTypeScreen.route
             Screen.SmartACHAccountsListScreen.baseRoute -> Screen.SmartACHAccountsListScreen.route
             else -> Screen.HomeScreen.route

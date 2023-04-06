@@ -50,7 +50,6 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
  * @param showTotalToReceive - boolean to determine if the total to receive section should be displayed
  * @param showBottomExchangeInfo - boolean to determine if the bottom exchange info section should be displayed
  * @param amountToReceive - number to display in the total to receive section
- * @param accountNumber - number to display in the account info section
  * @param buttonText - text to display in the button
  * @param asset - text of the crypto currency asset
  * @param assetImageUrl - url of the crypto currency asset image
@@ -73,7 +72,6 @@ fun ConfirmationBottomSheetContent(
     showTotalToReceive: Boolean = false,
     showBottomExchangeInfo: Boolean = false,
     amountToReceive: String = DEFAULT_AMOUNT,
-    accountNumber: String = "",
     buttonText: String = "",
     asset: String = "",
     assetImageUrl: String = "",
@@ -114,7 +112,6 @@ fun ConfirmationBottomSheetContent(
         )
         AccountInfoSection(
             idCurrency = idCurrency,
-            ibanAccountNumber = accountNumber,
             labelText = accountInfoLabel
         )
         if (showBottomExchangeInfo) {
@@ -261,8 +258,7 @@ private fun InfoSection(
 @Composable
 private fun AccountInfoSection(
     idCurrency: Int,
-    ibanAccountNumber: String,
-    @StringRes labelText: Int,
+    @StringRes labelText: Int
 ) {
     Column(
         modifier = Modifier
@@ -283,14 +279,17 @@ private fun AccountInfoSection(
             startIcon = R.drawable.ic_multimoney_smart,
             endIcon = null,
             title = stringResource(
-                id = R.string.crypto_purchase_flow_confirmation_from_account,
-                if (idCurrency == CurrencyType.Colon.id) {
-                    CurrencyType.Colon.symbol
+                id = if (idCurrency == CurrencyType.Colon.id) {
+                    CurrencyType.Colon.myAccountSmartSymbol
                 } else {
-                    CurrencyType.Dollar.symbol
+                    CurrencyType.Dollar.myAccountSmartSymbol
                 }
             ),
-            subtitle = ibanAccountNumber,
+            subtitle = if (idCurrency == CurrencyType.Colon.id) {
+                CurrencyType.Colon.stringName
+            } else {
+                CurrencyType.Dollar.stringName
+            },
             enable = false
         )
     }

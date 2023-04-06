@@ -22,12 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.multimoney.data.util.catalog.Brand
-import com.multimoney.data.util.catalog.SmartWorkflow
-import com.multimoney.domain.model.security.Wording
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.BlackTransparency16
 import com.multimoney.multimoney.presentation.theme.BlackTransparency20
@@ -35,7 +31,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
-import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.SPACE
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
@@ -49,9 +44,7 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 fun CardInactiveSmartProduct(
     textOne: String = "",
     textTwo: String = "",
-    cTA: String = "",
     type: SmartProcessStarted? = SmartProcessStarted.SmartInitialProcess,
-    showAction: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     val backgroundShip: Color = if (isSystemInDarkTheme()) {
@@ -69,7 +62,8 @@ fun CardInactiveSmartProduct(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            ) { onClick.invoke() }
+            ) { onClick.invoke() },
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         CustomInformativeChip(
             text = stringResource(id = R.string.smart_card_smart_title),
@@ -87,27 +81,12 @@ fun CardInactiveSmartProduct(
             text = textOne,
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
-            color = MultimoneyTheme.colors.labelText
+            color = MultimoneyTheme.colors.text
         )
         Text(
             text = textTwo,
             modifier = Modifier.padding(top = 8.dp),
             style = Typography.caption,
-            color = MultimoneyTheme.colors.text
-        )
-        if (showAction) {
-            CustomImage(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .align(Alignment.CenterHorizontally),
-                drawableResource = R.drawable.ic_chevron_up
-            )
-        }
-        Text(
-            text = cTA,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
-            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
     }
@@ -257,10 +236,9 @@ fun getSmartCardStartIcon(type: SmartProcessStarted?) = when (type) {
 }
 
 sealed class SmartProcessStarted {
-    object SmartInitialProcess: SmartProcessStarted()
+    object SmartInitialProcess : SmartProcessStarted()
     object SmartStartProcessIncomplete : SmartProcessStarted()
     object SmartProcessOnFidoIncomplete : SmartProcessStarted()
     object SmartProcessFirmIncomplete : SmartProcessStarted()
     object SmartProcessOnfidoReject : SmartProcessStarted()
-    object CreditProcessCreateAccountFailure : SmartProcessStarted()
 }

@@ -26,21 +26,20 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
 
     val context = LocalContext.current
 
-    CustomProductBackground(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        type = ProductBackGroundType.Secondary
-    ) {
-        viewModel.uiState.userStatus?.apply {
-            when (viewModel.uiState.smartContent.first) {
-                true -> {
-                    val step = viewModel.uiState.smartContent.second
-                    viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
+    viewModel.uiState.userStatus?.apply {
+        when (viewModel.uiState.smartContent.first) {
+            true -> {
+                val step = viewModel.uiState.smartContent.second
+                viewModel.uiState.userStatus?.infoBankAccount?.wording.let {
+                    CustomProductBackground(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        type = ProductBackGroundType.Secondary,
+                        cta = if (step != SMART_CARD_NO_ACTION) it?.cTA.toString() else null
+                    ) {
                         CardInactiveSmartProduct(
                             it?.textOne.toString(),
                             it?.textTwo.toString(),
-                            it?.cTA.toString(),
-                            getSmartProcessType(step),
-                            step != SMART_CARD_NO_ACTION
+                            getSmartProcessType(step)
                         ) {
                             if (step != SMART_CARD_NO_ACTION) {
                                 viewModel.onUIEvent(
@@ -57,9 +56,15 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
                             }
                         }
                     }
+
                 }
-                false -> {
-                    viewModel.balanceCredit?.balanceAccountSmart?.let {
+            }
+            false -> {
+                viewModel.balanceCredit?.balanceAccountSmart?.let {
+                    CustomProductBackground(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        type = ProductBackGroundType.Secondary
+                    ) {
                         if (it.isNotEmpty()) {
                             CardSmartProduct(
                                 currency = it[index]?.currencyCode ?: "",
@@ -70,18 +75,21 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
                         }
                     }
                 }
-                else -> {
-                    // Empty on purpose
-                }
+            }
+            else -> {
+                // Empty on purpose
             }
         }
     }
+
 }
 
 fun getSmartProcessType(workflow: String) = when (workflow) {
     SmartWorkflow.SMART_INITIAL_CARD.workflow -> SmartProcessStarted.SmartInitialProcess
+    SmartWorkflow.SMART_ONFIDO_PROCESS.workflow,
     SmartWorkflow.SMART_STEP_PENDING.workflow -> SmartProcessStarted.SmartStartProcessIncomplete
-    SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow -> SmartProcessStarted.SmartProcessOnFidoIncomplete
+    SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow ->
+        SmartProcessStarted.SmartProcessOnFidoIncomplete
     SmartWorkflow.SMART_CONTRACT_PROCESS.workflow -> SmartProcessStarted.SmartProcessFirmIncomplete
     SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow -> SmartProcessStarted.SmartProcessOnfidoReject
     else -> null

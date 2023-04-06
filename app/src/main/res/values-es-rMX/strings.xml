@@ -122,13 +122,6 @@
     <string name="onboarding_guatemala_step_three_title" translatable="false">Paga tu crédito desde la app</string>
     <string name="onboarding_guatemala_step_three_sub_title" translatable="false">Sin salir de tu casa, en el momento que quieras.</string>
 
-    <!-- OnBoarding Mexico-->
-    <string name="onboarding_mexico_step_one_title" translatable="false">Obtén \nlibertad \nfinanciera</string>
-    <string name="onboarding_mexico_step_one_sub_title" translatable="false">Crea tu cuenta en 5 minutos.</string>
-    <string name="onboarding_mexico_step_two_title" translatable="false">Tu crédito \nen menos \nde 2 horas</string>
-    <string name="onboarding_mexico_step_two_sub_title" translatable="false">Solicita hasta $400,000 MXN.</string>
-    <string name="onboarding_mexico_step_three_title" translatable="false">Ten el \ncontrol de \ntu crédito</string>
-    <string name="onboarding_mexico_step_three_sub_title" translatable="false">Revisa tus fechas de pago y monto disponible 24/7.</string>
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
@@ -1706,10 +1699,6 @@
     <string name="registered_user_otp_other_phone_number_subtitle" translatable="false">Por favor comunicate con nosotros para actualizar tus datos</string>
     <string name="registered_user_otp_code_placeholder" translatable="false">0</string>
     <string name="registered_user_otp_code_required" translatable="false">Código de verificación requerido</string>
-
-    <!-- Profile cards -->
-    <string name="profile_cards_empty_state_cr" translatable="false">No tenés tarjetas registradas</string>
-    <string name="profile_cards_empty_state_sv" translatable="false">No tienes tarjetas registradas</string>
 
     <!-- Profile -> My Cards -> Edit Card -->
     <string name="profile_my_cards_edit_card_title" translatable="false">Editar tarjeta</string>

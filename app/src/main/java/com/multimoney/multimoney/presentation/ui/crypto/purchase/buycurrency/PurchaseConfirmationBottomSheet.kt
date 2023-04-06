@@ -95,7 +95,6 @@ fun PurchaseConfirmationBottomSheet(
                     append(viewModel.asset)
                 }
             },
-            accountNumber = viewModel.accountNumber,
             buttonText = stringResource(id = R.string.crypto_purchase_flow_confirmation_btn_buy),
             showTotalToReceive = false,
             showBottomExchangeInfo = viewModel.idCurrencyAccount == CurrencyType.Colon.id,

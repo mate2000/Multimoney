@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -38,7 +39,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusiness.OwnBusinessViewModel.UIEvent.OnMonthlyIncomeChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
@@ -47,7 +47,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun SmartOwnBusinessSvScreen(
     viewModel: OwnBusinessViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
+    economicActivity: GeneralEconomicActivity? = null
 ) {
     LaunchedEffect(true) {
         sourceIncomeSharedViewModel.baseEvent.collect { event ->
@@ -74,7 +75,7 @@ fun SmartOwnBusinessSvScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = SourceIncomeOptionType.OwnBusiness.id.toLong(),
+                                idEconomicActivity = economicActivity?.id?.toLong(),
                                 companyName = viewModel.uiState.companyNameValue,
                                 aboutCompany = viewModel.uiState.companyDescriptionValue,
                                 income = viewModel.uiState.monthlyIncomeValue.toFloat(),

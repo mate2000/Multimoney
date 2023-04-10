@@ -12,6 +12,7 @@ import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelThreeUseC
 import com.multimoney.domain.interaction.accountsmart.QueryAddressLevelTwoUseCase
 import com.multimoney.domain.model.accountsmart.AccountSmartData
 import com.multimoney.domain.model.accountsmart.Address
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -27,7 +28,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.util.ADDRESS_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.Retired
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -57,7 +57,7 @@ class SourceIncomeViewModel @Inject constructor(
         accountSmartData: AccountSmartData?
     ) {
         accountSmartData?.let {
-            if (accountSmartData.idEconomicActivity != Retired.id.toLong()) {
+            if (accountSmartData.idEconomicActivity != Retired.iconId.toLong()) {
                 val divisionOne = it.idJobLevel1
                 val divisionTwo = it.idJobLevel2
                 val divisionThree = it.idJobLevel3
@@ -80,9 +80,7 @@ class SourceIncomeViewModel @Inject constructor(
      */
     fun goBackToMainOptions() {
         onUIEvent(
-            UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
-                SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            )
+            UIEvent.OnNavigateToSelectedSourceOfIncomeOption(null)
         )
     }
 
@@ -307,7 +305,7 @@ class SourceIncomeViewModel @Inject constructor(
 
     private fun onValidateForm() = emitBaseEvent(OnFormValidateCompleted(isFormValid()))
 
-    private fun onSourceOfIncomeOptionSelected(selectedOption: Int) {
+    private fun onSourceOfIncomeOptionSelected(selectedOption: GeneralEconomicActivity?) {
         trackOriginationSmartFirstTimeIncome()
         uiState = uiState.copy(selectedOption = selectedOption)
     }
@@ -320,7 +318,7 @@ class SourceIncomeViewModel @Inject constructor(
 
     data class UIState(
         // Interactions
-        val selectedOption: Int = SourceIncomeOptionType.MainSourceIncomeScreenType.id,
+        val selectedOption: GeneralEconomicActivity? = null,
         val divisionOneList: List<Address?>? = listOf(),
         val divisionTwoList: List<Address?>? = listOf(),
         val divisionThreeList: List<Address?>? = listOf(),
@@ -380,7 +378,9 @@ class SourceIncomeViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnNavigateToSelectedSourceOfIncomeOption(val selectedOption: Int) : UIEvent()
+        data class OnNavigateToSelectedSourceOfIncomeOption(val selectedOption: GeneralEconomicActivity?) :
+            UIEvent()
+
         data class OnDivisionOneValueChange(
             val user: String,
             val idBrand: Int,

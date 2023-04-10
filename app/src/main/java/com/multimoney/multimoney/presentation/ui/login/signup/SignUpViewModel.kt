@@ -167,6 +167,7 @@ class SignUpViewModel @Inject constructor(
             }
         }
         this.countryCode = countryCode
+        this.idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {

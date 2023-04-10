@@ -382,7 +382,7 @@ class SignUpViewModel @Inject constructor(
         executeUseCase {
             queryCountryContactUseCase.invoke(
                 user = SignInViewModel.GUEST_USER,
-                idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
+                idBrand = idBrand ?: Brand.Default.id
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
                     whatsAppLink = contactInfo?.whatsappLink ?: ""

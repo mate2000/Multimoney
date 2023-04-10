@@ -58,10 +58,9 @@ fun CustomCatalogItem(
             width = 1.dp,
             brush = Brush.verticalGradient(
                 colors = listOf(GradientGrey1, GradientGrey2)
-            ),
+            )
         )
     ) {
-
         val labelColor: Color = if (isSystemInDarkTheme()) {
             WhiteTransparency60
         } else {
@@ -80,7 +79,7 @@ fun CustomCatalogItem(
                 painter = painterResource(iconId.getSourceIncomeIconDrawable()),
                 contentDescription = label,
                 contentScale = ContentScale.Inside,
-                alignment = Alignment.BottomCenter,
+                alignment = Alignment.BottomCenter
             )
             Box(
                 modifier = Modifier.fillMaxWidth()

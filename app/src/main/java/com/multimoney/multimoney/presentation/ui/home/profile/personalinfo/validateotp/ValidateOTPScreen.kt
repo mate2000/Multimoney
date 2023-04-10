@@ -144,7 +144,8 @@ fun ValidateOTPScreen(
                 }
             }.onMessage {
                 viewModel.onUIEvent(
-                    ValidateOTPViewModel.UIEvent.OnFailureWithDialog(false,
+                    ValidateOTPViewModel.UIEvent.OnFailureWithDialog(
+                        false,
                         DialogParameters(
                             titleResource = R.string.sign_up_email_blocked_dialog_title,
                             description = viewModel.userBlockedForMaxAttend,
@@ -159,7 +160,9 @@ fun ValidateOTPScreen(
                                     ValidateOTPViewModel.UIEvent.OnOpenWhatsappLink(context)
                                 )
                             }
-                        )))
+                        )
+                    )
+                )
             }.onFailure {
                 viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnError)
             }.onLoading {
@@ -181,7 +184,7 @@ fun ValidateOTPScreen(
         }
     }
 
-    //full screen dialog
+    // full screen dialog
     if (viewModel.uiState.isAlertResultVisible) {
         AlertResult(
             titleString = stringResource(id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_error_changing_phone_title else R.string.profile_error_changing_email_title),
@@ -252,7 +255,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 viewModel.uiState.destination ?: ""
             ),
             style = Typography.body2,
-            color = MultimoneyTheme.colors.labelText,
+            color = MultimoneyTheme.colors.labelText
         )
 
         when (viewModel.uiState.messageStatus) {
@@ -321,12 +324,14 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
             errorMessage = stringResource(id = viewModel.uiState.otpError.second)
         )
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .constrainAs(timerText) {
-                top.linkTo(otpField.bottom)
-            }) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .constrainAs(timerText) {
+                    top.linkTo(otpField.bottom)
+                }
+        ) {
             Text(
                 text = stringResource(
                     id = viewModel.uiState.statusTextResource,

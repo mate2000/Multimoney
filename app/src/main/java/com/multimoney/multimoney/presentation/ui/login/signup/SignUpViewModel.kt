@@ -13,6 +13,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
@@ -25,6 +26,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -71,6 +73,7 @@ import javax.inject.Inject
 @OptIn(ExperimentalMaterialApi::class)
 class SignUpViewModel @Inject constructor(
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
+    private val queryCountryContactUseCase: QueryCountryContactUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
@@ -164,6 +167,7 @@ class SignUpViewModel @Inject constructor(
             }
         }
         this.countryCode = countryCode
+        this.idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
@@ -375,8 +379,15 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onGetWhatsAppLink() {
-        viewModelScope.launch {
-            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = SignInViewModel.GUEST_USER,
+                idBrand = idBrand ?: Brand.Default.id
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    whatsAppLink = contactInfo?.whatsappLink ?: ""
+                }
+            }
         }
     }
 

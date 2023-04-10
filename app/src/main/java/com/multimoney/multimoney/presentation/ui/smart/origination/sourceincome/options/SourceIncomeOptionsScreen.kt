@@ -55,7 +55,7 @@ fun SourceIncomeOptionsScreen(
             generalEconomicActivityList = generalEconomicActivityList ?: listOf(),
             isLoading = isLoading,
             onItemClick = { sourceOfIncome ->
-                sourceOfIncome?.id?.let {
+                sourceOfIncome?.let {
                     sourceIncomeSharedViewModel.onUIEvent(
                         OnNavigateToSelectedSourceOfIncomeOption(it)
                     )

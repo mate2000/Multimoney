@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -39,7 +40,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnIncomeSourceChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.otherincome.OtherIncomeViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
@@ -48,7 +48,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun OtherIncomeScreen(
     viewModel: OtherIncomeViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
+    economicActivity: GeneralEconomicActivity? = null
 ) {
     LaunchedEffect(true) {
         sourceIncomeSharedViewModel.baseEvent.collect { event ->
@@ -75,9 +76,7 @@ fun OtherIncomeScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = if (sharedViewModel.idBrandAsInt == Brand.CostaRica.id) {
-                                    SourceIncomeOptionType.OtherCR.id.toLong()
-                                } else SourceIncomeOptionType.OtherSV.id.toLong(),
+                                idEconomicActivity = economicActivity?.id?.toLong(),
                                 income = viewModel.uiState.incomeAmount.toFloat(),
                                 specifiesIncomeSource = viewModel.uiState.incomeSource,
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
@@ -111,11 +110,7 @@ fun OtherIncomeScreen(
     )
 
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
-                SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            )
-        )
+        sourceIncomeSharedViewModel.goBackToMainOptions()
     }
 }
 

@@ -68,8 +68,6 @@ android {
 
     buildTypes {
         production {
-            minifyEnabled true
-            shrinkResources true
             crunchPngs false
             applicationIdSuffix ".cr"
             signingConfig signingConfigs.production

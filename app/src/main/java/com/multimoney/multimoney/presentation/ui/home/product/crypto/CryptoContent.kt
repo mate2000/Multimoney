@@ -69,7 +69,8 @@ fun CryptoContent(
                     CustomProductBackground(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
+                        type = ProductBackGroundType.ComplementaryTwo,
+                        cta = userStatus.infoCrypto?.wording?.cTA
                     ) {
                         CryptoCardDiscoverCrypto(
                             wording = userStatus.infoCrypto?.wording,
@@ -85,7 +86,8 @@ fun CryptoContent(
                 if (it.statusRequest != "" && it.idRequestGlobal != 0L && it.currentStep != "") {
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
+                        type = ProductBackGroundType.ComplementaryTwo,
+                        cta = userStatus.infoCrypto?.wording?.cTA
                     ) {
                         CryptoCardSmartInProcess(
                             wording = userStatus.infoCrypto?.wording,
@@ -97,7 +99,8 @@ fun CryptoContent(
                     CustomProductBackground(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
+                        type = ProductBackGroundType.ComplementaryTwo,
+                        cta = userStatus.infoCrypto?.wording?.cTA
                     ) {
                         CryptoCardDiscoverCrypto(
                             wording = userStatus.infoCrypto?.wording,

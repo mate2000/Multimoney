@@ -23,8 +23,8 @@ import com.multimoney.multimoney.presentation.theme.ShadowColorComplementaryTwo
 import com.multimoney.multimoney.presentation.theme.ShadowColorPrimary
 import com.multimoney.multimoney.presentation.theme.ShadowColorSecondary
 import com.multimoney.multimoney.presentation.theme.ShadowColorTertiary
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryOne
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Secondary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.util.coloredShadow
 fun CustomProductBackground(
     modifier: Modifier = Modifier,
     type: ProductBackGroundType = Primary,
+    cta: String? = null,
     content: @Composable () -> Unit = {}
 ) {
     val shadowCardColor: Color
@@ -65,14 +66,16 @@ fun CustomProductBackground(
     Row(
         modifier = Modifier
             .coloredShadow(shadowCardColor)
-            .padding(bottom = 16.dp)
     ) {
         Box(modifier = modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 230.dp)
-                    .paint(painterResource(id = cardResourceId), contentScale = ContentScale.FillBounds)
+                    .paint(
+                        painterResource(id = cardResourceId),
+                        contentScale = ContentScale.FillBounds
+                    )
                     .clip(RoundedCornerShape(24.dp))
                     .blur(0.24.dp)
 
@@ -83,6 +86,12 @@ fun CustomProductBackground(
                         .align(Alignment.TopCenter)
                 )
                 content()
+                ProductCardCTA(
+                    modifier = Modifier
+                        .padding(top = 20.dp, bottom = 16.dp)
+                        .align(Alignment.BottomCenter),
+                    actionText = cta
+                )
             }
         }
     }

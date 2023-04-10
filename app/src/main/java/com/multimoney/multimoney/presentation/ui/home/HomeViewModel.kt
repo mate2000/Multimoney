@@ -125,12 +125,12 @@ class HomeViewModel @Inject constructor(
                 userName = dataStorePreferences.getUserName().firstOrNull() ?: ""
             )
             callQueryValidateUserStatus(
-                uiState.pkUser.toInt(),
+                uiState.pkUser.toIntOrNull() ?: 0,
                 uiState.identification,
                 uiState.email,
-                uiState.idBrand.toInt()
+                uiState.idBrand.toIntOrNull() ?: Brand.Default.id
             )
-            callQueryGetConfigurationVersion(uiState.idBrand.toInt())
+            callQueryGetConfigurationVersion(uiState.idBrand.toIntOrNull() ?: Brand.Default.id)
             getContactInfo()
         }
     }
@@ -145,7 +145,7 @@ class HomeViewModel @Inject constructor(
         executeUseCase {
             queryCountryContactUseCase.invoke(
                 user = uiState.email,
-                idBrand = uiState.idBrand.toInt()
+                idBrand = uiState.idBrand.toIntOrNull() ?: Brand.Default.id
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
                     viewModelScope.launch {

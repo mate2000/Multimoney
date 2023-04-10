@@ -163,8 +163,7 @@ class SignInOTPViewModel @Inject constructor(
 
     private fun onShowBlockedDialog() {
         uiState = uiState.copy(
-            openDialog =
-            DialogParameters(
+            openDialog = DialogParameters(
                 titleResource = R.string.sign_in_verify_otp_blocked_title,
                 descriptionResource = uiState.dialogTextResource,
                 isActive = mutableStateOf(true),

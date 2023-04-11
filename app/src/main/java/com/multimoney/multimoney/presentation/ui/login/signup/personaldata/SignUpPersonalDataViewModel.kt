@@ -354,7 +354,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
     private fun onNationalityChange(
         nationality: Int,
         updateNationality: (nationality: String, idBrand: Int) -> Unit,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onMexicoSelected: () -> Unit
     ) {
         uiState = uiState.copy(
             nationalityValue = onSuccessCountry?.countryList?.get(nationality)?.countryDescription
@@ -362,15 +363,19 @@ class SignUpPersonalDataViewModel @Inject constructor(
             personalDocumentValue = "",
             dataInformationClient = null
         )
-        callQueryCatalogDocumentType(
-            onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0,
-            onLoadingValueChange
-        )
         cleanUIForNationality()
-        updateNationality.invoke(
-            onSuccessCountry?.countryList?.get(nationality)?.countryDescription ?: "",
-            onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0
-        )
+        if (nationality == MEXICO) {
+            onMexicoSelected()
+        } else {
+            callQueryCatalogDocumentType(
+                onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0,
+                onLoadingValueChange
+            )
+            updateNationality.invoke(
+                onSuccessCountry?.countryList?.get(nationality)?.countryDescription ?: "",
+                onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0
+            )
+        }
     }
 
     private fun onCallMutationUserValidationUseCase(
@@ -708,7 +713,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
             is OnNationalityChange -> onNationalityChange(
                 event.nationality,
                 event.updateNationality,
-                event.onLoadingValueChange
+                event.onLoadingValueChange,
+                event.onMexicoSelected
             )
             is OnFirstNameChange -> onFirstNameValueChange(
                 event.firstName,
@@ -766,7 +772,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
         data class OnNationalityChange(
             val nationality: Int,
             val updateNationality: (nationality: String, idBrand: Int) -> Unit,
-            val onLoadingValueChange: (isLoading: Boolean) -> Unit
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onMexicoSelected: () -> Unit
         ) :
             UIEvent()
 
@@ -835,5 +842,6 @@ class SignUpPersonalDataViewModel @Inject constructor(
         const val ANDROID_LABEL = "Android"
         const val SINGLE_DOCUMENT = 1
         const val ANOTHER_DEVICE_ALREADY_REGISTERED = 3102
+        const val MEXICO = 3
     }
 }

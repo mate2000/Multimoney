@@ -8,7 +8,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditInProcessStatus
 import com.multimoney.data.util.catalog.CreditWorkflow
+import com.multimoney.data.util.catalog.getCreditProcessStatus
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
@@ -17,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGtSvCreditRejected
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditManualProcess
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
@@ -50,7 +53,8 @@ fun CreditContent(viewModel: ProductViewModel) {
                     content = {
                         CardWithCreditInProcess(
                             type = getCardWithCreditInProcessType(
-                                infoCredit?.wording?.workflow ?: ""
+                                infoCredit?.wording?.workflow ?: "",
+                                infoCredit?.infoPreApprove?.status
                             ),
                             idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
                             action = getCardAction(
@@ -121,7 +125,7 @@ fun CreditContent(viewModel: ProductViewModel) {
                     content = {
                         CardWithCreditInProcess(
                             type = CreditManualProcess,
-                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.Default.id,
                             wording = viewModel.uiState.userStatus?.infoCredit?.wording
                         )
                     }
@@ -167,8 +171,14 @@ fun getCardAction(
     }
 }
 
-fun getCardWithCreditInProcessType(workflow: String) = when (workflow) {
-    CreditWorkflow.CREDIT_PROCESS.workflow -> CreditStartProcessIncomplete
+fun getCardWithCreditInProcessType(workflow: String, status: String? = "") = when (workflow) {
+    CreditWorkflow.CREDIT_PROCESS.workflow -> {
+        when(getCreditProcessStatus(status)) {
+            CreditInProcessStatus.OFFER -> CreditProcessStarted.CreditOfferApproved
+            CreditInProcessStatus.IN_PROCESS -> CreditStartProcessIncomplete
+            else -> null
+        }
+    }
     CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow -> CreditProcessFirmMaxAttempts
     CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow -> CreditProcessOnfidoReject
     CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow -> CreditProcessFirmReject

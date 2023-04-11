@@ -48,6 +48,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
@@ -321,7 +322,7 @@ fun CardWithCreditInProcess(
         CreditProcessCreateAccountFailure -> {
             startIcon = drawable.ic_warning
         }
-        CreditProcessStarted.CreditRejected -> {
+        CreditOfferApproved -> {
             startIcon = 0
         }
         else -> Unit
@@ -552,6 +553,7 @@ fun OngoingCredit(
 
 sealed class CreditProcessStarted {
     object CreditStartProcessIncomplete : CreditProcessStarted()
+    object CreditOfferApproved : CreditProcessStarted()
     object CreditProcessOnFidoIncomplete : CreditProcessStarted()
     object CreditManualProcess : CreditProcessStarted()
     object CreditProcessFirmReject : CreditProcessStarted()
@@ -559,5 +561,4 @@ sealed class CreditProcessStarted {
     object CreditProcessOnfidoReject : CreditProcessStarted()
     object CreditProcessOnfidoMaxAttempts : CreditProcessStarted()
     object CreditProcessCreateAccountFailure : CreditProcessStarted()
-    object CreditRejected : CreditProcessStarted()
 }

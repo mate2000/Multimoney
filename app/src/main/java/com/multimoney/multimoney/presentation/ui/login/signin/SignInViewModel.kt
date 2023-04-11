@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -249,9 +250,9 @@ class SignInViewModel @Inject constructor(
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
                     else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
                     else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)

@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
@@ -311,7 +312,7 @@ class SignInOTPViewModel @Inject constructor(
 
     private fun onSetupResources(context: Context) {
         uiState = when (context.getUserCountry()) {
-            SIM_CODE_EL_SALVADOR -> {
+            SIM_CODE_EL_SALVADOR, SIM_CODE_GUATEMALA -> {
                 uiState.copy(
                     weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template_gt,
                     dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle

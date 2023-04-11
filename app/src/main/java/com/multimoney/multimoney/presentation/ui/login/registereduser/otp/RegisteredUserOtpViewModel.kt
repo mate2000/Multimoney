@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -16,7 +17,6 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.OTP_METHOD
@@ -42,12 +42,6 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -56,6 +50,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class RegisteredUserOtpViewModel @Inject constructor(
@@ -207,21 +207,27 @@ class RegisteredUserOtpViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { sendPinProcess ->
                 uiState = uiState.copy(otpResend = sendPinProcess?.nextType, isLoading = false)
-                initializeTimer(totalTime = sendPinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION)
+                initializeTimer(
+                    totalTime = sendPinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION
+                )
                 getPhaseAction()
                 onExecuteTimer()
             }.onMessage {
                 uiState = uiState.copy(
                     isLoading = false,
                     dialogParameters = DialogParameters(
-                        titleResource = string.sign_up_email_blocked_dialog_title,
-                        descriptionResource = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts,
+                        titleResource = R.string.sign_up_email_blocked_dialog_title,
+                        descriptionResource = if (idBrand == Brand.CostaRica.id) {
+                            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
+                        } else {
+                            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
+                        },
                         isActive = mutableStateOf(true),
-                        positiveResource = string.contact,
+                        positiveResource = R.string.contact,
                         positiveAction = {
                             onUserBlocked()
                         },
-                        negativeResource = string.cancel,
+                        negativeResource = R.string.cancel,
                         negativeAction = {
                             navigateToSignIn()
                         }
@@ -300,7 +306,9 @@ class RegisteredUserOtpViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     viewModelScope.launch {
-                        if (dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()) {
+                        if (
+                            dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()
+                        ) {
                             registerAdjustEvent(
                                 AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012,
                                 isLoggedIn = false,
@@ -319,7 +327,10 @@ class RegisteredUserOtpViewModel @Inject constructor(
                     )
                 }.onMessage {
                     uiState =
-                        uiState.copy(otpError = Pair(true, R.string.sign_up_otp_code_not_valid), isLoading = false)
+                        uiState.copy(
+                            otpError = Pair(true, R.string.sign_up_otp_code_not_valid),
+                            isLoading = false
+                        )
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -339,10 +350,10 @@ class RegisteredUserOtpViewModel @Inject constructor(
         uiState = uiState.copy(
             isLoading = false,
             dialogParameters = DialogParameters(
-                titleResource = string.registered_user_otp_other_phone_number_title,
+                titleResource = R.string.registered_user_otp_other_phone_number_title,
                 descriptionResource = R.string.registered_user_otp_other_phone_number_subtitle,
                 isActive = mutableStateOf(true),
-                positiveResource = string.contact,
+                positiveResource = R.string.contact,
                 positiveAction = {
                     emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
                 }
@@ -407,12 +418,9 @@ class RegisteredUserOtpViewModel @Inject constructor(
         const val PHASE_FOUR = 4
         const val PHASE_FIVE = 5
         const val PHASE_SIX = 6
-
         const val TOTAL_DIGITS = 4
-
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
-
         const val APP_SOURCE = 2
     }
 }

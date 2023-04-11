@@ -37,12 +37,15 @@ fun CreditContent(viewModel: ProductViewModel) {
         val context = LocalContext.current
         var content: @Composable () -> Unit = {}
         var cta: String? = null
+        var isActionEnabled: Boolean = false
+        var action: () -> Unit = {}
         if (infoCredit?.wording?.display == true) {
             when (infoCredit?.wording?.workflow) {
                 CreditWorkflow.CREDIT_AVAILABLE.workflow -> {
                     content = {
                         OngoingCredit(viewModel)
                     }
+                    isActionEnabled = false
                     cta = null
                 }
                 CreditWorkflow.CREDIT_PROCESS.workflow,
@@ -57,69 +60,73 @@ fun CreditContent(viewModel: ProductViewModel) {
                                 infoCredit?.infoPreApprove?.status
                             ),
                             idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
-                            action = getCardAction(
-                                workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = viewModel.whatsAppLink,
-                                context = context,
-                                viewModel = viewModel
-                            ),
                             wording = infoCredit?.wording
                         )
                     }
                     cta = infoCredit?.wording?.cTA
+                    isActionEnabled = true
+                    action = getCardAction(
+                        workflow = infoCredit?.wording?.workflow ?: "",
+                        whatsAppLink = viewModel.whatsAppLink,
+                        context = context,
+                        viewModel = viewModel
+                    )
                 }
                 CreditWorkflow.CREDIT_PENDING.workflow -> {
                     content = { CardCreditFirmedAndOnfidoPending() }
+                    isActionEnabled = false
                     cta = null
                 }
                 CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
                     content = {
                         CardNonPreApprovedCredit(
                             textOne = infoCredit?.wording?.textOne,
-                            textTwo = infoCredit?.wording?.textTwo,
-                            action = getCardAction(
-                                workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = viewModel.whatsAppLink,
-                                context = context,
-                                viewModel = viewModel
-                            )
+                            textTwo = infoCredit?.wording?.textTwo
                         )
                     }
-                    cta =
-                        stringResource(id = R.string.home_product_gt_sv_non_pre_approved_credit_action)
+                    cta = stringResource(id = R.string.home_product_gt_sv_non_pre_approved_credit_action)
+                    isActionEnabled = true
+                    action = getCardAction(
+                        workflow = infoCredit?.wording?.workflow ?: "",
+                        whatsAppLink = viewModel.whatsAppLink,
+                        context = context,
+                        viewModel = viewModel
+                    )
                 }
                 CreditWorkflow.CREDIT_REJECTED.workflow -> {
                     content = {
                         CardGtSvCreditRejected(
-                            action = getCardAction(
-                                workflow = infoCredit?.wording?.workflow ?: "",
-                                whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
-                                    ?: viewModel.whatsAppLink,
-                                context = context,
-                                viewModel = viewModel
-                            ),
                             wording = viewModel.uiState.userStatus?.infoCredit?.wording
                         )
                     }
                     cta = viewModel.uiState.userStatus?.infoCredit?.wording?.cTA
+                    isActionEnabled = true
+                    action = getCardAction(
+                        workflow = infoCredit?.wording?.workflow ?: "",
+                        whatsAppLink = viewModel.uiState.userStatus?.infoCredit?.wording?.link
+                            ?: viewModel.whatsAppLink,
+                        context = context,
+                        viewModel = viewModel
+                    )
                 }
                 CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> {
                     content = {
                         CardWithCreditInProcess(
                             type = CreditProcessCreateAccountFailure,
                             idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
-                            wording = viewModel.uiState.userStatus?.infoCredit?.wording,
-                            action = {
-                                viewModel.onUIEvent(
-                                    OnMaxAttemptsCardClick(
-                                        whatsAppLink = viewModel.whatsAppLink,
-                                        context = context
-                                    )
-                                )
-                            }
+                            wording = viewModel.uiState.userStatus?.infoCredit?.wording
                         )
                     }
                     cta = viewModel.uiState.userStatus?.infoCredit?.wording?.cTA
+                    isActionEnabled = true
+                    action = {
+                        viewModel.onUIEvent(
+                            OnMaxAttemptsCardClick(
+                                whatsAppLink = viewModel.whatsAppLink,
+                                context = context
+                            )
+                        )
+                    }
                 }
                 else -> {
                     content = {
@@ -129,15 +136,17 @@ fun CreditContent(viewModel: ProductViewModel) {
                             wording = viewModel.uiState.userStatus?.infoCredit?.wording
                         )
                     }
+                    isActionEnabled = false
                 }
             }
             CustomProductBackground(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 type = Primary,
-                cta = cta
-            ) {
-                content()
-            }
+                cta = cta,
+                content = content,
+                isActionEnabled = isActionEnabled,
+                action = action
+            )
         }
     }
 }
@@ -173,7 +182,7 @@ fun getCardAction(
 
 fun getCardWithCreditInProcessType(workflow: String, status: String? = "") = when (workflow) {
     CreditWorkflow.CREDIT_PROCESS.workflow -> {
-        when(getCreditProcessStatus(status)) {
+        when (getCreditProcessStatus(status)) {
             CreditInProcessStatus.OFFER -> CreditOfferApproved
             CreditInProcessStatus.IN_PROCESS -> CreditStartProcessIncomplete
             else -> null

@@ -61,19 +61,12 @@ import com.multimoney.multimoney.presentation.util.getCardDateFormat
 @Composable
 fun CardNonPreApprovedCredit(
     textOne: String? = "",
-    textTwo: String? = "",
-    action: () -> Unit = {}
+    textTwo: String? = ""
 ) {
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action()
-            },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -127,20 +120,13 @@ fun CardGtSvCreditRejected(
         cTA = "",
         link = "",
         display = false
-    ),
-    action: () -> Unit = {}
+    )
 ) {
     val notDefinedValue = stringResource(id = string.not_defined)
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action()
-            },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -295,7 +281,6 @@ fun CreditPreApproved(
 fun CardWithCreditInProcess(
     type: CreditProcessStarted? = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {},
     wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
@@ -332,13 +317,7 @@ fun CardWithCreditInProcess(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action.invoke()
-            },
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -521,9 +500,9 @@ fun OngoingCredit(
                                     .clip(CircleShape)
                                     .background(
                                         if ((
-                                                    viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                        ?: 0
-                                                    ) > 0
+                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                ?: 0
+                                            ) > 0
                                         ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                     )
                             )

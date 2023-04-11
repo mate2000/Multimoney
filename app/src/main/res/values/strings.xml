@@ -231,6 +231,7 @@
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>
     <string name="sign_up_otp_code_required" translatable="false">Código de verificación requerido</string>
     <string name="sign_up_otp_code_not_valid" translatable="false">Código de verificación incorrecto</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_in_otp_expiration_time_phase_one" translatable="false">Código expira en </string>

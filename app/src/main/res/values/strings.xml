@@ -176,8 +176,8 @@
     <string name="sign_in_error_alert_dialog_button" translatable="false">Ir al inicio</string>
     <string name="sign_up_session_blacklisted_title_cr" translatable="false">No podés realizar el registro</string>
     <string name="sign_up_session_blacklisted_title" translatable="false">No puedes realizar el registro</string>
-    <string name="sign_up_session_blacklisted_message_cr" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Intentálo más tarde o contacta a soporte.</string>
-    <string name="sign_up_session_blacklisted_message_sv" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes iniciar sesión ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_session_blacklisted_message_cr" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes registrarte ahora. Intentálo más tarde o contacta a soporte.</string>
+    <string name="sign_up_session_blacklisted_message_sv" translatable="false">Hemos detectado una anomalía. por tu seguridad no puedes registrarte ahora. Inténtalo más tarde o contacta a soporte.</string>
 
 
     <!-- Sign Up Costa rica-->

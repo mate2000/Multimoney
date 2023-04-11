@@ -34,13 +34,9 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         type = ProductBackGroundType.Secondary,
-                        cta = if (step != SMART_CARD_NO_ACTION) it?.cTA.toString() else null
-                    ) {
-                        CardInactiveSmartProduct(
-                            it?.textOne.toString(),
-                            it?.textTwo.toString(),
-                            getSmartProcessType(step)
-                        ) {
+                        cta = if (step != SMART_CARD_NO_ACTION) it?.cTA.toString() else null,
+                        isActionEnabled = step != SMART_CARD_NO_ACTION,
+                        action = {
                             if (step != SMART_CARD_NO_ACTION) {
                                 viewModel.onUIEvent(
                                     OnNavigateToSmartOriginationFlow(
@@ -55,15 +51,21 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
                                 )
                             }
                         }
+                    ) {
+                        CardInactiveSmartProduct(
+                            it?.textOne.toString(),
+                            it?.textTwo.toString(),
+                            getSmartProcessType(step)
+                        )
                     }
-
                 }
             }
             false -> {
                 viewModel.balanceCredit?.balanceAccountSmart?.let {
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.Secondary
+                        type = ProductBackGroundType.Secondary,
+                        isActionEnabled = false
                     ) {
                         if (it.isNotEmpty()) {
                             CardSmartProduct(
@@ -81,7 +83,6 @@ fun SmartContent(viewModel: ProductViewModel, index: Int) {
             }
         }
     }
-
 }
 
 fun getSmartProcessType(workflow: String) = when (workflow) {

@@ -164,6 +164,13 @@
     <string name="sign_in_expired_password_dialog_title" translatable="false">Tu contraseña ha expirado</string>
     <string name="sign_in_expired_password_dialog_description" translatable="false">Para poder hacer login debes de actualizar tu contraseña.</string>
     <string name="sign_in_expired_password_dialog_positive_button" translatable="false">Actualizar contraseña</string>
+    <string name="sign_in_too_many_attempts_cr" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, intentá de nuevo</string>
+    <string name="sign_in_too_many_attempts" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, intenta de nuevo</string>
+    <string name="sign_in_account_blocked_title_cr" translatable="false">Restablecé tu contraseña</string>
+    <string name="sign_in_account_blocked_title" translatable="false">Restablece tu contraseña</string>
+    <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad debés restablecer la contraseña para poder ingresar al app</string>
+    <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad debes restablecer la contraseña para poder ingresar al app</string>
+    <string name="sign_in_restore_password" translatable="false">Restablecer</string>
 
 
     <!-- Sign Up General-->

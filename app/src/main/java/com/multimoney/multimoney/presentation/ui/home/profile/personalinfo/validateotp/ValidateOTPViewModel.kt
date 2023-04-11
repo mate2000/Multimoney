@@ -109,8 +109,14 @@ class ValidateOTPViewModel @Inject constructor(
     private fun getTextResources() {
         uiState = uiState.copy(
             dialogTextResource = when (uiState.idBrand) {
-                Brand.CostaRica.id -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone else R.string.profile_otp_user_blocked_max_attempt_email
-                else -> if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_sv else R.string.profile_otp_user_blocked_max_attempt_email_sv
+                Brand.CostaRica.id -> {
+                    if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone
+                    else R.string.profile_otp_user_blocked_max_attempt_email
+                }
+                else -> {
+                    if (uiState.changingField == FieldToChange.PHONE.value) R.string.profile_otp_user_blocked_max_attempt_phone_sv
+                    else R.string.profile_otp_user_blocked_max_attempt_email_sv
+                }
             },
             alertTextResource = when (uiState.idBrand) {
                 Brand.CostaRica.id -> R.string.profile_error_changing_phone

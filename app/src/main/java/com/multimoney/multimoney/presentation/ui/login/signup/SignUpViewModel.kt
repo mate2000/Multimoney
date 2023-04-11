@@ -486,8 +486,10 @@ class SignUpViewModel @Inject constructor(
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
-            is UIEvent.OnUpdateCountry ->
+            is UIEvent.OnUpdateCountry -> {
                 uiState = uiState.copy(country = event.country)
+                idBrand = Brand.Search.getIdBrandByCountryCode(event.country)
+            }
             is UIEvent.OnUpdatePassword -> pass = event.pass
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)

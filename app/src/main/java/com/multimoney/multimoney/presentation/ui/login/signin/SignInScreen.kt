@@ -70,17 +70,17 @@ fun SignInScreen(
     // Navigation
     LaunchedEffect(true) {
         viewModel.apply {
+            onUIEvent(
+                SignInViewModel.UIEvent.OnUpdateCountry(
+                    context.getUserCountry()
+                )
+            )
             executeNavigation(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate)
             onUIEvent(
                 SignInViewModel.UIEvent.OnStart(
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value,
                     forceChangeDevice
-                )
-            )
-            onUIEvent(
-                SignInViewModel.UIEvent.OnUpdateCountry(
-                    context.getUserCountry()
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))

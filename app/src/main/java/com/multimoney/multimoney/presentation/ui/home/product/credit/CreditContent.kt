@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditWorkflow
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnMaxAttemptsCardClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
@@ -30,22 +32,26 @@ import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Pr
 fun CreditContent(viewModel: ProductViewModel) {
     viewModel.uiState.userStatus?.apply {
         val context = LocalContext.current
+        var content: @Composable () -> Unit = {}
+        var cta: String? = null
         if (infoCredit?.wording?.display == true) {
-            CustomProductBackground(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                type = Primary
-            ) {
-                when (infoCredit?.wording?.workflow) {
-                    CreditWorkflow.CREDIT_AVAILABLE.workflow -> {
+            when (infoCredit?.wording?.workflow) {
+                CreditWorkflow.CREDIT_AVAILABLE.workflow -> {
+                    content = {
                         OngoingCredit(viewModel)
                     }
-                    CreditWorkflow.CREDIT_PROCESS.workflow,
-                    CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow,
-                    CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow,
-                    CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow,
-                    CreditWorkflow.CONTACT_ERROR.workflow -> {
+                    cta = null
+                }
+                CreditWorkflow.CREDIT_PROCESS.workflow,
+                CreditWorkflow.CONTACT_EVICERTIA_MAX.workflow,
+                CreditWorkflow.CREDIT_ONFIDO_PROCESS.workflow,
+                CreditWorkflow.CREDIT_CONTRACT_PROCESS.workflow,
+                CreditWorkflow.CONTACT_ERROR.workflow -> {
+                    content = {
                         CardWithCreditInProcess(
-                            type = getCardWithCreditInProcessType(infoCredit?.wording?.workflow ?: ""),
+                            type = getCardWithCreditInProcessType(
+                                infoCredit?.wording?.workflow ?: ""
+                            ),
                             idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
@@ -56,12 +62,17 @@ fun CreditContent(viewModel: ProductViewModel) {
                             wording = infoCredit?.wording
                         )
                     }
-                    CreditWorkflow.CREDIT_PENDING.workflow -> {
-                        CardCreditFirmedAndOnfidoPending()
-                    }
-                    CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
+                    cta = infoCredit?.wording?.cTA
+                }
+                CreditWorkflow.CREDIT_PENDING.workflow -> {
+                    content = { CardCreditFirmedAndOnfidoPending() }
+                    cta = null
+                }
+                CreditWorkflow.CREDIT_NOT_PREAPROVED.workflow -> {
+                    content = {
                         CardNonPreApprovedCredit(
-                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            textOne = infoCredit?.wording?.textOne,
+                            textTwo = infoCredit?.wording?.textTwo,
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
                                 whatsAppLink = viewModel.whatsAppLink,
@@ -70,7 +81,11 @@ fun CreditContent(viewModel: ProductViewModel) {
                             )
                         )
                     }
-                    CreditWorkflow.CREDIT_REJECTED.workflow -> {
+                    cta =
+                        stringResource(id = R.string.home_product_gt_sv_non_pre_approved_credit_action)
+                }
+                CreditWorkflow.CREDIT_REJECTED.workflow -> {
+                    content = {
                         CardGtSvCreditRejected(
                             action = getCardAction(
                                 workflow = infoCredit?.wording?.workflow ?: "",
@@ -82,10 +97,14 @@ fun CreditContent(viewModel: ProductViewModel) {
                             wording = viewModel.uiState.userStatus?.infoCredit?.wording
                         )
                     }
-                    CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> {
+                    cta = viewModel.uiState.userStatus?.infoCredit?.wording?.cTA
+                }
+                CreditWorkflow.CONTACT_CREDIT_ERROR.workflow -> {
+                    content = {
                         CardWithCreditInProcess(
                             type = CreditProcessCreateAccountFailure,
-                            idBrand = viewModel.uiState.idBrand.toInt(),
+                            idBrand = viewModel.uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id,
+                            wording = viewModel.uiState.userStatus?.infoCredit?.wording,
                             action = {
                                 viewModel.onUIEvent(
                                     OnMaxAttemptsCardClick(
@@ -96,7 +115,10 @@ fun CreditContent(viewModel: ProductViewModel) {
                             }
                         )
                     }
-                    else -> {
+                    cta = viewModel.uiState.userStatus?.infoCredit?.wording?.cTA
+                }
+                else -> {
+                    content = {
                         CardWithCreditInProcess(
                             type = CreditManualProcess,
                             idBrand = viewModel.uiState.idBrand.toInt(),
@@ -104,6 +126,13 @@ fun CreditContent(viewModel: ProductViewModel) {
                         )
                     }
                 }
+            }
+            CustomProductBackground(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                type = Primary,
+                cta = cta
+            ) {
+                content()
             }
         }
     }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -39,7 +40,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCompanyNameChange
@@ -51,8 +51,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomDropdown
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
@@ -60,7 +58,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun SmartCrSalaryScreen(
     viewModel: SmartCrSalaryViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel,
-    sourceIncomeSharedViewModel: SourceIncomeViewModel
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    economicActivity: GeneralEconomicActivity? = null
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -96,7 +95,7 @@ fun SmartCrSalaryScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = SourceIncomeOptionType.FormalSalariedCr.id.toLong(),
+                                idEconomicActivity = economicActivity?.id?.toLong(),
                                 idProfessionType = viewModel.uiState.professionSmartList.find {
                                     it?.name == viewModel.uiState.profession
                                 }?.id,
@@ -104,7 +103,7 @@ fun SmartCrSalaryScreen(
                                 idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
                                 idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
                                 fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
-                                income = viewModel.uiState.paymentAmount.toFloat(),
+                                income = viewModel.uiState.paymentAmount.toFloatOrNull() ?: 0f,
                                 companyName = viewModel.uiState.companyName,
                                 positionJob = viewModel.uiState.jobPosition,
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
@@ -128,11 +127,7 @@ fun SmartCrSalaryScreen(
     }
 
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            OnNavigateToSelectedSourceOfIncomeOption(
-                MainSourceIncomeScreenType.id
-            )
-        )
+        sourceIncomeSharedViewModel.goBackToMainOptions()
     }
 
     ShowCustomDialog(viewModel.uiState)

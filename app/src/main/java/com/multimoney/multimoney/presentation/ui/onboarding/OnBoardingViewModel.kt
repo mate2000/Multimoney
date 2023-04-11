@@ -8,8 +8,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnGoToNextScreen
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnInitializeResources
@@ -19,6 +21,7 @@ import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_MEXICO
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -180,7 +183,7 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToNextScreen(screen: String) {
+    private fun navigateToNextScreen(screen: String, context: Context) {
         viewModelScope.launch {
             dataStorePreferences.isOnBoardingEnabled(false)
             if (dataStorePreferences.isAdjustSingUpButtonClickedEventRegister().first()) {
@@ -193,7 +196,12 @@ class OnBoardingViewModel @Inject constructor(
 
             popAndNavigateTo(
                 route = if (screen == Screen.SignUpScreen.baseRoute) {
-                    "$screen/".plus(0)
+                    "$screen/".plus(0).plus(
+                        getNavParam(
+                            ID_BRAND,
+                            Brand.Search.getIdBrandByCountryCode(getCountryCode(context))
+                        )
+                    )
                 } else {
                     screen
                 },
@@ -214,7 +222,7 @@ class OnBoardingViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent, context: Context) {
         when (event) {
-            is OnNavigateToNextScreen -> navigateToNextScreen(event.screen)
+            is OnNavigateToNextScreen -> navigateToNextScreen(event.screen, context)
             is OnGoToNextScreen -> goToNextScreen(context)
             is OnPress -> onPress(event.pressGestureScope, context)
             is OnInitializeResources -> initializeResources(context)
@@ -222,7 +230,10 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnNavigateToNextScreen(val screen: String) : UIEvent()
+        data class OnNavigateToNextScreen(
+            val screen: String,
+            val context: Context
+        ) : UIEvent()
         data class OnPress(val pressGestureScope: PointerInputScope) : UIEvent()
         object OnGoToNextScreen : UIEvent()
         object OnInitializeResources : UIEvent()

@@ -51,7 +51,8 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             route = Screen.ForceUpdateScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType }
-            )) {
+            )
+        ) {
             ForceUpdateScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -111,8 +112,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 step = navController.currentBackStackEntry?.arguments?.getString(
                     SIGN_UP_STEP,
                     DEFAULT_STEP
-                )
-                    ?: DEFAULT_STEP,
+                ) ?: DEFAULT_STEP,
                 idBrand = navController.currentBackStackEntry?.arguments?.getInt(ID_BRAND, 0),
                 onNavigate = {
                     navController.navigate(it.route)

@@ -26,6 +26,7 @@ import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
@@ -489,7 +490,11 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun onNavigateToSignUp() =
-        navigateTo(route = "${Screen.SignUpScreen.baseRoute}/".plus(0))
+        navigateTo(
+            route = "${Screen.SignUpScreen.baseRoute}/".plus(0).plus(
+                getNavParam(ID_BRAND, Brand.Search.getIdBrandByCountryCode(uiState.country))
+            )
+        )
 
     private fun initializeBiometricPrompt(
         biometricPromptTitle: String,
@@ -517,20 +522,18 @@ class SignInViewModel @Inject constructor(
 
     private fun onFingerprintCheckedChanged(
         value: Boolean,
-        showDialog: Boolean,
-        country: String
+        showDialog: Boolean
     ) {
         uiState = uiState.copy(
             isFingerprintChecked = value,
-            openDialog = getBiometricsDialogParameters(country, showDialog)
+            openDialog = getBiometricsDialogParameters(showDialog)
         )
     }
 
     private fun getBiometricsDialogParameters(
-        country: String,
         showDialog: Boolean
     ): DialogParameters {
-        return when (country) {
+        return when (uiState.country) {
             SIM_CODE_EL_SALVADOR -> {
                 DialogParameters(
                     titleResource = string.active_biometric_title,
@@ -542,7 +545,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
-                                country
+                                uiState.country
                             )
                         )
                     },
@@ -551,7 +554,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                country
+                                uiState.country
                             )
                         )
                     },
@@ -560,7 +563,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                country
+                                uiState.country
                             )
                         )
                     },
@@ -578,7 +581,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = true,
                                 showDialog = false,
-                                country
+                                uiState.country
                             )
                         )
                     },
@@ -587,7 +590,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                country
+                                uiState.country
                             )
                         )
                     },
@@ -596,7 +599,7 @@ class SignInViewModel @Inject constructor(
                             UIEvent.OnFingerprintCheckedChanged(
                                 value = false,
                                 showDialog = false,
-                                country
+                                uiState.country
                             )
                         )
                     },
@@ -671,9 +674,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun setCountryCode(countryCode: String) {
+    private fun setContactInfo() {
         executeUseCase {
-            getContactInfo(Brand.Search.getIdBrandByCountryCode(countryCode))
+            getContactInfo(Brand.Search.getIdBrandByCountryCode(uiState.country))
         }
     }
 
@@ -723,8 +726,7 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
             is UIEvent.OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
-                event.showDialog,
-                event.country
+                event.showDialog
             )
 
             is UIEvent.OnStart -> onStart(
@@ -741,7 +743,7 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnUpdateToastVisibility -> onUpdateToastVisibility(event.value)
             is UIEvent.OnUpdateCountry -> uiState = uiState.copy(country = event.country)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
-            is UIEvent.OnSetCountryCode -> setCountryCode(event.countryCode)
+            is UIEvent.OnSetCountryCode -> setContactInfo()
         }
     }
 

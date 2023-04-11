@@ -2,6 +2,7 @@ package com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,46 +45,31 @@ fun CryptoCardDiscoverCrypto(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
-            ) { onClick.invoke() }
+            ) { onClick.invoke() },
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_smart_in_process_crypto_card),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = MultimoneyTheme.colors.chipBackground
+        )
         Text(
             text = wording?.textOne ?: "",
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.creditNotApprovedText
         )
         Text(
             text = wording?.textTwo ?: "",
-            modifier = Modifier.padding(top = 4.dp),
-            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.caption,
             color = MultimoneyTheme.colors.text
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                modifier = Modifier.wrapContentSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CustomImage(
-                    modifier = Modifier
-                        .padding(top = 44.dp)
-                        .align(Alignment.CenterHorizontally),
-                    drawableResource = R.drawable.ic_chevron_up
-                )
-                Text(
-                    text = wording?.cTA ?: "",
-                    modifier = Modifier
-                        .padding(bottom = 12.dp)
-                        .align(Alignment.CenterHorizontally),
-                    style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                    color = MultimoneyTheme.colors.text
-                )
-            }
-        }
     }
 }
 

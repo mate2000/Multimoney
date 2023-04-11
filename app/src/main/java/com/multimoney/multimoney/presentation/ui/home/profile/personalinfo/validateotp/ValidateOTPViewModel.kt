@@ -51,12 +51,6 @@ import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -67,6 +61,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -77,7 +77,7 @@ class ValidateOTPViewModel @Inject constructor(
     private val mutationChangeEmailUseCase: MutationChangeEmailUseCase,
     private val cognitoHelper: CognitoHelper,
     private val countDownTimer: MMCountDownTimer,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
@@ -301,7 +301,14 @@ class ValidateOTPViewModel @Inject constructor(
         user: String
     ) =
         executeUseCase {
-            mutationChangePhoneUseCase.invoke(identification, phone, countryCode, pkUser, idBrand, user)
+            mutationChangePhoneUseCase.invoke(
+                identification,
+                phone,
+                countryCode,
+                pkUser,
+                idBrand,
+                user
+            )
                 .collectLatest {
                     processChangePhoneResult(it)
                 }
@@ -327,10 +334,9 @@ class ValidateOTPViewModel @Inject constructor(
                 changeUser,
                 user,
                 idBrand
-            )
-                .collectLatest {
-                    processChangeEmailResult(it)
-                }
+            ).collectLatest {
+                processChangeEmailResult(it)
+            }
         }
 
     private fun processChangePhoneResult(result: MultimoneyResult<ChangePhone>) {
@@ -510,12 +516,11 @@ class ValidateOTPViewModel @Inject constructor(
             is UIEvent.OnOtpValueChange -> onOtpValueChange(event.value)
             is UIEvent.OnLoadingValueChange -> uiState = uiState.copy(isLoading = event.isLoading)
             is UIEvent.OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(
-                        isLoading = event.isLoading,
-                        openDialog = event.openDialog,
-                        messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
-                    )
+                uiState = uiState.copy(
+                    isLoading = event.isLoading,
+                    openDialog = event.openDialog,
+                    messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
+                )
             is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
             is UIEvent.OpenMaxAttemptsReachedDialog -> openMaxAttemptsReachedDialog()
             is UIEvent.OnError -> uiState = uiState.copy(isAlertResultVisible = true)

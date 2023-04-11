@@ -122,7 +122,7 @@ fun SignInPasswordScreen(
         CustomButton(
             onClick = {
                 viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginPassword)
-                viewModel.onUIEvent(OnCallCognitoSignIn(activity))
+                viewModel.onUIEvent(OnCallCognitoSignIn())
             },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier

@@ -153,7 +153,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen :
-        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
+        Screen("sign_in_screen", "sign_in_screen")
 
     object SignUpScreen :
         Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")

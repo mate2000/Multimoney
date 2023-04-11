@@ -31,7 +31,6 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
-import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -81,17 +80,14 @@ class SignInViewModel @Inject constructor(
     private var deviceBrand = getDeviceBrand()
     private var deviceModel = getDeviceModel()
     private var isEmulator = checkIfEmulator()
-    private var forceDeviceChange = false
     private var forceShowBiometricsPrompt = false
 
     private fun onStart(
         deviceName: String,
         deviceType: String,
-        forceDeviceChange: Boolean
     ) {
         this.deviceName = deviceName
         this.deviceType = deviceType
-        this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
         viewModelScope.launch(Dispatchers.IO) { ipAddress = getIPAddress() ?: "" }
         viewModelScope.launch {
@@ -114,11 +110,10 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun callCognitoSignIn(activity: FragmentActivity) {
+    private fun callCognitoSignIn(forceDeviceChange: Boolean = false) {
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
 
-        // TODO: Implement logic to send metadata to cognito
         val attrs = mapOf(
             DEVICE_ID to deviceId,
             BRAND to deviceBrand,
@@ -156,7 +151,7 @@ class SignInViewModel @Inject constructor(
                                                 authUserAttribute
                                             )
                                             if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                                .toBoolean()
+                                                    .toBoolean()
                                             ) {
                                                 uiState = uiState.copy(
                                                     openDialog = DialogParameters(
@@ -243,16 +238,16 @@ class SignInViewModel @Inject constructor(
             )
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
-            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+                authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
                     else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
                     else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
@@ -461,7 +456,7 @@ class SignInViewModel @Inject constructor(
                 uiState = uiState.copy(
                     userPassword = dataStorePreferences.getUserPassword(this@apply).first()
                 )
-                callCognitoSignIn(activity)
+                callCognitoSignIn()
             }
         }
     }
@@ -733,10 +728,9 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnStart -> onStart(
                 event.deviceName,
                 event.deviceType,
-                event.forceDeviceChange
             )
             is UIEvent.OnValidateUserEmail -> isUserEmailValid()
-            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
+            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.forceDeviceChange)
             is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()
             is UIEvent.OnCloseDialog -> onCloseDialog()
             is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
@@ -779,11 +773,10 @@ class SignInViewModel @Inject constructor(
         data class OnStart(
             val deviceName: String,
             val deviceType: String,
-            val forceDeviceChange: Boolean
         ) : UIEvent()
 
         object OnValidateUserEmail : UIEvent()
-        data class OnCallCognitoSignIn(val activity: FragmentActivity) : UIEvent()
+        data class OnCallCognitoSignIn(val forceDeviceChange: Boolean = false) : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()

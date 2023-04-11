@@ -13,6 +13,7 @@ import android.os.Build
 import android.provider.ContactsContract
 import android.provider.Settings.Secure
 import android.telephony.TelephonyManager
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
@@ -22,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.util.error.CognitoError
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
@@ -38,13 +40,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 
 fun Context.getUserCountry(): String {
     try {
@@ -298,12 +300,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -413,6 +415,14 @@ fun String?.toTwoChar(): String {
 }
 
 fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
+
+fun String.getCognitoError(): CognitoError {
+    val start = this.indexOf("{")
+    val end = this.indexOf("}")
+    val json = this.substring(start, end.plus(1))
+    Log.wtf("Cognito", "cognito $json")
+    return Gson().fromJson(json, CognitoError::class.java)
+}
 
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
 

@@ -164,6 +164,7 @@
     <string name="sign_in_expired_password_dialog_title" translatable="false">Tu contraseña ha expirado</string>
     <string name="sign_in_expired_password_dialog_description" translatable="false">Para poder hacer login debes de actualizar tu contraseña.</string>
     <string name="sign_in_expired_password_dialog_positive_button" translatable="false">Actualizar contraseña</string>
+    <string name="sign_in_user_blocked_for_too_many_attends_title" translatable="false">Múltiples intentos fallidos</string>
 
 
     <!-- Sign Up General-->

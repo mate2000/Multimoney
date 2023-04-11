@@ -65,6 +65,7 @@ fun SignUpPasswordScreen(
     BackHandler {
         when {
             sharedViewModel.uiState.bottomSheetVisibleState.isVisible -> {
+
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnHidePasswordBottomSheet)
             }
             else -> sharedViewModel.onUIEvent(OnCloseClick(focusManager))
@@ -88,11 +89,33 @@ fun SignUpPasswordScreen(
 
     viewModel.onUIEvent(
         SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts(
-            biometricPromptTitle = stringResource(id = if (sharedViewModel.idBrand == Brand.CostaRica.id) string.active_biometric_title_cr else string.active_biometric_title),
-            biometricPromptDescription = stringResource(id = if (sharedViewModel.idBrand == Brand.CostaRica.id) string.active_biometric_message_cr else string.active_biometric_message),
-            biometricPromptNegative = stringResource(id = R.string.cancel),
-            biometricDialogSuccessDescription = stringResource(id = R.string.dialog_success_biometric_description),
-            biometricDialogFailureDescription = stringResource(id = R.string.dialog_failure_biometric_description),
+            biometricPromptTitle = stringResource(
+                id = when (sharedViewModel.idBrand) {
+                    Brand.CostaRica.id -> string.active_biometric_title_cr
+                    Brand.Mexico.id -> string.active_biometric_title_mx
+                    else -> string.active_biometric_title
+                }
+            ),
+            biometricPromptDescription = stringResource(
+                id = when (sharedViewModel.idBrand) {
+                    Brand.CostaRica.id -> string.active_biometric_message_cr
+                    Brand.Mexico.id -> string.active_biometric_message_mx
+                    else -> string.active_biometric_message
+                }
+            ),
+            biometricPromptNegative = stringResource(id = string.cancel),
+            biometricDialogSuccessDescription = stringResource(
+                id = when(sharedViewModel.idBrand) {
+                    Brand.Mexico.id -> string.dialog_success_biometric_description_mx
+                    else -> string.dialog_success_biometric_description
+                }
+            ),
+            biometricDialogFailureDescription = stringResource(
+                id = when(sharedViewModel.idBrand) {
+                    Brand.Mexico.id -> string.dialog_failure_biometric_description_mx
+                    else -> string.dialog_failure_biometric_description
+                }
+            ),
             idBrand = sharedViewModel.idBrand
         )
     )
@@ -244,17 +267,17 @@ fun SignUpPasswordScreen(
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.sign_up_label_password),
+            labelText = stringResource(id = string.sign_up_label_password),
             isPassword = true,
             modifier = Modifier
                 .padding(top = 24.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
+            isRequiredMessage = stringResource(id = string.sign_up_password_required),
             isError = viewModel.uiState.passwordError.first,
             errorMessage = if (viewModel.uiState.passwordError.first) {
-                if (viewModel.uiState.passwordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                if (viewModel.uiState.passwordError.second == string.sign_up_password_requirement_forbidden_words) {
                     stringResource(
-                        id = R.string.sign_up_password_requirement_forbidden_words,
+                        id = string.sign_up_password_requirement_forbidden_words,
                         viewModel.getForbiddenWords(viewModel.uiState.password)
                     )
                 } else {
@@ -287,17 +310,17 @@ fun SignUpPasswordScreen(
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
-            labelText = stringResource(id = R.string.sign_up_label_confirm_password),
+            labelText = stringResource(id = string.sign_up_label_confirm_password),
             isPassword = true,
             modifier = Modifier
                 .padding(top = 16.dp),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.sign_up_password_required),
+            isRequiredMessage = stringResource(id = string.sign_up_password_required),
             isError = viewModel.uiState.confirmPasswordError.first,
             errorMessage = if (viewModel.uiState.confirmPasswordError.first) {
-                if (viewModel.uiState.confirmPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                if (viewModel.uiState.confirmPasswordError.second == string.sign_up_password_requirement_forbidden_words) {
                     stringResource(
-                        id = R.string.sign_up_password_requirement_forbidden_words,
+                        id = string.sign_up_password_requirement_forbidden_words,
                         viewModel.getForbiddenWords(viewModel.uiState.confirmPassword)
                     )
                 } else {
@@ -312,23 +335,23 @@ fun SignUpPasswordScreen(
                 .padding(top = 8.dp)
         ) {
             PasswordRequirementLabels(
-                text = stringResource(id = R.string.sign_up_password_requirement_eight_characters_minimum),
+                text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
                 state = viewModel.uiState.eightCharactersMinimumState
             )
             PasswordRequirementLabels(
-                text = stringResource(id = R.string.sign_up_password_requirement_one_uppercase),
+                text = stringResource(id = string.sign_up_password_requirement_one_uppercase),
                 state = viewModel.uiState.oneUppercaseState
             )
             PasswordRequirementLabels(
-                text = stringResource(id = R.string.sign_up_password_requirement_one_lowercase),
+                text = stringResource(id = string.sign_up_password_requirement_one_lowercase),
                 state = viewModel.uiState.oneLowercaseState
             )
             PasswordRequirementLabels(
-                text = stringResource(id = R.string.sign_up_password_requirement_one_number),
+                text = stringResource(id = string.sign_up_password_requirement_one_number),
                 state = viewModel.uiState.oneNumberState
             )
             PasswordRequirementLabels(
-                text = stringResource(id = R.string.sign_up_password_requirement_one_characer),
+                text = stringResource(id = string.sign_up_password_requirement_one_characer),
                 state = viewModel.uiState.oneCharacterState
             )
         }
@@ -344,7 +367,7 @@ fun SignUpPasswordScreen(
                         )
                     )
                 },
-                text = stringResource(id = R.string.sign_in_activate_fingerprint),
+                text = stringResource(id = string.sign_in_activate_fingerprint),
                 modifier = Modifier.padding(top = 16.dp)
             )
         }

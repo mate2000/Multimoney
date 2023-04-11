@@ -247,6 +247,41 @@ class SignUpViewModel @Inject constructor(
         )
     }
 
+    private fun onSelectMexicoAsOption(focusManager: FocusManager, context: Context) {
+        focusManager.clearFocus()
+        getContactInfo(MEXICO_ID_BRAND)
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.sign_up_personal_data_dialog_title_mx_user,
+                descriptionResource = string.sign_up_personal_data_dialog_subtitle_mx_user,
+                positiveResource = string.sign_up_personal_data_dialog_positive_action,
+                negativeResource = string.sign_up_personal_data_dialog_negative_action,
+                positiveAction = {
+                    whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
+                },
+                negativeAction = {
+                    popAndNavigateTo(
+                        route = Screen.SignInScreen.route,
+                        popTo = Screen.SignUpScreen.route
+                    )
+                },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun getContactInfo(idBrand: Int) =
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = userData?.email ?: "",
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    whatsAppLink = contactInfo?.whatsappLink?:""
+                }
+            }
+        }
+
     private fun onContinueClick(focusManager: FocusManager) {
         focusManager.clearFocus()
         nextAction.invoke()
@@ -492,6 +527,7 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
             is UIEvent.OnGetWhatsAppLink -> onGetWhatsAppLink()
+            is UIEvent.OnSelectMexicoEvent -> onSelectMexicoAsOption(event.focusManager, event.context)
         }
     }
 
@@ -554,10 +590,12 @@ class SignUpViewModel @Inject constructor(
         data class OnCheckIfEmailExists(val userData: UserData?) : UIEvent()
         data class OnChangeRestartEvent(val shouldBeOnRestart: Boolean) : UIEvent()
         object OnGetWhatsAppLink : UIEvent()
+        data class OnSelectMexicoEvent(val focusManager: FocusManager, val context: Context) : UIEvent()
     }
 
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
+        const val MEXICO_ID_BRAND = 12
     }
 }

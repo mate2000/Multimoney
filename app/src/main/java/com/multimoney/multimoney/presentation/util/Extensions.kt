@@ -40,13 +40,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 
 fun Context.getUserCountry(): String {
     try {
@@ -416,11 +416,13 @@ fun String?.toTwoChar(): String {
 
 fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
 
+/**
+ * PreAuthentication failed with error {"code":"2896","message":"Cuenta bloqueada, vuenve a intentar en 14 segundos"}. (Service: AmazonCognitoIdentityProvider; Status Code: 400; Error Code: UserLambdaValidationException; Request ID: 1fd30457-5f48-4166-a971-9f9b8dfc2edb)
+ */
 fun String.getCognitoError(): CognitoError {
-    val start = this.indexOf("{")
-    val end = this.indexOf("}")
-    val json = this.substring(start, end.plus(1))
-    Log.wtf("Cognito", "cognito $json")
+    val start = this.indexOf(JSON_START_SYMBOL)
+    val end = this.indexOf(JSON_END_SYMBOL)
+    val json = this.substring(start, end.plus(ONE))
     return Gson().fromJson(json, CognitoError::class.java)
 }
 
@@ -485,9 +487,12 @@ private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
 private const val CODE_KEYWORD = "code"
+private const val MESSAGE_KEYWORD = "message"
 private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
 private const val QUESTION_MARK = "?"
 private const val NEW_VALUE = ""
 private const val PHONE_WITHOUT_FORMAT_REGEX = "[^0-9]+"
+private const val JSON_START_SYMBOL = "{"
+private const val JSON_END_SYMBOL = "{"

@@ -30,7 +30,9 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -214,8 +216,7 @@ class SignInViewModel @Inject constructor(
     private fun onNavigateToChangePassword(idBrand: Int, pkUser: String, userName: String) =
         navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/$idBrand/$pkUser/$userName/${uiState.userEmail}/${Screen.SignInScreen.baseRoute}")
 
-    private fun checkSessionState(authException: AuthException) {
-        return when {
+    private fun checkSessionState(authException: AuthException) = when {
             authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true ->
                 uiState = uiState.copy(
                     errorCode = CognitoErrorCode.SessionActive,
@@ -287,7 +288,6 @@ class SignInViewModel @Inject constructor(
             }
             else -> callQueryValidationUserExistsUseCase()
         }
-    }
 
     private fun callQueryValidationUserExistsUseCase() = executeUseCase {
         queryValidateUserExistsUseCase(
@@ -407,6 +407,7 @@ class SignInViewModel @Inject constructor(
         uiState = uiState.copy(
             userEmailError = Pair(true, string.error_empty),
             userPasswordError = Pair(true, string.sign_in_validation),
+            userPasswordErrorMessage = Pair(false, null),
             isLoading = false
         )
     }
@@ -713,6 +714,7 @@ class SignInViewModel @Inject constructor(
         val userEmailError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         val userPassword: String = "",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
+        val userPasswordErrorMessage: Pair<Boolean, String?> = Pair(false, null),
         val userName: String = "",
         val isFingerprintChecked: Boolean = false,
 

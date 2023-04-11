@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
@@ -102,7 +103,10 @@ fun SignUpEmailScreen(
                                 viewModel.onSuccessValidation(context, sharedViewModel, userData)
                             }
                         )
-                        sharedViewModel.logEvents(null, AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001)
+                        sharedViewModel.logEvents(
+                            null,
+                            AdjustEventType.SECURITY_SIGN_UP_CHANGE_DEVICE_9001
+                        )
                     } else {
                         viewModel.onSuccessValidation(context, sharedViewModel, userData)
                     }
@@ -191,7 +195,7 @@ fun SignUpEmailScreen(
                 focusManager.clearFocus()
             }),
             labelText = stringResource(
-                if (sharedViewModel.uiState.country == SIM_CODE_EL_SALVADOR) string.sign_up_email_header_sv
+                if (sharedViewModel.uiState.country == SIM_CODE_EL_SALVADOR || sharedViewModel.uiState.country == SIM_CODE_GUATEMALA) string.sign_up_email_header_sv
                 else string.sign_up_email_header
             ),
             placeHolder = stringResource(id = string.sign_up_email_placeholder),

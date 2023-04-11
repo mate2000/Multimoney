@@ -30,12 +30,15 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
+import com.multimoney.multimoney.presentation.util.getCognitoErrorMessage
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getIPAddress
@@ -249,12 +252,54 @@ class SignInViewModel @Inject constructor(
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
                     else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
                     else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
+                ),
+                isLoading = false
+            )
+        }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.TooManyAttempts.code) == true -> {
+            val message = authException.cause?.message?.getCognitoErrorMessage()
+
+            uiState = if (message.isNullOrBlank()) {
+                val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
+                else string.sign_in_too_many_attempts
+
+                uiState.copy(
+                    userEmailError = Pair(true, string.error_empty),
+                    userPasswordError = Pair(true, messageResId),
+                    userPasswordErrorMessage = Pair(true, null),
+                    isLoading = false
+                )
+            } else {
+                uiState.copy(
+                    userEmailError = Pair(true, string.error_empty),
+                    userPasswordErrorMessage = Pair(true, message),
+                    isLoading = false
+                )
+            }
+        }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.AccountBlocked.code) == true -> {
+            viewModelScope.launch {
+                dataStorePreferences.clearData()
+            }
+            val titleResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_title_cr
+            else string.sign_in_account_blocked_title
+
+            val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_message_cr
+            else string.sign_in_account_blocked_message
+
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    titleResource = titleResId,
+                    descriptionResource = messageResId,
+                    positiveResource = string.sign_in_restore_password,
+                    positiveAction = { onNavigateToForgotPassword() },
+                    isActive = mutableStateOf(true),
                 ),
                 isLoading = false
             )
@@ -380,6 +425,7 @@ class SignInViewModel @Inject constructor(
         uiState = uiState.copy(
             userEmailError = Pair(true, string.error_empty),
             userPasswordError = Pair(true, string.sign_in_validation),
+            userPasswordErrorMessage = Pair(false, null),
             isLoading = false
         )
     }
@@ -686,6 +732,7 @@ class SignInViewModel @Inject constructor(
         val userEmailError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         val userPassword: String = "",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
+        val userPasswordErrorMessage: Pair<Boolean, String?> = Pair(false, null),
         val userName: String = "",
         val isFingerprintChecked: Boolean = false,
 

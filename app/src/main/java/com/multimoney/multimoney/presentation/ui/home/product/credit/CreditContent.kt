@@ -19,8 +19,8 @@ import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardGtSvCreditRejected
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardNonPreApprovedCredit
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CardWithCreditInProcess
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditManualProcess
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessFirmReject
@@ -174,7 +174,7 @@ fun getCardAction(
 fun getCardWithCreditInProcessType(workflow: String, status: String? = "") = when (workflow) {
     CreditWorkflow.CREDIT_PROCESS.workflow -> {
         when(getCreditProcessStatus(status)) {
-            CreditInProcessStatus.OFFER -> CreditProcessStarted.CreditOfferApproved
+            CreditInProcessStatus.OFFER -> CreditOfferApproved
             CreditInProcessStatus.IN_PROCESS -> CreditStartProcessIncomplete
             else -> null
         }

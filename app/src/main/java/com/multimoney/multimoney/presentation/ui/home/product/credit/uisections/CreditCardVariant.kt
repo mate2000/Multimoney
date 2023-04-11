@@ -44,11 +44,11 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip

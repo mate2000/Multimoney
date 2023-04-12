@@ -210,6 +210,8 @@ import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUse
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -404,6 +406,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationPhoneValidationUseCase(securityRepository: SecurityRepository): MutationPhoneValidationUseCase =
         MutationPhoneValidationUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveRegisterCoreLogUseCase(securityRepository: SecurityRepository): MutationSaveRegisterCoreLogUseCase =
+        MutationSaveRegisterCoreLogUseCaseImpl(securityRepository)
 
     // Balance
 

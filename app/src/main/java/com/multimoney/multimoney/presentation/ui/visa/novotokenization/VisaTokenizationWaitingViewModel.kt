@@ -12,14 +12,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
 import com.multimoney.domain.interaction.security.MutationUserPhoneMobileSaveUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
 import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.util.parametercorelog.EnrollCardParameters
+import com.multimoney.domain.model.util.parametercorelog.EnrollDeviceParameters
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
@@ -42,18 +46,19 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
 import com.multimoney.multimoney.presentation.util.getDateFormat
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Date
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.Date
-import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
@@ -61,6 +66,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     private val mmCountDownTimer: MMCountDownTimer,
     private val novoHelper: NovoHelper,
     private val mutationUserPhoneMobileSaveUseCase: MutationUserPhoneMobileSaveUseCase,
+    private val mutationSaveRegisterCoreLogUseCase: MutationSaveRegisterCoreLogUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
@@ -103,6 +109,11 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     },
                     onErrorEnrollDevice = {
                         mmCountDownTimer.resumeTimer()
+                        callMutationSaveRegisterCoreLog(
+                            RegisterCoreLogProcess.NOVO_ENROLL_DEVICE.process,
+                            Gson().toJson(EnrollDeviceParameters(identification, phone)),
+                            it.message ?: ""
+                        )
                         handleErrorResult()
                     }
                 )
@@ -124,6 +135,23 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             cardExpirationYear = getExpirationYear(expirationDate?.last() ?: ""),
             onErrorEnrollPan = {
                 mmCountDownTimer.resumeTimer()
+                callMutationSaveRegisterCoreLog(
+                    RegisterCoreLogProcess.NOVO_ENROLL_CARD.process,
+                    Gson().toJson(
+                        EnrollCardParameters(
+                            identification,
+                            email,
+                            balanceCardInformation?.cardInformation?.cardNumber ?: "",
+                            balanceCardInformation?.cardInformation?.holderName ?: "",
+                            balanceCardInformation?.cardInformation?.cValidation ?: "",
+                            expirationDate?.first() ?: "",
+                            getExpirationYear(
+                                expirationDate?.last() ?: ""
+                            )
+                        )
+                    ),
+                    it.message ?: ""
+                )
                 handleErrorResult()
             },
             onSuccessEnrollPan = {
@@ -183,6 +211,22 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         }
     }
 
+    private fun callMutationSaveRegisterCoreLog(
+        process: String,
+        parameter: String,
+        result: String
+    ) {
+        executeUseCase {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                email,
+                idBrand,
+                process,
+                parameter,
+                result
+            )
+        }
+    }
+
     private fun linkWalletWithThisDevice(walletId: String) {
         executeUseCase {
             mutationUserPhoneMobileSaveUseCase.invoke(
@@ -199,7 +243,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                     } else {
                         viewModelScope.launch {
                             if (dataStorePreferences.isAdjustFirstActivatedMMVisaEventRegister().first()) {
-                                registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED_5040, data = BaseEventDataDto(user = email, idBrand = idBrand, identification = identification).toJson())
+                                registerAdjustEvent(
+                                    AdjustEventType.MM_VISA_CTA_FIRST_MM_VISA_ACTIVATED_5040,
+                                    data = BaseEventDataDto(
+                                        user = email,
+                                        idBrand = idBrand,
+                                        identification = identification
+                                    ).toJson()
+                                )
                                 dataStorePreferences.isAdjustFirstActivatedMMVisaEventRegister(false)
                             }
                         }

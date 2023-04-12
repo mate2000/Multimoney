@@ -82,6 +82,7 @@
     <string name="smart_transfer_abandon_dialog_message_cr" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="common_percentage_format" translatable="false">%s\%%</string>
     <string name="content_description_more_info" translatable="false">Más información</string>
+    <string name="contact_support" translatable="false">Contactar a soporte</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false" />

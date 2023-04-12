@@ -6,7 +6,6 @@ plugins {
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'dexguard'
-    id 'applanga'
     id 'kotlin-kapt'
 }
 apply from: '../dependencies.gradle'
@@ -201,9 +200,6 @@ dependencies {
 
     // LibPhoneNumber
     implementation libphonenumber.libphonenumber
-
-    // AppLanga
-    implementation appLanga.app_langa
 
     // Biometric
     implementation biometric.biometric

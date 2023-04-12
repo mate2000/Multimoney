@@ -247,7 +247,7 @@ fun SignInContent(
     // Dialog
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            title = viewModel.uiState.openDialog.title.ifEmpty { stringResource(id = viewModel.uiState.openDialog.titleResource) },
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),

@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -37,6 +38,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
+import com.multimoney.multimoney.presentation.util.getCognitoError
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getIPAddress
@@ -47,12 +49,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -198,7 +200,9 @@ class SignInViewModel @Inject constructor(
                         callQueryValidationUserExistsUseCase()
                     }
                 },
-                { checkSessionState(it) }
+                {
+                    checkSessionState(it)
+                }
             )
         }, {
             callQueryValidationUserExistsUseCase()
@@ -209,55 +213,77 @@ class SignInViewModel @Inject constructor(
         navigateTo("${Screen.ProfileChangePasswordScreen.baseRoute}/$idBrand/$pkUser/$userName/${uiState.userEmail}/${Screen.SignInScreen.baseRoute}")
 
     private fun checkSessionState(authException: AuthException) = when {
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true ->
-            uiState = uiState.copy(
-                errorCode = CognitoErrorCode.SessionActive,
-                openDialog = DialogParameters(
-                    titleResource = string.sign_in_session_active_on_another_device_title,
-                    descriptionResource = string.sign_in_session_open_here_close_another,
-                    positiveResource = string.sign_in_dialog_sign_in_here_button,
-                    negativeResource = string.sign_in_dialog_exit_button,
-                    positiveAction = { onUIEvent(UIEvent.OnNavigateToOTPScreen) },
-                    negativeAction = { onUIEvent(UIEvent.OnCloseDialog) },
-                    dismissAction = { onUIEvent(UIEvent.OnCloseDialog) },
-                    isActive = mutableStateOf(true)
-                ),
-                isLoading = false
-            )
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true -> {
-            viewModelScope.launch {
-                dataStorePreferences.clearData()
+            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionActive.code) == true ->
+                uiState = uiState.copy(
+                    errorCode = CognitoErrorCode.SessionActive,
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_session_active_on_another_device_title,
+                        descriptionResource = string.sign_in_session_open_here_close_another,
+                        positiveResource = string.sign_in_dialog_sign_in_here_button,
+                        negativeResource = string.sign_in_dialog_exit_button,
+                        positiveAction = { onUIEvent(UIEvent.OnNavigateToOTPScreen) },
+                        negativeAction = { onUIEvent(UIEvent.OnCloseDialog) },
+                        dismissAction = { onUIEvent(UIEvent.OnCloseDialog) },
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
+            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true -> {
+                viewModelScope.launch {
+                    dataStorePreferences.clearData()
+                }
+                uiState = uiState.copy(
+                    errorCode = CognitoErrorCode.SessionBlocked,
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_session_blocked_title,
+                        descriptionResource = string.sign_in_session_blacklisted_message_sv,
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
             }
-            uiState = uiState.copy(
-                errorCode = CognitoErrorCode.SessionBlocked,
-                openDialog = DialogParameters(
-                    titleResource = string.sign_in_session_blocked_title,
-                    descriptionResource = string.sign_in_session_blacklisted_message_sv,
-                    isActive = mutableStateOf(true)
-                ),
-                isLoading = false
-            )
-        }
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
-                authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
-            viewModelScope.launch {
-                dataStorePreferences.clearData()
+            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
+                    authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+                viewModelScope.launch {
+                    dataStorePreferences.clearData()
+                }
+                uiState = uiState.copy(
+                    errorCode = CognitoErrorCode.BlacklistedDevice,
+                    openDialog = DialogParameters(
+                        titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                        else string.sign_in_session_blacklisted_title_cr,
+                        descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                        else string.sign_in_session_blacklisted_message_cr,
+                        positiveResource = string.sign_in_session_blacklisted_contact_support,
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
             }
-            uiState = uiState.copy(
-                errorCode = CognitoErrorCode.BlacklistedDevice,
-                openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
-                    else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
-                    else string.sign_in_session_blacklisted_message_cr,
-                    positiveResource = string.sign_in_session_blacklisted_contact_support,
-                    isActive = mutableStateOf(true)
-                ),
-                isLoading = false
-            )
+            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
+                uiState = uiState.copy(
+                    errorCode = CognitoErrorCode.UserBlockedForTooManyAttends,
+                    openDialog = DialogParameters(
+                        titleResource = string.sign_in_user_blocked_for_too_many_attends_title,
+                        description = authException.cause?.message?.getCognitoError()?.message.orEmpty(),
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
+            }
+            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedChangePasswordNeeded.code) == true -> {
+                uiState = uiState.copy(
+                    errorCode = CognitoErrorCode.UserBlockedChangePasswordNeeded,
+                    openDialog = DialogParameters(
+                        title = authException.cause?.message?.getCognitoError()?.message.orEmpty(),
+                        description = authException.cause?.message?.getCognitoError()?.detail.orEmpty(),
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
+            }
+            else -> callQueryValidationUserExistsUseCase()
         }
-        else -> callQueryValidationUserExistsUseCase()
-    }
 
     private fun callQueryValidationUserExistsUseCase() = executeUseCase {
         queryValidateUserExistsUseCase(
@@ -377,6 +403,7 @@ class SignInViewModel @Inject constructor(
         uiState = uiState.copy(
             userEmailError = Pair(true, string.error_empty),
             userPasswordError = Pair(true, string.sign_in_validation),
+            userPasswordErrorMessage = Pair(false, null),
             isLoading = false
         )
     }
@@ -683,6 +710,7 @@ class SignInViewModel @Inject constructor(
         val userEmailError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         val userPassword: String = "",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
+        val userPasswordErrorMessage: Pair<Boolean, String?> = Pair(false, null),
         val userName: String = "",
         val isFingerprintChecked: Boolean = false,
 

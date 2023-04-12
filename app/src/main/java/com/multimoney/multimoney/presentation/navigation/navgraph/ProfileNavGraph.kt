@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.Perso
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.email.ChangeEmailScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.phone.ChangePhoneScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPScreen
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.VerifyNewValueOTPScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.SettingsScreen
 import com.multimoney.multimoney.presentation.ui.home.profile.settings.changepassword.ChangePasswordScreen
@@ -238,6 +239,38 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             )
         ) {
             ValidateOTPScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            Screen.ProfileVerifyNewValueOTPScreen.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ID_CLIENT) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            VerifyNewValueOTPScreen(
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(HOME_STATE, it.homeState)

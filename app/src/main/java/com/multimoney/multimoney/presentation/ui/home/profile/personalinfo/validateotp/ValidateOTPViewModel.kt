@@ -349,23 +349,29 @@ class ValidateOTPViewModel @Inject constructor(
         result.onSuccess {
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
-                dataStorePreferences.setUserPhoneNumberWithCode(
-                    uiState.newPhoneNumberCode?.plus(
-                        uiState.newValue
-                    ) ?: ""
-                )
-                registerAdjustEvent(
-                    AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001,
-                    applyAdjust = false,
-                    data = BaseEventDataDto(
-                        user = uiState.email,
-                        idBrand = uiState.idBrand,
-                        idClient = uiState.idClient,
-                        identification = uiState.identification
-                    ).toJson()
-                )
-                navigateBack(Screen.HomeScreen.route, isRestart = true)
-                emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
+                if(uiState.firstOTP){
+                    dataStorePreferences.setUserPhoneNumberWithCode(
+                        uiState.newPhoneNumberCode?.plus(
+                            uiState.newValue
+                        ) ?: ""
+                    )
+                    registerAdjustEvent(
+                        AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001,
+                        applyAdjust = false,
+                        data = BaseEventDataDto(
+                            user = uiState.email,
+                            idBrand = uiState.idBrand,
+                            idClient = uiState.idClient,
+                            identification = uiState.identification
+                        ).toJson()
+                    )
+                    navigateBack(Screen.HomeScreen.route, isRestart = true)
+                    emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
+                }
+                else {
+                    uiState = uiState.copy(firstOTP = false)
+                    navigateToConfirmChange()
+                }
             }
         }
             .onMessage { uiState = uiState.copy(isLoading = false) }
@@ -377,25 +383,36 @@ class ValidateOTPViewModel @Inject constructor(
         result.onSuccess {
             uiState = uiState.copy(isLoading = false)
             viewModelScope.launch {
-                dataStorePreferences.setUserEmail(uiState.newValue ?: "")
-                registerAdjustEvent(
-                    AdjustEventType.SETTINGS_CHANGE_EMAIL_SUCCESS_8000,
-                    applyAdjust = false,
-                    data = BaseEventDataDto(
-                        user = uiState.email,
-                        idBrand = uiState.idBrand,
-                        idClient = uiState.idClient,
-                        identification = uiState.identification
-                    ).toJson()
-                )
-                navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
-                emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
+                if(uiState.firstOTP){
+                    dataStorePreferences.setUserEmail(uiState.newValue ?: "")
+                    registerAdjustEvent(
+                        AdjustEventType.SETTINGS_CHANGE_EMAIL_SUCCESS_8000,
+                        applyAdjust = false,
+                        data = BaseEventDataDto(
+                            user = uiState.email,
+                            idBrand = uiState.idBrand,
+                            idClient = uiState.idClient,
+                            identification = uiState.identification
+                        ).toJson()
+                    )
+                    navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
+                    emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
+                }
+                else{
+                    uiState = uiState.copy(firstOTP = false)
+                    navigateToConfirmChange()
+                }
             }
         }
             .onMessage { uiState = uiState.copy(isLoading = false) }
             .onFailure { uiState = uiState.copy(isLoading = false, isAlertResultVisible = true) }
             .onLoading { uiState = uiState.copy(isLoading = true) }
     }
+
+    private fun navigateToConfirmChange(){
+        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}")
+    }
+
 
     private fun processValidateOTPResult(result: MultimoneyResult<ValidatePin?>) {
         result.onSuccess {
@@ -484,8 +501,8 @@ class ValidateOTPViewModel @Inject constructor(
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
         val destination: String? = null,
-        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters()
-
+        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),
+        val firstOTP: Boolean = true
     )
 
     private fun onNavigateBack() {

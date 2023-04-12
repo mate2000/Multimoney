@@ -59,7 +59,6 @@ fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel = hiltViewModel(),
-    forceChangeDevice: Boolean = false
 ) {
     // Properties
     val fragmentActivity = LocalContext.current as FragmentActivity
@@ -80,7 +79,6 @@ fun SignInScreen(
                 SignInViewModel.UIEvent.OnStart(
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value,
-                    forceChangeDevice
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))

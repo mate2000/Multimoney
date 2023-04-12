@@ -239,14 +239,6 @@ ext {
             libphonenumber: "com.googlecode.libphonenumber:libphonenumber:$libphonenumber_version"
     ]
 
-    // AppLanga
-    applanga_version = "3.0.163"
-
-    appLanga = [
-            app_langa_classpath: "com.applanga.android:plugin:$applanga_version",
-            app_langa          : "com.applanga.android:Applanga:$applanga_version"
-    ]
-
     // Biometric
     biometric_version = "1.2.0-alpha04"
 

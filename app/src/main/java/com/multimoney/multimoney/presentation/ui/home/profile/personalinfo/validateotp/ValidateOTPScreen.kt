@@ -257,7 +257,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                viewModel.uiState.destination?.replace(" ","") ?: ""
+                viewModel.uiState.destination?.replace(" ", "") ?: ""
             ),
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText

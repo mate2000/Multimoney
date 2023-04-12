@@ -179,7 +179,7 @@ class ValidateOTPViewModel @Inject constructor(
             identification,
             firstName,
             email,
-            cellphone.replace(" ",""),
+            cellphone.replace(" ", ""),
             sendMethod,
             pkUser,
             idBrand,
@@ -292,7 +292,7 @@ class ValidateOTPViewModel @Inject constructor(
             appSource = APP_SOURCE,
             pkUser = uiState.pkUser ?: "",
             pinSecurity = uiState.otp,
-            telephone = uiState.phoneNumber?.replace(" ",""),
+            telephone = uiState.phoneNumber?.replace(" ", ""),
             userCreate = uiState.userName ?: ""
         )
             .collectLatest { result ->

@@ -184,15 +184,18 @@ class ChangePhoneViewModel @Inject constructor(
                             R.string.sign_up_phone_not_valid
                         )
                     )
-                    else if(uiState.phoneCode.plus(uiState.newPhoneNumber) == uiState.phoneNumber?.replace(" ","")) {
+                    else if (uiState.phoneCode.plus(uiState.newPhoneNumber) == uiState.phoneNumber?.replace(
+                            " ",
+                            ""
+                        )
+                    ) {
                         uiState = uiState.copy(
                             phoneNumberError = Pair(
                                 true,
                                 R.string.profile_phone_not_equal_than_previous_error
                             ), isButtonEnabled = false
                         )
-                    }
-                    else clearPhoneError()
+                    } else clearPhoneError()
                 }
             }
         }

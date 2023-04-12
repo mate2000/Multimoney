@@ -51,7 +51,7 @@ fun ChangePhoneScreen(
         it.countryCode == viewModel.uiState.countryCode
     }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
             ChangePhoneViewModel.UIEvent.OnStart(
                 phoneCode = selectedCountry.countryPhoneCode

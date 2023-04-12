@@ -139,7 +139,7 @@ fun VerifyIdentityContent(viewModel: VerifyIdentityViewModel) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
-            text = stringResource(id = R.string.profile_send_code),
+            text = stringResource(id = R.string.profile_verify_code),
             enable = viewModel.uiState.isButtonEnabled,
             onClick = {
                 viewModel.onUIEvent(VerifyIdentityViewModel.UIEvent.OnContinueButtonClicked)

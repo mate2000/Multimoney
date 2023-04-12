@@ -216,6 +216,7 @@
     <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
     <string name="sign_up_phone_not_valid" translatable="false">Número de celular incorrecto</string>
+    <string name="profile_phone_not_equal_than_previous_error" translatable="false">El teléfono ingresado debe ser distinto al actual</string>
     <string name="sign_up_phone_contact_by" translatable="false">Contactar por:</string>
     <string name="sign_up_phone_contact_by_email" translatable="false">Correo electrónico</string>
     <string name="sign_up_phone_contact_by_whatsapp" translatable="false">WhatsApp</string>
@@ -487,9 +488,9 @@
     <string name="automatic_logout_dialog_sign_in_toast" translatable="false">No se detectó actividad en tu sesión, cerramos la aplicación por seguridad.</string>
     <string name="automatic_logout_biometric_title" translatable="false">Reanudar mi sesión</string>
     <string name="automatic_logout_biometric_description" translatable="false">Utilice su biometría para autenticarse en la aplicación</string>
-
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_identity_verification_verify_your_template" translatable="false">Verifica tu nuevo %1$s</string>
+    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Verifica tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Verifica tu nuevo email</string>
     <string name="profile_identity_verification_phone" translatable="false">teléfono</string>
     <string name="profile_identity_verification_email" translatable="false">email</string>
     <string name="profile_where_do_you_want_to_receive_the_code_sv" translatable="false">¿Dónde quieres recibir el código?</string>
@@ -500,7 +501,7 @@
     <string name="profile_otp_to_previous_email" translatable="false">Correo electrónico anterior</string>
     <string name="profile_otp_to_sms" translatable="false">SMS</string>
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
-    <string name="profile_send_code" translatable="false">Enviar código</string>
+    <string name="profile_verify_code" translatable="false">Verificar</string>
     <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
     <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
     <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>

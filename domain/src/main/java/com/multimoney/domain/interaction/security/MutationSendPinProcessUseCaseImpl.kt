@@ -14,7 +14,8 @@ class MutationSendPinProcessUseCaseImpl(val securityRepository: SecurityReposito
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): Flow<MultimoneyResult<SendPinProcess?>> = securityRepository.mutationSendPinProcess(
         identification,
         firstName,
@@ -23,6 +24,7 @@ class MutationSendPinProcessUseCaseImpl(val securityRepository: SecurityReposito
         sendMethod,
         pkUser,
         idBrand,
-        user
+        user,
+        flowOrigin
     )
 }

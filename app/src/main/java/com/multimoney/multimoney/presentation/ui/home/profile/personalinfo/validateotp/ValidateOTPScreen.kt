@@ -32,6 +32,7 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.data.util.catalog.FieldToChange
+import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -41,6 +42,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnInit
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -83,13 +85,16 @@ fun ValidateOTPScreen(
         }
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(
-            onPopBackStack = onPopBackStack,
-            onNavigate = onNavigate,
-            onPopAndNavigate = onPopAndNavigate
-        )
-        viewModel.onUIEvent(OnGetWhatsAppLink)
-        requestOTP(viewModel)
+        viewModel.apply {
+            onUIEvent(OnInit)
+            executeNavigation(
+                onPopBackStack = onPopBackStack,
+                onNavigate = onNavigate,
+                onPopAndNavigate = onPopAndNavigate
+            )
+            onUIEvent(OnGetWhatsAppLink)
+            requestOTP(this)
+        }
     }
 
     BackHandler {
@@ -252,7 +257,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                viewModel.uiState.destination ?: ""
+                viewModel.uiState.destination?.replace(" ","") ?: ""
             ),
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText
@@ -357,10 +362,10 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
-            text = stringResource(id = R.string.profile_send_code),
+            text = stringResource(id = R.string.profile_verify_code),
             enable = viewModel.isFormValid(),
             onClick = {
-                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnContinueButtonClicked)
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnValidateOtpClicked)
             }
         )
     }
@@ -376,7 +381,8 @@ fun requestOTP(viewModel: ValidateOTPViewModel) {
             viewModel.uiState.sendMethod ?: "",
             viewModel.uiState.pkUser ?: "",
             viewModel.uiState.idBrand ?: 0,
-            viewModel.uiState.email ?: ""
+            viewModel.uiState.email ?: "",
+            FlowOriginChangeProfileInfo.NORMAL.value
         )
     )
 }

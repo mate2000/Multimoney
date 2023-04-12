@@ -68,6 +68,7 @@ class ChangePhoneViewModel @Inject constructor(
         uiState = when (uiState.idBrand) {
             Brand.Guatemala.id -> uiState.copy(currentBrand = Brand.Guatemala)
             Brand.ElSalvador.id -> uiState.copy(currentBrand = Brand.ElSalvador)
+            Brand.Mexico.id -> uiState.copy(currentBrand = Brand.Mexico)
             else -> uiState.copy(currentBrand = Brand.CostaRica)
         }
         val defaultCountry =
@@ -107,6 +108,13 @@ class ChangePhoneViewModel @Inject constructor(
                 countryCode = countryCode,
                 phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
             ).not() -> uiState = uiState.copy(isButtonEnabled = false)
+            uiState.phoneCode.plus(uiState.newPhoneNumber) == uiState.phoneNumber?.replace(
+                " ",
+                ""
+            ) ->
+                uiState = uiState.copy(
+                    isButtonEnabled = false
+                )
             else -> uiState = uiState.copy(
                 isButtonEnabled = true, phoneNumberError = Pair(false, R.string.error_empty)
             )
@@ -125,7 +133,8 @@ class ChangePhoneViewModel @Inject constructor(
             Brand.Guatemala.id -> Brand.Guatemala.countryCode
             Brand.CostaRica.id -> Brand.CostaRica.countryCode
             Brand.ElSalvador.id -> Brand.ElSalvador.countryCode
-            else -> ""
+            Brand.Mexico.id -> Brand.Mexico.countryCode
+            else -> Brand.CostaRica.countryCode
         }
     }
 
@@ -175,6 +184,14 @@ class ChangePhoneViewModel @Inject constructor(
                             R.string.sign_up_phone_not_valid
                         )
                     )
+                    else if(uiState.phoneCode.plus(uiState.newPhoneNumber) == uiState.phoneNumber?.replace(" ","")) {
+                        uiState = uiState.copy(
+                            phoneNumberError = Pair(
+                                true,
+                                R.string.profile_phone_not_equal_than_previous_error
+                            ), isButtonEnabled = false
+                        )
+                    }
                     else clearPhoneError()
                 }
             }

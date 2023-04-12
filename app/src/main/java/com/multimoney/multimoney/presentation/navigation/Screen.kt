@@ -256,8 +256,8 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileVerifyNewValueOTPScreen : Screen(
-        "profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}",
-        "profile_validate_otp_screen"
+        "profile_verify_new_value_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}/{$SEND_METHOD}",
+        "profile_verify_new_value_screen"
     )
 
     // Profile Sub-Screens

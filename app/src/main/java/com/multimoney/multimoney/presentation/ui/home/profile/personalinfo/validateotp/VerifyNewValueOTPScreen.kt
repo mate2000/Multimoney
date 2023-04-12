@@ -32,6 +32,7 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.data.util.catalog.FieldToChange
+import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
@@ -41,6 +42,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityViewModel.Companion.SEND_EMAIL_METHOD
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityViewModel.Companion.SEND_PHONE_METHOD
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -83,13 +86,17 @@ fun VerifyNewValueOTPScreen(
         }
 
     LaunchedEffect(true) {
-        viewModel.executeNavigation(
-            onPopBackStack = onPopBackStack,
-            onNavigate = onNavigate,
-            onPopAndNavigate = onPopAndNavigate
-        )
-        viewModel.onUIEvent(OnGetWhatsAppLink)
-        requestSecondOTP(viewModel)
+        viewModel.apply {
+            onUIEvent(ValidateOTPViewModel.UIEvent.OnInit)
+            executeNavigation(
+                onPopBackStack = onPopBackStack,
+                onNavigate = onNavigate,
+                onPopAndNavigate = onPopAndNavigate
+            )
+            onUIEvent(OnGetWhatsAppLink)
+            requestSecondOTP(this)
+        }
+
     }
 
     BackHandler {
@@ -238,7 +245,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(titleText) {
                     top.linkTo(topNavBar.bottom)
                 },
-            text = stringResource(id = R.string.profile_identity_verification_verify_your_template,if(viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_identity_verification_phone else R.string.profile_identity_verification_phone),
+            text = stringResource(id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_identity_verification_verify_your_new_phone else R.string.profile_identity_verification_verify_your_new_email),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
@@ -252,7 +259,9 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                viewModel.uiState.destination ?: ""
+                if (viewModel.uiState.changingField == FieldToChange.PHONE.value) viewModel.uiState.newPhoneNumberCode.plus(
+                    viewModel.uiState.newValue
+                ) else viewModel.uiState.newValue ?: ""
             ),
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText
@@ -357,10 +366,10 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
-            text = stringResource(id = R.string.profile_send_code),
+            text = stringResource(id = R.string.profile_verify_code),
             enable = viewModel.isFormValid(),
             onClick = {
-                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnContinueButtonClicked)
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnValidateSecondOtpClicked)
             }
         )
     }
@@ -371,12 +380,17 @@ fun requestSecondOTP(viewModel: ValidateOTPViewModel) {
         ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcess(
             viewModel.uiState.identification ?: "",
             viewModel.uiState.firstName ?: "",
-            (if(viewModel.uiState.changingField == FieldToChange.EMAIL.value) viewModel.uiState.newValue else viewModel.uiState.email) ?: "",
-            (if(viewModel.uiState.changingField == FieldToChange.PHONE.value) viewModel.uiState.newValue else viewModel.uiState.phoneNumber) ?: "",
-            viewModel.uiState.sendMethod ?: "",
+            (if (viewModel.uiState.changingField == FieldToChange.EMAIL.value) viewModel.uiState.newValue else viewModel.uiState.email)
+                ?: "",
+            (if (viewModel.uiState.changingField == FieldToChange.PHONE.value) (viewModel.uiState.newPhoneNumberCode.plus(
+                viewModel.uiState.newValue
+            ).replace(" ", "")
+                    ) else viewModel.uiState.phoneNumber) ?: "",
+            if (viewModel.uiState.changingField == FieldToChange.PHONE.value) SEND_PHONE_METHOD else SEND_EMAIL_METHOD,
             viewModel.uiState.pkUser ?: "",
             viewModel.uiState.idBrand ?: 0,
-            viewModel.uiState.userName ?: ""
+            viewModel.uiState.userName ?: "",
+            FlowOriginChangeProfileInfo.CHANGE.value
         )
     )
 }

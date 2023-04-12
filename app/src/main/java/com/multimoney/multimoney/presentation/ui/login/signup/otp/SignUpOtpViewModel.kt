@@ -209,7 +209,8 @@ class SignUpOtpViewModel @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ) = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
         mutationSendPinProcessUseCase.invoke(
@@ -220,7 +221,8 @@ class SignUpOtpViewModel @Inject constructor(
             sendMethod,
             pkUser,
             idBrand,
-            user
+            user,
+            flowOrigin
         ).collectLatest { result ->
             onCallMutationSendPinProcessEvent.emit(result)
         }
@@ -377,7 +379,8 @@ class SignUpOtpViewModel @Inject constructor(
                 event.sendMethod,
                 event.pkUser,
                 event.idBrand,
-                event.user
+                event.user,
+                event.flowOrigin
             )
             is OnValidateForm -> isFormValid()
             is OnNavigateToSignIn -> navigateToSignIn()
@@ -419,7 +422,8 @@ class SignUpOtpViewModel @Inject constructor(
             val sendMethod: String,
             val pkUser: String,
             val idBrand: Int,
-            val user: String
+            val user: String,
+            val flowOrigin: Int
         ) : UIEvent()
 
         data class OnCallMutationSendPinProcessSuccess(

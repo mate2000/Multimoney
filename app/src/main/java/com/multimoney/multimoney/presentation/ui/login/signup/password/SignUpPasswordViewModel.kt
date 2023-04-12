@@ -166,8 +166,16 @@ class SignUpPasswordViewModel @Inject constructor(
         uiState = uiState.copy(
             isFingerprintChecked = value,
             openDialogCustom = DialogParameters(
-                titleResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_title_cr else string.active_biometric_title,
-                descriptionResource = if (idBrand == Brand.CostaRica.id) string.active_biometric_message_cr else string.active_biometric_message,
+                titleResource = when (idBrand) {
+                    Brand.CostaRica.id -> string.active_biometric_title_cr
+                    Brand.Mexico.id -> string.active_biometric_title_mx
+                    else -> string.active_biometric_title
+                },
+                descriptionResource = when (idBrand) {
+                    Brand.CostaRica.id -> string.active_biometric_message_cr
+                    Brand.Mexico.id -> string.active_biometric_message_mx
+                    else -> string.active_biometric_message
+                },
                 isActive = mutableStateOf(showDialog),
                 positiveResource = string.active_biometric_positive_button_label,
                 negativeResource = string.active_biometric_negative_button_label,

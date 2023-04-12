@@ -36,7 +36,7 @@ fun CreditDetail(
     getCreditBalanceLabel: (List<BalanceCredit?>?) -> String,
     getQuota: (List<BalanceCredit?>?) -> String,
     getMinPayment: (List<BalanceCredit?>?) -> String,
-    onShareIbanAccount: (String, String, String) -> Unit
+    onShareAccount: (String, String, String) -> Unit
 ) {
     ExpandableSectionLayout(
         title = stringResource(id = R.string.credit_detail_title),
@@ -61,15 +61,22 @@ fun CreditDetail(
                     )
                 )
             })
-
-            CreditDetailItem(label = stringResource(id = string.credit_detail_fee), value = {
+            CreditDetailItem(label = stringResource(
+                id = if (uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
+                    string.credit_detail_fee_mx
+                } else {
+                    string.credit_detail_fee
+                }
+            ), value = {
                 Row {
                     balance?.getFirstSummary()?.monthlyQuotaLabel?.let {
                         Icon(
                             imageVector = Filled.Circle,
                             tint = if ((balance.getExpiredDays()) > 0) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.dotIndicatorColor,
                             contentDescription = "",
-                            modifier = Modifier.size(16.dp).padding(end = 4.dp)
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(end = 4.dp)
                         )
                     }
                     Text(
@@ -92,7 +99,9 @@ fun CreditDetail(
                                 MultimoneyTheme.colors.dotIndicatorColor
                             },
                             contentDescription = "",
-                            modifier = Modifier.size(16.dp).padding(end = 4.dp)
+                            modifier = Modifier
+                                .size(16.dp)
+                                .padding(end = 4.dp)
                         )
                     }
                     Text(
@@ -104,7 +113,13 @@ fun CreditDetail(
                     )
                 }
             })
-            CreditDetailItem(label = stringResource(id = string.credit_detail_overdue_fee), value = {
+            CreditDetailItem(label = stringResource(
+                id = if (uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
+                    string.credit_detail_overdue_fee_mx
+                } else {
+                    string.credit_detail_overdue_fee
+                }
+            ), value = {
                 Text(
                     text = balance?.getFirstSummary()?.expiredPayment?.toString() ?: "",
                     style = Typography.body2.copy(
@@ -130,15 +145,50 @@ fun CreditDetail(
                                 imageVector = Outlined.Share,
                                 tint = MultimoneyTheme.colors.arrowColor,
                                 contentDescription = "",
-                                modifier = Modifier.clickable {
-                                    if (it.isNotEmpty()) {
-                                        onShareIbanAccount(
-                                            clientLabel,
-                                            accountLabel,
-                                            it
-                                        )
+                                modifier = Modifier
+                                    .clickable {
+                                        if (it.isNotEmpty()) {
+                                            onShareAccount(
+                                                clientLabel,
+                                                accountLabel,
+                                                it
+                                            )
+                                        }
                                     }
-                                }.padding(start = 16.dp)
+                                    .padding(start = 16.dp)
+                            )
+                        }
+                    }
+                })
+            }
+            if (uiState.idBrand == Brand.Mexico.id.toString()) {
+                val clientLabel = stringResource(id = R.string.credit_detail_client)
+                val accountLabel = stringResource(id = R.string.credit_detail_clabe_number)
+                CreditDetailItem(label = stringResource(id = string.credit_detail_clabe_account), value = {
+                    Row {
+                        Text(
+                            text = balance?.getFirstSummary()?.ibanAccount ?: "",
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        )
+                        balance?.getFirstSummary()?.ibanAccount?.let {
+                            Icon(
+                                imageVector = Outlined.Share,
+                                tint = MultimoneyTheme.colors.arrowColor,
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .clickable {
+                                        if (it.isNotEmpty()) {
+                                            onShareAccount(
+                                                clientLabel,
+                                                accountLabel,
+                                                it
+                                            )
+                                        }
+                                    }
+                                    .padding(start = 16.dp)
                             )
                         }
                     }
@@ -173,7 +223,9 @@ fun CreditDetailItem(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
     ) {
         Text(
             text = label,

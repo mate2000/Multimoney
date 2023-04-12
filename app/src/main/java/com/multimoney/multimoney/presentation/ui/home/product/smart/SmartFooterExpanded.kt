@@ -32,7 +32,7 @@ fun SmartFooterExpanded(
                     account = it[index],
                     onShareIbanAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
                         viewModel.onUIEvent(
-                            ProductViewModel.UIEvent.OnShareIbanAccount(
+                            ProductViewModel.UIEvent.OnShareAccount(
                                 clientLabel,
                                 accountLabel,
                                 ibanAccount

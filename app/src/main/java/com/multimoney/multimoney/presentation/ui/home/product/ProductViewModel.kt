@@ -83,6 +83,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToGtSvNonPreApproved
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentPoints
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
@@ -95,7 +96,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateCollapsedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
@@ -494,6 +495,10 @@ class ProductViewModel @Inject constructor(
                     "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
         }
         navigateTo(route)
+    }
+
+    private fun onNavigateToPaymentPointsScreen() {
+        // TODO navigation to Payment Points Screen for Mexico
     }
 
     private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
@@ -1388,6 +1393,7 @@ class ProductViewModel @Inject constructor(
                 onIntent = uiEvent.onIntent
             )
             is OnNavigateToPaymentProcess -> onNavigateToPaymentScreen()
+            is OnNavigateToPaymentPoints -> onNavigateToPaymentPointsScreen()
             is OnNavigateToSendMoneyFlow -> onNavigateToSendMoneyScreen(uiEvent.account)
             is OnNavigateToHomeMultimoneyVisa -> onNavigateToHomeMultimoneyVisa()
             is OnNavigateToPaymentSmartFlow -> onSmartAccountCardClick(
@@ -1420,10 +1426,10 @@ class ProductViewModel @Inject constructor(
             )
 
             is OnLastStepChange -> lastStep = uiEvent.lastStep
-            is OnShareIbanAccount -> shareIbanAccount(
+            is OnShareAccount -> shareIbanAccount(
                 uiEvent.clientLabel,
                 uiEvent.accountLabel,
-                uiEvent.ibanAccount
+                uiEvent.account
             )
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
@@ -1508,6 +1514,7 @@ class ProductViewModel @Inject constructor(
 
         object OnGetCryptoMovements : UIEvent()
         object OnNavigateToPaymentProcess : UIEvent()
+        object OnNavigateToPaymentPoints : UIEvent()
         object OnNavigateToProfileScreen : UIEvent()
         object OnNavigateToHomeMultimoneyVisa : UIEvent()
         object OnNavigateToDisbursement : UIEvent()
@@ -1552,10 +1559,10 @@ class ProductViewModel @Inject constructor(
             val creditMovements: List<CreditMovementsResult>
         ) : UIEvent()
 
-        data class OnShareIbanAccount(
+        data class OnShareAccount(
             val clientLabel: String,
             val accountLabel: String,
-            val ibanAccount: String
+            val account: String
         ) : UIEvent()
 
         data class OnQuickActionClicked(

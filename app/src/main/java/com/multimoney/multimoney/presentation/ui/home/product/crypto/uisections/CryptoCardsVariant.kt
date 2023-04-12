@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +25,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
-import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.util.calculateGainLoses
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
@@ -34,18 +32,13 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegati
 
 @Composable
 fun CryptoCardDiscoverCrypto(
-    wording: Wording?,
-    onClick: () -> Unit = {}
+    wording: Wording?
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick.invoke() },
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         CustomInformativeChip(
@@ -75,15 +68,10 @@ fun CryptoCardDiscoverCrypto(
 
 @Composable
 fun CryptoCardSmartInProcess(
-    wording: Wording?,
-    onClick: () -> Unit = {}
+    wording: Wording?
 ) {
     Column(
         modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick.invoke() }
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 24.dp)

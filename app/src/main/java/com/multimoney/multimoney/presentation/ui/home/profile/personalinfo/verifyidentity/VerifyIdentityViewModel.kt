@@ -45,7 +45,7 @@ class VerifyIdentityViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
             changingField = savedStateHandle[CHANGING_FIELD],
-            newEmail = savedStateHandle[NEW_EMAIL],
+            newEmail = savedStateHandle[NEW_EMAIL]
         )
         getTextResources()
     }
@@ -55,16 +55,14 @@ class VerifyIdentityViewModel @Inject constructor(
             titleResource = when (uiState.idBrand) {
                 Brand.CostaRica.id -> R.string.profile_where_do_you_want_to_receive_the_code
                 else -> R.string.profile_where_do_you_want_to_receive_the_code_sv
-
             }
         )
     }
 
     private fun validateForm() {
-        uiState = if (uiState.questionTwoValue || uiState.questionOneValue)
-            uiState.copy(isButtonEnabled = true)
-        else
-            uiState.copy(isButtonEnabled = false)
+        uiState =
+            if (uiState.questionTwoValue || uiState.questionOneValue) uiState.copy(isButtonEnabled = true)
+            else uiState.copy(isButtonEnabled = false)
     }
 
     private fun onQuestionOneValueChange(value: Boolean) {
@@ -90,7 +88,11 @@ class VerifyIdentityViewModel @Inject constructor(
             FieldToChange.PHONE.value -> uiState.phoneCode.plus(uiState.newPhoneNumber)
             else -> uiState.newEmail
         }
-        navigateTo("${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${newValue}/${sendMethod}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}")
+        navigateTo(
+            "${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/" +
+                "$newValue/$sendMethod/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/" +
+                "${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}"
+        )
     }
 
     data class UIState(

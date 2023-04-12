@@ -44,6 +44,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
@@ -60,19 +61,12 @@ import com.multimoney.multimoney.presentation.util.getCardDateFormat
 @Composable
 fun CardNonPreApprovedCredit(
     textOne: String? = "",
-    textTwo: String? = "",
-    action: () -> Unit = {}
+    textTwo: String? = ""
 ) {
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action()
-            },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -126,20 +120,13 @@ fun CardGtSvCreditRejected(
         cTA = "",
         link = "",
         display = false
-    ),
-    action: () -> Unit = {}
+    )
 ) {
     val notDefinedValue = stringResource(id = string.not_defined)
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action()
-            },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -294,7 +281,6 @@ fun CreditPreApproved(
 fun CardWithCreditInProcess(
     type: CreditProcessStarted? = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {},
     wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
@@ -321,7 +307,7 @@ fun CardWithCreditInProcess(
         CreditProcessCreateAccountFailure -> {
             startIcon = drawable.ic_warning
         }
-        CreditProcessStarted.CreditRejected -> {
+        CreditOfferApproved -> {
             startIcon = 0
         }
         else -> Unit
@@ -331,13 +317,7 @@ fun CardWithCreditInProcess(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action.invoke()
-            },
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -520,9 +500,9 @@ fun OngoingCredit(
                                     .clip(CircleShape)
                                     .background(
                                         if ((
-                                                    viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                        ?: 0
-                                                    ) > 0
+                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                ?: 0
+                                            ) > 0
                                         ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                     )
                             )
@@ -552,6 +532,7 @@ fun OngoingCredit(
 
 sealed class CreditProcessStarted {
     object CreditStartProcessIncomplete : CreditProcessStarted()
+    object CreditOfferApproved : CreditProcessStarted()
     object CreditProcessOnFidoIncomplete : CreditProcessStarted()
     object CreditManualProcess : CreditProcessStarted()
     object CreditProcessFirmReject : CreditProcessStarted()
@@ -559,5 +540,4 @@ sealed class CreditProcessStarted {
     object CreditProcessOnfidoReject : CreditProcessStarted()
     object CreditProcessOnfidoMaxAttempts : CreditProcessStarted()
     object CreditProcessCreateAccountFailure : CreditProcessStarted()
-    object CreditRejected : CreditProcessStarted()
 }

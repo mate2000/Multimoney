@@ -497,10 +497,10 @@
     <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
     <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
-    <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
-    <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el registro ahora. Inténtalo más tarde o contactá a soporte.</string>
-    <string name="profile_otp_user_blocked_max_attempt_phone_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="profile_otp_user_blocked_max_attempt_email_sv" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el cambio ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el cambio ahora. Inténtalo más tarde o contactá a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_phone_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="profile_otp_user_blocked_max_attempt_email_sv" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>

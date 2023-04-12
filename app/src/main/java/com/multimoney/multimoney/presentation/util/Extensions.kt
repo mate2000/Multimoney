@@ -21,7 +21,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.util.error.CognitoError
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
@@ -38,14 +40,13 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Vis
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
-import org.json.JSONObject
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.Locale
 import kotlin.time.Duration
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 
 fun Context.getUserCountry(): String {
     try {
@@ -299,12 +300,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-        Build.MODEL
-    } else {
-        "${Build.MANUFACTURER} ${Build.MODEL}"
-    }
-    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+            Build.MODEL
+        } else {
+            "${Build.MANUFACTURER} ${Build.MODEL}"
+        }
+        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -418,15 +419,13 @@ fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code
 /**
  * PreAuthentication failed with error {"code":"2896","message":"Cuenta bloqueada, vuenve a intentar en 14 segundos"}. (Service: AmazonCognitoIdentityProvider; Status Code: 400; Error Code: UserLambdaValidationException; Request ID: 1fd30457-5f48-4166-a971-9f9b8dfc2edb)
  */
-fun String.getCognitoErrorMessage(): String? {
-    val jsonStartIndex = this.indexOf("{")
-    val jsonEndIndex = this.lastIndexOf("}")
-    val jsonString = this.substring(jsonStartIndex, jsonEndIndex + 1)
-
-    val jsonObject = JSONObject(jsonString)
-    return if (jsonObject.has(MESSAGE_KEYWORD)) {
-        jsonObject.getString(MESSAGE_KEYWORD)
-    } else {
+fun String.getCognitoError(): CognitoError? {
+    val start = this.indexOf(JSON_START_SYMBOL)
+    val end = this.indexOf(JSON_END_SYMBOL)
+    val json = this.substring(start, end.plus(ONE))
+    return try {
+        Gson().fromJson(json, CognitoError::class.java)
+    } catch (e: JsonSyntaxException) {
         null
     }
 }
@@ -499,3 +498,5 @@ private const val DEFAULT_AMOUNT_OF_DECIMALS = 2
 private const val QUESTION_MARK = "?"
 private const val NEW_VALUE = ""
 private const val PHONE_WITHOUT_FORMAT_REGEX = "[^0-9]+"
+private const val JSON_START_SYMBOL = "{"
+private const val JSON_END_SYMBOL = "}"

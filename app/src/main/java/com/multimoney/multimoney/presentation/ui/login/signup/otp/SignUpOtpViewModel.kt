@@ -62,15 +62,19 @@ class SignUpOtpViewModel @Inject constructor(
 
     // Stateless
     var linkWhatsapp = ""
-    var userBlockedForMaxAttend = ""
+    var userBlockedForMaxAttend = R.string.empty
     private var numberOfPinForwards = 0
 
     // Events
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
 
-    private fun onStart(linkWhatsapp: String, userBlockedForMaxAttend: String, idBrand: Int?) {
+    private fun onStart(linkWhatsapp: String, idBrand: Int?) {
         this.linkWhatsapp = linkWhatsapp
-        this.userBlockedForMaxAttend = userBlockedForMaxAttend
+        this.userBlockedForMaxAttend = if (idBrand == Brand.CostaRica.id) {
+            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
+        } else {
+            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
+        }
         uiState = uiState.copy(
             idBrand = idBrand,
             subtitleResource = if (idBrand == Brand.CostaRica.id) {
@@ -129,7 +133,7 @@ class SignUpOtpViewModel @Inject constructor(
             uiState = uiState.copy(
                 openUserBlockedDialog = DialogParameters(
                     titleResource = R.string.sign_up_email_blocked_dialog_title,
-                    description = userBlockedForMaxAttend,
+                    descriptionResource = userBlockedForMaxAttend,
                     isActive = mutableStateOf(true),
                     positiveResource = R.string.contact,
                     negativeResource = R.string.cancel
@@ -140,16 +144,17 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun getPhaseResourceString() = when (uiState.phaseCount) {
         PHASE_ONE -> {
-            if (uiState.idBrand == Brand.CostaRica.id)
-                R.string.sign_up_otp_expiration_time_phase_one_cr
+            if (uiState.idBrand == Brand.CostaRica.id) R.string.sign_up_otp_expiration_time_phase_one_cr
             else R.string.sign_up_otp_expiration_time_phase_one
         }
         PHASE_THREE -> {
-            if (uiState.idBrand == Brand.CostaRica.id)
-                R.string.sign_up_otp_expiration_time_phase_three_cr
+            if (uiState.idBrand == Brand.CostaRica.id) R.string.sign_up_otp_expiration_time_phase_three_cr
             else R.string.sign_up_otp_expiration_time_phase_three
         }
-        PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
+        PHASE_TWO, PHASE_FOUR -> {
+            if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms
+            else R.string.sign_up_otp_call
+        }
         PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
         else -> R.string.sign_up_otp_expiration_time_phase_six
     }
@@ -168,9 +173,19 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun resend(userData: UserData?) {
         if (uiState.otpResend == ResendOtp.SMS.option) {
-            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_RESEND_OTP_2005, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SIGNUP_RESEND_OTP_2005,
+                isLoggedIn = false,
+                data = userData?.toJson() ?: "",
+                applyAdjust = false
+            )
         } else {
-            registerAdjustEvent(adjustEventType = AdjustEventType.SIGNUP_OTP_BY_CALL_2006, isLoggedIn = false, data = userData?.toJson() ?: "", applyAdjust = false)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SIGNUP_OTP_BY_CALL_2006,
+                isLoggedIn = false,
+                data = userData?.toJson() ?: "",
+                applyAdjust = false
+            )
         }
         uiState = uiState.copy(
             isTimerRunning = true,
@@ -180,8 +195,9 @@ class SignUpOtpViewModel @Inject constructor(
 
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
-            uiState.otp.trim()
-                .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS && uiState.phaseCount < PHASE_SIX
+            uiState.otp.trim().isNotEmpty() &&
+                uiState.otp.trim().length == TOTAL_DIGITS &&
+                uiState.phaseCount < PHASE_SIX
         )
     )
 
@@ -250,7 +266,7 @@ class SignUpOtpViewModel @Inject constructor(
                             uiState = uiState.copy(
                                 openUserBlockedDialog = DialogParameters(
                                     titleResource = R.string.sign_up_email_blocked_dialog_title,
-                                    description = userBlockedForMaxAttend,
+                                    descriptionResource = userBlockedForMaxAttend,
                                     isActive = mutableStateOf(true),
                                     positiveResource = R.string.contact,
                                     negativeResource = R.string.cancel
@@ -340,7 +356,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp, event.userBlockedForMaxAttends, event.idBrand)
+            is OnStart -> onStart(event.linkWhatsapp, event.idBrand)
             is OnNextActionClick -> onNextActionClick(
                 event.pkUser,
                 event.idBrand,
@@ -378,7 +394,6 @@ class SignUpOtpViewModel @Inject constructor(
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val userBlockedForMaxAttends: String,
             val idBrand: Int?
         ) : UIEvent()
 

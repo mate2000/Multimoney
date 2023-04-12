@@ -59,7 +59,6 @@ fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel = hiltViewModel(),
-    forceChangeDevice: Boolean = false
 ) {
     // Properties
     val fragmentActivity = LocalContext.current as FragmentActivity
@@ -80,7 +79,6 @@ fun SignInScreen(
                 SignInViewModel.UIEvent.OnStart(
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value,
-                    forceChangeDevice
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))
@@ -249,7 +247,7 @@ fun SignInContent(
     // Dialog
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            title = viewModel.uiState.openDialog.title.ifEmpty { stringResource(id = viewModel.uiState.openDialog.titleResource) },
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),

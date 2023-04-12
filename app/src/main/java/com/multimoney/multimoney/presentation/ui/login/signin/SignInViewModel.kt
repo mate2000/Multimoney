@@ -37,7 +37,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
-import com.multimoney.multimoney.presentation.util.getCognitoErrorMessage
+import com.multimoney.multimoney.presentation.util.getCognitoError
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getIPAddress
@@ -48,12 +48,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -82,17 +82,14 @@ class SignInViewModel @Inject constructor(
     private var deviceBrand = getDeviceBrand()
     private var deviceModel = getDeviceModel()
     private var isEmulator = checkIfEmulator()
-    private var forceDeviceChange = false
     private var forceShowBiometricsPrompt = false
 
     private fun onStart(
         deviceName: String,
         deviceType: String,
-        forceDeviceChange: Boolean
     ) {
         this.deviceName = deviceName
         this.deviceType = deviceType
-        this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
         viewModelScope.launch(Dispatchers.IO) { ipAddress = getIPAddress() ?: "" }
         viewModelScope.launch {
@@ -115,11 +112,10 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun callCognitoSignIn(activity: FragmentActivity) {
+    private fun callCognitoSignIn(forceDeviceChange: Boolean = false) {
         uiState = uiState.copy(isLoading = true)
         clearUserEmailError()
 
-        // TODO: Implement logic to send metadata to cognito
         val attrs = mapOf(
             DEVICE_ID to deviceId,
             BRAND to deviceBrand,
@@ -157,7 +153,7 @@ class SignInViewModel @Inject constructor(
                                                 authUserAttribute
                                             )
                                             if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                                .toBoolean()
+                                                    .toBoolean()
                                             ) {
                                                 uiState = uiState.copy(
                                                     openDialog = DialogParameters(
@@ -203,7 +199,9 @@ class SignInViewModel @Inject constructor(
                         callQueryValidationUserExistsUseCase()
                     }
                 },
-                { checkSessionState(it) }
+                {
+                    checkSessionState(it)
+                }
             )
         }, {
             callQueryValidationUserExistsUseCase()
@@ -244,7 +242,7 @@ class SignInViewModel @Inject constructor(
             )
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
-            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+                authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
@@ -261,8 +259,8 @@ class SignInViewModel @Inject constructor(
                 isLoading = false
             )
         }
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.TooManyAttempts.code) == true -> {
-            val message = authException.cause?.message?.getCognitoErrorMessage()
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
+            val message = authException.cause?.message?.getCognitoError()?.message
 
             uiState = if (message.isNullOrBlank()) {
                 val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
@@ -282,7 +280,7 @@ class SignInViewModel @Inject constructor(
                 )
             }
         }
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.AccountBlocked.code) == true -> {
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedChangePasswordNeeded.code) == true -> {
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
@@ -505,7 +503,7 @@ class SignInViewModel @Inject constructor(
                 uiState = uiState.copy(
                     userPassword = dataStorePreferences.getUserPassword(this@apply).first()
                 )
-                callCognitoSignIn(activity)
+                callCognitoSignIn()
             }
         }
     }
@@ -778,10 +776,9 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnStart -> onStart(
                 event.deviceName,
                 event.deviceType,
-                event.forceDeviceChange
             )
             is UIEvent.OnValidateUserEmail -> isUserEmailValid()
-            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
+            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.forceDeviceChange)
             is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()
             is UIEvent.OnCloseDialog -> onCloseDialog()
             is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
@@ -824,11 +821,10 @@ class SignInViewModel @Inject constructor(
         data class OnStart(
             val deviceName: String,
             val deviceType: String,
-            val forceDeviceChange: Boolean
         ) : UIEvent()
 
         object OnValidateUserEmail : UIEvent()
-        data class OnCallCognitoSignIn(val activity: FragmentActivity) : UIEvent()
+        data class OnCallCognitoSignIn(val forceDeviceChange: Boolean = false) : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()

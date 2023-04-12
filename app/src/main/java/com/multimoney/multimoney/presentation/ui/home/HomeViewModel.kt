@@ -383,8 +383,8 @@ class HomeViewModel @Inject constructor(
 
         removeBlankCards(productPageList)
 
-        // If idBrand is different from Guatemala enable Smart
-        if (uiState.idBrand != Brand.Guatemala.id.toString()) {
+        // If idBrand is different from Guatemala and Mexico enable Smart
+        if (uiState.idBrand != Brand.Guatemala.id.toString() && uiState.idBrand.toInt() != Brand.Mexico.id) {
             if (balance.balanceAccountSmart.isNullOrEmpty().not()) {
                 // Add the amount of account smart that user has
                 balance.balanceAccountSmart?.forEachIndexed { index, account ->

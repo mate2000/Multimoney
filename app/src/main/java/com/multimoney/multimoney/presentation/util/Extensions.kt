@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
+import org.json.JSONObject
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -414,6 +415,22 @@ fun String?.toTwoChar(): String {
 
 fun String.isCognitoErrorCode(code: String) = contains(""""$CODE_KEYWORD":"$code"""")
 
+/**
+ * PreAuthentication failed with error {"code":"2896","message":"Cuenta bloqueada, vuenve a intentar en 14 segundos"}. (Service: AmazonCognitoIdentityProvider; Status Code: 400; Error Code: UserLambdaValidationException; Request ID: 1fd30457-5f48-4166-a971-9f9b8dfc2edb)
+ */
+fun String.getCognitoErrorMessage(): String? {
+    val jsonStartIndex = this.indexOf("{")
+    val jsonEndIndex = this.lastIndexOf("}")
+    val jsonString = this.substring(jsonStartIndex, jsonEndIndex + 1)
+
+    val jsonObject = JSONObject(jsonString)
+    return if (jsonObject.has(MESSAGE_KEYWORD)) {
+        jsonObject.getString(MESSAGE_KEYWORD)
+    } else {
+        null
+    }
+}
+
 fun CharSequence.replaceNumbersToZero() = replace(Regex(DIGITS_REGEX), ZERO_STRING)
 
 fun getCountryCodeByIdBrand(idBrand: Int): String {
@@ -475,6 +492,7 @@ private const val NUMBER_REGEX = "[0-9]"
 private const val DECIMAL_SEPARATOR = '.'
 private const val WHITE_SPACE_SEPARATOR = ' '
 private const val CODE_KEYWORD = "code"
+private const val MESSAGE_KEYWORD = "message"
 private const val DIGITS_REGEX = "\\d"
 private const val ZERO_STRING = "0"
 private const val DEFAULT_AMOUNT_OF_DECIMALS = 2

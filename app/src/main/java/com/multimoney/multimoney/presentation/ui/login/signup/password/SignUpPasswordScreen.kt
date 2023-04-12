@@ -367,7 +367,12 @@ fun SignUpPasswordScreen(
                         )
                     )
                 },
-                text = stringResource(id = string.sign_in_activate_fingerprint),
+                text = stringResource(
+                    id = when(sharedViewModel.idBrand) {
+                        Brand.Mexico.id -> string.sign_in_activate_fingerprint_mx
+                        else -> string.sign_in_activate_fingerprint
+                    }
+                ),
                 modifier = Modifier.padding(top = 16.dp)
             )
         }

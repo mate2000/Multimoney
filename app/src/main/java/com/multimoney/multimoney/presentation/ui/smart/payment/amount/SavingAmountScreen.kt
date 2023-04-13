@@ -133,7 +133,8 @@ fun SavingAmountContent(viewModel: SavingAmountViewModel = hiltViewModel()) {
             shouldDisplayExchange = viewModel.shouldDisplayExchange,
             onContinueClick = { viewModel.onAmountUIEvent(OnContinueClick) },
             enableButton = viewModel.amountUIState.enableButton,
-            suggestions = { QuantitySuggestions(viewModel) }
+            suggestions = { QuantitySuggestions(viewModel) },
+            isPayment = true
         )
     }
 }

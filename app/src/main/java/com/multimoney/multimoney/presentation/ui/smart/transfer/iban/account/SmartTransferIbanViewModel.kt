@@ -23,10 +23,16 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.HomeState
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.BaseEvent.OnHideAccountOptionsBottomSheet
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.BaseEvent.OnShowAccountOptionsBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallListSinpeAccounts
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnDeleteAccount
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnEditAccount
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnHideAccountOptions
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowAccountOptions
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,6 +56,7 @@ class SmartTransferIbanViewModel @Inject constructor(
     private var idClient: String = ""
     private var identification: String? = ""
     private var smartAccount: SmartAccountID? = null
+    private var selectedAccount: ACHAccount? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -177,6 +184,19 @@ class SmartTransferIbanViewModel @Inject constructor(
         )
     }
 
+    private fun onShowAccountOptionsBottomSheet(selectedAccount: ACHAccount?) {
+        this.selectedAccount = selectedAccount
+        emitBaseEvent(OnShowAccountOptionsBottomSheet)
+    }
+
+    private fun onEditAccount() {
+        // TODO: Edit account
+    }
+
+    private fun onDeleteAccount() {
+        // TODO: Delete account
+    }
+
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,
@@ -189,6 +209,10 @@ class SmartTransferIbanViewModel @Inject constructor(
             is OnNavigateBack -> onNavigateBack()
             is OnAccountClick -> onAccountClick(uiEvent.account)
             is OnCallListSinpeAccounts -> onCallListSinpeAccounts()
+            is OnShowAccountOptions -> onShowAccountOptionsBottomSheet(uiEvent.account)
+            is OnHideAccountOptions -> emitBaseEvent(OnHideAccountOptionsBottomSheet)
+            is OnEditAccount -> onEditAccount()
+            is OnDeleteAccount -> onDeleteAccount()
         }
     }
 
@@ -197,5 +221,14 @@ class SmartTransferIbanViewModel @Inject constructor(
         object OnAddAccountClick : UIEvent()
         object OnCallListSinpeAccounts : UIEvent()
         data class OnAccountClick(val account: ACHAccount?) : UIEvent()
+        data class OnShowAccountOptions(val account: ACHAccount?) : UIEvent()
+        object OnHideAccountOptions : UIEvent()
+        object OnEditAccount : UIEvent()
+        object OnDeleteAccount : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        object OnShowAccountOptionsBottomSheet : BaseEvent()
+        object OnHideAccountOptionsBottomSheet : BaseEvent()
     }
 }

@@ -470,32 +470,7 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun processValidateOTPResult(result: MultimoneyResult<ValidatePin?>) {
         result.onSuccess {
-            when (uiState.changingField) {
-                FieldToChange.PHONE.value -> {
-                    navigateToConfirmChange()
-//                    onChangePhone(
-//                        uiState.identification.toString(),
-//                        uiState.newValue.toString(),
-//                        uiState.newPhoneNumberCode.toString(),
-//                        uiState.pkUser ?: "",
-//                        uiState.idBrand ?: 0,
-//                        uiState.userName ?: ""
-//                    )
-                }
-                else -> {
-                    navigateToConfirmChange()
-//                    onChangeEmail(
-//                        uiState.idClient ?: 0,
-//                        uiState.pkUser?.toInt() ?: 0,
-//                        uiState.identification.toString(),
-//                        uiState.newValue.toString(),
-//                        0,
-//                        false,
-//                        uiState.userName ?: "",
-//                        uiState.idBrand ?: 0
-//                    )
-                }
-            }
+            navigateToConfirmChange()
         }.onMessage {
             if (it?.messageError?.status == VALIDATE_OTP_FAILED_CODE) {
                 openMaxAttemptsReachedDialog()

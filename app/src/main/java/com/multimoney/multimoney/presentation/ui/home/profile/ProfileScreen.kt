@@ -37,7 +37,6 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.formatPhoneNumber
-import com.multimoney.multimoney.presentation.util.splitByWhiteSpace
 
 @Composable
 fun ProfileScreen(

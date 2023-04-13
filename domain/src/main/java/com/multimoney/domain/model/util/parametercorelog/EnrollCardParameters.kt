@@ -8,6 +8,7 @@ data class EnrollCardParameters(
     val userId: String?,
     val email: String?,
     val accountNumber: String?,
+    val accountName: String?,
     val month: String,
     val year: String
 ) : Parcelable

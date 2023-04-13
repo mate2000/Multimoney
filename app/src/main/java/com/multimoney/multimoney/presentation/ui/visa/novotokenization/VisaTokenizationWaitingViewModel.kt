@@ -43,6 +43,7 @@ import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaToken
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnShowSuccessTokenizationScreen
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnStartNovoTokenization
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.SAVE_CORE_LOG
 import com.multimoney.multimoney.presentation.util.YEAR_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -55,6 +56,7 @@ import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -144,13 +146,14 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                             identification,
                             email,
                             balanceCardInformation?.cardInformation?.cardNumber ?: "",
+                            balanceCardInformation?.cardInformation?.holderName ?: "",
                             expirationDate?.first() ?: "",
                             getExpirationYear(
                                 expirationDate?.last() ?: ""
                             )
                         )
                     ),
-                    it.message ?: ""
+                    it.toJson()
                 )
                 handleErrorResult()
             },
@@ -216,7 +219,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         parameter: String,
         result: String
     ) {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             mutationSaveRegisterCoreLogUseCase.invoke(
                 email,
                 idBrand,
@@ -225,7 +228,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 result
             ).collectLatest { result ->
                 result.onSuccess {
-                    Timber.d("SAVED_CORE_LOG")
+                    Timber.d(SAVE_CORE_LOG)
                 }
             }
         }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
@@ -16,6 +17,7 @@ import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.util.parametercorelog.VisaDirectIncludeCardParameters
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -39,6 +41,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymen
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.payment.cards.SmartPaymentCardsViewModel.UIEvent.OnStopTimer
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.SAVE_CORE_LOG
 import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_APPLICATION_NAME
 import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_ENDPOINT
 import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGORY
@@ -48,13 +51,14 @@ import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProces
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getNavParam
-import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlinx.coroutines.GlobalScope
+import timber.log.Timber
 
 @HiltViewModel
 class SmartPaymentCardsViewModel @Inject constructor(
@@ -243,8 +247,29 @@ class SmartPaymentCardsViewModel @Inject constructor(
     }
 
     private fun setErrorAlertResultAddCard(
+        response: String,
         addVisaCardErrors: AddVisaCardErrors
     ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                infoUser?.email,
+                infoUser?.idBrand ?: 0,
+                RegisterCoreLogProcess.VISA_DIRECT_INCLUDE_CARD.process,
+                Gson().toJson(
+                    VisaDirectIncludeCardParameters(
+                        applicationName = reactApplicationName,
+                        userName = reactUserName,
+                        userPassword = reactUserPass,
+                        endpoint = reactEndPoint
+                    )
+                ),
+                response
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Timber.d(SAVE_CORE_LOG)
+                }
+            }
+        }
         uiState = uiState.copy(
             isAlertResultVisible = true,
             isAlertResultVisaError = true,
@@ -255,20 +280,11 @@ class SmartPaymentCardsViewModel @Inject constructor(
             alertResultButtonResource = R.string.payment_schedule_error_alert_button_two,
             isLoading = false
         )
-        GlobalScope.launch {
-            mutationSaveRegisterCoreLogUseCase.invoke(
-                infoUser?.email,
-                infoUser?.idBrand ?: 0,
-                RegisterCoreLogProcess.VISA_DIRECT_INCLUDE_CARD.process,
-                "",
-                addVisaCardErrors.toJson()
-            )
-        }
     }
 
     private fun onHandleAddCardResponse(response: String, isError: Boolean) {
         if (isError) {
-            setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
+            setErrorAlertResultAddCard(response, response.getAddCardErrorFromValue())
         } else {
             onNavigateToVisaVerifyInformation(response)
         }
@@ -277,8 +293,8 @@ class SmartPaymentCardsViewModel @Inject constructor(
     private fun onCardSelected(cardSelected: CardVisaDirect) {
         navigateTo(
             "${Screen.SmartPaymentSavingAmountSV.baseRoute}/" +
-                "${Screen.SmartPaymentCardsScreenSV.baseRoute}/" +
-                "${encodeData(cardSelected)}/${encodeData(smartAccount)}/${SmartTransferTypes.VisaToSmart.id}"
+                    "${Screen.SmartPaymentCardsScreenSV.baseRoute}/" +
+                    "${encodeData(cardSelected)}/${encodeData(smartAccount)}/${SmartTransferTypes.VisaToSmart.id}"
 
         )
     }

@@ -66,6 +66,7 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnTryWithPassword
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.SAVE_CORE_LOG
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CardType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -81,6 +82,7 @@ import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -280,7 +282,7 @@ class VisaCardViewModel @Inject constructor(
         parameter: String,
         result: String
     ) {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             mutationSaveRegisterCoreLogUseCase.invoke(
                 email,
                 idBrand,
@@ -289,7 +291,7 @@ class VisaCardViewModel @Inject constructor(
                 result
             ).collectLatest { result ->
                 result.onSuccess {
-                    Timber.d("SAVED_CORE_LOG")
+                    Timber.d(SAVE_CORE_LOG)
                 }
             }
         }

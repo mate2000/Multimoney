@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
@@ -47,6 +48,7 @@ import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGOR
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
 import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
@@ -55,6 +57,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.GlobalScope
 
 @HiltViewModel
 class PaymentScheduleCardListViewModel @Inject constructor(
@@ -63,6 +66,7 @@ class PaymentScheduleCardListViewModel @Inject constructor(
     private val queryListCardVDUseCase: QueryListCardVDUseCase,
     private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
     private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase,
+    private val mutationSaveRegisterCoreLogUseCase: MutationSaveRegisterCoreLogUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
@@ -257,6 +261,15 @@ class PaymentScheduleCardListViewModel @Inject constructor(
             alertResultButtonResource = R.string.payment_schedule_error_alert_button_two,
             isLoading = false
         )
+        GlobalScope.launch {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                infoUser?.email,
+                infoUser?.idBrand ?: 0,
+                RegisterCoreLogProcess.VISA_DIRECT_INCLUDE_CARD.process,
+                "",
+                addVisaCardErrors.toJson()
+            )
+        }
     }
 
     private fun onNavigateBack() = navigateBack(popTo = Screen.PaymentScheduleCardScreen.route, isRestart = false)

@@ -81,6 +81,7 @@ import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -279,14 +280,18 @@ class VisaCardViewModel @Inject constructor(
         parameter: String,
         result: String
     ) {
-        executeUseCase {
+        GlobalScope.launch {
             mutationSaveRegisterCoreLogUseCase.invoke(
                 email,
                 idBrand,
                 process,
                 parameter,
                 result
-            )
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Timber.d("SAVED_CORE_LOG")
+                }
+            }
         }
     }
 

@@ -55,10 +55,12 @@ import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
@@ -142,8 +144,6 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                             identification,
                             email,
                             balanceCardInformation?.cardInformation?.cardNumber ?: "",
-                            balanceCardInformation?.cardInformation?.holderName ?: "",
-                            balanceCardInformation?.cardInformation?.cValidation ?: "",
                             expirationDate?.first() ?: "",
                             getExpirationYear(
                                 expirationDate?.last() ?: ""
@@ -216,14 +216,18 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         parameter: String,
         result: String
     ) {
-        executeUseCase {
+        GlobalScope.launch {
             mutationSaveRegisterCoreLogUseCase.invoke(
                 email,
                 idBrand,
                 process,
                 parameter,
                 result
-            )
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Timber.d("SAVED_CORE_LOG")
+                }
+            }
         }
     }
 

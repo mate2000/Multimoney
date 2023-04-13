@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
@@ -58,6 +59,7 @@ import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGOR
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
 import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getDayFromString
 import com.multimoney.multimoney.presentation.util.getNavParam
@@ -67,6 +69,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.GlobalScope
 
 @HiltViewModel
 class PaymentScheduleCardViewModel @Inject constructor(
@@ -77,6 +80,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private val getCardAutomaticDebitUseCase: QueryGetCardAutomaticDebitUseCase,
     private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
     private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase,
+    private val mutationSaveRegisterCoreLogUseCase: MutationSaveRegisterCoreLogUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
@@ -335,6 +339,15 @@ class PaymentScheduleCardViewModel @Inject constructor(
             alertResultButtonResource = R.string.payment_schedule_error_alert_button_two,
             isLoading = false
         )
+        GlobalScope.launch {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                infoUser?.email,
+                infoUser?.idBrand ?: 0,
+                RegisterCoreLogProcess.VISA_DIRECT_INCLUDE_CARD.process,
+                "",
+                addVisaCardErrors.toJson()
+            )
+        }
     }
 
     private fun onEditCardVisaDirect() = navigateTo(

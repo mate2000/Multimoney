@@ -121,6 +121,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMut
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveLogTrackingMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveRegisterCoreLogMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
@@ -1065,6 +1066,23 @@ class GraphqlApi @Inject constructor(
 
     fun queryGetToken(): ApolloCall<GetTokenQuery.Data> =
         apolloAuthorizedClient.query(GetTokenQuery()).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveRegisterCoreLog(
+        user: String?,
+        idBrand: Int,
+        process: String,
+        parameters: String,
+        result: String
+    ): ApolloCall<SaveRegisterCoreLogMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveRegisterCoreLogMutation(
+                user ?: "",
+                idBrand,
+                process,
+                parameters,
+                result
+            )
+        ).fetchPolicy(NetworkOnly)
 
     // SmartAccount
     fun queryGetCoreBankMovements(

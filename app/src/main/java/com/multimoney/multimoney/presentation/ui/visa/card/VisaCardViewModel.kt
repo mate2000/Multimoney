@@ -19,6 +19,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand.CostaRica
 import com.multimoney.data.util.catalog.Brand.ElSalvador
 import com.multimoney.data.util.catalog.Brand.Guatemala
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardBlockingUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCardUnblockingUseCase
 import com.multimoney.domain.model.balance.BalanceCardInformation
@@ -65,9 +66,11 @@ import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIE
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnTryWithPassword
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.presentation.util.SAVE_CORE_LOG
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CardType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
@@ -78,12 +81,15 @@ import com.novopayment.sdk.vts.model.NovoError
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -96,7 +102,8 @@ class VisaCardViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
     private val cognitoHelper: CognitoHelper,
     private val mutationCardBlockingUseCase: MutationCardBlockingUseCase,
-    private val mutationCardUnblockingUseCase: MutationCardUnblockingUseCase
+    private val mutationCardUnblockingUseCase: MutationCardUnblockingUseCase,
+    private val mutationSaveRegisterCoreLogUseCase: MutationSaveRegisterCoreLogUseCase
 ) :
     BaseViewModel(true) {
     // uiState
@@ -270,13 +277,40 @@ class VisaCardViewModel @Inject constructor(
         }
     }
 
+    private fun callMutationSaveRegisterCoreLog(
+        process: String,
+        parameter: String,
+        result: String
+    ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                email,
+                idBrand,
+                process,
+                parameter,
+                result
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Timber.d(SAVE_CORE_LOG)
+                }
+            }
+        }
+    }
+
     private fun startNovoPayment() {
+        val token = NovoVTS.getFavoriteCard()
         novoHelper.novoNewPayment(
+            token,
             onSuccessPayment = {
                 showAlertResultDialog(true)
             },
             onErrorPayment = {
                 if (shouldHandleNovoError(it)) {
+                    callMutationSaveRegisterCoreLog(
+                        RegisterCoreLogProcess.NOVO_SELECT_CARD.process,
+                        JSONObject().put(NOVO_TOKEN, token).toString(),
+                        it.message ?: ""
+                    )
                     handleErrorResult()
                 }
             }
@@ -588,9 +622,9 @@ class VisaCardViewModel @Inject constructor(
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnNavigatePreferences -> navigateTo(
                 "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                encodeData(
-                    balanceCardInformation
-                )
+                    encodeData(
+                        balanceCardInformation
+                    )
                 }/$availableBalanceLabel/$idClient/$idLoanClient"
 
             )
@@ -598,15 +632,25 @@ class VisaCardViewModel @Inject constructor(
             is OnNavigateToVisaTokenizationScreen -> {
                 viewModelScope.launch {
                     if (dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister().first()) {
-                        registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038, applyAdjust = false, data = BaseEventDataDto(user = email, idBrand = idBrand, idClient = idClient, idLoanClient = idLoanClient, identification = identification).toJson())
+                        registerAdjustEvent(
+                            AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038,
+                            applyAdjust = false,
+                            data = BaseEventDataDto(
+                                user = email,
+                                idBrand = idBrand,
+                                idClient = idClient,
+                                idLoanClient = idLoanClient,
+                                identification = identification
+                            ).toJson()
+                        )
                         dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister(false)
                     }
                 }
                 navigateTo(
                     "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                    encodeData(
-                        balanceCardInformation
-                    )
+                        encodeData(
+                            balanceCardInformation
+                        )
                     }"
                 )
             }
@@ -683,5 +727,6 @@ class VisaCardViewModel @Inject constructor(
         const val INIT_PASSWORD_ATTEMPTS = 0
         const val MAX_NUMBER_ATTEMPTS_TO_PAY = 2
         const val DELAY_TO_START_PAYMENT = 300L
+        const val NOVO_TOKEN = "vProvisionedTokenId"
     }
 }

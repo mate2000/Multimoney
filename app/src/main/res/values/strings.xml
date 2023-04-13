@@ -1526,6 +1526,7 @@
 
     <!-- Smart SAC Transfer -->
     <string name="sac_account" translatable="false">"Cuenta SAC</string>
+    <string name="smart_transfer_total_to_debit" translatable="false">Total a debitar</string>
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>

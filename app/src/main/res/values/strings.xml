@@ -1859,4 +1859,9 @@
     <string name="force_update_message_cr" translatable="false">Para ingresar a tu app, actualizá</string>
     <string name="force_update_message_gt_sv" translatable="false">Para ingresar a tu app, actualiza</string>
     <string name="force_update_intent_package" translatable="false">com.android.vending</string>
+
+    <!-- Account Options Bottom Sheet -->
+    <string name="account_options_bootom_sheet_edit_name" translatable="false">Editar nombre</string>
+    <string name="account_options_bootom_sheet_delete_account" translatable="false">Eliminar cuenta</string>
+
 </resources>

@@ -45,12 +45,6 @@ class ChangeEmailViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
     }
 
-
-    private fun isNewEmailEqualTanPrevious(newEmail: String): Boolean {
-        return newEmail == uiState.email
-    }
-
-
     private fun isFormValid() {
         uiState = when {
             uiState.newEmail?.isBlank() == true -> {

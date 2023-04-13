@@ -1,4 +1,4 @@
-mutation SendPinProcess($identification:String!, $firstName:String!, $email:String!, $cellphone:String!, $sendMethod:String!, $fk_Suv_Mtr_Usuario:Int!,$idBrand:Int!, $user:String!) {
+mutation SendPinProcess($identification:String!, $firstName:String!, $email:String!, $cellphone:String!, $sendMethod:String!, $fk_Suv_Mtr_Usuario:Int!,$idBrand:Int!, $user:String!, $flowOrigin: Int!) {
     sendPinProccess(
         sendPinProccessInput: {
             identification: $identification
@@ -9,6 +9,7 @@ mutation SendPinProcess($identification:String!, $firstName:String!, $email:Stri
             fk_Suv_Mtr_Usuario: $fk_Suv_Mtr_Usuario
             idBrand: $idBrand
             user: $user
+            flowOrigin: $flowOrigin
         }
     ) {
         pk_suv_mtr_usuario

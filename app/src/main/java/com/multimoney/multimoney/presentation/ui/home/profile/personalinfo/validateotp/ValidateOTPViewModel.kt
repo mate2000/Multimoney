@@ -370,6 +370,9 @@ class ValidateOTPViewModel @Inject constructor(
                         uiState.newValue
                     ) ?: ""
                 )
+                dataStorePreferences.setUserPhoneNumber(
+                    uiState.newValue ?: ""
+                )
                 registerAdjustEvent(
                     AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001,
                     applyAdjust = false,
@@ -380,7 +383,13 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateBack(Screen.HomeScreen.route, isRestart = true)
+                navigateTo(
+                    "${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.email}/${
+                        uiState.newPhoneNumberCode?.plus(
+                            uiState.newValue
+                        ) ?: ""
+                    }/${uiState.identification}/${uiState.pkUser}/${uiState.userName}"
+                )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
         }

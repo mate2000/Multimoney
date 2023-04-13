@@ -502,6 +502,7 @@
     <string name="profile_otp_to_sms" translatable="false">SMS</string>
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
     <string name="profile_verify_code" translatable="false">Verificar</string>
+    <string name="profile_request_otp_code" translatable="false">Enviar código</string>
     <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
     <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
     <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>

@@ -206,7 +206,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileScreen : Screen(
-        "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
+        "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$LAST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
     )
 

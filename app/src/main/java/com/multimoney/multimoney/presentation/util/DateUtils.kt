@@ -111,17 +111,17 @@ fun onEmissionDateValidation(pickedDate: String, formatter: DateTimeFormatter): 
 }
 
 fun getCurrentDateYMDPattern(): String {
-    val date = LocalDate.now()
-    return date.toString()
+    val date = LocalDateTime.now()
+    return date.format(DATE_TIME_DOCUMENTS_FORMAT)
 }
 
 fun getPreviousDate(daysToSubtract: Long): String {
-    val date = LocalDate.now().minusDays(daysToSubtract)
-    return date.toString()
+    val date = LocalDateTime.now().minusDays(daysToSubtract)
+    return date.format(DATE_TIME_DOCUMENTS_FORMAT)
 }
 
 fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
-    val date = LocalDate.now()
+    val date = LocalDateTime.now()
     when (dateFilter) {
         FilterDate.YESTERDAY -> date.minusDays(1)
         FilterDate.LAST_7_DAYS -> date.minusDays(7)
@@ -131,8 +131,8 @@ fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
         FilterDate.LAST_365_DAYS -> date.minusDays(365)
     }
 
-    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    return date.format(formatters)
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    return date.format(DATE_TIME_DOCUMENTS_FORMAT)
 }
 
 fun getCurrentDate(time: Date): String {

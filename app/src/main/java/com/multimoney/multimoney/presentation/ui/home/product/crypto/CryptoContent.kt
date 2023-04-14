@@ -38,7 +38,8 @@ fun CryptoContent(
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = 0.0,
-                                isEmptyStateDisable = cryptoEmptyState
+                                isEmptyStateDisable = cryptoEmptyState,
+                                investedBalance = 0.0
                             )
                         }
                     } else if (cryptoBalance.outOfService) {
@@ -62,7 +63,8 @@ fun CryptoContent(
                             CryptoCardWithBalance(
                                 cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
                                 clientCryptoBalanceHistory = clientBalanceHistory,
-                                isEmptyStateDisable = cryptoEmptyState
+                                isEmptyStateDisable = cryptoEmptyState,
+                                investedBalance = cryptoBalance.investedBalance?.toDoubleOrNull() ?: 0.0
                             )
                         }
                     }

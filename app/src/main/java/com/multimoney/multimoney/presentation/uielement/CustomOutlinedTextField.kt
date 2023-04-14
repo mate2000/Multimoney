@@ -57,12 +57,12 @@ import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultBlack
-import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative300
 import com.multimoney.multimoney.presentation.theme.SemanticNegative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
@@ -219,7 +219,7 @@ fun CustomOutlinedTextField(
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
-                backgroundColor = GrayScale500
+                backgroundColor = WhiteTransparency16
                 textColor = WhiteTransparency30
             }
         }
@@ -247,7 +247,7 @@ fun CustomOutlinedTextField(
             }
             else -> {
                 focusedIndicatorColor = DefaultBlack
-                backgroundColor = GrayScale500
+                backgroundColor = WhiteTransparency16
                 textColor = WhiteTransparency30
             }
         }

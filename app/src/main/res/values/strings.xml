@@ -83,6 +83,7 @@
     <string name="common_percentage_format" translatable="false">%s\%%</string>
     <string name="content_description_more_info" translatable="false">Más información</string>
     <string name="contact_support" translatable="false">Contactar a soporte</string>
+    <string name="delete" translatable="false">Eliminar</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false" />
@@ -1566,6 +1567,10 @@
     <string name="smart_add_sac_account_number_validation" translatable="false">El número de cuenta debe tener de 9 a 16 dígitos</string>
     <string name="smart_add_sac_account_names_label" translatable="false">Nombre(s)</string>
     <string name="smart_add_sac_account_last_names_label" translatable="false">Apellido(s)</string>
+    <string name="smart_add_sac_account_dialog_delete_account_title" translatable="false">Eliminar cuenta</string>
+    <string name="smart_add_sac_account_dialog_delete_account_description" translatable="false">¿Estás seguro que querés eliminar tu cuenta?</string>
+    <string name="smart_add_sac_account_toast_deleted_account" translatable="false">Cuenta eliminada.</string>
+
 
     <!-- Smart Transfer 365 Edit Amount -->
     <string name="transfer_365_amount_title" translatable="false">Enviar dinero</string>

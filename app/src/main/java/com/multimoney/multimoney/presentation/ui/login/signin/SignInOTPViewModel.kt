@@ -35,6 +35,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
@@ -163,8 +164,7 @@ class SignInOTPViewModel @Inject constructor(
 
     private fun onShowBlockedDialog() {
         uiState = uiState.copy(
-            openDialog =
-            DialogParameters(
+            openDialog = DialogParameters(
                 titleResource = R.string.sign_in_verify_otp_blocked_title,
                 descriptionResource = uiState.dialogTextResource,
                 isActive = mutableStateOf(true),
@@ -252,10 +252,9 @@ class SignInOTPViewModel @Inject constructor(
         }
     }
 
-    private fun onCallMutationChangeDevice() = executeUseCase {
+    private fun onCallMutationChangeDevice(onSuccess: () -> Unit) = executeUseCase {
         mutationChangeDeviceUseCase.invoke(email, uiState.otp).collectLatest { result ->
             result.onSuccess {
-                uiState = uiState.copy(isLoading = false)
                 when (it.status) {
                     SUCCESS_STATUS -> {
                         registerAdjustEvent(
@@ -264,15 +263,21 @@ class SignInOTPViewModel @Inject constructor(
                             applyAdjust = false,
                             data = EmailDto(email).toJson()
                         )
-                        onNavigateToLogin()
+                        onSuccess.invoke()
                     }
                     WRONG_CODE -> {
                         uiState =
-                            uiState.copy(otpError = Pair(true, R.string.sign_in_otp_wrong_code))
+                            uiState.copy(
+                                otpError = Pair(true, R.string.sign_in_otp_wrong_code),
+                                isLoading = false
+                            )
                     }
                     EXPIRED_CODE -> {
                         uiState =
-                            uiState.copy(otpError = Pair(true, R.string.sign_in_otp_expired_code))
+                            uiState.copy(
+                                otpError = Pair(true, R.string.sign_in_otp_expired_code),
+                                isLoading = false
+                            )
                     }
                 }
             }.onFailure {
@@ -307,7 +312,7 @@ class SignInOTPViewModel @Inject constructor(
 
     private fun onSetupResources(context: Context) {
         uiState = when (context.getUserCountry()) {
-            SIM_CODE_EL_SALVADOR -> {
+            SIM_CODE_EL_SALVADOR, SIM_CODE_GUATEMALA -> {
                 uiState.copy(
                     weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template_gt,
                     dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle
@@ -357,7 +362,7 @@ class SignInOTPViewModel @Inject constructor(
         when (uiEvent) {
             is UIEvent.OnCallMutationRequestChangeDevice -> onCallMutationRequestChangeDevice()
             is UIEvent.OnNavigateBack -> onNavigateBack()
-            is UIEvent.OnValidateOTP -> onCallMutationChangeDevice()
+            is UIEvent.OnValidateOTP -> onCallMutationChangeDevice(uiEvent.onSuccess)
             is UIEvent.OnOTPValueChange -> onOtpValueChange(uiEvent.otp)
             is UIEvent.OnResendOTP -> onResendOTP()
             is UIEvent.OnGetOtpFromMessage -> getOtpFromMessage(uiEvent.message)
@@ -373,7 +378,7 @@ class SignInOTPViewModel @Inject constructor(
     sealed class UIEvent {
         object OnCallMutationRequestChangeDevice : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnValidateOTP : UIEvent()
+        data class OnValidateOTP(val onSuccess: () -> Unit) : UIEvent()
         object OnShowBlockedDialog : UIEvent()
         data class OnOTPValueChange(val otp: String) : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()

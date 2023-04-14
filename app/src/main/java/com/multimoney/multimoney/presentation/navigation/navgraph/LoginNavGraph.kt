@@ -1,13 +1,14 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
-import com.multimoney.multimoney.presentation.navigation.FORCE_CHANGE_DEVICE
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.LOGIN_ROUTE
@@ -24,6 +25,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
@@ -51,7 +53,8 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
             route = Screen.ForceUpdateScreen.route,
             arguments = listOf(
                 navArgument(ID_BRAND) { type = NavType.IntType }
-            )) {
+            )
+        ) {
             ForceUpdateScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -71,15 +74,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
         }
         composable(
             route = Screen.SignInScreen.route,
-            arguments = listOf(
-                navArgument(FORCE_CHANGE_DEVICE) {
-                    type = NavType.BoolType
-                    defaultValue = false
-                }
-            )
         ) {
-            val forceChangeDevice = it.arguments?.getBoolean(FORCE_CHANGE_DEVICE) ?: false
-
             SignInScreen(
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
@@ -89,7 +84,6 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 onNavigate = {
                     navController.navigate(it.route)
                 },
-                forceChangeDevice = forceChangeDevice
             )
         }
         composable(
@@ -111,8 +105,7 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 step = navController.currentBackStackEntry?.arguments?.getString(
                     SIGN_UP_STEP,
                     DEFAULT_STEP
-                )
-                    ?: DEFAULT_STEP,
+                ) ?: DEFAULT_STEP,
                 idBrand = navController.currentBackStackEntry?.arguments?.getInt(ID_BRAND, 0),
                 onNavigate = {
                     navController.navigate(it.route)
@@ -150,7 +143,12 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(route = Screen.SignInOTPScreen.route) {
+        composable(route = Screen.SignInOTPScreen.route) { backStackEntry ->
+            val parent = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.SignInScreen.route)
+            }
+            val viewModel = hiltViewModel<SignInViewModel>(parent)
+
             SignInOTPScreen(
                 onNavigate = {
                     navController.navigate(it.route)
@@ -159,7 +157,8 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
-                }
+                },
+                signInViewModel = viewModel
             )
         }
         composable(route = Screen.RequestForgotPassword.route) {

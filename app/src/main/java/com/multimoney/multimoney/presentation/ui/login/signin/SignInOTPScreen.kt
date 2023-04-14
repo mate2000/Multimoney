@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,13 +47,13 @@ import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
-@Preview
 @Composable
 fun SignInOTPScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignInOTPViewModel = hiltViewModel()
+    viewModel: SignInOTPViewModel = hiltViewModel(),
+    signInViewModel: SignInViewModel
 ) {
     val context = LocalContext.current
     val launchSmsActivityResult =
@@ -124,7 +123,7 @@ fun SignInOTPScreen(
             }
         )
     }
-    SignInOTPContent(viewModel = viewModel)
+    SignInOTPContent(viewModel, signInViewModel)
     LoadingIndicator(viewModel.uiState.isLoading)
 
     // Start SMS Retriever client
@@ -143,7 +142,7 @@ fun SignInOTPScreen(
 }
 
 @Composable
-fun SignInOTPContent(viewModel: SignInOTPViewModel) {
+fun SignInOTPContent(viewModel: SignInOTPViewModel, signInViewModel: SignInViewModel) {
     ConstraintLayout(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -283,7 +282,9 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel) {
             text = stringResource(id = R.string.sign_in_verify_otp_button),
             enable = viewModel.isFormValid() && viewModel.uiState.isButtonEnabled,
             onClick = {
-                viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnValidateOTP)
+                viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnValidateOTP {
+                    signInViewModel.onUIEvent(SignInViewModel.UIEvent.OnCallCognitoSignIn(true))
+                })
             }
         )
     }

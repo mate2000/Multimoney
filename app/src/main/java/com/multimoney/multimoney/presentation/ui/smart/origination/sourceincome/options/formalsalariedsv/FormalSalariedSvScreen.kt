@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps.Search
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -32,7 +33,6 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnCompanyNameChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnLoadCurrentStepData
@@ -40,7 +40,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.formalsalariedsv.FormalSalariedSvViewModel.UIEvent.OnSalaryChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
@@ -48,7 +47,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun FormalSalariedSvScreen(
     sharedViewModel: SmartViewModel = hiltViewModel(),
     sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
-    viewModel: FormalSalariedSvViewModel = hiltViewModel()
+    viewModel: FormalSalariedSvViewModel = hiltViewModel(),
+    economicActivity: GeneralEconomicActivity? = null
 ) {
     LaunchedEffect(true) {
         sourceIncomeSharedViewModel.baseEvent.collect { event ->
@@ -79,8 +79,8 @@ fun FormalSalariedSvScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = SourceIncomeOptionType.FormalSalariedSv.id.toLong(),
-                                income = viewModel.uiState.salary.toFloat(),
+                                idEconomicActivity = SourceIncomeOptionType.FormalSalariedSv.iconId.toLong(),
+                                income = viewModel.uiState.salary.toFloatOrNull() ?: 0f,
                                 companyName = viewModel.uiState.companyName,
                                 positionJob = viewModel.uiState.profession,
                                 idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
@@ -113,11 +113,7 @@ fun FormalSalariedSvScreen(
         sharedViewModel.user
     )
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            OnNavigateToSelectedSourceOfIncomeOption(
-                MainSourceIncomeScreenType.id
-            )
-        )
+        sourceIncomeSharedViewModel.goBackToMainOptions()
     }
 }
 

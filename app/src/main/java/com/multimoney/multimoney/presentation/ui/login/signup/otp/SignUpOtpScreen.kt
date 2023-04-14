@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -41,6 +42,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
@@ -87,19 +89,18 @@ fun SignUpOtpScreen(
             }
         }
 
-    viewModel.onUIEvent(
-        SignUpOtpViewModel.UIEvent.OnStart(
-            sharedViewModel.whatsAppLink ?: "",
-            stringResource(id = R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts),
-            sharedViewModel.idBrand
-        )
-    )
-
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(OnShowCloseIcon(true))
+        sharedViewModel.onUIEvent(OnGetWhatsAppLink)
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
             onUIEvent(SignUpOtpViewModel.UIEvent.OnInitializeTimer(PHASE_ONE, TIMER_DURATION))
+            onUIEvent(
+                SignUpOtpViewModel.UIEvent.OnStart(
+                    sharedViewModel.whatsAppLink ?: "",
+                    sharedViewModel.idBrand
+                )
+            )
             baseEvent.collect { event ->
                 when (event) {
                     is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
@@ -123,7 +124,8 @@ fun SignUpOtpScreen(
                     SEND_METHOD_PHONE,
                     userData?.pkUser ?: "",
                     idBrand ?: 0,
-                    userData?.email ?: ""
+                    userData?.email ?: "",
+                    FlowOriginChangeProfileInfo.NORMAL.value
                 )
             )
             onUIEvent(
@@ -194,7 +196,7 @@ fun SignUpOtpScreen(
                         isLoading = false,
                         openDialog = DialogParameters(
                             titleResource = string.sign_up_email_blocked_dialog_title,
-                            description = viewModel.userBlockedForMaxAttend,
+                            descriptionResource = viewModel.userBlockedForMaxAttend,
                             isActive = mutableStateOf(true),
                             positiveResource = string.contact,
                             positiveAction = {
@@ -345,7 +347,8 @@ fun SignUpOtpScreen(
                                 viewModel.uiState.otpResend ?: SEND_METHOD_PHONE,
                                 userData?.pkUser ?: "",
                                 idBrand ?: 0,
-                                userData?.email ?: ""
+                                userData?.email ?: "",
+                                FlowOriginChangeProfileInfo.NORMAL.value
                             )
                         )
                     }
@@ -369,12 +372,14 @@ fun SignUpOtpScreen(
     if (viewModel.uiState.openUserBlockedDialog.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openUserBlockedDialog.titleResource),
-            message = viewModel.uiState.openUserBlockedDialog.description,
+            message = viewModel.uiState.openUserBlockedDialog.description.ifEmpty {
+                stringResource(viewModel.uiState.openUserBlockedDialog.descriptionResource)
+            },
             positiveButtonText = stringResource(id = viewModel.uiState.openUserBlockedDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openUserBlockedDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openUserBlockedDialog.isActive,
             onPositiveAction = {
-                context.openWhatsAppDeepLink(viewModel.linkWhatsapp)
+                context.openWhatsAppDeepLink(sharedViewModel.whatsAppLink.orEmpty())
                 viewModel.onUIEvent(OnNavigateToSignIn)
             },
             onNegativeAction = {

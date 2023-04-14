@@ -566,7 +566,12 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToProfileScreen() {
-        navigateTo("${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/${uiState.userStatus?.infoUser?.firstName}/$email/${uiState.userStatus?.infoUser?.phone}/$identification/$pkUser/$userName")
+        navigateTo(
+            "${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/" +
+                    "${uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }}/$email/" +
+                    "${uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }}/" +
+                    "$identification/$pkUser/$userName"
+        )
     }
 
     // Todo check if the navigation to this screen is suitable for the purchase crypto flow

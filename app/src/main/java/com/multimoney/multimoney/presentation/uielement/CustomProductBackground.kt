@@ -1,5 +1,7 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -23,8 +26,8 @@ import com.multimoney.multimoney.presentation.theme.ShadowColorComplementaryTwo
 import com.multimoney.multimoney.presentation.theme.ShadowColorPrimary
 import com.multimoney.multimoney.presentation.theme.ShadowColorSecondary
 import com.multimoney.multimoney.presentation.theme.ShadowColorTertiary
-import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryOne
+import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.ComplementaryTwo
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Primary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Secondary
 import com.multimoney.multimoney.presentation.uielement.ProductBackGroundType.Tertiary
@@ -35,6 +38,9 @@ import com.multimoney.multimoney.presentation.util.coloredShadow
 fun CustomProductBackground(
     modifier: Modifier = Modifier,
     type: ProductBackGroundType = Primary,
+    cta: String? = null,
+    isActionEnabled: Boolean = false,
+    action: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
     val shadowCardColor: Color
@@ -63,26 +69,45 @@ fun CustomProductBackground(
     }
 
     Row(
-        modifier = Modifier
-            .coloredShadow(shadowCardColor)
-            .padding(bottom = 16.dp)
+        modifier = if (isActionEnabled) {
+            Modifier
+                .coloredShadow(shadowCardColor).clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    action()
+                }
+        } else {
+            Modifier
+                .coloredShadow(shadowCardColor)
+        }
     ) {
         Box(modifier = modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 230.dp)
-                    .paint(painterResource(id = cardResourceId), contentScale = ContentScale.FillBounds)
+                    .paint(
+                        painterResource(id = cardResourceId),
+                        contentScale = ContentScale.FillBounds
+                    )
                     .clip(RoundedCornerShape(24.dp))
                     .blur(0.24.dp)
 
             ) {
                 CustomImage(
-                    drawableResource = drawable.ic_swipe_indicator, modifier = Modifier
+                    drawableResource = drawable.ic_swipe_indicator,
+                    modifier = Modifier
                         .padding(top = 8.dp)
                         .align(Alignment.TopCenter)
                 )
                 content()
+                ProductCardCTA(
+                    modifier = Modifier
+                        .padding(top = 20.dp, bottom = 16.dp)
+                        .align(Alignment.BottomCenter),
+                    actionText = cta
+                )
             }
         }
     }

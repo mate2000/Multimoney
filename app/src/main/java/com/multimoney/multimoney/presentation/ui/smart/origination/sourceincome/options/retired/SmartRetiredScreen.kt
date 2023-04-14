@@ -24,6 +24,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -33,14 +34,11 @@ import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.On
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
-import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnInstitutionValueChange
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnLoadCurrentStepData
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.retired.SmartRetiredViewModel.UIEvent.OnPaymentAmountValueChange
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType.MainSourceIncomeScreenType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
@@ -48,7 +46,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun SmartRetiredScreen(
     viewModel: SmartRetiredViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
+    economicActivity: GeneralEconomicActivity? = null
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -66,9 +65,9 @@ fun SmartRetiredScreen(
                     sharedViewModel.onUIEvent(
                         OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = SourceIncomeOptionType.Retired.id.toLong(),
+                                idEconomicActivity = economicActivity?.id?.toLong(),
                                 institutionPension = viewModel.uiState.institution,
-                                income = viewModel.uiState.paymentAmount.toFloat(),
+                                income = viewModel.uiState.paymentAmount.toFloatOrNull() ?: 0f,
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
                             )
                         )
@@ -90,11 +89,7 @@ fun SmartRetiredScreen(
     }
 
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            OnNavigateToSelectedSourceOfIncomeOption(
-                MainSourceIncomeScreenType.id
-            )
-        )
+        sourceIncomeSharedViewModel.goBackToMainOptions()
     }
 
     Column(

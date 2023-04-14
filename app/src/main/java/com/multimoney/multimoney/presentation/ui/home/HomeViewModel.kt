@@ -125,12 +125,12 @@ class HomeViewModel @Inject constructor(
                 userName = dataStorePreferences.getUserName().firstOrNull() ?: ""
             )
             callQueryValidateUserStatus(
-                uiState.pkUser.toInt(),
+                uiState.pkUser.toIntOrNull() ?: 0,
                 uiState.identification,
                 uiState.email,
-                uiState.idBrand.toInt()
+                uiState.idBrand.toIntOrNull() ?: Brand.Default.id
             )
-            callQueryGetConfigurationVersion(uiState.idBrand.toInt())
+            callQueryGetConfigurationVersion(uiState.idBrand.toIntOrNull() ?: Brand.Default.id)
             getContactInfo()
         }
     }
@@ -145,7 +145,7 @@ class HomeViewModel @Inject constructor(
         executeUseCase {
             queryCountryContactUseCase.invoke(
                 user = uiState.email,
-                idBrand = uiState.idBrand.toInt()
+                idBrand = uiState.idBrand.toIntOrNull() ?: Brand.Default.id
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
                     viewModelScope.launch {
@@ -383,8 +383,8 @@ class HomeViewModel @Inject constructor(
 
         removeBlankCards(productPageList)
 
-        // If idBrand is different from Guatemala enable Smart
-        if (uiState.idBrand != Brand.Guatemala.id.toString()) {
+        // If idBrand is different from Guatemala and Mexico enable Smart
+        if (uiState.idBrand != Brand.Guatemala.id.toString() && uiState.idBrand.toInt() != Brand.Mexico.id) {
             if (balance.balanceAccountSmart.isNullOrEmpty().not()) {
                 // Add the amount of account smart that user has
                 balance.balanceAccountSmart?.forEachIndexed { index, account ->

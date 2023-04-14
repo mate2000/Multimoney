@@ -48,7 +48,6 @@ fun OnBoardingScreen(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit,
     viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
 
     LaunchedEffect(true) {
@@ -122,7 +121,7 @@ fun OnBoardingScreen(
                 text = stringResource(id = R.string.registration),
                 onClick = {
                     viewModel.onUIEvent(
-                        OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute),
+                        OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute, context),
                         context
                     )
                 }
@@ -157,7 +156,7 @@ fun OnBoardingScreen(
                         .padding(start = 4.dp),
                     onClick = {
                         viewModel.onUIEvent(
-                            OnNavigateToNextScreen(Screen.SignInScreen.baseRoute),
+                            OnNavigateToNextScreen(Screen.SignInScreen.baseRoute, context),
                             context
                         )
                     }

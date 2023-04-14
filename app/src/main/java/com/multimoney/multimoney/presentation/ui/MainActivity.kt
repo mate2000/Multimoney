@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         ProviderInstaller.installIfNeededAsync(this, this)
         activity = this

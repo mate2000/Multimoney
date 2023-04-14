@@ -5,4 +5,7 @@ sealed class CognitoErrorCode(val code: String) {
     object SessionBlocked : CognitoErrorCode("2889")
     object BlacklistedDevice : CognitoErrorCode("2888")
     object BlacklistedDeviceTooManyAccounts : CognitoErrorCode("2899")
+    object UserBlockedForTooManyAttends : CognitoErrorCode("2896")
+    object UserBlockedChangePasswordNeeded : CognitoErrorCode("2897")
+    object DeviceChangeRequiredDueToInactivity : CognitoErrorCode("2898")
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -30,7 +31,6 @@ import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.ownbusinesspersonaltitle.OwnBusinessTitleViewModel.UIEvent.OnGetUserData
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeOptionType
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 
@@ -38,7 +38,8 @@ import com.multimoney.multimoney.presentation.util.transformation.formatDecimalM
 fun OwnBusinessTitleScreen(
     viewModel: OwnBusinessTitleViewModel = hiltViewModel(),
     sharedViewModel: SmartViewModel = hiltViewModel(),
-    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel()
+    sourceIncomeSharedViewModel: SourceIncomeViewModel = hiltViewModel(),
+    economicActivity: GeneralEconomicActivity? = null
 ) {
     LaunchedEffect(true) {
         sourceIncomeSharedViewModel.baseEvent.collect { event ->
@@ -65,9 +66,9 @@ fun OwnBusinessTitleScreen(
                     sharedViewModel.onUIEvent(
                         SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase(
                             accountSmartData = sharedViewModel.accountSmartData?.copy(
-                                idEconomicActivity = SourceIncomeOptionType.OwnBusinessInPartnership.id.toLong(),
+                                idEconomicActivity = economicActivity?.id?.toLong(),
                                 currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep),
-                                income = viewModel.uiState.incomeAmount.toFloat(),
+                                income = viewModel.uiState.incomeAmount.toFloatOrNull() ?: 0f,
                                 entrepreneurship = viewModel.uiState.businessName,
                                 idJobLevel1 = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.id?.toLongOrNull(),
                                 idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
@@ -95,11 +96,7 @@ fun OwnBusinessTitleScreen(
 
     // return to the main options screen whenever tapping on native back button from the device
     BackHandler {
-        sourceIncomeSharedViewModel.onUIEvent(
-            SourceIncomeViewModel.UIEvent.OnNavigateToSelectedSourceOfIncomeOption(
-                SourceIncomeOptionType.MainSourceIncomeScreenType.id
-            )
-        )
+        sourceIncomeSharedViewModel.goBackToMainOptions()
     }
 
     OwnBusinessTitleScreenContent(

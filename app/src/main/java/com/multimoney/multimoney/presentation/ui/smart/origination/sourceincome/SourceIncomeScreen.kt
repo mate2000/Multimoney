@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
 import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.UIEvent.OnAddressValueChange
@@ -66,43 +67,51 @@ fun SourceIncomeScreen(
  */
 @Composable
 fun ShowSelectedSourceIncomeOption(
-    selectedOption: Int,
+    selectedOption: GeneralEconomicActivity?,
     sharedViewModel: SmartViewModel,
     sourceIncomeSharedViewModel: SourceIncomeViewModel
 ) {
-    when (selectedOption) {
-        SourceIncomeOptionType.OwnBusiness.id -> SmartOwnBusinessSvScreen(
+    when (selectedOption?.iconCode) {
+        SourceIncomeOptionType.OwnBusiness.iconId -> SmartOwnBusinessSvScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.FormalSalariedCr.id -> SmartCrSalaryScreen(
+        SourceIncomeOptionType.FormalSalariedCr.iconId -> SmartCrSalaryScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.Retired.id -> SmartRetiredScreen(
+        SourceIncomeOptionType.Retired.iconId -> SmartRetiredScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.OtherSV.id,
-        SourceIncomeOptionType.OtherCR.id -> OtherIncomeScreen(
+        SourceIncomeOptionType.OtherSV.iconId,
+        SourceIncomeOptionType.OtherCR.iconId -> OtherIncomeScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.OwnBusinessInPartnership.id -> OwnBusinessInPartnershipScreen(
+        SourceIncomeOptionType.OwnBusinessInPartnership.iconId -> OwnBusinessInPartnershipScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.FreeLancer.id -> IndProfessionalScreen(
+        SourceIncomeOptionType.FreeLancer.iconId -> IndProfessionalScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.OwnBusinessOnPersonalBasis.id -> OwnBusinessTitleScreen(
+        SourceIncomeOptionType.OwnBusinessOnPersonalBasis.iconId -> OwnBusinessTitleScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
-        SourceIncomeOptionType.FormalSalariedSv.id -> FormalSalariedSvScreen(
+        SourceIncomeOptionType.FormalSalariedSv.iconId -> FormalSalariedSvScreen(
             sharedViewModel = sharedViewModel,
-            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            economicActivity = selectedOption
         )
 
         else -> {
@@ -155,7 +164,7 @@ fun SmartAddressFields(
                 .padding(top = 16.dp),
             items = sourceIncomeSharedViewModel.uiState.divisionOneList?.map { it?.name.orEmpty() }
                 ?: listOf(),
-            value = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.name ?: "",
+            value = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.name.orEmpty(),
             onValueChange = { valueSelected, _ ->
                 sourceIncomeSharedViewModel.onUIEvent(
                     OnDivisionOneValueChange(
@@ -176,7 +185,7 @@ fun SmartAddressFields(
             .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionTwoList?.map { it?.name.orEmpty() }
             ?: listOf(),
-        value = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.name ?: "",
+        value = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.name.orEmpty(),
         onValueChange = { valueSelected, _ ->
             sourceIncomeSharedViewModel.onUIEvent(
                 OnDivisionTwoValueChange(
@@ -196,7 +205,7 @@ fun SmartAddressFields(
             .padding(top = 16.dp),
         items = sourceIncomeSharedViewModel.uiState.divisionThreeList?.map { it?.name.orEmpty() }
             ?: listOf(),
-        value = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.name ?: "",
+        value = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.name.orEmpty(),
         onValueChange = { valueSelected, _ ->
             sourceIncomeSharedViewModel.onUIEvent(
                 OnDivisionThreeValueChange(

@@ -102,7 +102,8 @@ interface SecurityRepository {
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): Flow<MultimoneyResult<SendPinProcess?>>
 
     suspend fun mutationOnFidoInitialProcess(

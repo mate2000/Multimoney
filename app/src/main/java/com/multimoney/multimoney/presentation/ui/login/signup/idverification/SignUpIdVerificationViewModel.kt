@@ -70,7 +70,12 @@ class SignUpIdVerificationViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             mutationOnFidoInitialProcessUseCase.invoke(
-                names, lastNames, identification, applicationId, brand, user
+                names,
+                lastNames,
+                identification,
+                applicationId,
+                brand,
+                user
             ).collectLatest { result ->
                 result.onSuccess {
                     injectNewToken(it?.sdkToken ?: "")
@@ -113,7 +118,8 @@ class SignUpIdVerificationViewModel @Inject constructor(
                         )
                     )
                 }
-            })
+            }
+        )
     }
 
     fun onUIEvent(event: UIEvent) {
@@ -124,7 +130,7 @@ class SignUpIdVerificationViewModel @Inject constructor(
                 event.userData?.identification ?: "",
                 event.applicationId,
                 event.idBrand ?: 0,
-                event.userData?.email ?: "",
+                event.userData?.email ?: ""
             )
             is OnInitValues -> onInitValues(onFidoError)
             is OnOpenOnFidoSdk -> onOpenOnFidoSDK(

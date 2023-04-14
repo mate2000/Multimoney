@@ -27,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,11 +44,11 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
-import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditStartProcessIncomplete
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
@@ -61,19 +60,13 @@ import com.multimoney.multimoney.presentation.util.getCardDateFormat
  */
 @Composable
 fun CardNonPreApprovedCredit(
-    idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {}
+    textOne: String? = "",
+    textTwo: String? = ""
 ) {
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action()
-            },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -92,31 +85,25 @@ fun CardNonPreApprovedCredit(
                 }
             )
             Text(
-                text = stringResource(
-                    id = string.home_product_sv_non_pre_approved_credit_description
-                ),
+                text = if (textOne.isNullOrEmpty()) {
+                    stringResource(
+                        id = string.home_product_sv_non_pre_approved_credit_description
+                    )
+                } else {
+                    textOne
+                },
                 modifier = Modifier.padding(top = 20.dp),
                 style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.text
             )
-        }
-        Column(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CustomImage(
-                drawableResource = drawable.ic_chevron_up
-            )
-            Text(
-                text = stringResource(id = string.home_product_gt_sv_non_pre_approved_credit_action),
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Center
-            )
+            if (textTwo.isNullOrEmpty().not()) {
+                Text(
+                    text = textTwo ?: "",
+                    modifier = Modifier.padding(top = 4.dp),
+                    style = Typography.caption,
+                    color = MultimoneyTheme.colors.text
+                )
+            }
         }
     }
 }
@@ -133,20 +120,13 @@ fun CardGtSvCreditRejected(
         cTA = "",
         link = "",
         display = false
-    ),
-    action: () -> Unit = {}
+    )
 ) {
     val notDefinedValue = stringResource(id = string.not_defined)
     Column(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action()
-            },
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -167,32 +147,14 @@ fun CardGtSvCreditRejected(
             Text(
                 text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
                 modifier = Modifier.padding(top = 20.dp),
-                style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.creditNotApprovedText
             )
             Text(
                 text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
                 modifier = Modifier.padding(top = 4.dp),
-                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                style = Typography.caption,
                 color = MultimoneyTheme.colors.text
-            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(top = 32.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CustomImage(
-                drawableResource = drawable.ic_chevron_up
-            )
-            Text(
-                text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-                style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                color = MultimoneyTheme.colors.text,
-                textAlign = TextAlign.Center
             )
         }
     }
@@ -319,15 +281,13 @@ fun CreditPreApproved(
 fun CardWithCreditInProcess(
     type: CreditProcessStarted? = CreditProcessOnfidoReject,
     idBrand: Int = Brand.ElSalvador.id,
-    action: () -> Unit = {},
     wording: Wording? = Wording("", "", "")
 ) {
     val notDefinedValue = stringResource(id = R.string.not_defined)
-    var chipText = R.string.home_product_process_credit_label
+    val chipText = R.string.home_product_process_credit_label
     val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
     val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
-    val actionText: String? = wording?.cTA?.filter { wording.textTwo != notDefinedValue }
-    var startIcon = R.drawable.ic_time
+    var startIcon = drawable.ic_time
 
     val backgroundShip: Color = if (isSystemInDarkTheme()) {
         BlackTransparency20
@@ -335,9 +295,6 @@ fun CardWithCreditInProcess(
         WhiteTransparency10
     }
     when (type) {
-        CreditStartProcessIncomplete -> {
-            startIcon = drawable.ic_warning
-        }
         CreditProcessOnfidoMaxAttempts -> {
             startIcon = drawable.ic_warning
         }
@@ -350,6 +307,9 @@ fun CardWithCreditInProcess(
         CreditProcessCreateAccountFailure -> {
             startIcon = drawable.ic_warning
         }
+        CreditOfferApproved -> {
+            startIcon = 0
+        }
         else -> Unit
     }
 
@@ -357,13 +317,7 @@ fun CardWithCreditInProcess(
         modifier = Modifier
             .padding(top = 12.dp, start = 24.dp, end = 24.dp)
             .fillMaxWidth()
-            .wrapContentHeight()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                action.invoke()
-            },
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -391,29 +345,6 @@ fun CardWithCreditInProcess(
                 style = Typography.caption,
                 color = MultimoneyTheme.colors.text
             )
-        }
-
-        Column(modifier = Modifier.fillMaxWidth()) {
-            actionText?.let {
-                if (it.isNotBlank()) {
-                    CustomImage(
-                        modifier = Modifier
-                            .padding(top = 21.dp)
-                            .align(Alignment.CenterHorizontally),
-                        drawableResource = drawable.ic_chevron_up
-                    )
-
-                    Text(
-                        text = actionText,
-                        modifier = Modifier
-                            .padding(bottom = 12.dp)
-                            .align(Alignment.CenterHorizontally),
-                        style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                        color = MultimoneyTheme.colors.text,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
         }
     }
 }
@@ -463,7 +394,7 @@ fun CardCreditFirmedAndOnfidoPending() {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalTextApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun OngoingCredit(
     viewModel: ProductViewModel
@@ -575,9 +506,9 @@ fun OngoingCredit(
                                     .clip(CircleShape)
                                     .background(
                                         if ((
-                                                    viewModel.balanceCredit?.getFirstSummary()?.daysExpired
-                                                        ?: 0
-                                                    ) > 0
+                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                ?: 0
+                                            ) > 0
                                         ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
                                     )
                             )
@@ -607,6 +538,7 @@ fun OngoingCredit(
 
 sealed class CreditProcessStarted {
     object CreditStartProcessIncomplete : CreditProcessStarted()
+    object CreditOfferApproved : CreditProcessStarted()
     object CreditProcessOnFidoIncomplete : CreditProcessStarted()
     object CreditManualProcess : CreditProcessStarted()
     object CreditProcessFirmReject : CreditProcessStarted()

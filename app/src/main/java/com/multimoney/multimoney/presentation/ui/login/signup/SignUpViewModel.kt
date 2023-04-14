@@ -13,6 +13,7 @@ import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.data.util.catalog.SignUpStep.Search
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.domain.model.util.onFailure
@@ -25,6 +26,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_DATA
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
@@ -53,6 +55,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -62,15 +65,16 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
 class SignUpViewModel @Inject constructor(
     private val mutationUpdateUserRegisterUseCase: MutationUpdateUserRegisterUseCase,
+    private val queryCountryContactUseCase: QueryCountryContactUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
@@ -164,6 +168,7 @@ class SignUpViewModel @Inject constructor(
             }
         }
         this.countryCode = countryCode
+        this.idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
@@ -375,8 +380,15 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun onGetWhatsAppLink() {
-        viewModelScope.launch {
-            whatsAppLink = dataStorePreferences.getWhatsAppLink().first()
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = SignInViewModel.GUEST_USER,
+                idBrand = idBrand ?: Brand.Default.id
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    whatsAppLink = contactInfo?.whatsappLink ?: ""
+                }
+            }
         }
     }
 
@@ -384,12 +396,12 @@ class SignUpViewModel @Inject constructor(
         if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
             val country = context.getUserCountry()
             DialogParameters(
-                titleResource = if (country == SIM_CODE_EL_SALVADOR) {
+                titleResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
                     string.sign_up_session_blacklisted_title
                 } else {
                     string.sign_up_session_blacklisted_title_cr
                 },
-                descriptionResource = if (country == SIM_CODE_EL_SALVADOR) {
+                descriptionResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
                     string.sign_up_session_blacklisted_message_sv
                 } else {
                     string.sign_up_session_blacklisted_message_cr
@@ -404,7 +416,13 @@ class SignUpViewModel @Inject constructor(
             DialogParameters(
                 title = userData?.message.orEmpty(),
                 description = userData?.detail.orEmpty(),
-                isActive = mutableStateOf(true)
+                isActive = mutableStateOf(true),
+                positiveResource = if (userData?.status == STATUS_EMAIL_OR_PHONE_EMPTY) string.contact_support else string.accept,
+                positiveAction = {
+                    if (userData?.status == STATUS_EMAIL_OR_PHONE_EMPTY) {
+                        whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
+                    }
+                }
             )
         }
 
@@ -475,8 +493,10 @@ class SignUpViewModel @Inject constructor(
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
-            is UIEvent.OnUpdateCountry ->
+            is UIEvent.OnUpdateCountry -> {
                 uiState = uiState.copy(country = event.country)
+                idBrand = Brand.Search.getIdBrandByCountryCode(event.country)
+            }
             is UIEvent.OnUpdatePassword -> pass = event.pass
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
@@ -548,5 +568,6 @@ class SignUpViewModel @Inject constructor(
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
+        const val STATUS_EMAIL_OR_PHONE_EMPTY = 3108
     }
 }

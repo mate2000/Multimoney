@@ -33,7 +33,8 @@ fun CryptoContent(
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.ComplementaryTwo
+                            type = ProductBackGroundType.ComplementaryTwo,
+                            isActionEnabled = false
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = 0.0,
@@ -45,7 +46,8 @@ fun CryptoContent(
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.ComplementaryTwo
+                            type = ProductBackGroundType.ComplementaryTwo,
+                            isActionEnabled = false
                         ) {
                             CryptoCardMaintenanceState()
                         }
@@ -54,7 +56,8 @@ fun CryptoContent(
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.ComplementaryTwo
+                            type = ProductBackGroundType.ComplementaryTwo,
+                            isActionEnabled = false
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
@@ -69,11 +72,13 @@ fun CryptoContent(
                     CustomProductBackground(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
+                        type = ProductBackGroundType.ComplementaryTwo,
+                        cta = userStatus.infoCrypto?.wording?.cTA,
+                        isActionEnabled = true,
+                        action = { openSmartCryptoAction.invoke() }
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording,
-                            onClick = { openSmartCryptoAction.invoke() }
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 }
@@ -85,11 +90,13 @@ fun CryptoContent(
                 if (it.statusRequest != "" && it.idRequestGlobal != 0L && it.currentStep != "") {
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
+                        type = ProductBackGroundType.ComplementaryTwo,
+                        cta = userStatus.infoCrypto?.wording?.cTA,
+                        isActionEnabled = true,
+                        action = { openSmartCryptoAction.invoke() }
                     ) {
                         CryptoCardSmartInProcess(
-                            wording = userStatus.infoCrypto?.wording,
-                            onClick = { openSmartCryptoAction.invoke() }
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 } else {
@@ -97,11 +104,13 @@ fun CryptoContent(
                     CustomProductBackground(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
-                        type = ProductBackGroundType.ComplementaryTwo
+                        type = ProductBackGroundType.ComplementaryTwo,
+                        cta = userStatus.infoCrypto?.wording?.cTA,
+                        isActionEnabled = true,
+                        action = { openSmartCryptoAction.invoke() }
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording,
-                            onClick = { openSmartCryptoAction.invoke() }
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 }

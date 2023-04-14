@@ -11,7 +11,6 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentProcess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentPoints
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditCtaButtons
 
 /**
@@ -27,11 +26,7 @@ fun CreditCtaFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeVi
                 .fillMaxWidth()
                 .wrapContentHeight(),
             onClickPay = {
-                if (viewModel.uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
-                    viewModel.onUIEvent(OnNavigateToPaymentPoints)
-                } else {
-                    viewModel.onUIEvent(OnNavigateToPaymentProcess)
-                }
+                viewModel.onUIEvent(OnNavigateToPaymentProcess)
             },
             onClickDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
             canDisburse = viewModel.uiState.canExpandCredit,

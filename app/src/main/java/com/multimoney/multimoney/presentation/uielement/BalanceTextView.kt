@@ -35,7 +35,12 @@ fun BalanceTextView(
     currencyDecimalStyle: TextStyle
 ) {
     val decimalSeparator = DecimalFormatSymbols(Locale.ENGLISH).decimalSeparator
-    val splitText = balanceText.split(decimalSeparator)
+    val whiteSpaceText =  balanceText.split(WHITE_SPACE)
+    val splitText = if (whiteSpaceText.size > SPLIT_TEXT_NO_DECIMAL_SIZE) {
+        whiteSpaceText[0].split(decimalSeparator)
+    } else {
+        balanceText.split(decimalSeparator)
+    }
     val localDensity = LocalDensity.current
     var fontPadding by remember { mutableStateOf(0.dp) }
 
@@ -76,7 +81,32 @@ fun BalanceTextView(
                 )
             }
         }
+        if (whiteSpaceText.size > SPLIT_TEXT_NO_DECIMAL_SIZE) {
+            Text(
+                modifier = modifier,
+                text = WHITE_SPACE.plus(whiteSpaceText[1]),
+                style = currencyStyle,
+                onTextLayout = {
+                    val totalTextHeight = with(localDensity) {
+                        it.size.height.toDp()
+                    }
+                    val fontHeight = with(localDensity) {
+                        currencyStyle.fontSize.toDp()
+                    }
+                    val fontPaddingDifference = (totalTextHeight - fontHeight) / 2
+                    with(localDensity) {
+                        fontPadding =
+                            if (fontPaddingDifference <= currencyDecimalStyle.fontSize.toDp()) {
+                                fontPaddingDifference
+                            } else {
+                                currencyDecimalStyle.fontSize.toDp()
+                            }
+                    }
+                }
+            )
+        }
     }
 }
 
 const val SPLIT_TEXT_NO_DECIMAL_SIZE = 1
+const val WHITE_SPACE = " "

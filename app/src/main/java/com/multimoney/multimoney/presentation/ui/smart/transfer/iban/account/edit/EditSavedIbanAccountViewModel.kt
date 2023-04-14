@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -13,9 +15,12 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ACCOUNT_ID
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -24,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditSavedIbanAccountViewModel @Inject constructor(
     private val queryACHTransferFavoriteGetUseCase: QueryACHTransferFavoriteGetUseCase,
+    private val mutationUpdateACHAccountUseCase: MutationUpdateACHAccountUseCase,
     savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
@@ -36,12 +42,16 @@ class EditSavedIbanAccountViewModel @Inject constructor(
     private var idBrand: Int?
     private var identification: String?
     private var accountId: Int?
+    private var idClient: String = ""
+    private var smartAccount: SmartAccountID? = null
 
     init {
         user = savedStateHandle[USER]
         idBrand = savedStateHandle[ID_BRAND]
         identification = savedStateHandle[IDENTIFICATION]
         accountId = savedStateHandle[ACCOUNT_ID]
+        idClient = savedStateHandle[ID_CLIENT] ?: ""
+        smartAccount = savedStateHandle[SMART_ACCOUNT]
     }
 
     private fun getIbanAccount() = executeUseCase {
@@ -75,12 +85,35 @@ class EditSavedIbanAccountViewModel @Inject constructor(
         )
     }
 
-    private fun saveChanges() {
+    private fun saveChanges() = executeUseCase {
+        mutationUpdateACHAccountUseCase.invoke(
+            user = user.orEmpty(),
+            idBrand = idBrand ?: Brand.CostaRica.id,
+            description = uiState.nickname,
+            accountId = accountId ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
 
+            }
+        }
     }
 
     private fun onNavigateBack() {
         navigateBack(popTo = Screen.SmartTransferIbanAccountScreen.route, isRestart = false)
+    }
+
+    private fun onNavigateToAccountsList() {
+        popAndNavigateTo(
+            popTo = Screen.SmartEditSavedIbanAccount.route,
+            route = Screen.SmartTransferIbanAccountScreen.baseRoute
+                .plus("/${encodeData(smartAccount)}")
+                .plus("$user")
+                .plus("/$idBrand")
+                .plus("/$identification")
+                .plus("/${Screen.HomeScreen.route}")
+                .plus("/$idClient")
+                .plus("/${true}")
+        )
     }
 
     private fun onFailure(error: HttpError) {

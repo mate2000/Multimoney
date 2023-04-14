@@ -26,6 +26,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDelete
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
@@ -989,6 +991,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryACHTransferFavoriteGetUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteGetUseCase =
         QueryACHTransferFavoriteGetUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateACHAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationUpdateACHAccountUseCase =
+        MutationUpdateACHAccountUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

@@ -1,0 +1,22 @@
+mutation UpdateACHAccount(
+    $accountId: Int!,
+    $description: String!
+    $idBrand: Int!,
+    $user: String!
+) {
+    aCHTransferFavoriteUpdate(
+        aCHTransferFavoriteUpdateInput: {
+            accountForAchTransferId: $accountId
+            description: $description
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        result {
+            accountForAchTransferId
+        }
+        status
+        message
+        detail
+    }
+}

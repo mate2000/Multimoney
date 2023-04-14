@@ -334,6 +334,24 @@ class SmartAccountRepositoryImpl @Inject constructor(
             }
         )
 
+    override suspend fun mutationUpdateACHAccount(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int,
+        description: String
+    ): Flow<MultimoneyResult<Int?>> =
+        fetchData(
+            apolloCall = graphqlApi.mutationUpdateACHAccount(
+                user = user,
+                idBrand = idBrand,
+                achTransferId = achTransferId,
+                description = description
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
     override suspend fun queryLocalTransferFavorite(
         idBrand: Int,
         user: String,

@@ -127,11 +127,19 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                         textAlign = TextAlign.Left
                     )
                     CustomLabelDescRow(
-                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(top = 18.dp)
+                            .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_credit_clabe_account_number),
                         descriptionText = viewModel.uiState.creditNumber ?: "",
                         endIcon = R.drawable.ic_copy,
-                        endIconClick = { viewModel.onUIEvent(OnCopyTextToClipboard(viewModel.uiState.creditNumber ?: "")) }
+                        endIconClick = {
+                            viewModel.onUIEvent(
+                                OnCopyTextToClipboard(
+                                    viewModel.uiState.creditNumber ?: ""
+                                )
+                            )
+                        }
                     )
                     CustomInformativeChip(
                         text = stringResource(id = R.string.payment_options_transfer_steps_disclaimer),
@@ -172,30 +180,46 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
 
                     if (viewModel.uiState.isAccountNumberVisible) {
                         CustomLabelDescRow(
-                            modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(top = 18.dp)
+                                .fillMaxWidth(),
                             labelText = stringResource(id = R.string.payment_options_transfer_account),
                             descriptionText = viewModel.uiState.transferAccount?.account ?: ""
                         )
                     }
                     CustomLabelDescRow(
-                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(top = 18.dp)
+                            .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_bank),
                         descriptionText = viewModel.uiState.transferAccount?.bank ?: ""
                     )
                     CustomLabelDescRow(
-                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(top = 18.dp)
+                            .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_type_transfer),
                         descriptionText = viewModel.uiState.transferAccount?.typeTransfer ?: ""
                     )
                     CustomLabelDescRow(
-                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(top = 18.dp)
+                            .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_credit_number),
                         descriptionText = viewModel.uiState.creditNumber ?: "",
                         endIcon = R.drawable.ic_copy,
-                        endIconClick = { viewModel.onUIEvent(OnCopyTextToClipboard(viewModel.uiState.creditNumber ?: "")) }
+                        endIconClick = {
+                            viewModel.onUIEvent(
+                                OnCopyTextToClipboard(
+                                    viewModel.uiState.creditNumber ?: ""
+                                )
+                            )
+                        }
                     )
                     CustomLabelDescRow(
-                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(top = 18.dp)
+                            .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_beneficiary_name),
                         descriptionText = viewModel.uiState.transferAccount?.beneficiaryName ?: ""
                     )

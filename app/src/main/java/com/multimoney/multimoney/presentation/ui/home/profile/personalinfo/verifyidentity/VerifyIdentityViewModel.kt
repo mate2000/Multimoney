@@ -90,8 +90,8 @@ class VerifyIdentityViewModel @Inject constructor(
         }
         navigateTo(
             "${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/" +
-                "$newValue/$sendMethod/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/" +
-                "${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}"
+                    "$newValue/$sendMethod/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/" +
+                    "${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}"
         )
     }
 

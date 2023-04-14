@@ -301,6 +301,12 @@ class SignInViewModel @Inject constructor(
                 isLoading = false
             )
         }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.DeviceChangeRequiredDueToInactivity.code) == true -> {
+            uiState = uiState.copy(
+                isLoading = false
+            )
+            onNavigateToOTPScreen()
+        }
         else -> callQueryValidationUserExistsUseCase()
     }
 

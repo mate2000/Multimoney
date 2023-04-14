@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
@@ -203,7 +204,8 @@ class RegisteredUserOtpViewModel @Inject constructor(
             otpMethod,
             userData?.pkUser.orEmpty(),
             idBrand,
-            userData?.email.orEmpty()
+            userData?.email.orEmpty(),
+            FlowOriginChangeProfileInfo.NORMAL.value
         ).collectLatest { result ->
             result.onSuccess { sendPinProcess ->
                 uiState = uiState.copy(otpResend = sendPinProcess?.nextType, isLoading = false)

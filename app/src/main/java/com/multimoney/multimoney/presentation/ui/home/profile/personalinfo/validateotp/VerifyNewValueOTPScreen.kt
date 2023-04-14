@@ -42,7 +42,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnInit
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityViewModel.Companion.SEND_EMAIL_METHOD
+import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.verifyidentity.VerifyIdentityViewModel.Companion.SEND_PHONE_METHOD
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -58,7 +59,7 @@ import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 
 @Preview
 @Composable
-fun ValidateOTPScreen(
+fun VerifyNewValueOTPScreen(
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -86,22 +87,23 @@ fun ValidateOTPScreen(
 
     LaunchedEffect(true) {
         viewModel.apply {
-            onUIEvent(OnInit)
+            onUIEvent(ValidateOTPViewModel.UIEvent.OnInit)
             executeNavigation(
                 onPopBackStack = onPopBackStack,
                 onNavigate = onNavigate,
                 onPopAndNavigate = onPopAndNavigate
             )
             onUIEvent(OnGetWhatsAppLink)
-            requestOTP(this)
+            requestSecondOTP(this)
         }
+
     }
 
     BackHandler {
         viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnNavigateBack)
     }
 
-    ValidateOTPContent(viewModel = viewModel)
+    VerifyNewValueOTPContent(viewModel = viewModel)
     LoadingIndicator(viewModel.uiState.isLoading)
     if (viewModel.uiState.openDialog.isActive.value) {
         CustomDialog(
@@ -220,7 +222,7 @@ fun ValidateOTPScreen(
 }
 
 @Composable
-fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
+fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
     ConstraintLayout(
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
@@ -243,7 +245,9 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(titleText) {
                     top.linkTo(topNavBar.bottom)
                 },
-            text = stringResource(id = R.string.profile_identity_verification),
+            text = stringResource(
+                id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_identity_verification_verify_your_new_phone else R.string.profile_identity_verification_verify_your_new_email
+            ),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
@@ -257,7 +261,9 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                viewModel.uiState.destination?.replace(" ", "") ?: ""
+                if (viewModel.uiState.changingField == FieldToChange.PHONE.value) viewModel.uiState.newPhoneNumberCode.plus(
+                    viewModel.uiState.newValue
+                ) else viewModel.uiState.newValue ?: ""
             ),
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText
@@ -278,7 +284,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                         color = MultimoneyTheme.colors.textLink
                     ),
                     onClick = {
-                        requestOTP(viewModel)
+                        requestSecondOTP(viewModel)
                     }
                 )
             }
@@ -295,7 +301,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                         color = MultimoneyTheme.colors.textAlertColor
                     ),
                     onClick = {
-                        requestOTP(viewModel)
+                        requestSecondOTP(viewModel)
                     }
                 )
             }
@@ -365,24 +371,28 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
             text = stringResource(id = R.string.profile_verify_code),
             enable = viewModel.isFormValid(),
             onClick = {
-                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnValidateOtpClicked)
+                viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnValidateSecondOtpClicked)
             }
         )
     }
 }
 
-fun requestOTP(viewModel: ValidateOTPViewModel) {
+fun requestSecondOTP(viewModel: ValidateOTPViewModel) {
     viewModel.onUIEvent(
         ValidateOTPViewModel.UIEvent.OnCallMutationSendPinProcess(
             viewModel.uiState.identification ?: "",
             viewModel.uiState.firstName ?: "",
-            viewModel.uiState.email ?: "",
-            viewModel.uiState.phoneNumber ?: "",
-            viewModel.uiState.sendMethod ?: "",
+            (if (viewModel.uiState.changingField == FieldToChange.EMAIL.value) viewModel.uiState.newValue else viewModel.uiState.email)
+                ?: "",
+            (if (viewModel.uiState.changingField == FieldToChange.PHONE.value) (viewModel.uiState.newPhoneNumberCode.plus(
+                viewModel.uiState.newValue
+            ).replace(" ", "")
+                    ) else viewModel.uiState.phoneNumber) ?: "",
+            if (viewModel.uiState.changingField == FieldToChange.PHONE.value) SEND_PHONE_METHOD else SEND_EMAIL_METHOD,
             viewModel.uiState.pkUser ?: "",
             viewModel.uiState.idBrand ?: 0,
-            viewModel.uiState.email ?: "",
-            FlowOriginChangeProfileInfo.NORMAL.value
+            viewModel.uiState.userName ?: "",
+            FlowOriginChangeProfileInfo.CHANGE.value
         )
     )
 }

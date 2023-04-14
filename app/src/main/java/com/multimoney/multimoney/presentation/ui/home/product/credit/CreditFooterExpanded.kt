@@ -18,7 +18,7 @@ import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareAccount
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditDetail
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditVisa
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.ScheduleAutomaticPayment
@@ -64,9 +64,9 @@ fun CreditFooterExpanded(viewModel: ProductViewModel, sharedViewModel: HomeViewM
                 viewModel.getQuota(it)
             },
             getMinPayment = { viewModel.getMinPayment(it) },
-            onShareIbanAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
+            onShareAccount = { clientLabel: String, accountLabel: String, ibanAccount: String ->
                 viewModel.onUIEvent(
-                    OnShareIbanAccount(
+                    OnShareAccount(
                         clientLabel,
                         accountLabel,
                         ibanAccount

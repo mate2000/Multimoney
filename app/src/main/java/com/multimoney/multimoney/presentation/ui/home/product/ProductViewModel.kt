@@ -96,7 +96,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareIbanAccount
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnShareAccount
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateCollapsedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
@@ -1432,10 +1432,10 @@ class ProductViewModel @Inject constructor(
             )
 
             is OnLastStepChange -> lastStep = uiEvent.lastStep
-            is OnShareIbanAccount -> shareIbanAccount(
+            is OnShareAccount -> shareIbanAccount(
                 uiEvent.clientLabel,
                 uiEvent.accountLabel,
-                uiEvent.ibanAccount
+                uiEvent.account
             )
             is OnProgressCalculation -> getProgress()
             is IsPaymentExpired -> isExpired()
@@ -1564,10 +1564,10 @@ class ProductViewModel @Inject constructor(
             val creditMovements: List<CreditMovementsResult>
         ) : UIEvent()
 
-        data class OnShareIbanAccount(
+        data class OnShareAccount(
             val clientLabel: String,
             val accountLabel: String,
-            val ibanAccount: String
+            val account: String
         ) : UIEvent()
 
         data class OnQuickActionClicked(

@@ -138,7 +138,9 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
             )
             Text(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
                 text = stringResource(id = R.string.profile_we_will_send_you_a_code_to_your_email),
                 style = Typography.body2.copy(color = MultimoneyTheme.colors.descriptionText)
             )

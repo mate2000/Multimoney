@@ -464,7 +464,13 @@ fun OngoingCredit(
             ) {
                 Column {
                     Text(
-                        text = stringResource(id = R.string.home_product_fee),
+                        text = stringResource(
+                            id = if (viewModel.uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
+                                string.home_product_fee_mx
+                            } else {
+                                string.home_product_fee
+                            }
+                        ),
                         modifier = Modifier.padding(top = 4.dp),
                         style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
                         color = MultimoneyTheme.colors.text

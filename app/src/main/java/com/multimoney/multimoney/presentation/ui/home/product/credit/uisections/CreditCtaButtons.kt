@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
@@ -30,7 +31,8 @@ fun CreditCtaButtons(
     canDisburse: Boolean,
     paymentAvailable: Boolean,
     onClickPay: () -> Unit = {},
-    onClickDisbursement: () -> Unit = {}
+    onClickDisbursement: () -> Unit = {},
+    idBrand: Int =  Brand.CostaRica.id
 ) {
     Row(
         modifier = modifier,
@@ -39,11 +41,21 @@ fun CreditCtaButtons(
         // Check if user has payments available
         if (paymentAvailable) {
             CustomButton(
-                text = stringResource(string.home_pay_fee_button_text),
+                text = stringResource(
+                    if (idBrand == Brand.Mexico.id) {
+                        string.home_see_payment_points_button_text
+                    } else {
+                        string.home_pay_fee_button_text
+                    }
+                ),
                 modifier = Modifier
                     .weight(1f)
                     .height(48.dp),
-                buttonType = if (canDisburse) PrimarySecondary else PrimaryPrimary,
+                buttonType = if (idBrand == Brand.Mexico.id) {
+                    PrimarySecondary
+                } else {
+                    if (canDisburse) PrimarySecondary else PrimaryPrimary
+                },
                 onClick = {
                     onClickPay()
                 }

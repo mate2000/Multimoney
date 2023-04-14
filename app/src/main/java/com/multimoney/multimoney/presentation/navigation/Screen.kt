@@ -193,11 +193,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_up_splash_come_back_screen"
     )
 
-    object SignInOTPScreen : Screen(
-        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
-        "sign_in_otp_screen"
-    )
-
     object SignUpCompleted : Screen("sign_up_completed/{$EMAIL}/{$PASSWORD}", "sign_up_completed")
 
     // HomeNavGraph Screens

@@ -111,17 +111,19 @@ fun onEmissionDateValidation(pickedDate: String, formatter: DateTimeFormatter): 
 }
 
 fun getCurrentDateYMDPattern(): String {
-    val date = LocalDate.now()
-    return date.toString()
+    val date = LocalDateTime.now()
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(YEAR_MONTH_DAY_AND_TIME_PATTERN)
+    return date.format(formatters)
 }
 
 fun getPreviousDate(daysToSubtract: Long): String {
-    val date = LocalDate.now().minusDays(daysToSubtract)
-    return date.toString()
+    val date = LocalDateTime.now().minusDays(daysToSubtract)
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(YEAR_MONTH_DAY_AND_TIME_PATTERN)
+    return date.format(formatters)
 }
 
 fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
-    val date = LocalDate.now()
+    val date = LocalDateTime.now()
     when (dateFilter) {
         FilterDate.YESTERDAY -> date.minusDays(1)
         FilterDate.LAST_7_DAYS -> date.minusDays(7)
@@ -131,7 +133,7 @@ fun getPreviousDate(dateFilter: FilterDate = FilterDate.YESTERDAY): String {
         FilterDate.LAST_365_DAYS -> date.minusDays(365)
     }
 
-    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val formatters: DateTimeFormatter = DateTimeFormatter.ofPattern(YEAR_MONTH_DAY_AND_TIME_PATTERN)
     return date.format(formatters)
 }
 
@@ -223,6 +225,7 @@ const val DAY_MONTH_YEAR_PATTERN_BAR_FORMAT = "dd | MM | yyyy"
 const val DAY_PATTERN = "dd"
 const val ISO_8601_API_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 const val YEAR_MONTH_DAY_AND_TIME_BAR_FORMAT = "dd | MM | yyyy hh:mm a"
+const val YEAR_MONTH_DAY_AND_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss"
 const val YEAR_PATTER = "yyyy"
 const val BAR = " | "
 const val HYPHEN = "-"

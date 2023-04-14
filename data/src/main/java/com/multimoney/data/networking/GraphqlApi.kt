@@ -7,6 +7,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.FetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteGetQuery
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
@@ -2360,6 +2361,18 @@ class GraphqlApi @Inject constructor(
             identificationTypeAccount = identificationTypeAccount,
             destinationCurrencyId = destinationCurrencyId,
             document = document
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationACHTransferFavoriteDelete(
+        user: String,
+        idBrand: Int,
+        accountForAchTransferId: Int
+    ): ApolloCall<ACHTransferFavoriteDeleteMutation.Data> = apolloAuthorizedClient.mutation(
+        ACHTransferFavoriteDeleteMutation(
+            user = user,
+            idBrand = idBrand,
+            accountForAchTransferId = accountForAchTransferId
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

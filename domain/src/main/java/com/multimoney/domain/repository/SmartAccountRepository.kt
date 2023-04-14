@@ -312,6 +312,12 @@ interface SmartAccountRepository {
         document: String
     ): Flow<MultimoneyResult<ACHAccount?>>
 
+    suspend fun mutationACHTransferFavoriteDelete(
+        user: String,
+        idBrand: Int,
+        accountForAchTransferId: Int
+    ): Flow<MultimoneyResult<ACHAccount?>>
+
     suspend fun mutationUpdateFavoriteContactSmart(
         idBrand: Int,
         user: String,

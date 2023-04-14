@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
@@ -934,6 +936,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationAddACHAccount(smartAccountRepository: SmartAccountRepository): MutationAddACHAccountUseCase =
         MutationAddACHAccountUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationACHTransferFavoriteDelete(smartAccountRepository: SmartAccountRepository): MutationACHTransferFavoriteDeleteUseCase =
+        MutationACHTransferFavoriteDeleteUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

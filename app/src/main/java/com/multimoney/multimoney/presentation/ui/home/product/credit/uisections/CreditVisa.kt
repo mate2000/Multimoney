@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.multimoney.data.util.catalog.CreditStatus
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.BoxVisaType.CreditCard
@@ -20,6 +21,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomBoxVisaBackground
 fun CreditVisa(
     uiState: UIState,
     balance: Balance?,
+    configurationVersion: ConfigurationVersion?,
     onNavigateToVisaActivateScreen: () -> Unit = {},
     onCreateMultimoneyVisa: () -> Unit = {},
     isExpanded: Boolean = false
@@ -39,13 +41,15 @@ fun CreditVisa(
                 idBrand = uiState.idBrand.toIntOrNull() ?: 0
             )
         } ?: run {
-            if (balance?.getFirstSummary()?.applyCommerce == true && balance.getFirstSummary()?.applyCreateCard == true) {
-                CustomBoxVisaBackground(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                    onClick = { onCreateMultimoneyVisa() },
-                    type = RequestCreditCard,
-                    idBrand = uiState.idBrand.toIntOrNull() ?: 0
-                )
+            if (configurationVersion?.configuration?.virtualCard?.active == true) {
+                if (balance?.getFirstSummary()?.applyCommerce == true && balance.getFirstSummary()?.applyCreateCard == true) {
+                    CustomBoxVisaBackground(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        onClick = { onCreateMultimoneyVisa() },
+                        type = RequestCreditCard,
+                        idBrand = uiState.idBrand.toIntOrNull() ?: 0
+                    )
+                }
             }
         }
     }

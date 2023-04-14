@@ -1684,7 +1684,7 @@
     <string name="registered_user_otp_options_title_cr" translatable="false">Verificación de identidad</string>
     <string name="registered_user_otp_options_message" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="registered_user_otp_options_message_cr" translatable="false">¿Dónde querés recibir el código?</string>
-    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico</string>
+    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico registrado</string>
     <string name="registered_user_otp_options_sms" translatable="false">SMS</string>
     <string name="registered_user_otp_options_button" translatable="false">Enviar código</string>
 

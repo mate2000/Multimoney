@@ -73,16 +73,16 @@ class SignInViewModel @Inject constructor(
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
-    private var deviceId = ""
-    private var uniqueId = ""
-    private var ipAddress = ""
-    private var deviceType = ""
-    private var deviceName = ""
-    private var appVersion = getAppVersion()
-    private var deviceBrand = getDeviceBrand()
-    private var deviceModel = getDeviceModel()
-    private var isEmulator = checkIfEmulator()
-    private var forceShowBiometricsPrompt = false
+    var deviceId = ""
+    var uniqueId = ""
+    var ipAddress = ""
+    var deviceType = ""
+    var deviceName = ""
+    var appVersion = getAppVersion()
+    var deviceBrand = getDeviceBrand()
+    var deviceModel = getDeviceModel()
+    var isEmulator = checkIfEmulator()
+    var forceShowBiometricsPrompt = false
 
     private fun onStart(
         deviceName: String,
@@ -113,7 +113,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun callCognitoSignIn(forceDeviceChange: Boolean = false) {
-        uiState = uiState.copy(isLoading = true)
+        uiState = uiState.copy(isLoading = true, showOtpScreen = false)
         clearUserEmailError()
 
         val attrs = mapOf(
@@ -668,10 +668,7 @@ class SignInViewModel @Inject constructor(
             applyAdjust = false,
             data = EmailDto(uiState.userEmail).toJson()
         )
-        popAndNavigateTo(
-            "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
-            Screen.SignInOTPScreen.baseRoute
-        )
+        uiState = uiState.copy(showOtpScreen = true)
     }
 
     private fun onUpdateToastVisibility(value: Boolean) {
@@ -733,7 +730,8 @@ class SignInViewModel @Inject constructor(
         val toastIsVisible: Boolean = false,
         val country: String = "",
         val linkWhatsapp: String = "",
-        val errorCode: CognitoErrorCode? = null
+        val errorCode: CognitoErrorCode? = null,
+        val showOtpScreen: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -772,6 +770,7 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnUpdateCountry -> uiState = uiState.copy(country = event.country)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
             is UIEvent.OnSetCountryCode -> setContactInfo()
+            is UIEvent.OnShowSignInScreen -> uiState = uiState.copy(showOtpScreen = false)
         }
     }
 
@@ -816,6 +815,7 @@ class SignInViewModel @Inject constructor(
         data class OnUpdateCountry(val country: String) : UIEvent()
         data class OnOpenWhatsappLink(val context: Context) : UIEvent()
         data class OnSetCountryCode(val countryCode: String) : UIEvent()
+        object OnShowSignInScreen : UIEvent()
     }
 
     companion object {

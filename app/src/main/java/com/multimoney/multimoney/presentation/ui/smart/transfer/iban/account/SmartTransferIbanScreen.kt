@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,10 +29,15 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.BaseEvent.OnHideAccountOptionsBottomSheet
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.BaseEvent.OnShowAccountOptionsBottomSheet
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallListSinpeAccounts
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnDeleteAccount
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnEditAccount
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowAccountOptions
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -38,16 +47,35 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SmartTransferIbanScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val accountOptionsBottomSheetState = rememberModalBottomSheetState(Hidden)
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallListSinpeAccounts)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnShowAccountOptionsBottomSheet -> {
+                    coroutineScope.launch {
+                        accountOptionsBottomSheetState.show()
+                    }
+                }
+                is OnHideAccountOptionsBottomSheet -> {
+                    coroutineScope.launch {
+                        accountOptionsBottomSheetState.hide()
+                    }
+                }
+            }
+        }
     }
 
     BackHandler {
@@ -98,6 +126,13 @@ fun SmartTransferIbanScreen(
         PaymentOptions(viewModel)
     }
 
+    AccountOptionsBottomSheet(
+        coroutineScope = coroutineScope,
+        modalBottomSheetState = accountOptionsBottomSheetState,
+        onEditClick = { viewModel.onUIEvent(OnEditAccount) },
+        onDeleteClick = { viewModel.onUIEvent(OnDeleteAccount) }
+    )
+
     LoadingIndicator(viewModel.uiState.isLoading)
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -130,6 +165,9 @@ fun PaymentOptions(viewModel: SmartTransferIbanViewModel = hiltViewModel()) {
                     .wrapContentHeight()
                     .padding(top = 12.dp),
                 endIcon = drawable.ic_options,
+                onEndIconClick = {
+                    viewModel.onUIEvent(OnShowAccountOptions(account))
+                },
                 startIcon = account?.destinationAccountCurrencyId?.getCurrencyFromId()?.accountIcon,
                 onClick = {
                     viewModel.onUIEvent(OnAccountClick(account))

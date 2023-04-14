@@ -56,7 +56,8 @@ fun SmartAmountBody(
     enableButton: Boolean,
     motive: String? = null,
     onMotiveChange: (String) -> Unit = {},
-    @StringRes disclaimerResource: Int? = null
+    @StringRes disclaimerResource: Int? = null,
+    isPayment: Boolean = false
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -131,7 +132,11 @@ fun SmartAmountBody(
                     mainRowAlignment = Arrangement.SpaceAround,
                     textColumnAlign = Alignment.CenterHorizontally,
                     leftTitleResource = R.string.payment_amount_bottom_sheet_exchange_type,
-                    rightTitleResource = R.string.smart_saving_total_to_deposit,
+                    rightTitleResource = if (isPayment) {
+                        R.string.smart_saving_total_to_deposit
+                    } else {
+                        R.string.smart_transfer_total_to_debit
+                    },
                     exchangeRateText = exchangeRate,
                     convertedAmountText = convertedTotal
                 )

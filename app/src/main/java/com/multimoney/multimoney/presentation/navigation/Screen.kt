@@ -133,6 +133,7 @@ const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
 const val ACCOUNT_ID = "account_id"
+const val EDIT_SUCCESS = "edit_success"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -207,7 +208,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileScreen : Screen(
-        "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
+        "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$LAST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
     )
 
@@ -562,7 +563,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$EDIT_SUCCESS}",
         "transfer_iban_account_screen"
     )
 

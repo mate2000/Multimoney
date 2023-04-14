@@ -14,6 +14,7 @@ import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
@@ -190,11 +191,30 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun onEditAccount() {
-        // TODO: Edit account
+       uiState = uiState.copy(
+           openDialog = DialogParameters(
+               titleResource = R.string.smart_iban_transfer_edit_dialog_title,
+               descriptionResource = R.string.smart_iban_transfer_edit_dialog_description,
+               positiveResource = R.string.edit,
+               negativeResource = R.string.exit,
+               isActive = mutableStateOf(true),
+               positiveAction = { navigateToEditNickname() }
+           )
+       )
     }
 
     private fun onDeleteAccount() {
         // TODO: Delete account
+    }
+
+    private fun navigateToEditNickname() {
+        navigateTo(
+            Screen.SmartEditSavedIbanAccount.baseRoute
+                .plus("/$user")
+                .plus("/${idBrand.toIntOrNull()}")
+                .plus("/$identification")
+                .plus("/${selectedAccount?.accountForAchTransferId}")
+        )
     }
 
     data class UIState(

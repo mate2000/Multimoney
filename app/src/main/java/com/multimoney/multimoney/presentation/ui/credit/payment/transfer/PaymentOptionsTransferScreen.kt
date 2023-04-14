@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -36,8 +39,10 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.transfer.Payment
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomLabelDescRow
+import com.multimoney.multimoney.presentation.uielement.Size
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent.Navigate
 import com.multimoney.multimoney.presentation.util.NavEvent.PopBackStack
@@ -88,7 +93,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome(true)) }
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateBackHome(viewModel.idBrand != Brand.Mexico.id)) }
         )
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             Column(
@@ -108,38 +113,94 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                 CustomInformativeText(
                     modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                     leadingIcon = R.drawable.ic_information,
-                    text = stringResource(id = R.string.payment_options_transfer_disclaimer),
-                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
+                    text = stringResource(id = viewModel.uiState.disclaimerResource),
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text),
+                    alignmentVertical = Alignment.Top
                 )
-                if (viewModel.uiState.isAccountNumberVisible) {
+                if (viewModel.idBrand == Brand.Mexico.id) {
+
+                    Text(
+                        modifier = Modifier.padding(top = 16.dp),
+                        text = stringResource(id = R.string.payment_options_transfer_interbank_title),
+                        style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text,
+                        textAlign = TextAlign.Left
+                    )
                     CustomLabelDescRow(
                         modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
-                        labelText = stringResource(id = R.string.payment_options_transfer_account),
-                        descriptionText = viewModel.uiState.transferAccount?.account ?: ""
+                        labelText = stringResource(id = R.string.payment_options_transfer_credit_clabe_account_number),
+                        descriptionText = viewModel.uiState.creditNumber ?: "",
+                        endIcon = R.drawable.ic_copy,
+                        endIconClick = { viewModel.onUIEvent(OnCopyTextToClipboard(viewModel.uiState.creditNumber ?: "")) }
+                    )
+                    CustomInformativeChip(
+                        text = stringResource(id = R.string.payment_options_transfer_steps_disclaimer),
+                        textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+                        modifier = Modifier.padding(top = 32.dp),
+                        shape = RoundedCornerShape(24.dp),
+                        background = MultimoneyTheme.colors.backgroundInformativeChip,
+                        startIcon = R.drawable.ic_information,
+                        startIconTint = MultimoneyTheme.colors.textInformation,
+                        size = Size.Large
+                    )
+                    CustomInformativeText(
+                        modifier = Modifier.padding(top = 16.dp),
+                        leadingIcon = R.drawable.ic_sending_transfer_365_mobile_gray,
+                        text = stringResource(id = R.string.payment_options_transfer_step_1_disclaimer),
+                        textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
+                    )
+                    CustomInformativeText(
+                        modifier = Modifier.padding(top = 16.dp),
+                        leadingIcon = R.drawable.ic_card_gray,
+                        text = stringResource(id = R.string.payment_options_transfer_step_2_disclaimer),
+                        textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
+                    )
+                    CustomInformativeText(
+                        modifier = Modifier.padding(top = 16.dp),
+                        leadingIcon = R.drawable.ic_payment_transfer_gray,
+                        text = stringResource(id = R.string.payment_options_transfer_step_3_disclaimer),
+                        textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
+                    )
+                    CustomInformativeText(
+                        modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                        leadingIcon = R.drawable.ic_time_gray,
+                        text = stringResource(id = R.string.payment_options_transfer_step_4_disclaimer),
+                        textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text)
+                    )
+
+                } else {
+
+                    if (viewModel.uiState.isAccountNumberVisible) {
+                        CustomLabelDescRow(
+                            modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                            labelText = stringResource(id = R.string.payment_options_transfer_account),
+                            descriptionText = viewModel.uiState.transferAccount?.account ?: ""
+                        )
+                    }
+                    CustomLabelDescRow(
+                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        labelText = stringResource(id = R.string.payment_options_transfer_bank),
+                        descriptionText = viewModel.uiState.transferAccount?.bank ?: ""
+                    )
+                    CustomLabelDescRow(
+                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        labelText = stringResource(id = R.string.payment_options_transfer_type_transfer),
+                        descriptionText = viewModel.uiState.transferAccount?.typeTransfer ?: ""
+                    )
+                    CustomLabelDescRow(
+                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        labelText = stringResource(id = R.string.payment_options_transfer_credit_number),
+                        descriptionText = viewModel.uiState.creditNumber ?: "",
+                        endIcon = R.drawable.ic_copy,
+                        endIconClick = { viewModel.onUIEvent(OnCopyTextToClipboard(viewModel.uiState.creditNumber ?: "")) }
+                    )
+                    CustomLabelDescRow(
+                        modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
+                        labelText = stringResource(id = R.string.payment_options_transfer_beneficiary_name),
+                        descriptionText = viewModel.uiState.transferAccount?.beneficiaryName ?: ""
                     )
                 }
-                CustomLabelDescRow(
-                    modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
-                    labelText = stringResource(id = R.string.payment_options_transfer_bank),
-                    descriptionText = viewModel.uiState.transferAccount?.bank ?: ""
-                )
-                CustomLabelDescRow(
-                    modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
-                    labelText = stringResource(id = R.string.payment_options_transfer_type_transfer),
-                    descriptionText = viewModel.uiState.transferAccount?.typeTransfer ?: ""
-                )
-                CustomLabelDescRow(
-                    modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
-                    labelText = stringResource(id = R.string.payment_options_transfer_credit_number),
-                    descriptionText = viewModel.uiState.creditNumber ?: "",
-                    endIcon = R.drawable.ic_copy,
-                    endIconClick = { viewModel.onUIEvent(OnCopyTextToClipboard(viewModel.uiState.creditNumber ?: "")) }
-                )
-                CustomLabelDescRow(
-                    modifier = Modifier.padding(top = 18.dp).fillMaxWidth(),
-                    labelText = stringResource(id = R.string.payment_options_transfer_beneficiary_name),
-                    descriptionText = viewModel.uiState.transferAccount?.beneficiaryName ?: ""
-                )
+
             }
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnNavigateBackHome(false)) },

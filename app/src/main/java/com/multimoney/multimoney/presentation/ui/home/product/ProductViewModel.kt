@@ -42,6 +42,7 @@ import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
+import com.multimoney.domain.model.security.TransferAccount
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -484,6 +485,12 @@ class ProductViewModel @Inject constructor(
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
+        } else if (uiState.idBrand.toInt() == Brand.Mexico.id) {
+            "${Screen.PaymentOptionsTransferScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstSummary()?.ibanAccount}/${
+                encodeData(
+                    configurationVersion?.configuration?.credit?.transferAccount
+                )
+            }"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
                 encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })

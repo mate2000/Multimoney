@@ -813,8 +813,8 @@
     <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
-    <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="continue_validating_identity_subtitle" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
+    <string name="continue_validating_identity_title" translatable="false">Tu solicitud fue enviada\nexitosamente</string>
+    <string name="continue_validating_identity_subtitle" translatable="false">Estamos verificando tus datos,\npronto te contactaremos para\nvalidar unos detalles</string>
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
@@ -1527,6 +1527,7 @@
 
     <!-- Smart SAC Transfer -->
     <string name="sac_account" translatable="false">"Cuenta SAC</string>
+    <string name="smart_transfer_total_to_debit" translatable="false">Total a debitar</string>
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>

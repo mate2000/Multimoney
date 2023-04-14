@@ -53,7 +53,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import timber.log.Timber
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -113,7 +112,7 @@ class SignInViewModel @Inject constructor(
     }
 
     private fun callCognitoSignIn(forceDeviceChange: Boolean = false) {
-        uiState = uiState.copy(isLoading = true)
+        uiState = uiState.copy(isLoading = true, showOtpScreen = false)
         clearUserEmailError()
 
         val attrs = mapOf(
@@ -161,9 +160,6 @@ class SignInViewModel @Inject constructor(
                                                         descriptionResource = string.sign_in_expired_password_dialog_description,
                                                         positiveResource = string.sign_in_expired_password_dialog_positive_button,
                                                         positiveAction = {
-                                                            if (forceDeviceChange) {
-                                                                uiState = uiState.copy(showOtpScreen = false)
-                                                            }
                                                             onNavigateToChangePassword(
                                                                 idBrand = payload.getString(
                                                                     SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND

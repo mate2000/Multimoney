@@ -83,6 +83,7 @@
     <string name="common_percentage_format" translatable="false">%s\%%</string>
     <string name="content_description_more_info" translatable="false">Más información</string>
     <string name="contact_support" translatable="false">Contactar a soporte</string>
+    <string name="edit" translatable="false">Editar</string>
 
     <!-- Errors -->
     <string name="error_empty" translatable="false" />
@@ -1485,6 +1486,9 @@
     <string name="smart_iban_transfer_accounts_title" translatable="false">Cuentas IBAN</string>
     <string name="smart_iban_transfer_accounts_add" translatable="false">Agregar</string>
     <string name="smart_iban_transfer_title" translatable="false">Cuentas registradas</string>
+    <string name="smart_iban_transfer_edit_dialog_title" translatable="false">Editar Apodo</string>
+    <string name="smart_iban_transfer_edit_dialog_description" translatable="false">¿Estás seguro que querés editar apodo?</string>
+    <string name="smart_iban_transfer_edit_title" translatable="false">Editar Apodo</string>
 
     <!-- Currency Detail Screen -->
     <string name="currency_detail_title" translatable="false">Inversión en %s</string>

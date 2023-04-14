@@ -132,6 +132,7 @@ const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
+const val ACCOUNT_ID = "account_id"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -563,6 +564,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SmartTransferIbanAccountScreen : Screen(
         "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
         "transfer_iban_account_screen"
+    )
+
+    object SmartEditSavedIbanAccount : Screen(
+        "smart_edit_saved_iban_account/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_ID}",
+        "smart_edit_saved_iban_account"
     )
 
     /**

@@ -16,6 +16,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EDIT_SUCCESS
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -58,6 +59,7 @@ class SmartTransferIbanViewModel @Inject constructor(
     private var identification: String? = ""
     private var smartAccount: SmartAccountID? = null
     private var selectedAccount: ACHAccount? = null
+    private var editSuccess: Boolean = false
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -65,6 +67,7 @@ class SmartTransferIbanViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         smartAccount = savedStateHandle[SMART_ACCOUNT]
+        editSuccess = savedStateHandle[EDIT_SUCCESS] ?: false
     }
 
     private fun onCallListSinpeAccounts() = executeUseCase {

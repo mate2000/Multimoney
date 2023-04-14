@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.multimoney.multimoney.presentation.navigation.ACCOUNT_ID
 import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.EDIT_SUCCESS
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
@@ -100,6 +101,10 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 },
                 navArgument(ID_CLIENT) {
                     type = NavType.StringType
+                },
+                navArgument(EDIT_SUCCESS) {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
             )
         ) {

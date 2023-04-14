@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.navigation.navgraph
 
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -23,9 +21,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.email.Regi
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otpoptions.RegisteredUserOtpOptionsScreen
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordScreen
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.SignInScreen
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompleted
 import com.multimoney.multimoney.presentation.ui.login.signup.splash.DEFAULT_STEP
@@ -141,24 +137,6 @@ fun NavGraphBuilder.loginNavGraph(navController: NavHostController) {
                         popUpTo(it.popTo) { inclusive = true }
                     }
                 }
-            )
-        }
-        composable(route = Screen.SignInOTPScreen.route) { backStackEntry ->
-            val parent = remember(backStackEntry) {
-                navController.getBackStackEntry(Screen.SignInScreen.route)
-            }
-            val viewModel = hiltViewModel<SignInViewModel>(parent)
-
-            SignInOTPScreen(
-                onNavigate = {
-                    navController.navigate(it.route)
-                },
-                onPopAndNavigate = {
-                    navController.navigate(it.route) {
-                        popUpTo(it.popTo) { inclusive = true }
-                    }
-                },
-                signInViewModel = viewModel
             )
         }
         composable(route = Screen.RequestForgotPassword.route) {

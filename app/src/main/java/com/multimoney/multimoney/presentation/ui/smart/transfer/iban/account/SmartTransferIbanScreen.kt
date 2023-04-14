@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.BaseEvent.OnHideAccountOptionsBottomSheet
@@ -36,6 +39,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnCallListSinpeAccounts
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnDeleteAccount
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnEditAccount
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowAccountOptions
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -56,8 +60,11 @@ fun SmartTransferIbanScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: SmartTransferIbanViewModel = hiltViewModel()
 ) {
+    // Properties
+    val activity = LocalContext.current.findActivity()
     val coroutineScope = rememberCoroutineScope()
     val accountOptionsBottomSheetState = rememberModalBottomSheetState(Hidden)
+
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallListSinpeAccounts)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
@@ -76,6 +83,11 @@ fun SmartTransferIbanScreen(
                 }
             }
         }
+    }
+
+    if (viewModel.uiState.toastIsVisible) {
+        Toast.makeText(activity, viewModel.uiState.toastMessage, Toast.LENGTH_LONG).show()
+        viewModel.onUIEvent(OnHideToast)
     }
 
     BackHandler {
@@ -139,6 +151,7 @@ fun SmartTransferIbanScreen(
         CustomDialog(
             title = stringResource(id = viewModel.uiState.openDialog.titleResource),
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,

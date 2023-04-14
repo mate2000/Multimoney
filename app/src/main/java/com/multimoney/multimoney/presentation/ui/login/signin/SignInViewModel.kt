@@ -252,9 +252,9 @@ class SignInViewModel @Inject constructor(
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
                     else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
                     else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
@@ -562,7 +562,7 @@ class SignInViewModel @Inject constructor(
         showDialog: Boolean
     ): DialogParameters {
         return when (uiState.country) {
-            SIM_CODE_EL_SALVADOR -> {
+            SIM_CODE_EL_SALVADOR, SIM_CODE_GUATEMALA -> {
                 DialogParameters(
                     titleResource = string.active_biometric_title,
                     descriptionResource = string.active_biometric_message,

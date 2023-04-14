@@ -692,6 +692,7 @@ fun ProductFooter(
             ProductType.Credit.value -> CreditFooter(
                 uiState = viewModel.uiState,
                 balance = viewModel.balanceCredit,
+                configurationVersion = viewModel.configurationVersion,
                 onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
                 onNavigateToVisaActivateScreen = {
                     viewModel.onUIEvent(

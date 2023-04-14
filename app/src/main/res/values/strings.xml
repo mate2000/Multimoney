@@ -832,8 +832,8 @@
     <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
-    <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="continue_validating_identity_subtitle" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
+    <string name="continue_validating_identity_title" translatable="false">Tu solicitud fue enviada\nexitosamente</string>
+    <string name="continue_validating_identity_subtitle" translatable="false">Estamos verificando tus datos,\npronto te contactaremos para\nvalidar unos detalles</string>
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
@@ -1550,6 +1550,7 @@
 
     <!-- Smart SAC Transfer -->
     <string name="sac_account" translatable="false">"Cuenta SAC</string>
+    <string name="smart_transfer_total_to_debit" translatable="false">Total a debitar</string>
     <string name="smart_sac_transfer_contact_rationale_title" translatable="false">Lo sentimos</string>
     <string name="smart_sac_transfer_contact_rationale_message" translatable="false">Necesitamos acceso a tus contactos para que podás realizar envíos</string>
     <string name="smart_sac_transfer_contact_rationale_button" translatable="false">Permitir acceso a contactos</string>
@@ -1711,7 +1712,7 @@
     <string name="registered_user_otp_options_title_cr" translatable="false">Verificación de identidad</string>
     <string name="registered_user_otp_options_message" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="registered_user_otp_options_message_cr" translatable="false">¿Dónde querés recibir el código?</string>
-    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico anterior</string>
+    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico</string>
     <string name="registered_user_otp_options_sms" translatable="false">SMS</string>
     <string name="registered_user_otp_options_button" translatable="false">Enviar código</string>
 
@@ -1883,4 +1884,9 @@
     <string name="force_update_message_cr" translatable="false">Para ingresar a tu app, actualizá</string>
     <string name="force_update_message_gt_sv" translatable="false">Para ingresar a tu app, actualiza</string>
     <string name="force_update_intent_package" translatable="false">com.android.vending</string>
+
+    <!-- Account Options Bottom Sheet -->
+    <string name="account_options_bootom_sheet_edit_name" translatable="false">Editar nombre</string>
+    <string name="account_options_bootom_sheet_delete_account" translatable="false">Eliminar cuenta</string>
+
 </resources>

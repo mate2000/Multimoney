@@ -5,8 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.domain.interaction.credit.QueryGetCardAutomaticDebitUseCase
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationActivatedCardAutomaticDebitUseCase
 import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
 import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
@@ -17,6 +19,7 @@ import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.util.parametercorelog.VisaDirectIncludeCardParameters
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -51,6 +54,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.cards.P
 import com.multimoney.multimoney.presentation.ui.home.HomeState
 import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.SAVE_CORE_LOG
 import com.multimoney.multimoney.presentation.util.VisaUtils.ATTEMPT_ONE
 import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_APPLICATION_NAME
 import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_ENDPOINT
@@ -58,15 +62,19 @@ import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGOR
 import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
 import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getDayFromString
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import timber.log.Timber
 
 @HiltViewModel
 class PaymentScheduleCardViewModel @Inject constructor(
@@ -77,6 +85,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
     private val getCardAutomaticDebitUseCase: QueryGetCardAutomaticDebitUseCase,
     private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
     private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase,
+    private val mutationSaveRegisterCoreLogUseCase: MutationSaveRegisterCoreLogUseCase,
     private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(true) {
 
@@ -276,7 +285,7 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onHandleAddCardResponse(response: String, isError: Boolean) {
         if (isError) {
-            setErrorAlertResultAddCard(response.getAddCardErrorFromValue())
+            setErrorAlertResultAddCard(response, response.getAddCardErrorFromValue())
         } else {
             logEvents(AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005)
             onNavigateToVisaVerifyInformation(response)
@@ -323,8 +332,29 @@ class PaymentScheduleCardViewModel @Inject constructor(
     }
 
     private fun setErrorAlertResultAddCard(
+        response: String,
         addVisaCardErrors: AddVisaCardErrors
     ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                infoUser?.email,
+                infoUser?.idBrand ?: 0,
+                RegisterCoreLogProcess.VISA_DIRECT_INCLUDE_CARD.process,
+                Gson().toJson(
+                    VisaDirectIncludeCardParameters(
+                        applicationName = reactApplicationName,
+                        userName = reactUserName,
+                        userPassword = reactUserPass,
+                        endpoint = reactEndPoint
+                    )
+                ),
+                response
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Timber.d(SAVE_CORE_LOG)
+                }
+            }
+        }
         uiState = uiState.copy(
             isAlertResultVisible = true,
             isAlertResultVisaError = true,
@@ -339,9 +369,9 @@ class PaymentScheduleCardViewModel @Inject constructor(
 
     private fun onEditCardVisaDirect() = navigateTo(
         route = "${Screen.PaymentScheduleCardListScreen.baseRoute}/$idClient/$idLoanClient/$paymentDate/$previousScreen/$identification/${
-        encodeData(
-            infoUser
-        )
+            encodeData(
+                infoUser
+            )
         }"
     )
 

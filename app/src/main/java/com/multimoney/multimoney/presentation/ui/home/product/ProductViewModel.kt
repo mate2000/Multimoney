@@ -567,10 +567,14 @@ class ProductViewModel @Inject constructor(
 
     private fun onNavigateToProfileScreen() {
         navigateTo(
-            "${Screen.ProfileScreen.baseRoute}/$idClient/${uiState.idBrand}/" +
-                    "${uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }}/$email/" +
-                    "${uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }}/" +
-                    "$identification/$pkUser/$userName"
+            Screen.ProfileScreen.baseRoute
+                    .plus("/$idClient")
+                    .plus("/${uiState.idBrand}")
+                    .plus("/${uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }}")
+                    .plus("/${uiState.userStatus?.infoUser?.lastName.orEmpty()}")
+                    .plus("/$email")
+                    .plus("/${uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }}")
+                    .plus("/$identification/$pkUser/$userName")
         )
     }
 

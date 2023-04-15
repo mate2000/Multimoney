@@ -11,11 +11,17 @@ class MutationUpdateACHAccountUseCaseImpl(
         user: String,
         idBrand: Int,
         description: String,
-        accountId: Int
+        accountId: Int,
+        titularName: String,
+        identification: String,
+        accountNumber: String
     ): Flow<MultimoneyResult<Int?>> = repository.mutationUpdateACHAccount(
         user = user,
         idBrand = idBrand,
         description = description,
-        achTransferId = accountId
+        achTransferId = accountId,
+        titularName = titularName,
+        identification = identification,
+        accountNumber = accountNumber
     )
 }

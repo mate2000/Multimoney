@@ -165,7 +165,10 @@ interface SmartAccountRepository {
         user: String,
         idBrand: Int,
         achTransferId: Int,
-        description: String
+        description: String,
+        titularName: String,
+        identification: String,
+        accountNumber: String
     ): Flow<MultimoneyResult<Int?>>
 
     suspend fun queryLocalTransferFavorite(

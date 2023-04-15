@@ -37,6 +37,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowAccountOptions
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowEditConfirmation
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -248,6 +249,15 @@ class SmartTransferIbanViewModel @Inject constructor(
         )
     }
 
+    private fun onEditSuccessShowToast() {
+        if (editSuccess) {
+            uiState = uiState.copy(
+                toastIsVisible = true,
+                toastMessage = R.string.smart_iban_transfer_edit_success_message
+            )
+        }
+    }
+
     private fun navigateToEditNickname() {
         navigateTo(
             Screen.SmartEditSavedIbanAccount.baseRoute
@@ -279,6 +289,7 @@ class SmartTransferIbanViewModel @Inject constructor(
             is OnHideToast -> uiState = uiState.copy(
                 toastIsVisible = false
             )
+            is OnShowEditConfirmation -> onEditSuccessShowToast()
         }
     }
 
@@ -292,6 +303,7 @@ class SmartTransferIbanViewModel @Inject constructor(
         object OnEditAccount : UIEvent()
         object OnDeleteAccount : UIEvent()
         object OnHideToast : UIEvent()
+        object OnShowEditConfirmation : UIEvent()
     }
 
     sealed class BaseEvent {

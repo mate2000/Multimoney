@@ -1310,14 +1310,20 @@ class GraphqlApi @Inject constructor(
         user: String,
         idBrand: Int,
         achTransferId: Int,
-        description: String
+        description: String,
+        titularName: String,
+        identification: String,
+        accountNumber: String
     ): ApolloCall<UpdateACHAccountMutation.Data> =
         apolloAuthorizedClient.mutation(
             UpdateACHAccountMutation(
                 accountId = achTransferId,
                 description = description,
                 user = user,
-                idBrand = idBrand
+                idBrand = idBrand,
+                titularName = titularName,
+                identification = identification,
+                accountNumber = accountNumber
             )
         ).fetchPolicy(NetworkOnly)
 

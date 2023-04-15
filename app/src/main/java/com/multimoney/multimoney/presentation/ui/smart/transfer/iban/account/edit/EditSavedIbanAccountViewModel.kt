@@ -90,11 +90,17 @@ class EditSavedIbanAccountViewModel @Inject constructor(
             user = user.orEmpty(),
             idBrand = idBrand ?: Brand.CostaRica.id,
             description = uiState.nickname,
-            accountId = accountId ?: 0
+            accountId = accountId ?: 0,
+            titularName = uiState.titularName,
+            identification = uiState.documentNumber.replace(DASH,""),
+            accountNumber = uiState.accountNumber
         ).collectLatest { result ->
             result.onSuccess {
-
+                uiState = uiState.copy(isLoading = false)
+                onNavigateToAccountsList()
             }
+            result.onFailure { onFailure(it) }
+            result.onLoading { uiState = uiState.copy(isLoading = true) }
         }
     }
 
@@ -151,5 +157,9 @@ class EditSavedIbanAccountViewModel @Inject constructor(
         object OnGetAccountInformation : UIEvent()
         object OnSaveButtonClick : UIEvent()
         data class OnNicknameChange(val nickname: String) : UIEvent()
+    }
+
+    companion object {
+        const val DASH = "-"
     }
 }

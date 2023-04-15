@@ -35,8 +35,10 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.edi
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.edit.EditSavedIbanAccountViewModel.UIEvent.OnSaveButtonClick
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
@@ -84,7 +86,7 @@ fun EditSavedIbanAccountScreen(
                     modifier = Modifier.padding(top = 32.dp),
                     labelText = stringResource(id = R.string.smart_iban_register_account_label),
                     enabled = false,
-                    leadingIconComposable = { tint ->
+                    leadingIconComposable = { _ ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 16.dp, end = 8.dp)
@@ -92,14 +94,14 @@ fun EditSavedIbanAccountScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_account_info),
                                 contentDescription = "",
-                                tint = tint
+                                tint = MultimoneyTheme.colors.bodyTextColor
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
                                 text = stringResource(id = R.string.iban_account_cr),
                                 style = Typography.body2.copy(
                                     fontWeight = FontWeight.SemiBold,
-                                    color = tint
+                                    color = MultimoneyTheme.colors.bodyTextColor
                                 )
                             )
                         }
@@ -170,5 +172,18 @@ fun EditSavedIbanAccountScreen(
                 enable = viewModel.uiState.isButtonEnabled
             )
         }
+    }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction
+        )
     }
 }

@@ -1490,6 +1490,7 @@
     <string name="smart_iban_transfer_edit_dialog_title" translatable="false">Editar Apodo</string>
     <string name="smart_iban_transfer_edit_dialog_description" translatable="false">¿Estás seguro que querés editar apodo?</string>
     <string name="smart_iban_transfer_edit_title" translatable="false">Editar Apodo</string>
+    <string name="smart_iban_transfer_edit_success_message" translatable="false">Apodo editado.</string>
 
     <!-- Currency Detail Screen -->
     <string name="currency_detail_title" translatable="false">Inversión en %s</string>

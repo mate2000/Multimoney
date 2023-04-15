@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowAccountOptions
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowEditConfirmation
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -67,6 +68,7 @@ fun SmartTransferIbanScreen(
 
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallListSinpeAccounts)
+        viewModel.onUIEvent(OnShowEditConfirmation)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
 
         viewModel.baseEvent.collect { event ->
@@ -153,7 +155,6 @@ fun SmartTransferIbanScreen(
             message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
             negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )

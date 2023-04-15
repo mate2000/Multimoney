@@ -133,6 +133,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
+import com.multimoney.data.networking.graphql.apollomodel.UpdateACHAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
@@ -1304,6 +1305,29 @@ class GraphqlApi @Inject constructor(
                 achTransferId
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationUpdateACHAccount(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int,
+        description: String,
+        titularName: String,
+        identification: String,
+        accountNumber: String,
+        destinationBankId: Int
+    ): ApolloCall<UpdateACHAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            UpdateACHAccountMutation(
+                accountId = achTransferId,
+                description = description,
+                user = user,
+                idBrand = idBrand,
+                titularName = titularName,
+                identification = identification,
+                accountNumber = accountNumber,
+                destinationBankId = destinationBankId
+            )
+        ).fetchPolicy(NetworkOnly)
 
     fun queryLocalTransferFavorite(
         idBrand: Int,

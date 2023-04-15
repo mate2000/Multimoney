@@ -161,6 +161,17 @@ interface SmartAccountRepository {
         achTransferId: Int
     ): Flow<MultimoneyResult<ACHAccountFull?>>
 
+    suspend fun mutationUpdateACHAccount(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int,
+        description: String,
+        titularName: String,
+        identification: String,
+        accountNumber: String,
+        destinationBankId: Int
+    ): Flow<MultimoneyResult<Int?>>
+
     suspend fun queryLocalTransferFavorite(
         idBrand: Int,
         user: String,

@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
@@ -17,6 +18,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EDIT_SUCCESS
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -61,6 +63,7 @@ class SmartTransferIbanViewModel @Inject constructor(
     private var identification: String? = ""
     private var smartAccount: SmartAccountID? = null
     private var selectedAccount: ACHAccount? = null
+    private var editSuccess: Boolean = false
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -68,6 +71,7 @@ class SmartTransferIbanViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         smartAccount = savedStateHandle[SMART_ACCOUNT]
+        editSuccess = savedStateHandle[EDIT_SUCCESS] ?: false
     }
 
     private fun onCallListSinpeAccounts() = executeUseCase {
@@ -90,6 +94,7 @@ class SmartTransferIbanViewModel @Inject constructor(
                     }
                 }
                 callNoFavoritesListSinpeAccount()
+                onEditSuccessShowToast()
             }
             result.onFailure { onFailure(it) }
             result.onLoading {
@@ -194,7 +199,16 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun onEditAccount() {
-        // TODO: Edit account
+       uiState = uiState.copy(
+           openDialog = DialogParameters(
+               titleResource = R.string.smart_iban_transfer_edit_dialog_title,
+               descriptionResource = R.string.smart_iban_transfer_edit_dialog_description,
+               positiveResource = R.string.edit,
+               negativeResource = R.string.exit,
+               isActive = mutableStateOf(true),
+               positiveAction = { navigateToEditNickname() }
+           )
+       )
     }
 
     private fun onDeleteAccount() {
@@ -233,6 +247,28 @@ class SmartTransferIbanViewModel @Inject constructor(
         uiState = uiState.copy(
             toastIsVisible = true,
             toastMessage = R.string.smart_add_sac_account_toast_deleted_account
+        )
+    }
+
+    private fun onEditSuccessShowToast() {
+        if (editSuccess) {
+            uiState = uiState.copy(
+                toastIsVisible = true,
+                toastMessage = R.string.smart_iban_transfer_edit_success_message
+            )
+            editSuccess = false
+        }
+    }
+
+    private fun navigateToEditNickname() {
+        navigateTo(
+            Screen.SmartEditSavedIbanAccount.baseRoute
+                .plus("/$user")
+                .plus("/${idBrand.toIntOrNull() ?: Brand.CostaRica.id}")
+                .plus("/$identification")
+                .plus("/${selectedAccount?.accountForAchTransferId}")
+                .plus("/${encodeData(smartAccount)}")
+                .plus("/$idClient")
         )
     }
 

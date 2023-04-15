@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteListUseCase
@@ -37,7 +38,6 @@ import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.Sma
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnHideToast
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowAccountOptions
-import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanViewModel.UIEvent.OnShowEditConfirmation
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -94,6 +94,7 @@ class SmartTransferIbanViewModel @Inject constructor(
                     }
                 }
                 callNoFavoritesListSinpeAccount()
+                onEditSuccessShowToast()
             }
             result.onFailure { onFailure(it) }
             result.onLoading {
@@ -255,6 +256,7 @@ class SmartTransferIbanViewModel @Inject constructor(
                 toastIsVisible = true,
                 toastMessage = R.string.smart_iban_transfer_edit_success_message
             )
+            editSuccess = false
         }
     }
 
@@ -262,9 +264,11 @@ class SmartTransferIbanViewModel @Inject constructor(
         navigateTo(
             Screen.SmartEditSavedIbanAccount.baseRoute
                 .plus("/$user")
-                .plus("/${idBrand.toIntOrNull()}")
+                .plus("/${idBrand.toIntOrNull() ?: Brand.CostaRica.id}")
                 .plus("/$identification")
                 .plus("/${selectedAccount?.accountForAchTransferId}")
+                .plus("/${encodeData(smartAccount)}")
+                .plus("/$idClient")
         )
     }
 
@@ -289,7 +293,6 @@ class SmartTransferIbanViewModel @Inject constructor(
             is OnHideToast -> uiState = uiState.copy(
                 toastIsVisible = false
             )
-            is OnShowEditConfirmation -> onEditSuccessShowToast()
         }
     }
 
@@ -303,7 +306,6 @@ class SmartTransferIbanViewModel @Inject constructor(
         object OnEditAccount : UIEvent()
         object OnDeleteAccount : UIEvent()
         object OnHideToast : UIEvent()
-        object OnShowEditConfirmation : UIEvent()
     }
 
     sealed class BaseEvent {

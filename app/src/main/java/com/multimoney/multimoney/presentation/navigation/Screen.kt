@@ -563,7 +563,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartEditSavedIbanAccount : Screen(
-        "smart_edit_saved_iban_account/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_ID}",
+        "smart_edit_saved_iban_account/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_ID}/{$SMART_ACCOUNT}/{$ID_CLIENT}",
         "smart_edit_saved_iban_account"
     )
 

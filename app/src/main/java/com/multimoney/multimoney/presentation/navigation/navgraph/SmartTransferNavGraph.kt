@@ -137,6 +137,9 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 },
                 navArgument(ACCOUNT_ID) {
                     type = NavType.IntType
+                },
+                navArgument(SMART_ACCOUNT) {
+                    type = SmartAccountIDNavType()
                 }
             )
         ) {
@@ -155,6 +158,11 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

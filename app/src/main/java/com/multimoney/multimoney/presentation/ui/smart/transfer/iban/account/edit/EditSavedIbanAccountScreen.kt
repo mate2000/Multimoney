@@ -47,13 +47,14 @@ import com.multimoney.multimoney.presentation.util.transformation.VisualTransfor
 @Composable
 fun EditSavedIbanAccountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: EditSavedIbanAccountViewModel = hiltViewModel()
 ) {
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
         viewModel.apply {
-            executeNavigation(onPopBackStack = onPopBackStack)
+            executeNavigation(onPopBackStack = onPopBackStack, onPopAndNavigate = onPopAndNavigate)
             viewModel.onUIEvent(OnGetAccountInformation)
         }
     }

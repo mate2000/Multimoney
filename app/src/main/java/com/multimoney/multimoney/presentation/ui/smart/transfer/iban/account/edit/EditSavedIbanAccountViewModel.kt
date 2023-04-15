@@ -70,7 +70,8 @@ class EditSavedIbanAccountViewModel @Inject constructor(
                     accountNumber = achAccountFull?.accountNumber
                         ?.replace(Brand.CostaRica.iban, "")
                         .orEmpty(),
-                    nickname = achAccountFull?.description.orEmpty()
+                    nickname = achAccountFull?.description.orEmpty(),
+                    destinationBankId = achAccountFull?.destinationBankId ?: 0
                 )
             }
             result.onFailure { onFailure(it) }
@@ -93,7 +94,8 @@ class EditSavedIbanAccountViewModel @Inject constructor(
             accountId = accountId ?: 0,
             titularName = uiState.titularName,
             identification = uiState.documentNumber.replace(DASH,""),
-            accountNumber = uiState.accountNumber
+            accountNumber = uiState.accountNumber,
+            destinationBankId = uiState.destinationBankId
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(isLoading = false)
@@ -113,7 +115,7 @@ class EditSavedIbanAccountViewModel @Inject constructor(
             popTo = Screen.SmartEditSavedIbanAccount.route,
             route = Screen.SmartTransferIbanAccountScreen.baseRoute
                 .plus("/${encodeData(smartAccount)}")
-                .plus("$user")
+                .plus("/$user")
                 .plus("/$idBrand")
                 .plus("/$identification")
                 .plus("/${Screen.HomeScreen.route}")
@@ -138,6 +140,7 @@ class EditSavedIbanAccountViewModel @Inject constructor(
         val documentNumber: String = "",
         val accountNumber: String = "",
         val nickname: String = "",
+        val destinationBankId: Int = 0,
         val validationFinish: Boolean = false,
         val isButtonEnabled: Boolean = false,
         var isLoading: Boolean = false

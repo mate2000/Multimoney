@@ -11,6 +11,7 @@ interface MutationUpdateACHAccountUseCase {
         accountId: Int,
         titularName: String,
         identification: String,
-        accountNumber: String
+        accountNumber: String,
+        destinationBankId: Int
     ): Flow<MultimoneyResult<Int?>>
 }

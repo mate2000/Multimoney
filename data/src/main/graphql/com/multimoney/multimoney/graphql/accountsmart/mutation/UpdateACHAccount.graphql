@@ -6,6 +6,7 @@ mutation UpdateACHAccount(
     $user: String!,
     $identification: String!
     $accountNumber: String!
+    $destinationBankId: Int!
 ) {
     aCHTransferFavoriteUpdate(
         aCHTransferFavoriteUpdateInput: {
@@ -16,6 +17,7 @@ mutation UpdateACHAccount(
             titularName: $titularName,
             identificacionNumber: $identification
             accountNumber: $accountNumber
+            destinationBankId: $destinationBankId
         }
     ) {
         result {

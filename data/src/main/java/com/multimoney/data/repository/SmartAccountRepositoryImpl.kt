@@ -341,7 +341,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         description: String,
         titularName: String,
         identification: String,
-        accountNumber: String
+        accountNumber: String,
+        destinationBankId: Int
     ): Flow<MultimoneyResult<Int?>> =
         fetchData(
             apolloCall = graphqlApi.mutationUpdateACHAccount(
@@ -351,7 +352,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 description = description,
                 titularName = titularName,
                 identification = identification,
-                accountNumber = accountNumber
+                accountNumber = accountNumber,
+                destinationBankId = destinationBankId
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

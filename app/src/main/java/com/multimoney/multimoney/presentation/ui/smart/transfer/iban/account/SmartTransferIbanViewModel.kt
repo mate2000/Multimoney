@@ -94,7 +94,6 @@ class SmartTransferIbanViewModel @Inject constructor(
                     }
                 }
                 callNoFavoritesListSinpeAccount()
-                //onEditSuccessShowToast()
             }
             result.onFailure { onFailure(it) }
             result.onLoading {

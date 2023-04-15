@@ -68,7 +68,6 @@ fun SmartTransferIbanScreen(
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnCallListSinpeAccounts)
         viewModel.executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
-
         viewModel.baseEvent.collect { event ->
             when (event) {
                 is OnShowAccountOptionsBottomSheet -> {
@@ -82,6 +81,15 @@ fun SmartTransferIbanScreen(
                     }
                 }
             }
+        }
+    }
+
+    /* Launching the Toast this way to avoid a crash caused by race conditions
+    to set toastIsVisible value on initialization
+     */
+    LaunchedEffect(true) {
+        if (viewModel.editSuccess) {
+            Toast.makeText(activity, viewModel.uiState.toastMessage, Toast.LENGTH_LONG).show()
         }
     }
 

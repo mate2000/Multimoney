@@ -87,7 +87,7 @@ fun EditSavedIbanAccountScreen(
                     modifier = Modifier.padding(top = 32.dp),
                     labelText = stringResource(id = R.string.smart_iban_register_account_label),
                     enabled = false,
-                    leadingIconComposable = { _ ->
+                    leadingIconComposable = { color ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 16.dp, end = 8.dp)
@@ -95,14 +95,14 @@ fun EditSavedIbanAccountScreen(
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_account_info),
                                 contentDescription = "",
-                                tint = MultimoneyTheme.colors.bodyTextColor
+                                tint = color
                             )
                             Text(
                                 modifier = Modifier.padding(start = 8.dp),
                                 text = stringResource(id = R.string.iban_account_cr),
                                 style = Typography.body2.copy(
                                     fontWeight = FontWeight.SemiBold,
-                                    color = MultimoneyTheme.colors.bodyTextColor
+                                    color = color
                                 )
                             )
                         }
@@ -166,6 +166,7 @@ fun EditSavedIbanAccountScreen(
                     .padding(bottom = 24.dp)
                     .height(48.dp),
                 onClick = {
+                    focusManager.clearFocus()
                     viewModel.onUIEvent(OnSaveButtonClick)
                 },
                 buttonType = CustomButtonType.PrimaryPrimary,

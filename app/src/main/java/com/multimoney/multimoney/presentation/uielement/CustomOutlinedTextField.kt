@@ -377,7 +377,7 @@ fun CustomOutlinedTextField(
                         VisualTransformation.None
                     } else PasswordVisualTransformation(),
                 textStyle = Typography.body2.copy(
-                    color = WhiteTransparency90
+                    color = if (enabled) WhiteTransparency90 else textColor
                 ),
                 maxLines = if (isTextArea) TWO else maxLines,
                 singleLine = if (isTextArea) false else singleLine,

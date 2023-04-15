@@ -63,7 +63,7 @@ class SmartTransferIbanViewModel @Inject constructor(
     private var identification: String? = ""
     private var smartAccount: SmartAccountID? = null
     private var selectedAccount: ACHAccount? = null
-    private var editSuccess: Boolean = false
+    var editSuccess: Boolean = false
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -94,7 +94,7 @@ class SmartTransferIbanViewModel @Inject constructor(
                     }
                 }
                 callNoFavoritesListSinpeAccount()
-                onEditSuccessShowToast()
+                //onEditSuccessShowToast()
             }
             result.onFailure { onFailure(it) }
             result.onLoading {
@@ -250,16 +250,6 @@ class SmartTransferIbanViewModel @Inject constructor(
         )
     }
 
-    private fun onEditSuccessShowToast() {
-        if (editSuccess) {
-            uiState = uiState.copy(
-                toastIsVisible = true,
-                toastMessage = R.string.smart_iban_transfer_edit_success_message
-            )
-            editSuccess = false
-        }
-    }
-
     private fun navigateToEditNickname() {
         navigateTo(
             Screen.SmartEditSavedIbanAccount.baseRoute
@@ -277,7 +267,7 @@ class SmartTransferIbanViewModel @Inject constructor(
         var isLoading: Boolean = false,
         var sinpeAccountList: List<ACHAccount?> = listOf(),
         val toastIsVisible: Boolean = false,
-        val toastMessage: Int = R.string.empty
+        val toastMessage: Int = R.string.smart_iban_transfer_edit_success_message
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -84,7 +84,7 @@ fun EditSavedIbanAccountScreen(
                     )
                 )
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(top = 32.dp),
+                    modifier = Modifier.padding(top = 24.dp),
                     labelText = stringResource(id = R.string.smart_iban_register_account_label),
                     enabled = false,
                     leadingIconComposable = { color ->
@@ -144,7 +144,7 @@ fun EditSavedIbanAccountScreen(
                     )
                 }
                 CustomOutlinedTextField(
-                    modifier = Modifier.padding(top = 27.dp),
+                    modifier = Modifier.padding(top = 27.dp, bottom = 24.dp),
                     value = viewModel.uiState.nickname,
                     labelText = stringResource(id = R.string.smart_iban_register_favorite_label),
                     keyboardOptions = KeyboardOptions(
@@ -163,7 +163,7 @@ fun EditSavedIbanAccountScreen(
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp)
+                    .padding(bottom = 8.dp)
                     .height(48.dp),
                 onClick = {
                     focusManager.clearFocus()

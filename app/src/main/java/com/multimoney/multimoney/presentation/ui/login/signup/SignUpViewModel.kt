@@ -65,10 +65,10 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -169,6 +169,7 @@ class SignUpViewModel @Inject constructor(
         }
         this.countryCode = countryCode
         this.idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
+        onGetWhatsAppLink()
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {

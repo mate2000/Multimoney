@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -228,6 +229,7 @@ class SignInViewModel @Inject constructor(
                 isLoading = false
             )
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true -> {
+            callQueryValidationUserExistsUseCase()
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
@@ -235,7 +237,8 @@ class SignInViewModel @Inject constructor(
                 errorCode = CognitoErrorCode.SessionBlocked,
                 openDialog = DialogParameters(
                     titleResource = string.sign_in_session_blocked_title,
-                    descriptionResource = string.sign_in_session_blacklisted_message_sv,
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
+                    else string.sign_in_session_blacklisted_message_cr,
                     isActive = mutableStateOf(true)
                 ),
                 isLoading = false
@@ -243,15 +246,16 @@ class SignInViewModel @Inject constructor(
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
             authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+            callQueryValidationUserExistsUseCase()
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
                     else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
                     else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
@@ -316,6 +320,7 @@ class SignInViewModel @Inject constructor(
             deviceId = dataStorePreferences.getDeviceId().first()
         ).collectLatest { result ->
             result.onSuccess { userData ->
+                setContactInfo(userData?.idBrand)
                 if (userData?.isNewUser == false) {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
@@ -333,7 +338,8 @@ class SignInViewModel @Inject constructor(
                 } else {
                     cognitoError()
                 }
-            }.onMessage {
+            }.onMessage { userData ->
+                setContactInfo(userData?.idBrand)
                 cognitoError()
             }.onFailure {
                 cognitoError()
@@ -583,7 +589,7 @@ class SignInViewModel @Inject constructor(
         showDialog: Boolean
     ): DialogParameters {
         return when (uiState.country) {
-            SIM_CODE_EL_SALVADOR -> {
+            SIM_CODE_EL_SALVADOR, SIM_CODE_GUATEMALA -> {
                 DialogParameters(
                     titleResource = string.active_biometric_title,
                     descriptionResource = string.active_biometric_message,
@@ -723,9 +729,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun setContactInfo() {
+    private fun setContactInfo(idBrand: Int? = null) {
         executeUseCase {
-            getContactInfo(Brand.Search.getIdBrandByCountryCode(uiState.country))
+            getContactInfo(idBrand ?: Brand.Search.getIdBrandByCountryCode(uiState.country))
         }
     }
 

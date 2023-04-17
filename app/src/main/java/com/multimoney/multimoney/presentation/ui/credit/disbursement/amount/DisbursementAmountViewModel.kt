@@ -165,8 +165,8 @@ class DisbursementAmountViewModel @Inject constructor(
                 maximumDisbursement = it?.amountMax?.toFloat() ?: 0F
                 sliderFactor = getSliderFactor(it?.amountTract?.toDouble() ?: 0.0)
                 uiState = uiState.copy(
-                    minimumDisbursementLabel = it?.labelAmountMinAvailable ?: "",
-                    maximumDisbursementLabel = it?.labelAmountMaxAvailable ?: "",
+                    minimumDisbursementLabel = it?.labelAmountMinAvailable.orEmpty(),
+                    maximumDisbursementLabel = it?.labelAmountMaxAvailable.orEmpty(),
                     sliderValueRangeInitial = getSliderValue(
                         minimumDisbursement,
                         it?.amountTract?.toDouble() ?: 0.0
@@ -219,7 +219,7 @@ class DisbursementAmountViewModel @Inject constructor(
                     commissionDisbursementLabel = product?.strComissionDisbursement.orEmpty()
                 )
                 isFormValid()
-                if (isFirstAnimation) {
+                if (isFirstAnimation && product != null) {
                     isFirstAnimation = false
                     isAnimationRunning = true
                     uiState = uiState.copy(startAnimation = true)

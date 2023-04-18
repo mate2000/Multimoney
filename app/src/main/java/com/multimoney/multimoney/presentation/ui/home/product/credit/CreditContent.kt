@@ -73,7 +73,12 @@ fun CreditContent(viewModel: ProductViewModel) {
                     )
                 }
                 CreditWorkflow.CREDIT_PENDING.workflow -> {
-                    content = { CardCreditFirmedAndOnfidoPending() }
+                    content = {
+                        CardCreditFirmedAndOnfidoPending(
+                            textOne = infoCredit?.wording?.textOne,
+                            textTwo = infoCredit?.wording?.textTwo
+                        )
+                    }
                     isActionEnabled = false
                     cta = null
                 }

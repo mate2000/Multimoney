@@ -376,8 +376,6 @@
 
     <!-- Home Product -->
     <string name="home_product_process_credit_label" translatable="false">Crédito</string>
-    <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_sv_non_pre_approved_credit_title" translatable="false">Crédito</string>
     <string name="home_product_sv_non_pre_approved_credit_description" translatable="false">Contesta estas preguntas para conocer si aplicas para un crédito.</string>
     <string name="home_product_gt_sv_non_pre_approved_credit_action" translatable="false">Contestar preguntas</string>

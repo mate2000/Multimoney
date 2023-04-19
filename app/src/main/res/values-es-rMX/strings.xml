@@ -383,8 +383,6 @@
 
     <!-- Home Product -->
     <string name="home_product_process_credit_label" translatable="false">Crédito</string>
-    <string name="home_product_process_accept_contract_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="home_product_process_accept_contract_description" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
     <string name="home_product_gt_sv_non_pre_approved_credit_title" translatable="false">Crédito</string>
     <string name="home_product_sv_non_pre_approved_credit_description" translatable="false">Contesta estas preguntas para conocer si aplicas para un crédito.</string>
     <string name="home_product_gt_sv_non_pre_approved_credit_action" translatable="false">Contestar preguntas</string>
@@ -816,9 +814,6 @@
     <string name="sign_credit_dialog_description_cr" translatable="false">Seguí las indicaciones a continuación</string>
     <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
-
-    <string name="continue_validating_identity_title" translatable="false">Estás cerca de recibir tu crédito</string>
-    <string name="continue_validating_identity_subtitle" translatable="false">Estamos validando tus datos. Pronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
@@ -1705,7 +1700,7 @@
     <string name="registered_user_otp_options_title_cr" translatable="false">Verificación de identidad</string>
     <string name="registered_user_otp_options_message" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="registered_user_otp_options_message_cr" translatable="false">¿Dónde querés recibir el código?</string>
-    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico</string>
+    <string name="registered_user_otp_options_email" translatable="false">Correo electrónico registrado</string>
     <string name="registered_user_otp_options_sms" translatable="false">SMS</string>
     <string name="registered_user_otp_options_button" translatable="false">Enviar código</string>
 

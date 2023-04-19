@@ -65,7 +65,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency70
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.Companion.FOUR_DIGITS
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.Companion.FOUR_DIGITS
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce

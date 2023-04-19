@@ -38,6 +38,8 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnSetArguments
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -99,11 +101,13 @@ fun SignInScreen(
         viewModel.onUIEvent(SignInViewModel.UIEvent.OnUpdateToastVisibility(false))
     }
 
-    SignInContent(viewModel, fragmentActivity, context)
+    SignInContent(onNavigate, onPopAndNavigate, viewModel, fragmentActivity, context)
 }
 
 @Composable
 fun SignInContent(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel,
     fragmentActivity: FragmentActivity,
     context: Context
@@ -242,6 +246,11 @@ fun SignInContent(
             buttonType = PrimaryTertiaryUnderLined
         )
     }
+
+    if (viewModel.uiState.showOtpScreen) {
+        SignInOTPScreen(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate, signInViewModel = viewModel)
+    }
+
     LoadingIndicator(viewModel.uiState.isLoading)
 
     // Dialog

@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.graphics.HomeCryptoGraphic
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
-import com.multimoney.multimoney.presentation.util.calculateGainLoses
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegatives
 
@@ -144,6 +143,7 @@ fun CryptoCardMaintenanceState(
 @Composable
 fun CryptoCardWithBalance(
     cryptoBalance: Double,
+    investedBalance: Double,
     clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
     isEmptyStateDisable: Boolean
 ) {
@@ -179,10 +179,12 @@ fun CryptoCardWithBalance(
         )
 
         if (isEmptyStateDisable) {
-            val isInGainOrLoss = calculateGainLoses(cryptoBalance, clientCryptoBalanceHistory) >= 0
+            val isInGainOrLoss = investedBalance >= 0
             val graphicColor = if (isInGainOrLoss) {
                 MultimoneyTheme.colors.cryptoGainsColor
-            } else MultimoneyTheme.colors.cryptoLossesColor
+            } else {
+                MultimoneyTheme.colors.cryptoLossesColor
+            }
 
             HomeCryptoGraphic(
                 clientCryptoBalanceHistory = clientCryptoBalanceHistory,
@@ -198,10 +200,7 @@ fun CryptoCardWithBalance(
                 CustomInformativeChip(
                     text = stringResource(
                         id = R.string.currency_item_dollar_symbol,
-                        calculateGainLoses(
-                            cryptoBalance,
-                            clientCryptoBalanceHistory
-                        ).toCurrencyFormatWithoutNegatives()
+                        investedBalance.toCurrencyFormatWithoutNegatives()
                     ),
                     textStyle = Typography.body2.copy(
                         fontWeight = FontWeight.SemiBold,

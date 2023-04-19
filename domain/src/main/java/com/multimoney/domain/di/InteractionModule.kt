@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
@@ -26,6 +28,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDelete
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
@@ -937,6 +941,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationACHTransferFavoriteDelete(smartAccountRepository: SmartAccountRepository): MutationACHTransferFavoriteDeleteUseCase =
+        MutationACHTransferFavoriteDeleteUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
 
@@ -989,6 +998,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryACHTransferFavoriteGetUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteGetUseCase =
         QueryACHTransferFavoriteGetUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateACHAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationUpdateACHAccountUseCase =
+        MutationUpdateACHAccountUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

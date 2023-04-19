@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.domain.interaction.credit.MutationSaveCreditApplicationUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveTermsAndConditionsCreditUseCase
@@ -40,20 +39,11 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.amount.Credi
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnTermAndConditionCheckedChange
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.takeWhile
 
 @HiltViewModel
 class CreditAmountViewModel @Inject constructor(
@@ -108,10 +98,14 @@ class CreditAmountViewModel @Inject constructor(
                 idUserRequest = creditOffer?.idUserRequest ?: 0
                 products = creditOffer?.products
                 currencyItems = products?.map { it?.currency ?: "" }
-                isAnimationRunning = true
-                setCreditOffer(INITIAL_CURRENCY_INDEX)
-                emitBaseEvent(OnUpdateIsCrosseling(creditOffer?.isCrosseling ?: false))
-                uiState = uiState.copy(isLoading = false, startAnimation = true)
+                if (products.isNullOrEmpty().not()) {
+                    isAnimationRunning = true
+                    setCreditOffer(INITIAL_CURRENCY_INDEX)
+                    emitBaseEvent(OnUpdateIsCrosseling(creditOffer?.isCrosseling ?: false))
+                    uiState = uiState.copy(isLoading = false, startAnimation = true)
+                } else {
+                    uiState = uiState.copy(isLoading = false)
+                }
             }.onFailure {
                 onFailureWithDialog(
                     false,

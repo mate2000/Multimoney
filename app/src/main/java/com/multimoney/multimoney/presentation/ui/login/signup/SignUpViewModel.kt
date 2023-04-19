@@ -65,10 +65,10 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -418,14 +418,18 @@ class SignUpViewModel @Inject constructor(
                 title = userData?.message.orEmpty(),
                 description = userData?.detail.orEmpty(),
                 isActive = mutableStateOf(true),
-                positiveResource = if (userData?.status == STATUS_EMAIL_OR_PHONE_EMPTY) string.contact_support else string.accept,
+                positiveResource = if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) string.contact_support else string.accept,
                 positiveAction = {
-                    if (userData?.status == STATUS_EMAIL_OR_PHONE_EMPTY) {
+                    if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) {
                         whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
                     }
                 }
             )
         }
+
+    private fun evaluateStatusEmailOrPhoneEmpty(status: Int?): Boolean {
+        return status == STATUS_EMAIL_EMPTY || status == STATUS_PHONE_EMPTY
+    }
 
     data class UIState(
         // Interactions
@@ -569,6 +573,7 @@ class SignUpViewModel @Inject constructor(
     companion object {
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
-        const val STATUS_EMAIL_OR_PHONE_EMPTY = 3108
+        const val STATUS_PHONE_EMPTY = 3108
+        const val STATUS_EMAIL_EMPTY = 3109
     }
 }

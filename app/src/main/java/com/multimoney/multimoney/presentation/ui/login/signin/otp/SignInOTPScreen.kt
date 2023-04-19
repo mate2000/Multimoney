@@ -1,4 +1,4 @@
-package com.multimoney.multimoney.presentation.ui.login.signin
+package com.multimoney.multimoney.presentation.ui.login.signin.otp
 
 import android.app.Activity
 import android.content.Intent
@@ -35,7 +35,20 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnCallCognitoSignIn
+import com.multimoney.multimoney.presentation.ui.login.signin.SignInViewModel.UIEvent.OnShowSignInScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.BaseEvent.ShowSignInScreen
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnCallMutationRequestChangeDevice
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnGetOtpFromMessage
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnOTPValueChange
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnOpenWhatsappLink
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnResendOTP
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnSetArguments
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnSetupResources
+import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnValidateOTP
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -49,7 +62,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Composable
 fun SignInOTPScreen(
-    onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInOTPViewModel = hiltViewModel(),
@@ -63,7 +75,7 @@ fun SignInOTPScreen(
                 Activity.RESULT_OK -> {
                     data?.apply {
                         getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)?.let {
-                            viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnGetOtpFromMessage(it))
+                            viewModel.onUIEvent(OnGetOtpFromMessage(it))
                         }
                     }
                 }
@@ -71,21 +83,43 @@ fun SignInOTPScreen(
         }
     LaunchedEffect(true) {
         viewModel.onUIEvent(
-            SignInOTPViewModel.UIEvent.OnSetupResources(context)
+            OnSetupResources(context)
+        )
+        viewModel.onUIEvent(
+            OnSetArguments(
+                signInViewModel.uiState.userEmail,
+                signInViewModel.uiState.userPassword,
+                signInViewModel.deviceId,
+                signInViewModel.uniqueId,
+                signInViewModel.ipAddress,
+                signInViewModel.deviceType,
+                signInViewModel.deviceName,
+                signInViewModel.appVersion,
+                signInViewModel.deviceBrand,
+                signInViewModel.deviceModel,
+                signInViewModel.isEmulator.toString()
+            )
         )
         viewModel.onUIEvent(OnGetWhatsAppLink)
         viewModel.executeNavigation(
-            onPopBackStack = onPopBackStack,
             onNavigate = onNavigate,
             onPopAndNavigate = onPopAndNavigate
         )
         viewModel.onUIEvent(
-            SignInOTPViewModel.UIEvent.OnCallMutationRequestChangeDevice
+            OnCallMutationRequestChangeDevice
         )
     }
 
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is ShowSignInScreen -> signInViewModel.onUIEvent(OnShowSignInScreen)
+            }
+        }
+    }
+
     BackHandler {
-        viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
+        viewModel.onUIEvent(OnNavigateBack)
     }
 
     if (viewModel.uiState.openDialog.isActive.value) {
@@ -97,14 +131,14 @@ fun SignInOTPScreen(
             openDialogCustom = viewModel.uiState.openDialog.isActive,
             onPositiveAction = {
                 viewModel.onUIEvent(
-                    SignInOTPViewModel.UIEvent.OnOpenWhatsappLink(
+                    OnOpenWhatsappLink(
                         context
                     )
                 )
             },
             onNegativeAction = {
                 viewModel.onUIEvent(
-                    SignInOTPViewModel.UIEvent.OnNavigateBack
+                    OnNavigateBack
                 )
             }
         )
@@ -118,7 +152,7 @@ fun SignInOTPScreen(
             isRightButtonVisible = false,
             onButtonClick = {
                 viewModel.onUIEvent(
-                    SignInOTPViewModel.UIEvent.OnNavigateBack
+                    OnNavigateBack
                 )
             }
         )
@@ -155,7 +189,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel, signInViewModel: SignInViewM
                 top.linkTo(parent.top)
             },
             onLeftButtonClick = {
-                viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnNavigateBack)
+                viewModel.onUIEvent(OnNavigateBack)
             },
             isRightButtonVisible = false
         )
@@ -187,7 +221,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel, signInViewModel: SignInViewM
         OtpTextField(
             value = viewModel.uiState.otp,
             onValueChange = {
-                viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnOTPValueChange(it))
+                viewModel.onUIEvent(OnOTPValueChange(it))
             },
             isValueFromSms = viewModel.uiState.isOtpFromSms,
             digits = SignInOTPViewModel.TOTAL_DIGITS,
@@ -248,7 +282,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel, signInViewModel: SignInViewM
                 ),
                 onClick = {
                     viewModel.onUIEvent(
-                        SignInOTPViewModel.UIEvent.OnResendOTP
+                        OnResendOTP
                     )
                 }
             )
@@ -282,8 +316,8 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel, signInViewModel: SignInViewM
             text = stringResource(id = R.string.sign_in_verify_otp_button),
             enable = viewModel.isFormValid() && viewModel.uiState.isButtonEnabled,
             onClick = {
-                viewModel.onUIEvent(SignInOTPViewModel.UIEvent.OnValidateOTP {
-                    signInViewModel.onUIEvent(SignInViewModel.UIEvent.OnCallCognitoSignIn(true))
+                viewModel.onUIEvent(OnValidateOTP {
+                    signInViewModel.onUIEvent(OnCallCognitoSignIn(true))
                 })
             }
         )

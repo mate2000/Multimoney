@@ -354,7 +354,10 @@ fun CardWithCreditInProcess(
  */
 @Composable
 @Preview
-fun CardCreditFirmedAndOnfidoPending() {
+fun CardCreditFirmedAndOnfidoPending(
+    textOne: String? = "",
+    textTwo: String? = ""
+) {
     val backgroundShip: Color = if (isSystemInDarkTheme()) {
         BlackTransparency20
     } else {
@@ -380,13 +383,13 @@ fun CardCreditFirmedAndOnfidoPending() {
             startIconTint = MultimoneyTheme.colors.iconColor
         )
         Text(
-            text = stringResource(id = R.string.home_product_process_accept_contract_title),
+            text = textOne.orEmpty(),
             modifier = Modifier.padding(top = 14.dp),
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
         Text(
-            text = stringResource(id = R.string.home_product_process_accept_contract_description),
+            text = textTwo.orEmpty(),
             modifier = Modifier.padding(top = 8.dp, bottom = 73.dp),
             style = Typography.caption,
             color = MultimoneyTheme.colors.text

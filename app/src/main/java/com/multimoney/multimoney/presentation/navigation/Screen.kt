@@ -132,6 +132,8 @@ const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
+const val ACCOUNT_ID = "account_id"
+const val EDIT_SUCCESS = "edit_success"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -191,11 +193,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object SignUpSplashComeBackScreen : Screen(
         "sign_up_splash_come_back_screen/{$SIGN_UP_STEP}/{$ID_BRAND}",
         "sign_up_splash_come_back_screen"
-    )
-
-    object SignInOTPScreen : Screen(
-        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
-        "sign_in_otp_screen"
     )
 
     object SignUpCompleted : Screen("sign_up_completed/{$EMAIL}/{$PASSWORD}", "sign_up_completed")
@@ -566,8 +563,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$EDIT_SUCCESS}",
         "transfer_iban_account_screen"
+    )
+
+    object SmartEditSavedIbanAccount : Screen(
+        "smart_edit_saved_iban_account/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_ID}/{$SMART_ACCOUNT}/{$ID_CLIENT}",
+        "smart_edit_saved_iban_account"
     )
 
     /**

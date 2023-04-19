@@ -30,7 +30,7 @@ fun ContinueValidatingOnfidoContent(navigateToHome: () -> Unit = {}) {
     AlertResult(
         iconResource = drawable.ic_success_symbol,
         titleResource = string.continue_validating_identity_title,
-        descriptionResource = string.continue_validating_identity_subtitle,
+        descriptionResource = string.continue_validating_identity_subtitle_credit,
         buttonTextResource = string.understood,
         isLeftButtonVisible = false,
         onRightButtonClick = { navigateToHome() },

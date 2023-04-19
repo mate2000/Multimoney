@@ -813,7 +813,7 @@
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <string name="continue_validating_identity_title" translatable="false">Tu solicitud fue enviada\nexitosamente</string>
-    <string name="continue_validating_identity_subtitle" translatable="false">Estamos verificando tus datos,\npronto te contactaremos para\nvalidar unos detalles</string>
+    <string name="continue_validating_identity_subtitle_credit" translatable="false">Estamos verificando tus datos,\npronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
     <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>

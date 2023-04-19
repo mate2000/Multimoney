@@ -42,7 +42,6 @@ import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
 import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.domain.model.security.MiniCardsItem
-import com.multimoney.domain.model.security.TransferAccount
 import com.multimoney.domain.model.security.ValidateUserStatus
 import com.multimoney.domain.model.util.error.HttpError
 import com.multimoney.domain.model.util.onFailure
@@ -131,13 +130,13 @@ import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import com.multimoney.multimoney.util.firebase.FirebaseHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
@@ -250,10 +249,14 @@ class ProductViewModel @Inject constructor(
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
-                scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
-                    R.drawable.ic_alert_expired_payment
-                } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
-                    R.drawable.info_blue_icon
+                scheduleChipIconResource = if (uiState.idBrand.toInt() != Brand.Mexico.id) {
+                    if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
+                        R.drawable.ic_alert_expired_payment
+                    } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
+                        R.drawable.info_blue_icon
+                    } else {
+                        null
+                    }
                 } else {
                     null
                 },
@@ -305,8 +308,8 @@ class ProductViewModel @Inject constructor(
     fun getProductScreenTitle(): Int =
         when {
             uiState.userStatus?.infoCredit?.status == MyProductStatus.ACTIVE.status ||
-                    uiState.userStatus?.infoCrypto?.status == MyProductStatus.ACTIVE.status ||
-                    uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
+                uiState.userStatus?.infoCrypto?.status == MyProductStatus.ACTIVE.status ||
+                uiState.userStatus?.infoBankAccount?.status == MyProductStatus.ACTIVE.status -> R.string.home_product_header_title
             else -> R.string.home_product_available_products_title
         }
 
@@ -420,18 +423,18 @@ class ProductViewModel @Inject constructor(
             SMART_FIRMED_ONFIDO_REJECTED.workflow -> {
                 navigateTo(
                     "${Screen.SmartOnfidoScreen.baseRoute}/$userName/${uiState.idBrand}/" +
-                            "$pkUser/$identification/$email/$firstName/${uiState.userStatus?.infoUser?.lastName}/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
-                            "${SmartViewModel.URL_EMPTY}/$comingFromCrypto/$firmStatus/$smartStep"
+                        "$pkUser/$identification/$email/$firstName/${uiState.userStatus?.infoUser?.lastName}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                        "${SmartViewModel.URL_EMPTY}/$comingFromCrypto/$firmStatus/$smartStep"
                 )
             }
             else -> {
                 navigateTo(
                     "${Screen.SmartScreen.baseRoute}/$userName/${uiState.idBrand}/$pkUser/$identification/$email/$lastStep/" +
-                            "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
-                            "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firmStatus/${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+                        "${uiState.userStatus?.infoUser?.firstName}/${uiState.userStatus?.infoUser?.lastName}/$comingFromCrypto/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                        "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firmStatus/${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
                 )
             }
         }
@@ -450,7 +453,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                        "${encodeData(uiState.userStatus?.infoUser)}"
+                    "${encodeData(uiState.userStatus?.infoUser)}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
@@ -479,26 +482,26 @@ class ProductViewModel @Inject constructor(
             uiState.idBrand.toInt() == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                encodeData(creditSummary)
+            encodeData(creditSummary)
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}"
         } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
+            encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
         } else if (uiState.idBrand.toInt() == Brand.Mexico.id) {
             "${Screen.PaymentOptionsTransferScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstSummary()?.ibanAccount}/${
-                encodeData(
-                    configurationVersion?.configuration?.credit?.transferAccount
-                )
+            encodeData(
+                configurationVersion?.configuration?.credit?.transferAccount
+            )
             }"
         } else {
             "${Screen.PaymentOptionsScreen.baseRoute}/${balanceCredit?.getFirstCredit()?.creditNumber}/${
-                encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
+            encodeData(configurationVersion?.configuration?.credit?.paymentMethod?.filter { it?.active == true })
             }/${encodeData(configurationVersion?.configuration?.credit?.transferAccount)}/" +
-                    "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
-                    "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
-                    "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                    "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
+                "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
+                "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
+                "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
+                "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
         }
         navigateTo(route)
     }
@@ -509,44 +512,46 @@ class ProductViewModel @Inject constructor(
         if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                    encodeData(ClientBankAccount())
+                encodeData(ClientBankAccount())
                 }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule"
             )
         } else {
             navigateTo(
                 route = "${Screen.PaymentScheduleCardScreen.baseRoute}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-                    encodeData(
-                        CardVisaDirect()
-                    )
+                encodeData(
+                    CardVisaDirect()
+                )
                 }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification/${
-                    encodeData(
-                        uiState.userStatus?.infoUser
-                    )
+                encodeData(
+                    uiState.userStatus?.infoUser
+                )
                 }"
             )
         }
     }
 
     private fun onChipQuotaClick() {
-        uiState = uiState.copy(
-            openDialog = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
-                DialogParameters(
-                    titleResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_title,
-                    descriptionResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_description,
-                    positiveResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_button,
-                    isActive = mutableStateOf(true)
-                )
-            } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
-                DialogParameters(
-                    titleResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_title,
-                    descriptionResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_description,
-                    positiveResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_button,
-                    isActive = mutableStateOf(true)
-                )
-            } else {
-                DialogParameters()
-            }
-        )
+        if (uiState.idBrand.toInt() != Brand.Mexico.id) {
+            uiState = uiState.copy(
+                openDialog = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
+                    DialogParameters(
+                        titleResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_title,
+                        descriptionResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_description,
+                        positiveResource = R.string.schedule_automatic_payment_credit_expired_payment_dialog_button,
+                        isActive = mutableStateOf(true)
+                    )
+                } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
+                    DialogParameters(
+                        titleResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_title,
+                        descriptionResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_description,
+                        positiveResource = R.string.schedule_automatic_payment_credit_multiple_payment_dialog_button,
+                        isActive = mutableStateOf(true)
+                    )
+                } else {
+                    DialogParameters()
+                }
+            )
+        }
     }
 
     private fun checkPaymentAvailability(summaryList: List<Summary>?): Boolean =
@@ -558,7 +563,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToVisaActivateScreen() =
         navigateTo(
             "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-                encodeData(balanceCredit?.balanceCardInformation)
+            encodeData(balanceCredit?.balanceCardInformation)
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
 
@@ -567,7 +572,7 @@ class ProductViewModel @Inject constructor(
         logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
         navigateTo(
             "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-                encodeData(balanceCredit?.balanceCardInformation)
+            encodeData(balanceCredit?.balanceCardInformation)
             }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
         )
     }
@@ -575,13 +580,13 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToProfileScreen() {
         navigateTo(
             Screen.ProfileScreen.baseRoute
-                    .plus("/$idClient")
-                    .plus("/${uiState.idBrand}")
-                    .plus("/${uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }}")
-                    .plus("/${uiState.userStatus?.infoUser?.lastName.orEmpty()}")
-                    .plus("/$email")
-                    .plus("/${uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }}")
-                    .plus("/$identification/$pkUser/$userName")
+                .plus("/$idClient")
+                .plus("/${uiState.idBrand}")
+                .plus("/${uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }}")
+                .plus("/${uiState.userStatus?.infoUser?.lastName.orEmpty()}")
+                .plus("/$email")
+                .plus("/${uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }}")
+                .plus("/$identification/$pkUser/$userName")
         )
     }
 
@@ -614,7 +619,7 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartPaymentMethodScreenSV.baseRoute}/" +
-                    "${encodeData(smartAccount)}/${encodeData(uiState.userStatus?.infoUser)}"
+                "${encodeData(smartAccount)}/${encodeData(uiState.userStatus?.infoUser)}"
         )
     }
 
@@ -631,7 +636,7 @@ class ProductViewModel @Inject constructor(
         val cardStatus = userStatus?.infoVirtualCard?.status
         navigateTo(
             "${Screen.CryptoWalletScreen.baseRoute}/$email/${uiState.idBrand}/$identification/" +
-                    "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
+                "$globalBalance/$idClient/$idLoanClient/$statusCredit/$statusSmart/$statusCrypto/$cardStatus"
         )
     }
 
@@ -659,7 +664,7 @@ class ProductViewModel @Inject constructor(
             DEFAULT_PROGRESS
         } else {
             (balanceCredit?.getFirstSummary()?.currentBalance?.toFloat() ?: DEFAULT_PROGRESS) /
-                    (balanceCredit?.getFirstCredit()?.creditLimit?.toFloat() ?: DEFAULT_PROGRESS)
+                (balanceCredit?.getFirstCredit()?.creditLimit?.toFloat() ?: DEFAULT_PROGRESS)
         }
     }
 
@@ -680,9 +685,9 @@ class ProductViewModel @Inject constructor(
         logEvents(AdjustEventType.DISBURSEMENT_FIRST_INIT_PROCESS_5021)
         navigateTo(
             route = "${Screen.DisbursementAmountScreen.baseRoute}/${uiState.idBrand}/$email/${uiState.userStatus?.infoCredit?.idClient}/${
-                encodeData(
-                    balanceCredit?.getFirstCredit()?.summary
-                )
+            encodeData(
+                balanceCredit?.getFirstCredit()?.summary
+            )
             }/$pkUser/${balanceCredit?.getFirstCredit()?.creditNumber}/${uiState.userStatus?.infoCredit?.infoPreApprove?.idUserRequest ?: 0}/$identification"
         )
     }
@@ -917,7 +922,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                        "${encodeData(uiState.userStatus?.infoUser)}"
+                    "${encodeData(uiState.userStatus?.infoUser)}"
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callSinpeAccountsListUseCase(account, onLoadingValueChange)
@@ -935,8 +940,8 @@ class ProductViewModel @Inject constructor(
         )
         navigateTo(
             route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/" +
-                    "$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}/" +
-                    "${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
+                "$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}/" +
+                "${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
         )
     }
 
@@ -1000,7 +1005,7 @@ class ProductViewModel @Inject constructor(
 
         navigateTo(
             "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                    "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
+                "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
         )
     }
 
@@ -1060,12 +1065,12 @@ class ProductViewModel @Inject constructor(
     private fun navigateToSignScreen(url: String? = null, comingFromCrypto: Boolean) {
         navigateTo(
             "${Screen.SmartSignScreen.baseRoute}/${if (url.isNullOrBlank()) GENERATE_DOCUMENT_STEP.value else SIGN_DOCUMENTS_STEP.value}/" +
-                    "${url?.encodeURLToUTF()}/" +
-                    "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
-                    "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
-                    "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
-                    "$userName/$comingFromCrypto/${!url.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
-                    "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
+                "${url?.encodeURLToUTF()}/" +
+                "${uiState.idBrand.toIntOrNull() ?: Brand.CostaRica.id}/$pkUser/$identification/$email/" +
+                "${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestSysde}/$firstName/" +
+                "${uiState.userStatus?.infoUser?.lastName}/${true}/${uiState.userStatus?.infoBankAccount?.infoRequest?.idRequestGlobal}/" +
+                "$userName/$comingFromCrypto/${!url.isNullOrBlank()}/${uiState.userStatus?.infoBankAccount?.statusFirm}/" +
+                "${uiState.userStatus?.infoBankAccount?.wording?.workflow}"
         )
     }
 
@@ -1193,9 +1198,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
-            .plus("/${cryptoItem?.monthLimitExceeded}")
-            .plus("/${Screen.HomeScreen.route}")
+        navigateTo(
+            "${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+                .plus("/${cryptoItem?.monthLimitExceeded}")
+                .plus("/${Screen.HomeScreen.route}")
         )
     }
 

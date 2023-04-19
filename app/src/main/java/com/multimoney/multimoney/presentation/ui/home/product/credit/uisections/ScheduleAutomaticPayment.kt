@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -32,7 +33,8 @@ fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeV
                 chipOnClick = { viewModel.onUIEvent(OnChipQuotaClick) },
                 threePointsOnClick = {
                     sharedViewModel.onUIEvent(OnShowAutomaticPaymentEdit)
-                }
+                },
+                shouldShowThreePoints = viewModel.uiState.idBrand.toInt() != Brand.Mexico.id
             )
         } else if (balance.applyAutomaticDebit == true) {
             Spacer(modifier = Modifier.height(24.dp))

@@ -249,14 +249,10 @@ class ProductViewModel @Inject constructor(
             uiState = uiState.copy(
                 canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
                 paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
-                scheduleChipIconResource = if (uiState.idBrand.toInt() != Brand.Mexico.id) {
-                    if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
-                        R.drawable.ic_alert_expired_payment
-                    } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
-                        R.drawable.info_blue_icon
-                    } else {
-                        null
-                    }
+                scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
+                    R.drawable.ic_alert_expired_payment
+                } else if (balanceCredit?.isBalanceCreditSummaryMultiple() == true) {
+                    R.drawable.info_blue_icon
                 } else {
                     null
                 },

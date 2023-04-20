@@ -48,7 +48,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ScheduleAutomaticPaymentTextInfo(
-    titleResource: Int = R.string.schedule_automatic_payment_credit_subtitle,
+    titleResource: Int,
     subtitleResource: Int = R.string.schedule_automatic_payment_credit_next_payment,
     dateText: String = "",
     chipLeadingIconResource: Int? = null,

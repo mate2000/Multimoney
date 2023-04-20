@@ -24,6 +24,11 @@ fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeV
         if (balance.automaticDebitEnabled == true) {
             Spacer(modifier = Modifier.height(8.dp))
             ScheduleAutomaticPaymentTextInfo(
+                titleResource = if (viewModel.uiState.idBrand.toInt() != Brand.Mexico.id) {
+                    string.schedule_automatic_payment_credit_subtitle
+                } else {
+                    string.schedule_automatic_payment_credit_subtitle_mx
+                },
                 dateText = getCardDateFormat(
                     viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel,
                     BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS

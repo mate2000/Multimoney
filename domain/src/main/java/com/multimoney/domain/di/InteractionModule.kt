@@ -1,5 +1,7 @@
 package com.multimoney.domain.di
 
+import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationACHTransferFavoriteDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationAddACHAccountUseCase
@@ -26,6 +28,8 @@ import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDelete
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountDeleteUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationSinpeAccountUpdateUseCaseImpl
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCase
+import com.multimoney.domain.interaction.accountsmart.MutationUpdateACHAccountUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCase
 import com.multimoney.domain.interaction.accountsmart.MutationUpdateFavoriteSmartUseCaseImpl
 import com.multimoney.domain.interaction.accountsmart.QueryACHTransferFavoriteGetUseCase
@@ -210,6 +214,8 @@ import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUse
 import com.multimoney.domain.interaction.security.MutationRequestChangeDeviceUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCase
 import com.multimoney.domain.interaction.security.MutationSaveLogTrackingUseCaseImpl
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
 import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCaseImpl
 import com.multimoney.domain.interaction.security.MutationUpdateUserRegisterUseCase
@@ -404,6 +410,11 @@ class InteractionModule {
     @Singleton
     fun provideMutationPhoneValidationUseCase(securityRepository: SecurityRepository): MutationPhoneValidationUseCase =
         MutationPhoneValidationUseCaseImpl(securityRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationSaveRegisterCoreLogUseCase(securityRepository: SecurityRepository): MutationSaveRegisterCoreLogUseCase =
+        MutationSaveRegisterCoreLogUseCaseImpl(securityRepository)
 
     // Balance
 
@@ -930,6 +941,11 @@ class InteractionModule {
 
     @Provides
     @Singleton
+    fun provideMutationACHTransferFavoriteDelete(smartAccountRepository: SmartAccountRepository): MutationACHTransferFavoriteDeleteUseCase =
+        MutationACHTransferFavoriteDeleteUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
     fun provideMutationUpdateFavoriteSmart(smartAccountRepository: SmartAccountRepository): MutationUpdateFavoriteSmartUseCase =
         MutationUpdateFavoriteSmartUseCaseImpl(smartAccountRepository)
 
@@ -982,6 +998,11 @@ class InteractionModule {
     @Singleton
     fun provideQueryACHTransferFavoriteGetUseCase(smartAccountRepository: SmartAccountRepository): QueryACHTransferFavoriteGetUseCase =
         QueryACHTransferFavoriteGetUseCaseImpl(smartAccountRepository)
+
+    @Provides
+    @Singleton
+    fun provideMutationUpdateACHAccountUseCase(smartAccountRepository: SmartAccountRepository): MutationUpdateACHAccountUseCase =
+        MutationUpdateACHAccountUseCaseImpl(smartAccountRepository)
 
     @Provides
     @Singleton

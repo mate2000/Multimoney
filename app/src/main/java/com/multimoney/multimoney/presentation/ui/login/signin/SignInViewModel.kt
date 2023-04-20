@@ -30,12 +30,15 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
 import com.multimoney.multimoney.presentation.util.getAppVersion
+import com.multimoney.multimoney.presentation.util.getCognitoError
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getIPAddress
@@ -71,26 +74,23 @@ class SignInViewModel @Inject constructor(
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
-    private var deviceId = ""
-    private var uniqueId = ""
-    private var ipAddress = ""
-    private var deviceType = ""
-    private var deviceName = ""
-    private var appVersion = getAppVersion()
-    private var deviceBrand = getDeviceBrand()
-    private var deviceModel = getDeviceModel()
-    private var isEmulator = checkIfEmulator()
-    private var forceDeviceChange = false
-    private var forceShowBiometricsPrompt = false
+    var deviceId = ""
+    var uniqueId = ""
+    var ipAddress = ""
+    var deviceType = ""
+    var deviceName = ""
+    var appVersion = getAppVersion()
+    var deviceBrand = getDeviceBrand()
+    var deviceModel = getDeviceModel()
+    var isEmulator = checkIfEmulator()
+    var forceShowBiometricsPrompt = false
 
     private fun onStart(
         deviceName: String,
-        deviceType: String,
-        forceDeviceChange: Boolean
+        deviceType: String
     ) {
         this.deviceName = deviceName
         this.deviceType = deviceType
-        this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
         viewModelScope.launch(Dispatchers.IO) { ipAddress = getIPAddress() ?: "" }
         viewModelScope.launch {
@@ -113,11 +113,10 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun callCognitoSignIn(activity: FragmentActivity) {
-        uiState = uiState.copy(isLoading = true)
+    private fun callCognitoSignIn(forceDeviceChange: Boolean = false) {
+        uiState = uiState.copy(isLoading = true, showOtpScreen = false)
         clearUserEmailError()
 
-        // TODO: Implement logic to send metadata to cognito
         val attrs = mapOf(
             DEVICE_ID to deviceId,
             BRAND to deviceBrand,
@@ -201,7 +200,9 @@ class SignInViewModel @Inject constructor(
                         callQueryValidationUserExistsUseCase()
                     }
                 },
-                { checkSessionState(it) }
+                {
+                    checkSessionState(it)
+                }
             )
         }, {
             callQueryValidationUserExistsUseCase()
@@ -228,6 +229,7 @@ class SignInViewModel @Inject constructor(
                 isLoading = false
             )
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true -> {
+            callQueryValidationUserExistsUseCase()
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
@@ -235,7 +237,8 @@ class SignInViewModel @Inject constructor(
                 errorCode = CognitoErrorCode.SessionBlocked,
                 openDialog = DialogParameters(
                     titleResource = string.sign_in_session_blocked_title,
-                    descriptionResource = string.sign_in_session_blacklisted_message_sv,
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
+                    else string.sign_in_session_blacklisted_message_cr,
                     isActive = mutableStateOf(true)
                 ),
                 isLoading = false
@@ -243,21 +246,70 @@ class SignInViewModel @Inject constructor(
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
             authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+            callQueryValidationUserExistsUseCase()
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
             uiState = uiState.copy(
                 errorCode = CognitoErrorCode.BlacklistedDevice,
                 openDialog = DialogParameters(
-                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_title_sv
+                    titleResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_title_sv
                     else string.sign_in_session_blacklisted_title_cr,
-                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR) string.sign_in_session_blacklisted_message_sv
+                    descriptionResource = if (uiState.country == SIM_CODE_EL_SALVADOR || uiState.country == SIM_CODE_GUATEMALA) string.sign_in_session_blacklisted_message_sv
                     else string.sign_in_session_blacklisted_message_cr,
                     positiveResource = string.sign_in_session_blacklisted_contact_support,
                     isActive = mutableStateOf(true)
                 ),
                 isLoading = false
             )
+        }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
+            val message = authException.cause?.message?.getCognitoError()?.message
+
+            uiState = if (message.isNullOrBlank()) {
+                val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
+                else string.sign_in_too_many_attempts
+
+                uiState.copy(
+                    userEmailError = Pair(true, string.error_empty),
+                    userPasswordError = Pair(true, messageResId),
+                    userPasswordErrorMessage = Pair(true, null),
+                    isLoading = false
+                )
+            } else {
+                uiState.copy(
+                    userEmailError = Pair(true, string.error_empty),
+                    userPasswordErrorMessage = Pair(true, message),
+                    isLoading = false
+                )
+            }
+        }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedChangePasswordNeeded.code) == true -> {
+            viewModelScope.launch {
+                dataStorePreferences.clearData()
+            }
+            val titleResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_title_cr
+            else string.sign_in_account_blocked_title
+
+            val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_message_cr
+            else string.sign_in_account_blocked_message
+
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    titleResource = titleResId,
+                    descriptionResource = messageResId,
+                    positiveResource = string.sign_in_restore_password,
+                    positiveAction = { onNavigateToForgotPassword() },
+                    isActive = mutableStateOf(true)
+                ),
+                isLoading = false
+            )
+        }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.DeviceChangeRequiredDueToInactivity.code) == true -> {
+            uiState = uiState.copy(
+                isLoading = false
+            )
+            onNavigateToOTPScreen()
         }
         else -> callQueryValidationUserExistsUseCase()
     }
@@ -268,6 +320,7 @@ class SignInViewModel @Inject constructor(
             deviceId = dataStorePreferences.getDeviceId().first()
         ).collectLatest { result ->
             result.onSuccess { userData ->
+                setContactInfo(userData?.idBrand)
                 if (userData?.isNewUser == false) {
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
@@ -285,7 +338,8 @@ class SignInViewModel @Inject constructor(
                 } else {
                     cognitoError()
                 }
-            }.onMessage {
+            }.onMessage { userData ->
+                setContactInfo(userData?.idBrand)
                 cognitoError()
             }.onFailure {
                 cognitoError()
@@ -380,6 +434,7 @@ class SignInViewModel @Inject constructor(
         uiState = uiState.copy(
             userEmailError = Pair(true, string.error_empty),
             userPasswordError = Pair(true, string.sign_in_validation),
+            userPasswordErrorMessage = Pair(false, null),
             isLoading = false
         )
     }
@@ -460,7 +515,7 @@ class SignInViewModel @Inject constructor(
                 uiState = uiState.copy(
                     userPassword = dataStorePreferences.getUserPassword(this@apply).first()
                 )
-                callCognitoSignIn(activity)
+                callCognitoSignIn()
             }
         }
     }
@@ -534,7 +589,7 @@ class SignInViewModel @Inject constructor(
         showDialog: Boolean
     ): DialogParameters {
         return when (uiState.country) {
-            SIM_CODE_EL_SALVADOR -> {
+            SIM_CODE_EL_SALVADOR, SIM_CODE_GUATEMALA -> {
                 DialogParameters(
                     titleResource = string.active_biometric_title,
                     descriptionResource = string.active_biometric_message,
@@ -640,10 +695,7 @@ class SignInViewModel @Inject constructor(
             applyAdjust = false,
             data = EmailDto(uiState.userEmail).toJson()
         )
-        popAndNavigateTo(
-            "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
-            Screen.SignInOTPScreen.baseRoute
-        )
+        uiState = uiState.copy(showOtpScreen = true)
     }
 
     private fun onUpdateToastVisibility(value: Boolean) {
@@ -674,9 +726,9 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun setContactInfo() {
+    private fun setContactInfo(idBrand: Int? = null) {
         executeUseCase {
-            getContactInfo(Brand.Search.getIdBrandByCountryCode(uiState.country))
+            getContactInfo(idBrand ?: Brand.Search.getIdBrandByCountryCode(uiState.country))
         }
     }
 
@@ -686,6 +738,7 @@ class SignInViewModel @Inject constructor(
         val userEmailError: Pair<Boolean, Int> = Pair(false, string.error_empty),
         val userPassword: String = "",
         val userPasswordError: Pair<Boolean, Int> = Pair(false, string.error_empty),
+        val userPasswordErrorMessage: Pair<Boolean, String?> = Pair(false, null),
         val userName: String = "",
         val isFingerprintChecked: Boolean = false,
 
@@ -704,7 +757,8 @@ class SignInViewModel @Inject constructor(
         val toastIsVisible: Boolean = false,
         val country: String = "",
         val linkWhatsapp: String = "",
-        val errorCode: CognitoErrorCode? = null
+        val errorCode: CognitoErrorCode? = null,
+        val showOtpScreen: Boolean = false
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -731,11 +785,10 @@ class SignInViewModel @Inject constructor(
 
             is UIEvent.OnStart -> onStart(
                 event.deviceName,
-                event.deviceType,
-                event.forceDeviceChange
+                event.deviceType
             )
             is UIEvent.OnValidateUserEmail -> isUserEmailValid()
-            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.activity)
+            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.forceDeviceChange)
             is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()
             is UIEvent.OnCloseDialog -> onCloseDialog()
             is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
@@ -744,6 +797,7 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnUpdateCountry -> uiState = uiState.copy(country = event.country)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
             is UIEvent.OnSetCountryCode -> setContactInfo()
+            is UIEvent.OnShowSignInScreen -> uiState = uiState.copy(showOtpScreen = false)
         }
     }
 
@@ -777,18 +831,18 @@ class SignInViewModel @Inject constructor(
 
         data class OnStart(
             val deviceName: String,
-            val deviceType: String,
-            val forceDeviceChange: Boolean
+            val deviceType: String
         ) : UIEvent()
 
         object OnValidateUserEmail : UIEvent()
-        data class OnCallCognitoSignIn(val activity: FragmentActivity) : UIEvent()
+        data class OnCallCognitoSignIn(val forceDeviceChange: Boolean = false) : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
         data class OnUpdateCountry(val country: String) : UIEvent()
         data class OnOpenWhatsappLink(val context: Context) : UIEvent()
         data class OnSetCountryCode(val countryCode: String) : UIEvent()
+        object OnShowSignInScreen : UIEvent()
     }
 
     companion object {

@@ -132,6 +132,8 @@ const val CROSSELING = "crosseling"
 const val OTP_METHOD = "otp_method"
 const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
+const val ACCOUNT_ID = "account_id"
+const val EDIT_SUCCESS = "edit_success"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -153,7 +155,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen :
-        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
+        Screen("sign_in_screen", "sign_in_screen")
 
     object SignUpScreen :
         Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
@@ -193,11 +195,6 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_up_splash_come_back_screen"
     )
 
-    object SignInOTPScreen : Screen(
-        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
-        "sign_in_otp_screen"
-    )
-
     object SignUpCompleted : Screen("sign_up_completed/{$EMAIL}/{$PASSWORD}", "sign_up_completed")
 
     // HomeNavGraph Screens
@@ -206,7 +203,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileScreen : Screen(
-        "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
+        "profile_screen/{$ID_CLIENT}/{$ID_BRAND}/{$FIRST_NAME}/{$LAST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$IDENTIFICATION}/{$PK_USER}/{$USER_NAME}",
         "profile_screen"
     )
 
@@ -253,6 +250,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     object ProfileValidateOTPScreen : Screen(
         "profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}",
         "profile_validate_otp_screen"
+    )
+
+    object ProfileVerifyNewValueOTPScreen : Screen(
+        "profile_verify_new_value_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}/{$SEND_METHOD}",
+        "profile_verify_new_value_screen"
     )
 
     // Profile Sub-Screens
@@ -561,8 +563,13 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartTransferIbanAccountScreen : Screen(
-        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}",
+        "transfer_iban_account_screen/{$SMART_ACCOUNT}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$EDIT_SUCCESS}",
         "transfer_iban_account_screen"
+    )
+
+    object SmartEditSavedIbanAccount : Screen(
+        "smart_edit_saved_iban_account/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ACCOUNT_ID}/{$SMART_ACCOUNT}/{$ID_CLIENT}",
+        "smart_edit_saved_iban_account"
     )
 
     /**

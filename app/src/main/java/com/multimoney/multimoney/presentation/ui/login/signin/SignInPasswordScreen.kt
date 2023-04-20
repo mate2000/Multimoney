@@ -65,9 +65,10 @@ fun SignInPasswordScreen(
                 .padding(top = 16.dp),
             isRequired = true,
             isRequiredMessage = stringResource(id = R.string.sign_in_password_required),
-            isError = viewModel.uiState.userPasswordError.first,
-            errorMessage = if (viewModel.uiState.userPasswordError.first) {
-                stringResource(id = viewModel.uiState.userPasswordError.second)
+            isError = viewModel.uiState.userPasswordError.first || viewModel.uiState.userPasswordErrorMessage.first,
+            errorMessage = if (viewModel.uiState.userPasswordError.first || viewModel.uiState.userPasswordErrorMessage.first) {
+                viewModel.uiState.userPasswordErrorMessage.second
+                    ?: stringResource(id = viewModel.uiState.userPasswordError.second)
             } else {
                 null
             }
@@ -122,7 +123,7 @@ fun SignInPasswordScreen(
         CustomButton(
             onClick = {
                 viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginPassword)
-                viewModel.onUIEvent(OnCallCognitoSignIn(activity))
+                viewModel.onUIEvent(OnCallCognitoSignIn())
             },
             text = stringResource(id = R.string.sign_in),
             modifier = Modifier

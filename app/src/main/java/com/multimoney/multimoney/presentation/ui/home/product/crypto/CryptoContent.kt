@@ -33,11 +33,13 @@ fun CryptoContent(
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.ComplementaryTwo
+                            type = ProductBackGroundType.ComplementaryTwo,
+                            isActionEnabled = false
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = 0.0,
-                                isEmptyStateDisable = cryptoEmptyState
+                                isEmptyStateDisable = cryptoEmptyState,
+                                investedBalance = 0.0
                             )
                         }
                     } else if (cryptoBalance.outOfService) {
@@ -45,7 +47,8 @@ fun CryptoContent(
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.ComplementaryTwo
+                            type = ProductBackGroundType.ComplementaryTwo,
+                            isActionEnabled = false
                         ) {
                             CryptoCardMaintenanceState()
                         }
@@ -54,12 +57,14 @@ fun CryptoContent(
                         CustomProductBackground(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp),
-                            type = ProductBackGroundType.ComplementaryTwo
+                            type = ProductBackGroundType.ComplementaryTwo,
+                            isActionEnabled = false
                         ) {
                             CryptoCardWithBalance(
                                 cryptoBalance = cryptoBalance.globalBalance ?: 0.0,
                                 clientCryptoBalanceHistory = clientBalanceHistory,
-                                isEmptyStateDisable = cryptoEmptyState
+                                isEmptyStateDisable = cryptoEmptyState,
+                                investedBalance = cryptoBalance.investedBalance?.toDoubleOrNull() ?: 0.0
                             )
                         }
                     }
@@ -70,11 +75,12 @@ fun CryptoContent(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo,
-                        cta = userStatus.infoCrypto?.wording?.cTA
+                        cta = userStatus.infoCrypto?.wording?.cTA,
+                        isActionEnabled = true,
+                        action = { openSmartCryptoAction.invoke() }
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording,
-                            onClick = { openSmartCryptoAction.invoke() }
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 }
@@ -87,11 +93,12 @@ fun CryptoContent(
                     CustomProductBackground(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo,
-                        cta = userStatus.infoCrypto?.wording?.cTA
+                        cta = userStatus.infoCrypto?.wording?.cTA,
+                        isActionEnabled = true,
+                        action = { openSmartCryptoAction.invoke() }
                     ) {
                         CryptoCardSmartInProcess(
-                            wording = userStatus.infoCrypto?.wording,
-                            onClick = { openSmartCryptoAction.invoke() }
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 } else {
@@ -100,11 +107,12 @@ fun CryptoContent(
                         modifier = Modifier
                             .padding(horizontal = 16.dp),
                         type = ProductBackGroundType.ComplementaryTwo,
-                        cta = userStatus.infoCrypto?.wording?.cTA
+                        cta = userStatus.infoCrypto?.wording?.cTA,
+                        isActionEnabled = true,
+                        action = { openSmartCryptoAction.invoke() }
                     ) {
                         CryptoCardDiscoverCrypto(
-                            wording = userStatus.infoCrypto?.wording,
-                            onClick = { openSmartCryptoAction.invoke() }
+                            wording = userStatus.infoCrypto?.wording
                         )
                     }
                 }

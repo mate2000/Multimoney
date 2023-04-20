@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UI
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdateUserNames
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUseDataValueChange
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -64,10 +65,10 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.firebase.FireBaseEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -168,6 +169,7 @@ class SignUpViewModel @Inject constructor(
         }
         this.countryCode = countryCode
         this.idBrand = Brand.Search.getIdBrandByCountryCode(countryCode)
+        onGetWhatsAppLink()
     }
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
@@ -430,12 +432,12 @@ class SignUpViewModel @Inject constructor(
         if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
             val country = context.getUserCountry()
             DialogParameters(
-                titleResource = if (country == SIM_CODE_EL_SALVADOR) {
+                titleResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
                     string.sign_up_session_blacklisted_title
                 } else {
                     string.sign_up_session_blacklisted_title_cr
                 },
-                descriptionResource = if (country == SIM_CODE_EL_SALVADOR) {
+                descriptionResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
                     string.sign_up_session_blacklisted_message_sv
                 } else {
                     string.sign_up_session_blacklisted_message_cr
@@ -450,9 +452,19 @@ class SignUpViewModel @Inject constructor(
             DialogParameters(
                 title = userData?.message.orEmpty(),
                 description = userData?.detail.orEmpty(),
-                isActive = mutableStateOf(true)
+                isActive = mutableStateOf(true),
+                positiveResource = if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) string.contact_support else string.accept,
+                positiveAction = {
+                    if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) {
+                        whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
+                    }
+                }
             )
         }
+
+    private fun evaluateStatusEmailOrPhoneEmpty(status: Int?): Boolean {
+        return status == STATUS_EMAIL_EMPTY || status == STATUS_PHONE_EMPTY
+    }
 
     data class UIState(
         // Interactions
@@ -521,8 +533,10 @@ class SignUpViewModel @Inject constructor(
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
             is UIEvent.OnExit -> onExit()
-            is UIEvent.OnUpdateCountry ->
+            is UIEvent.OnUpdateCountry -> {
                 uiState = uiState.copy(country = event.country)
+                idBrand = Brand.Search.getIdBrandByCountryCode(event.country)
+            }
             is UIEvent.OnUpdatePassword -> pass = event.pass
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
@@ -597,5 +611,7 @@ class SignUpViewModel @Inject constructor(
         const val SIGN_UP_TOTAL_STEPS = 6
         const val SIGN_UP_INDICATOR_TOTAL_STEPS = 5
         const val MEXICO_ID_BRAND = 12
+        const val STATUS_PHONE_EMPTY = 3108
+        const val STATUS_EMAIL_EMPTY = 3109
     }
 }

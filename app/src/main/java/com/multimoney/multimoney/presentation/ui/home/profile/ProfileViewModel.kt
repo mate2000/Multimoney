@@ -11,12 +11,12 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
-import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -24,10 +24,10 @@ import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.formatPhoneNumber
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -49,7 +49,8 @@ class ProfileViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
             idBrand = savedStateHandle[ID_BRAND] ?: 0,
-            firstName = savedStateHandle[FIRST_NAME]
+            firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
         )
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -117,6 +118,7 @@ class ProfileViewModel @Inject constructor(
         val pkUser: String? = null,
         val idClient: Int? = null,
         val firstName: String? = null,
+        val lastName: String? = null,
         val countryCode: String? = null,
         val openDialog: DialogParameters = DialogParameters()
     )

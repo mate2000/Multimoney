@@ -84,7 +84,7 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
 
     private fun onNavigateToIBANAccount() {
         navigateTo(
-            "${Screen.SmartTransferIbanAccountScreen.baseRoute}/${encodeData(selectedSmartAccount)}/$user/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient"
+            "${Screen.SmartTransferIbanAccountScreen.baseRoute}/${encodeData(selectedSmartAccount)}/$user/$idBrand/$identification/${Screen.SmartSelectSendingTypeScreen.baseRoute}/$idClient/${false}"
         )
     }
 

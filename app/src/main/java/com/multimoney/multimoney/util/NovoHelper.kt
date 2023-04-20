@@ -81,6 +81,7 @@ class NovoHelper @Inject constructor() {
     }
 
     fun novoNewPayment(
+        vProvisionedTokenId: String,
         onSuccessPayment: (response: NovoResponse<Boolean>) -> Unit,
         onErrorPayment: (error: NovoError) -> Unit
     ) {
@@ -94,7 +95,7 @@ class NovoHelper @Inject constructor() {
                     onSuccessPayment(response)
                 }
             },
-            NovoVTS.getFavoriteCard()
+            vProvisionedTokenId
         )
     }
 }

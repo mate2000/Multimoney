@@ -22,7 +22,6 @@ fun Navigation(notificationState: MutableState<Boolean>) {
         smartNavGraph(navController = navController)
         cryptoNavGraph(navController = navController)
         profileNavGraph(navController = navController)
-        testNavGraph(navController = navController)
         paymentSmartNavGraph(navController = navController)
         smartTransferNavGraph(navController = navController)
     }

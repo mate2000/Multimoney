@@ -24,7 +24,6 @@ buildscript {
         classpath firebase.crashlytics_classpath
         classpath google_services.plugin
         classpath dexguard.classpath
-        classpath appLanga.app_langa_classpath
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 

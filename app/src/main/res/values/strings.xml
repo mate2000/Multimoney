@@ -1367,6 +1367,7 @@
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
     <string name="schedule_automatic_payment_credit_subtitle" translatable="false">Pago programado de cuota</string>
+    <string name="schedule_automatic_payment_credit_subtitle_mx" translatable="false">Pago programado de mensualidad</string>
     <string name="schedule_automatic_payment_credit_next_payment" translatable="false">Próximo pago</string>
     <string name="schedule_automatic_payment_credit_expired_payment_dialog_title" translatable="false">Error pago automático</string>
     <string name="schedule_automatic_payment_credit_expired_payment_dialog_description" translatable="false">No posees suficientes fondos para realizar el pago, por favor realiza el pago manual o registra otra cuenta.</string>

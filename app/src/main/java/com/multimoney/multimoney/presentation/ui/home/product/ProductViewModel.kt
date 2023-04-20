@@ -15,12 +15,14 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus.NOT_SIGNED
-import com.multimoney.data.util.catalog.SmartWorkflow
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_APPROVED_BY_ONFIDO
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_CONTRACT_PROCESS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_INITIAL_CARD
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ONFIDO_PROCESS
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_STEP_PENDING
 import com.multimoney.domain.interaction.accountsmart.MutationAccountStatusUseCase
 import com.multimoney.domain.interaction.accountsmart.QueryListSinpeAccountUseCase
 import com.multimoney.domain.interaction.balance.QueryBalanceCardInformationUseCase
@@ -1153,21 +1155,22 @@ class ProductViewModel @Inject constructor(
 
     private fun getSmartContent() {
         val workflow = uiState.userStatus?.infoBankAccount?.wording?.workflow
-        uiState = uiState.copy(
-            smartContent = when (workflow) {
-                SmartWorkflow.SMART_INITIAL_CARD.workflow, SmartWorkflow.SMART_STEP_PENDING.workflow, SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow,
-                SmartWorkflow.SMART_CONTRACT_PROCESS.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING.workflow, SmartWorkflow.SMART_FIRMED_ONFIDO_REJECTED.workflow,
-                SmartWorkflow.SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> {
-                    Pair(true, workflow)
+        workflow?.let {
+            uiState = uiState.copy(
+                smartContent = when (workflow) {
+                    SMART_INITIAL_CARD.workflow, SMART_STEP_PENDING.workflow, SMART_IDENTITY_INCOMPLETE_OR_ONFIDO_MAX_ATTEMPTS.workflow,
+                    SMART_CONTRACT_PROCESS.workflow, SMART_FIRMED_ONFIDO_PENDING.workflow, SMART_FIRMED_ONFIDO_REJECTED.workflow,
+                    SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> {
+                        Pair(true, workflow)
+                    }
+                    else -> {
+                        Pair(true, SMART_CARD_NO_ACTION)
+                    }
                 }
-                "" -> {
-                    Pair(true, SMART_CARD_NO_ACTION)
-                }
-                else -> {
-                    Pair(false, "")
-                }
-            }
-        )
+            )
+        } ?: run {
+            uiState = uiState.copy(smartContent = Pair(false, ""))
+        }
     }
 
     private fun onDisclaimerChecked(checked: Boolean) {
@@ -1205,9 +1208,10 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onNavigateToReleaseTransaction(cryptoItem: CryptoCurrencyMovement?) {
-        navigateTo("${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
-            .plus("/${cryptoItem?.monthLimitExceeded}")
-            .plus("/${Screen.HomeScreen.route}")
+        navigateTo(
+            "${Screen.ReleaseTransactionScreen.baseRoute}/${cryptoItem?.market}/${cryptoItem?.id}"
+                .plus("/${cryptoItem?.monthLimitExceeded}")
+                .plus("/${Screen.HomeScreen.route}")
         )
     }
 

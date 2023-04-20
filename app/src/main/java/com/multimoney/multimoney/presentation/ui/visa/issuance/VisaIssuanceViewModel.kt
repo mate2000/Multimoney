@@ -21,11 +21,13 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnIssuanceClick
 import com.multimoney.multimoney.presentation.ui.visa.issuance.VisaIssuanceViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.util.NfcHelper
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -115,12 +117,18 @@ class VisaIssuanceViewModel @Inject constructor(
                     }
                 }
                 popAndNavigateTo(
-                    "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                    encodeData(
-                        balanceCardInformation
-                    )
-                    }",
-                    Screen.VisaIssuanceScreen.route
+                    Screen.VisaTokenizationWaitingScreen.baseRoute
+                            .plus(getNavParam(ID_BRAND, idBrand))
+                            .plus(getNavParam(PK_USER, pkUser))
+                            .plus(getNavParam(IDENTIFICATION, identification))
+                            .plus(getNavParam(EMAIL, email))
+                            .plus(getNavParam(PHONE_NUMBER, phone))
+                            .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                            .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                            .plus(getNavParam(ID_CLIENT, idClient))
+                            .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                            .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaIssuanceScreen.baseRoute))
+                    , Screen.VisaIssuanceScreen.route
                 )
             }
         }

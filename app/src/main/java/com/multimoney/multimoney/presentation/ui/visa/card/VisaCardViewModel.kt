@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
@@ -621,12 +622,16 @@ class VisaCardViewModel @Inject constructor(
             is OnCallNovoGetFavoriteCard -> callNovoGetFavoriteCard()
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnNavigatePreferences -> navigateTo(
-                "${Screen.VisaPreferencesScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                    encodeData(
-                        balanceCardInformation
-                    )
-                }/$availableBalanceLabel/$idClient/$idLoanClient"
-
+                Screen.VisaPreferencesScreen.baseRoute
+                        .plus(getNavParam(ID_BRAND, idBrand))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(USER, email))
+                        .plus(getNavParam(PHONE_NUMBER, phone))
+                        .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                        .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                        .plus(getNavParam(ID_CLIENT, idClient))
+                        .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
             )
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> {
@@ -647,11 +652,17 @@ class VisaCardViewModel @Inject constructor(
                     }
                 }
                 navigateTo(
-                    "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$email/$phone/${
-                        encodeData(
-                            balanceCardInformation
-                        )
-                    }"
+                    Screen.VisaTokenizationWaitingScreen.baseRoute
+                                .plus(getNavParam(ID_BRAND, idBrand))
+                                .plus(getNavParam(PK_USER, pkUser))
+                                .plus(getNavParam(IDENTIFICATION, identification))
+                                .plus(getNavParam(EMAIL, email))
+                                .plus(getNavParam(PHONE_NUMBER, phone))
+                                .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                                .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                                .plus(getNavParam(ID_CLIENT, idClient))
+                                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                                .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaCardScreen.baseRoute))
                 )
             }
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(

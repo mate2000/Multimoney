@@ -364,7 +364,7 @@ class CreditRepositoryImpl @Inject constructor(
             systemInDarkTheme
         ),
         apolloCallMapper = { data ->
-            Success(data.terminsAndConditions.terminsAndConditionsHtml)
+            Success(data.terminsAndConditionsCredit.terminsAndConditionsHtml)
         }
     )
 

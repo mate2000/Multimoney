@@ -26,7 +26,7 @@ fun MmWebViewHtml(html: String, context: Context) {
             clearCache(true)
             webViewClient = WebViewClient()
             settings.allowFileAccess = false
-            loadData(formatHtmlToDarkMode(html), MIME_TYPE, HTML_ENCODING)
+            loadDataWithBaseURL(null, html, MIME_TYPE, HTML_ENCODING, null)
         }
     })
 }

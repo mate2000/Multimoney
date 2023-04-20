@@ -15,6 +15,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
@@ -24,6 +25,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.Companion.NOVO_CARD_TOKEN_EMPTY
@@ -33,13 +35,14 @@ import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreference
 import com.multimoney.multimoney.presentation.ui.visa.preferences.VisaPreferencesViewModel.UIEvent.OnNavigateToVisaTokenizationScreen
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class VisaPreferencesViewModel @Inject constructor(
@@ -115,16 +118,32 @@ class VisaPreferencesViewModel @Inject constructor(
     private fun onNavigateToVisaTokenizationScreen() {
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister().first()) {
-                registerAdjustEvent(AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = idBrand, idClient = idClient, idLoanClient = idLoanClient, identification = identification).toJson())
+                registerAdjustEvent(
+                    AdjustEventType.MM_VISA_CTA_FIRST_LINK_MM_VISA_5038,
+                    applyAdjust = false,
+                    data = BaseEventDataDto(
+                        user = user,
+                        idBrand = idBrand,
+                        idClient = idClient,
+                        idLoanClient = idLoanClient,
+                        identification = identification
+                    ).toJson()
+                )
                 dataStorePreferences.isAdjustFirstLinkMMVisaEventRegister(false)
             }
         }
         navigateTo(
-            "${Screen.VisaTokenizationWaitingScreen.baseRoute}/$idBrand/$pkUser/$identification/$user/$phone/${
-            encodeData(
-                cardInformation
-            )
-            }"
+            Screen.VisaTokenizationWaitingScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, idBrand))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(EMAIL, user))
+                .plus(getNavParam(PHONE_NUMBER, phone))
+                .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(cardInformation)))
+                .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaPreferencesScreen.baseRoute))
         )
     }
 

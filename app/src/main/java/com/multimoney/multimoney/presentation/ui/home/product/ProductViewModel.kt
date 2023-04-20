@@ -52,12 +52,18 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_STEP
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
@@ -548,33 +554,47 @@ class ProductViewModel @Inject constructor(
     private fun validateQuotas(summaryList: List<Summary>?): Boolean =
         summaryList?.firstOrNull { it.currentBalance == ZERO } == null
 
-    private fun onNavigateToVisaActivateScreen() =
-        navigateTo(
-            "${Screen.VisaIssuanceScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-                encodeData(balanceCredit?.balanceCardInformation)
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
+    private fun onNavigateToVisaActivateScreen() = navigateTo(
+            Screen.VisaIssuanceScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone))
+                .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
+                .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_LOAN_CLIENT,uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
         )
 
     private fun onNavigateToHomeMultimoneyVisa() {
-        val infoCredit = uiState.userStatus?.infoCredit
         logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
         navigateTo(
-            "${Screen.VisaCardScreen.baseRoute}/${uiState.idBrand}/$pkUser/$identification/$email/${uiState.userStatus?.infoUser?.phone}/${
-                encodeData(balanceCredit?.balanceCardInformation)
-            }/${balanceCredit?.getFirstSummary()?.availableBalanceLabel}/$idClient/${uiState.userStatus?.infoCredit?.idLoanClient ?: 0}"
+            Screen.VisaCardScreen.baseRoute
+                    .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                    .plus(getNavParam(PK_USER, pkUser))
+                    .plus(getNavParam(IDENTIFICATION, identification))
+                    .plus(getNavParam(EMAIL, email))
+                    .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone))
+                    .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
+                    .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
+                    .plus(getNavParam(ID_CLIENT, idClient))
+                    .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
         )
     }
 
     private fun onNavigateToProfileScreen() {
         navigateTo(
             Screen.ProfileScreen.baseRoute
-                    .plus("/$idClient")
-                    .plus("/${uiState.idBrand}")
-                    .plus("/${uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }}")
-                    .plus("/${uiState.userStatus?.infoUser?.lastName.orEmpty()}")
-                    .plus("/$email")
-                    .plus("/${uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }}")
-                    .plus("/$identification/$pkUser/$userName")
+                    .plus(getNavParam(ID_CLIENT, idClient))
+                    .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                    .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }))
+                    .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName.orEmpty()))
+                    .plus(getNavParam(EMAIL, email))
+                    .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }))
+                    .plus(getNavParam(IDENTIFICATION, identification))
+                    .plus(getNavParam(PK_USER, pkUser))
+                    .plus(getNavParam(USER_NAME, userName))
         )
     }
 
@@ -998,7 +1018,6 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onCreateMultimoneyVisa(onLoadingValueChange: (isLoading: Boolean) -> Unit) {
-        // todo request token to know if the user already has a device enrolled
         executeUseCase {
             cardIssuanceNVUseCase.invoke(
                 idClient = uiState.userStatus?.infoUser?.idClient?.toLong() ?: 0,

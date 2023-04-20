@@ -28,11 +28,16 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.BaseEvent.OnOpenTapAndPayConfig
 import com.multimoney.multimoney.presentation.ui.visa.novotokenization.VisaTokenizationWaitingViewModel.UIEvent.OnAlertButtonClick
@@ -50,6 +55,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
 import com.multimoney.multimoney.presentation.util.getDateFormat
 import com.multimoney.multimoney.presentation.util.getDeviceManufacture
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
@@ -89,7 +95,11 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     var phone = ""
     var email: String = ""
     var balanceCardInformation: BalanceCardInformation? = null
+    var availableBalanceLabel: String? = null
+    private var idClient: Int = 0
+    private var idLoanClient: Int = 0
     var androidId: String = ""
+    var previewScreen: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -98,6 +108,10 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         email = savedStateHandle.get<String>(EMAIL) ?: ""
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         balanceCardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
+        availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
+        idClient = savedStateHandle[com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT] ?: 0
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
+        previewScreen = savedStateHandle.get<String>(PREVIOUS_SCREEN) ?: ""
     }
 
     private fun startTokenizationProcess() {
@@ -170,7 +184,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             setErrorAlertResult()
             numAttemptsToStartTokenization++
         } else {
-            onNavigateToHomeMultimoneyVisa()
+            navigateToCorrectScreen()
         }
     }
 
@@ -371,6 +385,30 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             isRestart
         )
 
+    private fun onNavigateToHomeVisa() {
+        popAndNavigateTo(
+            Screen.VisaCardScreen.baseRoute
+                .plus(getNavParam(ID_BRAND, idBrand))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL, email))
+                .plus(getNavParam(PHONE_NUMBER, phone))
+                .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient)),
+            Screen.VisaTokenizationWaitingScreen.route
+        )
+    }
+
+    private fun navigateToCorrectScreen(isRestart: Boolean = false) {
+        if (previewScreen == Screen.VisaIssuanceScreen.baseRoute) {
+            onNavigateToHomeVisa()
+        } else {
+            onNavigateToHomeMultimoneyVisa(isRestart)
+        }
+    }
+
     private fun onAlertButtonClick() {
         uiState = uiState.copy(
             isAlertResultVisible = false
@@ -419,9 +457,9 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
             is OnStartNovoTokenization -> startTokenizationProcess()
             is OnGetAndroidId -> androidId = event.androidId
             is OnAlertButtonClick -> onAlertButtonClick()
-            is OnAlertCloseClick -> onNavigateToHomeMultimoneyVisa()
+            is OnAlertCloseClick -> navigateToCorrectScreen()
             is OnShowSuccessTokenizationScreen -> uiState = uiState.copy(showSuccessTokenizationScreen = true)
-            is OnNavigateToHomeVisa -> onNavigateToHomeMultimoneyVisa(true)
+            is OnNavigateToHomeVisa -> navigateToCorrectScreen(true)
         }
     }
 

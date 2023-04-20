@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -181,6 +182,7 @@ fun SignInOTPContent(viewModel: SignInOTPViewModel, signInViewModel: SignInViewM
         modifier = Modifier
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
+            .clickable(onClick = {})
     ) {
         val (topNavBar, otpField, titleText, headerText, timerText, continueButton) = createRefs()
 

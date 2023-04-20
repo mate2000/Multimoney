@@ -277,7 +277,7 @@ class SignUpViewModel @Inject constructor(
                 idBrand = idBrand
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
-                    whatsAppLink = contactInfo?.whatsappLink?:""
+                    whatsAppLink = contactInfo?.whatsappLink ?: ""
                 }
             }
         }

@@ -19,6 +19,7 @@ import com.multimoney.domain.model.security.PhoneValidation
 import com.multimoney.domain.model.security.QuickActions
 import com.multimoney.domain.model.security.RequestChangeDevice
 import com.multimoney.domain.model.security.SaveLogTracking
+import com.multimoney.domain.model.security.SaveRegisterCoreLog
 import com.multimoney.domain.model.security.SendPinProcess
 import com.multimoney.domain.model.security.Token
 import com.multimoney.domain.model.security.UserData
@@ -209,7 +210,8 @@ class SecurityRepositoryImpl @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): Flow<MultimoneyResult<SendPinProcess?>> = fetchData(
         apolloCall = graphqlApi.mutationSendPinProcess(
             identification,
@@ -219,7 +221,8 @@ class SecurityRepositoryImpl @Inject constructor(
             sendMethod,
             pkUser.toInt(),
             idBrand,
-            user
+            user,
+            flowOrigin
         ),
         apolloCallMapper = { data ->
             if (data.sendPinProccess.status == null || data.sendPinProccess.status == 0) {
@@ -543,6 +546,19 @@ class SecurityRepositoryImpl @Inject constructor(
             } else {
                 Message(data.mapToDomainModel())
             }
+        }
+    )
+
+    override suspend fun mutationSaveRegisterCoreLog(
+        user: String?,
+        idBrand: Int,
+        process: String,
+        parameters: String,
+        result: String
+    ): Flow<MultimoneyResult<SaveRegisterCoreLog>> = fetchData(
+        apolloCall = graphqlApi.mutationSaveRegisterCoreLog(user, idBrand, process, parameters, result),
+        apolloCallMapper = { data ->
+            Success(data.mapToDomainModel())
         }
     )
 

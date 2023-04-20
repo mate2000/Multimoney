@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.multimoney.domain.model.balance.Balance
+import com.multimoney.domain.model.security.ConfigurationVersion
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIState
 import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditVisa
@@ -20,6 +21,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 fun CreditFooter(
     uiState: UIState,
     balance: Balance?,
+    configurationVersion: ConfigurationVersion?,
     onNavigateToDisbursement: () -> Unit,
     onNavigateToVisaActivateScreen: () -> Unit,
     onCreateMultimoneyVisa: () -> Unit
@@ -39,6 +41,7 @@ fun CreditFooter(
         CreditVisa(
             uiState = uiState,
             balance = balance,
+            configurationVersion = configurationVersion,
             onNavigateToVisaActivateScreen = { onNavigateToVisaActivateScreen() },
             onCreateMultimoneyVisa = { onCreateMultimoneyVisa() }
         )

@@ -40,14 +40,16 @@ fun SignUpPhoneScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(true) {
-        viewModel.onUIEvent(OnSetupSharedEvents(
-            onLoadingValueChange = {
-                sharedViewModel.onUIEvent(OnLoadingValueChange(it))
-            },
-            onFailureWithDialog = { isLoading, dialogParameters ->
-                sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
-            }
-        ))
+        viewModel.onUIEvent(
+            OnSetupSharedEvents(
+                onLoadingValueChange = {
+                    sharedViewModel.onUIEvent(OnLoadingValueChange(it))
+                },
+                onFailureWithDialog = { isLoading, dialogParameters ->
+                    sharedViewModel.onUIEvent(OnFailureWithDialog(isLoading, dialogParameters))
+                }
+            )
+        )
         sharedViewModel.onUIEvent(OnShowCloseIcon(true))
         sharedViewModel.apply {
             onUIEvent(
@@ -70,7 +72,10 @@ fun SignUpPhoneScreen(
                                 { onUIEvent(SignUpViewModel.UIEvent.OnCallMutationUpdateUserRegisterUseCase) }
                             )
                         )
-                        sharedViewModel.logEvents(FireBaseEvents.SignUpThree, AdjustEventType.SIGNUP_3_2003)
+                        sharedViewModel.logEvents(
+                            FireBaseEvents.SignUpThree,
+                            AdjustEventType.SIGNUP_3_2003
+                        )
                     },
                     nextStep = viewModel.getNextStep(
                         sharedViewModel.isPhoneVerified,

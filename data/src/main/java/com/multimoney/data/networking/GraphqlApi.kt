@@ -7,6 +7,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.FetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
+import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteDeleteMutation
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteGetQuery
 import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
 import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
@@ -121,6 +122,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMut
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveLogTrackingMutation
+import com.multimoney.data.networking.graphql.apollomodel.SaveRegisterCoreLogMutation
 import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
 import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
 import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
@@ -131,6 +133,7 @@ import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
 import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
 import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
+import com.multimoney.data.networking.graphql.apollomodel.UpdateACHAccountMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
 import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
@@ -895,7 +898,8 @@ class GraphqlApi @Inject constructor(
         sendMethod: String,
         pkUser: Int,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): ApolloCall<SendPinProcessMutation.Data> = apolloAuthorizedClient.mutation(
         SendPinProcessMutation(
             identification,
@@ -905,7 +909,8 @@ class GraphqlApi @Inject constructor(
             sendMethod,
             pkUser,
             idBrand,
-            user
+            user,
+            flowOrigin
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 
@@ -1065,6 +1070,23 @@ class GraphqlApi @Inject constructor(
 
     fun queryGetToken(): ApolloCall<GetTokenQuery.Data> =
         apolloAuthorizedClient.query(GetTokenQuery()).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationSaveRegisterCoreLog(
+        user: String?,
+        idBrand: Int,
+        process: String,
+        parameters: String,
+        result: String
+    ): ApolloCall<SaveRegisterCoreLogMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            SaveRegisterCoreLogMutation(
+                user ?: "",
+                idBrand,
+                process,
+                parameters,
+                result
+            )
+        ).fetchPolicy(NetworkOnly)
 
     // SmartAccount
     fun queryGetCoreBankMovements(
@@ -1285,6 +1307,29 @@ class GraphqlApi @Inject constructor(
                 achTransferId
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationUpdateACHAccount(
+        user: String,
+        idBrand: Int,
+        achTransferId: Int,
+        description: String,
+        titularName: String,
+        identification: String,
+        accountNumber: String,
+        destinationBankId: Int
+    ): ApolloCall<UpdateACHAccountMutation.Data> =
+        apolloAuthorizedClient.mutation(
+            UpdateACHAccountMutation(
+                accountId = achTransferId,
+                description = description,
+                user = user,
+                idBrand = idBrand,
+                titularName = titularName,
+                identification = identification,
+                accountNumber = accountNumber,
+                destinationBankId = destinationBankId
+            )
+        ).fetchPolicy(NetworkOnly)
 
     fun queryLocalTransferFavorite(
         idBrand: Int,
@@ -2342,6 +2387,18 @@ class GraphqlApi @Inject constructor(
             identificationTypeAccount = identificationTypeAccount,
             destinationCurrencyId = destinationCurrencyId,
             document = document
+        )
+    ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun mutationACHTransferFavoriteDelete(
+        user: String,
+        idBrand: Int,
+        accountForAchTransferId: Int
+    ): ApolloCall<ACHTransferFavoriteDeleteMutation.Data> = apolloAuthorizedClient.mutation(
+        ACHTransferFavoriteDeleteMutation(
+            user = user,
+            idBrand = idBrand,
+            accountForAchTransferId = accountForAchTransferId
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

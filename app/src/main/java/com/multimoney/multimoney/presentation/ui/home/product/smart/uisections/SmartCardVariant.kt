@@ -1,8 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.home.product.smart.uisections
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,8 +41,7 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 fun CardInactiveSmartProduct(
     textOne: String = "",
     textTwo: String = "",
-    type: SmartProcessStarted? = SmartProcessStarted.SmartInitialProcess,
-    onClick: () -> Unit = {}
+    type: SmartProcessStarted? = SmartProcessStarted.SmartInitialProcess
 ) {
     val backgroundShip: Color = if (isSystemInDarkTheme()) {
         BlackTransparency20
@@ -58,11 +54,7 @@ fun CardInactiveSmartProduct(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 12.dp, start = 24.dp, end = 24.dp, bottom = 12.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick.invoke() },
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         CustomInformativeChip(

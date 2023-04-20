@@ -6,8 +6,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import com.multimoney.multimoney.presentation.navigation.ACCOUNT_ID
 import com.multimoney.multimoney.presentation.navigation.CONTACTS
 import com.multimoney.multimoney.presentation.navigation.DESTINY_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.EDIT_SUCCESS
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
@@ -24,7 +26,9 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAc
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartPhoneAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.Transfer365AccountNavType
+import com.multimoney.multimoney.presentation.ui.home.profile.accounts.EditAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
+import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.edit.EditSavedIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.register.SmartTransferRegisterIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount.SelectSmartAccountContainer
@@ -97,6 +101,10 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 },
                 navArgument(ID_CLIENT) {
                     type = NavType.StringType
+                },
+                navArgument(EDIT_SUCCESS) {
+                    type = NavType.BoolType
+                    defaultValue = false
                 }
             )
         ) {
@@ -118,6 +126,43 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                         inclusive = false,
                         saveState = false
                     )
+                }
+            )
+        }
+        composable(
+            route = Screen.SmartEditSavedIbanAccount.route,
+            arguments = listOf(
+                navArgument(ID_BRAND) {
+                    type = NavType.IntType
+                },
+                navArgument(ACCOUNT_ID) {
+                    type = NavType.IntType
+                },
+                navArgument(SMART_ACCOUNT) {
+                    type = SmartAccountIDNavType()
+                }
+            )
+        ) {
+            EditSavedIbanAccountScreen(
+                onPopBackStack = {
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        PREVIOUS_IS_RESTART,
+                        it.isRestart
+                    )
+                    navController.getBackStackEntry(it.popTo).savedStateHandle.set(
+                        HOME_STATE,
+                        it.homeState
+                    )
+                    navController.popBackStack(
+                        route = it.popTo,
+                        inclusive = false,
+                        saveState = false
+                    )
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 }
             )
         }

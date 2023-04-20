@@ -20,10 +20,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompletedViewModel.UIEvent.OnSetupDeviceInfo
 import com.multimoney.multimoney.presentation.ui.login.signup.completed.SignUpCompletedViewModel.UIEvent.OnSignIn
 import com.multimoney.multimoney.presentation.uielement.CustomImage
@@ -35,7 +37,8 @@ import com.multimoney.multimoney.util.firebase.FireBaseEvents
 @Composable
 fun SignUpCompleted(
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
-    viewModel: SignUpCompletedViewModel = hiltViewModel()
+    viewModel: SignUpCompletedViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
     val fragmentActivity = LocalContext.current as FragmentActivity
     LaunchedEffect(true) {
@@ -65,7 +68,12 @@ fun SignUpCompleted(
                 .size(200.dp, 72.dp)
         )
         Text(
-            text = stringResource(id = R.string.sign_up_complete_title),
+            text = stringResource(
+                id = when (sharedViewModel.idBrand) {
+                    Brand.Mexico.id -> R.string.sign_up_complete_title_mx
+                    else -> R.string.sign_up_complete_title
+                }
+            ),
             modifier = Modifier.padding(top = 32.dp),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.titleText,

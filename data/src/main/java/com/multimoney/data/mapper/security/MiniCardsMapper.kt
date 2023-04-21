@@ -10,7 +10,7 @@ fun ListMiniCardsQuery.Data.mapToDomainModel() = MiniCards(
             priority = it.prioridad,
             type = it.tipo,
             imageUrl = it.imagenUrl ?: "",
-            deepLink = it.deeplink  ?: "",
+            deepLink = it.deeplink ?: "",
             flow = it.flujo ?: ""
         )
     }

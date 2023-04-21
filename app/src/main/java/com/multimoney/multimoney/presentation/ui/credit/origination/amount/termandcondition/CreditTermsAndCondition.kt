@@ -28,7 +28,6 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MmWebViewHtml
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreditTermsAndCondition(
     onAcceptTermsAndCondition: () -> Unit,

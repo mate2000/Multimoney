@@ -32,10 +32,12 @@ import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER_CODE
 import com.multimoney.multimoney.presentation.navigation.SEND_METHOD
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -46,11 +48,18 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -61,12 +70,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -413,7 +416,18 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateTo("${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.newValue}/${uiState.phoneNumber}/${uiState.identification}/${uiState.pkUser}/${uiState.userName}")
+                navigateTo(
+                    Screen.ProfileScreen.baseRoute
+                        .plus(getNavParam(ID_CLIENT, uiState.idClient))
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                        .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
+                        .plus(getNavParam(LAST_NAME, ""))
+                        .plus(getNavParam(EMAIL, uiState.newValue))
+                        .plus(getNavParam(PHONE_NUMBER, uiState.phoneNumber?.ifEmpty { 0 }))
+                        .plus(getNavParam(IDENTIFICATION, uiState.identification))
+                        .plus(getNavParam(PK_USER, uiState.pkUser))
+                        .plus(getNavParam(USER_NAME, uiState.userName))
+                )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }

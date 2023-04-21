@@ -15,6 +15,7 @@ import com.multimoney.data.util.catalog.CreditStep
 import com.multimoney.data.util.catalog.CreditWorkflow
 import com.multimoney.data.util.catalog.MyProductStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus.NOT_SIGNED
+import com.multimoney.data.util.catalog.SmartWorkflow.SMART_ACTIVE
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_APPROVED_BY_ONFIDO
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_CONTRACT_PROCESS
 import com.multimoney.data.util.catalog.SmartWorkflow.SMART_FIRMED_ONFIDO_PENDING
@@ -1162,6 +1163,9 @@ class ProductViewModel @Inject constructor(
                     SMART_CONTRACT_PROCESS.workflow, SMART_FIRMED_ONFIDO_PENDING.workflow, SMART_FIRMED_ONFIDO_REJECTED.workflow,
                     SMART_APPROVED_BY_ONFIDO.workflow, SMART_ONFIDO_PROCESS.workflow -> {
                         Pair(true, workflow)
+                    }
+                    SMART_ACTIVE.workflow -> {
+                        Pair(false, "")
                     }
                     else -> {
                         Pair(true, SMART_CARD_NO_ACTION)

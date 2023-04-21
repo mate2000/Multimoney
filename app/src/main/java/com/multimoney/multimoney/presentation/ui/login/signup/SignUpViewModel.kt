@@ -174,6 +174,7 @@ class SignUpViewModel @Inject constructor(
 
     private fun onNationalityChange(nationality: String, idBrand: Int) {
         this.idBrand = idBrand
+        onGetWhatsAppLink()
         userData = userData?.copy(
             nationality = nationality,
             identification = "",
@@ -388,6 +389,22 @@ class SignUpViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { contactInfo ->
                     whatsAppLink = contactInfo?.whatsappLink ?: ""
+                    onUIEvent(OnLoadingValueChange(false))
+                }
+                result.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
+                result.onFailure {
+                    onUIEvent(OnLoadingValueChange(false))
+                    onUIEvent(
+                        OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = DialogParameters(
+                                description = it.getError() ?: "",
+                                isActive = mutableStateOf(true)
+                            )
+                        )
+                    )
                 }
             }
         }

@@ -40,7 +40,7 @@ class SavingMethodTransferViewModel @Inject constructor(
             )
             is OnNavigateBackHome -> navigateBack(
                 popTo = HomeScreen.route,
-                isRestart = false
+                isRestart = true
             )
             is OnCopyTextToClipboard -> onCopyTextToClipboard(uiEvent.text)
         }

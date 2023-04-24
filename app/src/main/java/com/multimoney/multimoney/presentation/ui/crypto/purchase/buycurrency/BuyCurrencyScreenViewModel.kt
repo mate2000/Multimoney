@@ -389,6 +389,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
                             uiState = uiState.copy(
+                                errorMessageArg = it.buyHQR.message.orEmpty(),
                                 error = R.string.crypto_purchase_flow_error_no_funds,
                                 focusError = true,
                                 isLoading = false,
@@ -398,6 +399,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
                             uiState = uiState.copy(
+                                errorMessageArg = it.buyHQR.message.orEmpty(),
                                 error = R.string.crypto_purchase_flow_error_price_expired,
                                 focusError = true,
                                 isLoading = false,

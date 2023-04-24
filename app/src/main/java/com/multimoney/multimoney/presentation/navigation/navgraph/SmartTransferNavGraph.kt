@@ -26,7 +26,6 @@ import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAc
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartPhoneAccountNavType
 import com.multimoney.multimoney.presentation.navigation.navtype.payment.Transfer365AccountNavType
-import com.multimoney.multimoney.presentation.ui.home.profile.accounts.EditAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.SmartTransferIbanScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.account.edit.EditSavedIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.smart.transfer.iban.amount.SmartTransferAmountScreen
@@ -86,21 +85,6 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
             arguments = listOf(
                 navArgument(SMART_ACCOUNT) {
                     type = SmartAccountIDNavType()
-                },
-                navArgument(USER) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_BRAND) {
-                    type = NavType.StringType
-                },
-                navArgument(IDENTIFICATION) {
-                    type = NavType.StringType
-                },
-                navArgument(PREVIOUS_SCREEN) {
-                    type = NavType.StringType
-                },
-                navArgument(ID_CLIENT) {
-                    type = NavType.StringType
                 },
                 navArgument(EDIT_SUCCESS) {
                     type = NavType.BoolType

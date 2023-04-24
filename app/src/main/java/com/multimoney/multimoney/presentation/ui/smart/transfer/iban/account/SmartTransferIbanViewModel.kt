@@ -78,23 +78,19 @@ class SmartTransferIbanViewModel @Inject constructor(
     private fun onCallListSinpeAccounts() = executeUseCase {
         queryACHTransferFavoriteListUseCase.invoke(
             user = user,
-            idBrand = idBrand.toIntOrNull() ?: 0,
+            idBrand = idBrand.toIntOrNull() ?: Brand.Default.id,
             isFavorite = true,
             identificationNumber = identification.orEmpty()
         ).collectLatest { result ->
             result.onSuccess { achResult ->
                 uiState = uiState.copy(sinpeAccountList = listOf()) // Reset list
                 achResult?.data?.let { accounts ->
-                    if (accounts.isEmpty()) {
-                        navigateToAddIbanAccount()
-                    } else {
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            sinpeAccountList = uiState.sinpeAccountList + accounts
-                        )
-                    }
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        sinpeAccountList = uiState.sinpeAccountList + accounts
+                    )
                 }
-                callNoFavoritesListSinpeAccount()
+                onCallNoFavoritesListSinpeAccount()
             }
             result.onFailure { onFailure(it) }
             result.onLoading {
@@ -103,22 +99,21 @@ class SmartTransferIbanViewModel @Inject constructor(
         }
     }
 
-    private fun callNoFavoritesListSinpeAccount() = executeUseCase {
+    private fun onCallNoFavoritesListSinpeAccount() = executeUseCase {
         queryACHTransferFavoriteListUseCase.invoke(
             user = user,
-            idBrand = idBrand.toIntOrNull() ?: 0,
+            idBrand = idBrand.toIntOrNull() ?: Brand.Default.id,
             isFavorite = false,
             identificationNumber = identification.orEmpty()
         ).collectLatest { result ->
             result.onSuccess { achResult ->
                 achResult?.data?.let { accounts ->
-                    if (accounts.isEmpty()) {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        sinpeAccountList = uiState.sinpeAccountList + accounts
+                    )
+                    if (uiState.sinpeAccountList.isEmpty()) {
                         navigateToAddIbanAccount()
-                    } else {
-                        uiState = uiState.copy(
-                            isLoading = false,
-                            sinpeAccountList = uiState.sinpeAccountList + accounts
-                        )
                     }
                 }
             }
@@ -161,7 +156,7 @@ class SmartTransferIbanViewModel @Inject constructor(
             executeUseCase {
                 queryACHTransferFavoriteGetUseCase.invoke(
                     user,
-                    idBrand.toIntOrNull() ?: 0,
+                    idBrand.toIntOrNull() ?: Brand.Default.id,
                     selectedAccount.accountForAchTransferId ?: 0
                 ).collectLatest { result ->
                     result.onSuccess { achAccountFull ->
@@ -199,16 +194,16 @@ class SmartTransferIbanViewModel @Inject constructor(
     }
 
     private fun onEditAccount() {
-       uiState = uiState.copy(
-           openDialog = DialogParameters(
-               titleResource = R.string.smart_iban_transfer_edit_dialog_title,
-               descriptionResource = R.string.smart_iban_transfer_edit_dialog_description,
-               positiveResource = R.string.edit,
-               negativeResource = R.string.exit,
-               isActive = mutableStateOf(true),
-               positiveAction = { navigateToEditNickname() }
-           )
-       )
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = R.string.smart_iban_transfer_edit_dialog_title,
+                descriptionResource = R.string.smart_iban_transfer_edit_dialog_description,
+                positiveResource = R.string.edit,
+                negativeResource = R.string.exit,
+                isActive = mutableStateOf(true),
+                positiveAction = { navigateToEditNickname() }
+            )
+        )
     }
 
     private fun onDeleteAccount() {
@@ -230,7 +225,7 @@ class SmartTransferIbanViewModel @Inject constructor(
         executeUseCase {
             mutationACHTransferFavoriteDeleteUseCase.invoke(
                 user,
-                idBrand.toIntOrNull() ?: 0,
+                idBrand.toIntOrNull() ?: Brand.Default.id,
                 it.accountForAchTransferId ?: 0
             ).collectLatest { result ->
                 result.onSuccess {

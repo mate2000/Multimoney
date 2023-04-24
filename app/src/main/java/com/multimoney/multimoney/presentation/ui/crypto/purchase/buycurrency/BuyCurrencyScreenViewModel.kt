@@ -380,7 +380,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     when (it.buyHQR.status) {
                         CryptoProcessErrorCodes.WeeklyLimitExceeded.status -> {
                             uiState = uiState.copy(
-                                error = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                                errorString = it.buyHQR.message.orEmpty(),
                                 focusError = true,
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
@@ -389,6 +389,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
                             uiState = uiState.copy(
+                                errorMessageArg = it.buyHQR.message.orEmpty(),
                                 error = R.string.crypto_purchase_flow_error_no_funds,
                                 focusError = true,
                                 isLoading = false,
@@ -398,6 +399,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
                             uiState = uiState.copy(
+                                errorMessageArg = it.buyHQR.message.orEmpty(),
                                 error = R.string.crypto_purchase_flow_error_price_expired,
                                 focusError = true,
                                 isLoading = false,
@@ -478,6 +480,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val focusError: Boolean = false,
         val isError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
+        val errorString: String = "",
         val errorMessageArg: Any = Any(),
         val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
         //voucher information

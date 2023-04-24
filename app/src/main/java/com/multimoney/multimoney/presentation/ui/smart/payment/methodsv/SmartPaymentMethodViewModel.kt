@@ -39,7 +39,7 @@ class SmartPaymentMethodViewModel @Inject constructor(
     private fun onNavigateBack() {
         navigateBack(
             popTo = Screen.HomeScreen.route,
-            isRestart = false
+            isRestart = true
         )
     }
 

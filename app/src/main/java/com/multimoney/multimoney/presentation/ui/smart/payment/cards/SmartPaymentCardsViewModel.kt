@@ -326,7 +326,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnNavigateBack -> onNavigateBack()
-            is OnNavigateBackHome -> onNavigateBackHome(false)
+            is OnNavigateBackHome -> onNavigateBackHome(true)
             is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
             is OnStart -> onStart()
             is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)

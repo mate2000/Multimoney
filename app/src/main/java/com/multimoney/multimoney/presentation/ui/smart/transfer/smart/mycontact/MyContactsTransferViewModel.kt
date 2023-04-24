@@ -77,7 +77,7 @@ class MyContactsTransferViewModel @Inject constructor(
         queryRelatedContactsByPhoneUseCase.invoke(
             user = user,
             idBrand = idBrand,
-            contacts = relatedContacts
+            contacts = relatedContacts.distinct()
         ).collectLatest { result ->
             result.onSuccess { accountList ->
                 uiState = uiState.copy(isLoading = false)

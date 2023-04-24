@@ -155,6 +155,7 @@ fun AmountInputSection(
     currencyPrice: Double,
     isError: Boolean = false,
     @StringRes errorText: Int,
+    errorTextString: String = "",
     textArg: Any? = null,
     quoteAmount: MutableState<String>,
     baseAmount: MutableState<String>,
@@ -183,7 +184,9 @@ fun AmountInputSection(
             iconCurrency = asset,
             focusRequester = focusRequester,
             isError = isError,
-            errorText = getTextFromStringRes(textRes = errorText, arg = textArg),
+            errorText = errorTextString.ifEmpty {
+                getTextFromStringRes(textRes = errorText, arg = textArg)
+            },
             isTransformationCurrency = isTransformationCurrencyValue,
             onValueChanged = onAmountChanged,
             onImeClick = { keyboardController?.hide() },

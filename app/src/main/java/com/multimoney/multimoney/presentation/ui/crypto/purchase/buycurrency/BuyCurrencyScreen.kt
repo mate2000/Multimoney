@@ -264,6 +264,7 @@ fun BuyCurrencyScreenContent(
                     isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
                     isError = viewModel.uiState.focusError,
                     errorText = viewModel.uiState.error,
+                    errorTextString = viewModel.uiState.errorString,
                     textArg = viewModel.uiState.errorMessageArg,
                     onAmountChanged = {
                         viewModel.onUIEvent(

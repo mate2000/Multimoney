@@ -368,7 +368,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                     bottom.linkTo(parent.bottom, margin = 40.dp)
                 },
             buttonType = CustomButtonType.PrimaryPrimary,
-            text = stringResource(id = R.string.profile_verify_code),
+            text = stringResource(id = R.string.profile_verify),
             enable = viewModel.isFormValid(),
             onClick = {
                 viewModel.onUIEvent(ValidateOTPViewModel.UIEvent.OnValidateSecondOtpClicked)

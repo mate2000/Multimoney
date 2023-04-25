@@ -137,43 +137,58 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     )
 
     private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
-        getPriceQuoteAndCommissionsUseCase.invoke(
-            asset = asset,
-            crypto_network = cryptoNetWork,
-            idBrand = idBrand,
-            user = user,
-            market = market,
-            identification = identification,
-            side = side,
-            base_amount = uiState.baseAmount.value.ifEmpty {
-                DEFAULT_BASE_AMOUNT_STRING
-            }.toDouble(),
-            quote_amount = uiState.quoteAmount.value.ifEmpty {
-                if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
-            }.toDouble()
-        ).collectLatest { result ->
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
-            result.onSuccess { pricesQuotesAndCommission ->
-                uiState = uiState.copy(
-                    isLoading = false,
-                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
-                )
-                if (!uiState.isConfirmationBottomSheetOpen) {
-                    timer.startTimer()
-                } else {
-                    confirmationTimer.startTimer()
+        val currentQuote = calculateQuote(
+            quoteAmount = uiState.quoteAmount.value,
+            baseAmount = uiState.baseAmount.value,
+            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+        )
+        if (currentQuote > MAX_AMOUNT_ALLOWED) {
+            timer.startTimer()
+            isError(
+                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                isError = true,
+                focusError = true
+            )
+            return@executeUseCase
+        } else {
+            getPriceQuoteAndCommissionsUseCase.invoke(
+                asset = asset,
+                crypto_network = cryptoNetWork,
+                idBrand = idBrand,
+                user = user,
+                market = market,
+                identification = identification,
+                side = side,
+                base_amount = uiState.baseAmount.value.ifEmpty {
+                    DEFAULT_BASE_AMOUNT_STRING
+                }.toDouble(),
+                quote_amount = uiState.quoteAmount.value.ifEmpty {
+                    if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
+                }.toDouble()
+            ).collectLatest { result ->
+                result.onLoading {
+                    uiState = uiState.copy(isLoading = true)
                 }
-            }
-            result.onFailure {
-                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
-                    timer.stopTimer()
-                    confirmationTimer.stopTimer()
-                    openMaintenanceAction()
-                    return@onFailure
+                result.onSuccess { pricesQuotesAndCommission ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                    )
+                    if (!uiState.isConfirmationBottomSheetOpen) {
+                        timer.startTimer()
+                    } else {
+                        confirmationTimer.startTimer()
+                    }
                 }
-                onFailure()
+                result.onFailure {
+                    if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        timer.stopTimer()
+                        confirmationTimer.stopTimer()
+                        openMaintenanceAction()
+                        return@onFailure
+                    }
+                    onFailure()
+                }
             }
         }
     }
@@ -427,6 +442,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     }
                     uiState = uiState.copy(
                         isLoading = false,
+                        genericError = false,
                         purchaseStatus = PurchaseStatus.FAILED
                     )
                 }
@@ -439,6 +455,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         confirmationTimer.stopTimer()
         uiState = uiState.copy(
             isLoading = false,
+            genericError = true,
             purchaseStatus = PurchaseStatus.FAILED
         )
     }
@@ -474,6 +491,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         //** validations
         val focusError: Boolean = false,
         val isError: Boolean = false,
+        val genericError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorString: String = "",
         val errorMessageArg: Any = Any(),

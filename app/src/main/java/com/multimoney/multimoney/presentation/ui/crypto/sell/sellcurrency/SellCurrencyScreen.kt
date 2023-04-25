@@ -154,19 +154,34 @@ fun SellCurrencyScreen(
                     SellCryptoStep.PURCHASE_FAILED
                 )
             )
-            AlertResult(
-                titleString = stringResource(id = R.string.crypto_sell_flow_error_processing_sell),
-                descriptionString = stringResource(R.string.common_sorry_try_again_later),
-                buttonTextResource = R.string.profile_error_changing_phone_button,
-                isRightButtonVisible = true,
-                isLeftButtonVisible = false,
-                onButtonClick = {
-                    sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
-                },
-                onRightButtonClick = {
-                    sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
-                }
-            )
+            if (viewModel.uiState.genericError) {
+                AlertResult(
+                    titleString = stringResource(id = R.string.error_occurred_title),
+                    buttonTextResource = R.string.profile_error_changing_phone_button,
+                    isRightButtonVisible = true,
+                    isLeftButtonVisible = false,
+                    onButtonClick = {
+                        sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    },
+                    onRightButtonClick = {
+                        sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    }
+                )
+            } else {
+                AlertResult(
+                    titleString = stringResource(id = R.string.crypto_sell_flow_error_processing_sell),
+                    descriptionString = stringResource(R.string.common_sorry_try_again_later),
+                    buttonTextResource = R.string.profile_error_changing_phone_button,
+                    isRightButtonVisible = true,
+                    isLeftButtonVisible = false,
+                    onButtonClick = {
+                        sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    },
+                    onRightButtonClick = {
+                        sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    }
+                )
+            }
         }
     }
 

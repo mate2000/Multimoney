@@ -332,7 +332,7 @@ fun ContactBottomSheet(
                         color = colors.subTitleText
                     )
                 )
-                selectedContact.forEach {
+                selectedContact.distinct().forEach {
                     ContactAccountDisplay(
                         modifier = Modifier.fillMaxWidth(),
                         currency = it.idCurrency?.getCurrencyFromId() ?: Dollar,

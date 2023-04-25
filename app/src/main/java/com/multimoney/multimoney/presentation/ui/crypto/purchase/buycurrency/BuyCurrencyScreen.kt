@@ -60,7 +60,6 @@ fun BuyCurrencyScreen(
     sharedViewModel: PurchaseCryptoSharedViewModel = hiltViewModel(),
     viewModel: BuyCurrencyScreenViewModel = hiltViewModel()
 ) {
-
     val accountMask = stringResource(id = R.string.payment_account_masked_text)
     LaunchedEffect(key1 = true) {
         viewModel.onUIEvent(
@@ -159,19 +158,34 @@ fun BuyCurrencyScreen(
                     BuyCryptoStep.PURCHASE_FAILED
                 )
             )
-            AlertResult(
-                titleString = stringResource(id = R.string.crypto_purchase_flow_error_processing_purchase),
-                descriptionString = stringResource(R.string.common_sorry_try_again_later),
-                buttonTextResource = R.string.profile_error_changing_phone_button,
-                isRightButtonVisible = true,
-                isLeftButtonVisible = false,
-                onButtonClick = {
-                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
-                },
-                onRightButtonClick = {
-                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
-                }
-            )
+            if (viewModel.uiState.genericError) {
+                AlertResult(
+                    titleString = stringResource(id = R.string.error_occurred_title),
+                    buttonTextResource = R.string.profile_error_changing_phone_button,
+                    isRightButtonVisible = true,
+                    isLeftButtonVisible = false,
+                    onButtonClick = {
+                        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    },
+                    onRightButtonClick = {
+                        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    }
+                )
+            } else {
+                AlertResult(
+                    titleString = stringResource(id = R.string.crypto_purchase_flow_error_processing_purchase),
+                    descriptionString = stringResource(R.string.common_sorry_try_again_later),
+                    buttonTextResource = R.string.profile_error_changing_phone_button,
+                    isRightButtonVisible = true,
+                    isLeftButtonVisible = false,
+                    onButtonClick = {
+                        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    },
+                    onRightButtonClick = {
+                        sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+                    }
+                )
+            }
         }
     }
     BackHandler {
@@ -307,10 +321,11 @@ fun BuyCurrencyScreenContent(
                     }
                 }
                 Box(modifier = Modifier.constrainAs(counter) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(button.top)
-                }) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(button.top)
+                    }
+                ) {
                     CounterSection(
                         counterTextResourceId = R.string.crypto_purchase_flow_price_expires_in,
                         accountAvailableBalance = viewModel.smartAccountAvailableBalance,

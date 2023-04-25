@@ -124,6 +124,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
@@ -206,6 +207,7 @@ class ProductViewModel @Inject constructor(
         this.configurationVersion = configurationVersion
         uiState = uiState.copy(
             idBrand = idBrand,
+            wasSmartActive = uiState.productPageList?.singleOrNull { it.product == ProductType.Smart.value }?.enabled ?: false,
             productPageList = productPageList,
             expandedProductPageList = productPageList.filter { it.enabled }
         )
@@ -414,6 +416,7 @@ class ProductViewModel @Inject constructor(
         comingFromCrypto: Boolean = false,
         onIntent: () -> Unit? = { }
     ) {
+        uiState = uiState.copy(originationLaunchedFromCrypto = comingFromCrypto)
         val firmStatus =
             if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
                 uiState.userStatus?.infoBankAccount?.statusFirm
@@ -1382,6 +1385,10 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun updateCryptoOriginationFlag(isFlagActive: Boolean) {
+        uiState = uiState.copy(originationLaunchedFromCrypto = isFlagActive)
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1403,7 +1410,9 @@ class ProductViewModel @Inject constructor(
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
-        val isCryptoTransferEnabled: Boolean = false
+        val isCryptoTransferEnabled: Boolean = false,
+        val wasSmartActive: Boolean = false,
+        val originationLaunchedFromCrypto: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1522,6 +1531,7 @@ class ProductViewModel @Inject constructor(
                 uiEvent.restartNotificationRoute
             )
             is UIEvent.OnSaveFirebaseToke -> onSaveFirebaseToken()
+            is UIEvent.UpdateCryptoFlag -> updateCryptoOriginationFlag(uiEvent.isActive)
         }
     }
 
@@ -1635,6 +1645,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnSaveFirebaseToke : UIEvent()
+        data class UpdateCryptoFlag(val isActive: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

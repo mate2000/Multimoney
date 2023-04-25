@@ -167,9 +167,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 }
             }
             result.onFailure {
-                timer.stopTimer()
-                confirmationTimer.stopTimer()
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -200,10 +200,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     this.smartAccountAvailableBalance = exchangeRate?.convertedAmount ?: 0.0
                 }
                 result.onFailure {
-                    timer.stopTimer()
-                    confirmationTimer.stopTimer()
                     this.smartAccountAvailableBalance = 0.0
                     if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        timer.stopTimer()
+                        confirmationTimer.stopTimer()
                         openMaintenanceAction()
                         return@onFailure
                     }
@@ -229,9 +229,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 )
             }
             result.onFailure {
-                timer.stopTimer()
-                confirmationTimer.stopTimer()
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -252,11 +252,15 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         )
         uiState = uiState.copy(amountInUSD = quoteAmount, amountPlusFee = amountPlusFee)
 
-
         when {
             amount.isEmpty() -> isError(isError = true, focusError = false)
             quoteAmount < MINIMUM_AMOUNT_ALLOWED -> isError(
                 errorMessage = R.string.crypto_purchase_flow_error_minimum_amount,
+                isError = true,
+                focusError = true
+            )
+            amountPlusFee > MAX_AMOUNT_ALLOWED -> isError(
+                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
                 isError = true,
                 focusError = true
             )
@@ -416,6 +420,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 }
                 result.onFailure {
                     if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                        timer.stopTimer()
+                        confirmationTimer.stopTimer()
                         openMaintenanceAction()
                         return@onFailure
                     }
@@ -429,22 +435,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     }
 
     private fun onFailure() {
+        timer.stopTimer()
+        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             isLoading = false,
-            openDialog = DialogParameters(descriptionResource = R.string.error_occurred_title,
-                negativeResource = R.string.error_button_try_later,
-                positiveResource = R.string.error_button_retry,
-                isActive = mutableStateOf(true),
-                negativeAction = {
-                    uiState.failureAction()
-                },
-                positiveAction = {
-                    updateUiWithNewPricesAndCommissions()
-                    if (idCurrencyAccount == CurrencyType.Colon.id) {
-                        convertColonesToDollars(smartAccountAvailableBalance)
-                        getExchangeRate()
-                    }
-                })
+            purchaseStatus = PurchaseStatus.FAILED
         )
     }
 
@@ -573,5 +568,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         const val MINIMUM_AMOUNT_ALLOWED = 5.0
         const val DEFAULT_TIMER_COUNT = 15
         const val CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT = 5
+        const val MAX_AMOUNT_ALLOWED = 10000.0
     }
 }

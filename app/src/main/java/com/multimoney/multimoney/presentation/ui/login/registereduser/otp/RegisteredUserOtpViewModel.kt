@@ -85,11 +85,31 @@ class RegisteredUserOtpViewModel @Inject constructor(
     private fun onStart() {
         uiState = when (otpMethod) {
             SendOtpMethod.Email.value -> uiState.copy(
+                subtitleResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_subtitle_cr
+                } else {
+                    R.string.registered_user_otp_subtitle
+                },
+                disclaimerResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_disclaimer_cr
+                } else {
+                    R.string.registered_user_otp_disclaimer
+                },
                 titleResource = R.string.registered_user_otp_title_email,
                 titleOtpMethod = userData?.maskedMail.orEmpty(),
                 isOtherPhoneNumberVisible = false
             )
             else -> uiState.copy(
+                subtitleResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_subtitle_cr
+                } else {
+                    R.string.registered_user_otp_subtitle
+                },
+                disclaimerResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_disclaimer_cr
+                } else {
+                    R.string.registered_user_otp_disclaimer
+                },
                 titleResource = R.string.registered_user_otp_title_sms,
                 titleOtpMethod = userData?.maskedPhoneNumber.orEmpty(),
                 isOtherPhoneNumberVisible = true
@@ -200,7 +220,11 @@ class RegisteredUserOtpViewModel @Inject constructor(
             userData?.firstName.orEmpty(),
             userData?.email.orEmpty(),
             userData?.phoneNumber.orEmpty(),
-            otpMethod,
+            if (otpMethod == SendOtpMethod.Email.value) {
+                SendOtpMethod.Email.apiValue
+            } else {
+                SendOtpMethod.Sms.apiValue
+            },
             userData?.pkUser.orEmpty(),
             idBrand,
             userData?.email.orEmpty()
@@ -369,6 +393,8 @@ class RegisteredUserOtpViewModel @Inject constructor(
 
         // Interactions
         val titleResource: Int = R.string.empty,
+        val subtitleResource: Int = R.string.empty,
+        val disclaimerResource: Int = R.string.empty,
         val titleOtpMethod: String = "",
         val isOtherPhoneNumberVisible: Boolean = false,
         val phaseCount: Int = PHASE_ONE,

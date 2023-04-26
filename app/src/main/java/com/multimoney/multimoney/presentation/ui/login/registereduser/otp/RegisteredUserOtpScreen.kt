@@ -34,10 +34,12 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.BaseEvent.OnOpenWhatsApp
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FOUR
@@ -58,6 +60,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
@@ -181,11 +184,18 @@ fun RegisteredUserOtpContent(
 
                 Text(
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
-                    text = stringResource(id = R.string.registered_user_otp_subtitle),
+                    text = stringResource(id = uiState.subtitleResource),
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
+                )
+
+                CustomInformativeText(
+                    modifier = Modifier.padding(top = 8.dp),
+                    leadingIcon = drawable.ic_informative_400,
+                    text = stringResource(id = uiState.disclaimerResource),
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
                 )
 
                 if (uiState.isOtherPhoneNumberVisible) {

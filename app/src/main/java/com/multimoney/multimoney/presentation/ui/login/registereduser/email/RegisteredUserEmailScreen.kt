@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnValidateEmail
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -46,6 +47,7 @@ fun RegisteredUserEmailScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
         }
     }
     RegisteredUserEmailContent(
@@ -86,7 +88,7 @@ fun RegisteredUserEmailContent(
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = stringResource(R.string.registered_user_email_subtitle),
+                    text = stringResource(uiState.subtitleResource),
                     modifier = Modifier.padding(top = 16.dp),
                     style = Typography.body2,
                     color = MultimoneyTheme.colors.labelText

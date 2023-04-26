@@ -237,26 +237,48 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 getPhaseAction()
                 onExecuteTimer()
             }.onMessage {
-                uiState = uiState.copy(
-                    isLoading = false,
-                    dialogParameters = DialogParameters(
-                        titleResource = R.string.sign_up_email_blocked_dialog_title,
-                        descriptionResource = if (idBrand == Brand.CostaRica.id) {
-                            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
-                        } else {
-                            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
-                        },
-                        isActive = mutableStateOf(true),
-                        positiveResource = R.string.contact,
-                        positiveAction = {
-                            onUserBlocked()
-                        },
-                        negativeResource = R.string.cancel,
-                        negativeAction = {
-                            navigateToSignIn()
-                        }
+                when (it?.messageError?.status) {
+                    STATUS_NO_PHONE, STATUS_NO_EMAIL -> uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            title = it.messageError.message.orEmpty(),
+                            description = it.messageError.detail.orEmpty(),
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.common_go_back,
+                            positiveAction = {
+                                onBackClick()
+                            }
+                        )
                     )
-                )
+                    else -> uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            titleResource = R.string.sign_up_email_blocked_dialog_title,
+                            descriptionResource = if (idBrand == Brand.CostaRica.id) {
+                                if (otpMethod == SendOtpMethod.Email.value) {
+                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_email_cr
+                                } else {
+                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
+                                }
+                            } else {
+                                if (otpMethod == SendOtpMethod.Email.value) {
+                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_email_sv
+                                } else {
+                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
+                                }
+                            },
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.contact,
+                            positiveAction = {
+                                onUserBlocked()
+                            },
+                            negativeResource = R.string.cancel,
+                            negativeAction = {
+                                navigateToSignIn()
+                            }
+                        )
+                    )
+                }
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,
@@ -448,5 +470,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
         const val APP_SOURCE = 2
+        const val STATUS_NO_PHONE = 3108
+        const val STATUS_NO_EMAIL = 3109
     }
 }

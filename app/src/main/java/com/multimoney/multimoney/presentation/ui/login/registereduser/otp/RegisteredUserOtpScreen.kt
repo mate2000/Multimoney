@@ -39,7 +39,6 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.BaseEvent.OnOpenWhatsApp
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FIVE
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FOUR
@@ -291,7 +290,7 @@ fun RegisteredUserOtpContent(
     LoadingIndicator(uiState.isLoading)
     if (uiState.dialogParameters.isActive.value) {
         CustomDialog(
-            title = stringResource(id = uiState.dialogParameters.titleResource),
+            title = stringResource(id = uiState.dialogParameters.titleResource).ifEmpty { uiState.dialogParameters.title },
             message = stringResource(id = uiState.dialogParameters.descriptionResource).ifEmpty { uiState.dialogParameters.description },
             positiveButtonText = stringResource(id = uiState.dialogParameters.positiveResource),
             negativeButtonText = stringResource(id = uiState.dialogParameters.negativeResource),

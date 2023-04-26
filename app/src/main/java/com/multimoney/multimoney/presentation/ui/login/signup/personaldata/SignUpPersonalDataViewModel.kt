@@ -119,15 +119,15 @@ class SignUpPersonalDataViewModel @Inject constructor(
             else -> Brand.Default
         }
         onSuccessCountry?.countryList?.find {
-            (it.idBrand ?: 0) == deviceCountry.id
+            (it.idBrand ?: Brand.Default.id) == deviceCountry.id
         }?.let {
             callQueryCatalogDocumentType(
-                it.idBrand ?: 0,
+                it.idBrand ?: Brand.Default.id,
                 onLoadingValueChange
             )
             updateNationality.invoke(
                 it.countryDescription ?: "",
-                it.idBrand ?: 0
+                it.idBrand ?: Brand.Default.id
             )
             uiState = uiState.copy(nationalityValue = it.countryDescription ?: "")
         }
@@ -360,7 +360,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
             nationalityValue = onSuccessCountry?.countryList?.get(nationality)?.countryDescription
                 ?: "",
             personalDocumentValue = "",
-            dataInformationClient = null
+            dataInformationClient = null,
+            documentFormat = ""
         )
         callQueryCatalogDocumentType(
             onSuccessCountry?.countryList?.get(nationality)?.idBrand ?: 0,

@@ -1669,7 +1669,7 @@
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
-    <string name="registered_user_email_subtitle" translatable="false">Ingresa el correo electrónico completo para verificar que sos vos.</string>
+    <string name="registered_user_email_subtitle" translatable="false">Ingresa el correo electrónico completo para verificar que eres tú.</string>
     <string name="registered_user_email_subtitle_cr" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
     <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
     <string name="registered_user_email_different" translatable="false">El correo es invalido</string>

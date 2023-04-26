@@ -1669,7 +1669,8 @@
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
-    <string name="registered_user_email_subtitle" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
+    <string name="registered_user_email_subtitle" translatable="false">Ingresa el correo electrónico completo para verificar que sos vos.</string>
+    <string name="registered_user_email_subtitle_cr" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
     <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
     <string name="registered_user_email_different" translatable="false">El correo es invalido</string>
     <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
@@ -1687,7 +1688,10 @@
     <!-- Registered User Otp -->
     <string name="registered_user_otp_title_sms" translatable="false">Te enviamos un SMS \na tu celular %s</string>
     <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
-    <string name="registered_user_otp_subtitle" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
+    <string name="registered_user_otp_subtitle" translatable="false">Ingresa el código que te enviamos para verificar tu identidad.</string>
+    <string name="registered_user_otp_subtitle_cr" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
+    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda, nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá, nunca compartir este código.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
     <string name="registered_user_otp_other_phone_number" translatable="false">Tengo otro número</string>

@@ -86,7 +86,7 @@ fun RegisteredUserEmailContent(
                     color = MultimoneyTheme.colors.text
                 )
                 Text(
-                    text = stringResource(R.string.registered_user_email_subtitle),
+                    text = stringResource(uiState.subtitleResource),
                     modifier = Modifier.padding(top = 16.dp),
                     style = Typography.body2,
                     color = MultimoneyTheme.colors.labelText

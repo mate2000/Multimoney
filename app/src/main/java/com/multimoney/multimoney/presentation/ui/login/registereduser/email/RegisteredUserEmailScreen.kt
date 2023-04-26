@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnValidateEmail
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -46,6 +47,7 @@ fun RegisteredUserEmailScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onNavigate = onNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnStart)
         }
     }
     RegisteredUserEmailContent(

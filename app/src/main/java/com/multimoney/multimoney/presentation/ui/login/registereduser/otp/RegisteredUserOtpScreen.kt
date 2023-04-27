@@ -33,6 +33,7 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
 import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
@@ -190,7 +191,7 @@ fun RegisteredUserOtpContent(
 
                 CustomInformativeText(
                     modifier = Modifier.padding(top = 8.dp),
-                    leadingIcon = drawable.ic_informative_400,
+                    leadingIcon = R.drawable.ic_informative_400,
                     text = stringResource(id = uiState.disclaimerResource),
                     textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
                 )

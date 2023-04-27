@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.PoppinsFontFamily
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnUpdateIsCrosselingValue
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnOpenConditionOfCreditDialog
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel.BaseEvent.OnUpdateIsCrosseling
@@ -63,10 +64,12 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.amount.skele
 import com.multimoney.multimoney.presentation.ui.credit.origination.amount.termandcondition.CreditTermsAndCondition
 import com.multimoney.multimoney.presentation.uielement.CurrencyAmountInput
 import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
 import com.multimoney.multimoney.presentation.uielement.CustomSlider
 import com.multimoney.multimoney.presentation.uielement.CustomToggleButton
 import com.multimoney.multimoney.presentation.uielement.Size.Large
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.transformation.formatMoney
@@ -200,10 +203,14 @@ fun CreditAmountScreen(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
         ) {
+            TopNavBar(
+                onRightButtonClick = { sharedViewModel.onUIEvent(UIEvent.OnCloseClick(focusManager)) },
+                isLeftButtonVisible = false
+            )
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 36.dp, bottom = 40.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 35.dp, bottom = 40.dp),
                 text = stringResource(id = title),
                 style = Typography.h5.copy(
                     color = MultimoneyTheme.colors.titleText,

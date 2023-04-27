@@ -81,6 +81,7 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.UpdateCryptoFlag
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditCtaFooterExpanded
 import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
@@ -292,6 +293,23 @@ fun ProductScreen(
     LaunchedEffect(key1 = contentExpandedPagerState.currentPage) {
         viewModel.onUIEvent(OnUpdateExpandedPage(contentExpandedPagerState.currentPage))
         ctaFooterExpandedPagerState.scrollToPage(contentExpandedPagerState.currentPage)
+    }
+
+    /*
+    When activating smart in CR a new smart card is added. If the origination occurred from the Crypto card
+    and we come back to the home to display Crypto home, we have to update the card index
+     */
+    LaunchedEffect(key1 = true) {
+        if (viewModel.uiState.idBrand == Brand.CostaRica.id.toString() &&
+            viewModel.uiState.wasSmartActive.not() && viewModel.uiState.originationLaunchedFromCrypto
+        ) {
+            val newPage = viewModel.uiState.collapsedPage.plus(1)
+            viewModel.onUIEvent(OnUpdateCollapsedPage(newPage))
+            contentPagerState.scrollToPage(newPage)
+            viewModel.onUIEvent(OnUpdateExpandedPage(newPage))
+            contentExpandedPagerState.scrollToPage(newPage)
+            viewModel.onUIEvent(UpdateCryptoFlag(false))
+        }
     }
 
     if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {

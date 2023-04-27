@@ -148,6 +148,10 @@ fun validateDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX, value) || value.isEmpty()) && value != "00")
 }
 
+fun validateDecimalIncomeWithZeros(value: String): Boolean {
+    return ((Pattern.matches(DECIMAL_REGEX_WITH_ZEROS, value) || value.isEmpty()) && value != "00")
+}
+
 fun validateEightDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(EIGHT_DECIMAL_REGEX, value) || value.isEmpty()))
 }

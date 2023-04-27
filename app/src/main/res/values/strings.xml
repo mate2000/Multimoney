@@ -733,7 +733,7 @@
     <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_monthly_income_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
     <string name="credit_monthly_income_job_phone_required" translatable="false">Número de teléfono requerido</string>
-    <string name="credit_monthly_income_job_phone_error" translatable="false">Número invalido</string>
+    <string name="credit_monthly_income_job_phone_error" translatable="false">Número inválido</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>

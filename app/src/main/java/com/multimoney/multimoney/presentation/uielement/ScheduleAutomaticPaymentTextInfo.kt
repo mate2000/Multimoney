@@ -48,13 +48,14 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ScheduleAutomaticPaymentTextInfo(
-    titleResource: Int = R.string.schedule_automatic_payment_credit_subtitle,
+    titleResource: Int,
     subtitleResource: Int = R.string.schedule_automatic_payment_credit_next_payment,
     dateText: String = "",
     chipLeadingIconResource: Int? = null,
     amountText: String = "",
     threePointsOnClick: () -> Unit = {},
-    chipOnClick: () -> Unit = {}
+    chipOnClick: () -> Unit = {},
+    shouldShowThreePoints: Boolean = true
 ) {
     val titleColor: Color
     val nextPaymentTextColor: Color
@@ -86,13 +87,15 @@ fun ScheduleAutomaticPaymentTextInfo(
                 style = Typography.subtitle2.copy(fontWeight = FontWeight.SemiBold),
                 color = titleColor
             )
-            Image(
-                modifier = Modifier.clickable {
-                    threePointsOnClick()
-                },
-                painter = painterResource(id = R.drawable.ic_option_points),
-                contentDescription = ""
-            )
+            if (shouldShowThreePoints) {
+                Image(
+                    modifier = Modifier.clickable {
+                        threePointsOnClick()
+                    },
+                    painter = painterResource(id = R.drawable.ic_option_points),
+                    contentDescription = ""
+                )
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 12.dp),

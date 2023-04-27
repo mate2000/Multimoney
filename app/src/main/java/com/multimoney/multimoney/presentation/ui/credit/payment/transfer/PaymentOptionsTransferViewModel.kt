@@ -31,7 +31,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         private set
 
     // Stateless
-    private var idBrand: Int = 0
+    var idBrand: Int = 0
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -44,7 +44,18 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
     }
 
     private fun onGetTextResource() {
-        uiState = uiState.copy(titleResource = R.string.payment_options_transfer_title_sv)
+        uiState = when (idBrand) {
+            Brand.Mexico.id -> {
+                uiState.copy(
+                    titleResource = string.payment_options_transfer_title_mx,
+                    disclaimerResource = string.payment_options_transfer_disclaimer_mx
+                )
+            }
+            else -> uiState.copy(
+                titleResource = string.payment_options_transfer_title_sv,
+                disclaimerResource = string.payment_options_transfer_disclaimer
+            )
+        }
     }
 
     private fun onCopyTextToClipboard(text: String) {
@@ -69,9 +80,17 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         }
     }
 
+    private fun onNavigateBack() {
+        when (idBrand) {
+            Brand.Mexico.id -> navigateBack(popTo = HomeScreen.route, isRestart = false)
+            else -> navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+        }
+    }
+
     data class UIState(
         // Interactions
         val titleResource: Int = R.string.empty,
+        val disclaimerResource: Int = R.string.empty,
         val creditNumber: String? = null,
         val transferAccount: TransferAccount? = null,
         val isAccountNumberVisible: Boolean = false,
@@ -80,7 +99,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnNavigateBack -> navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+            is OnNavigateBack -> onNavigateBack()
             is OnNavigateBackHome -> onNavigateBackHome(uiEvent.showDialog)
             is OnCopyTextToClipboard -> onCopyTextToClipboard(uiEvent.text)
         }

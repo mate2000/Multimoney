@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -123,7 +124,8 @@ fun SignUpOtpScreen(
                     SEND_METHOD_PHONE,
                     userData?.pkUser ?: "",
                     idBrand ?: 0,
-                    userData?.email ?: ""
+                    userData?.email ?: "",
+                    FlowOriginChangeProfileInfo.NORMAL.value
                 )
             )
             onUIEvent(
@@ -345,7 +347,8 @@ fun SignUpOtpScreen(
                                 viewModel.uiState.otpResend ?: SEND_METHOD_PHONE,
                                 userData?.pkUser ?: "",
                                 idBrand ?: 0,
-                                userData?.email ?: ""
+                                userData?.email ?: "",
+                                FlowOriginChangeProfileInfo.NORMAL.value
                             )
                         )
                     }

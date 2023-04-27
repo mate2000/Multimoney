@@ -33,11 +33,13 @@ import androidx.compose.ui.unit.sp
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.BaseEvent.OnOpenBiometricDialog
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
@@ -294,7 +296,9 @@ fun RegisteredUserPasswordContent(
                         onCheckedChange = {
                             onFingerprintCheckedChanged(it, it)
                         },
-                        text = stringResource(id = string.sign_in_activate_fingerprint),
+                        text = stringResource(
+                            id = if (viewModel.userData?.idBrand == Brand.Mexico.id) string.sign_in_activate_fingerprint_mx else string.sign_in_activate_fingerprint
+                        ),
                         modifier = Modifier.padding(top = 16.dp)
                     )
                 }

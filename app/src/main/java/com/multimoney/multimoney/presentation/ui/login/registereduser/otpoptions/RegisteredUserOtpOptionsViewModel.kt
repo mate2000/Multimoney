@@ -44,13 +44,18 @@ class RegisteredUserOtpOptionsViewModel @Inject constructor(savedStateHandle: Sa
     }
 
     private fun onStart() {
-        uiState = if (idBrand == Brand.CostaRica.id) {
-            uiState.copy(
+        uiState = when (idBrand) {
+            Brand.CostaRica.id -> uiState.copy(
                 titleResource = R.string.registered_user_otp_options_title_cr,
                 messageResource = R.string.registered_user_otp_options_message_cr,
                 isFormValid = isFormValid()
             )
-        } else {
+            Brand.Mexico.id -> uiState.copy(
+                titleResource = R.string.registered_user_otp_options_title_mx,
+                messageResource = R.string.registered_user_otp_options_message,
+                isFormValid = isFormValid()
+            )
+         else ->
             uiState.copy(
                 titleResource = R.string.registered_user_otp_options_title,
                 messageResource = R.string.registered_user_otp_options_message,

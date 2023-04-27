@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -23,6 +24,11 @@ fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeV
         if (balance.automaticDebitEnabled == true) {
             Spacer(modifier = Modifier.height(8.dp))
             ScheduleAutomaticPaymentTextInfo(
+                titleResource = if (viewModel.uiState.idBrand.toInt() != Brand.Mexico.id) {
+                    string.schedule_automatic_payment_credit_subtitle
+                } else {
+                    string.schedule_automatic_payment_credit_subtitle_mx
+                },
                 dateText = getCardDateFormat(
                     viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel,
                     BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
@@ -32,7 +38,8 @@ fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeV
                 chipOnClick = { viewModel.onUIEvent(OnChipQuotaClick) },
                 threePointsOnClick = {
                     sharedViewModel.onUIEvent(OnShowAutomaticPaymentEdit)
-                }
+                },
+                shouldShowThreePoints = viewModel.uiState.idBrand.toInt() != Brand.Mexico.id
             )
         } else if (balance.applyAutomaticDebit == true) {
             Spacer(modifier = Modifier.height(24.dp))

@@ -898,7 +898,8 @@ class GraphqlApi @Inject constructor(
         sendMethod: String,
         pkUser: Int,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): ApolloCall<SendPinProcessMutation.Data> = apolloAuthorizedClient.mutation(
         SendPinProcessMutation(
             identification,
@@ -908,7 +909,8 @@ class GraphqlApi @Inject constructor(
             sendMethod,
             pkUser,
             idBrand,
-            user
+            user,
+            flowOrigin
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
 

@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,6 +54,7 @@ fun SignUpPersonalDataScreen(
     sharedViewModel: SignUpViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     viewModel.apply {
         isOnRestart = isRestart || sharedViewModel.uiState.shouldChangeOnRestart
@@ -205,6 +207,14 @@ fun SignUpPersonalDataScreen(
                             sharedViewModel.onUIEvent(
                                 SignUpViewModel.UIEvent.OnLoadingValueChange(
                                     isLoading
+                                )
+                            )
+                        },
+                        onMexicoSelected = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnSelectMexicoEvent(
+                                    focusManager,
+                                    context
                                 )
                             )
                         }

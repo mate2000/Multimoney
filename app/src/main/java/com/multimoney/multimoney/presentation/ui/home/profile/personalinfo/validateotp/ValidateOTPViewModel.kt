@@ -80,7 +80,7 @@ class ValidateOTPViewModel @Inject constructor(
     private val mutationChangeEmailUseCase: MutationChangeEmailUseCase,
     private val cognitoHelper: CognitoHelper,
     private val countDownTimer: MMCountDownTimer,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
@@ -91,7 +91,7 @@ class ValidateOTPViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    init {
+    private fun init() {
         uiState = uiState.copy(
             idBrand = savedStateHandle[ID_BRAND],
             identification = savedStateHandle[IDENTIFICATION],
@@ -174,18 +174,20 @@ class ValidateOTPViewModel @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ) = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
         mutationSendPinProcessUseCase.invoke(
             identification,
             firstName,
             email,
-            cellphone,
+            cellphone.replace(" ", ""),
             sendMethod,
             pkUser,
             idBrand,
-            user
+            user,
+            flowOrigin
         ).collectLatest { result ->
             onCallMutationSendPinProcessEvent.emit(result)
         }
@@ -287,7 +289,21 @@ class ValidateOTPViewModel @Inject constructor(
         onNavigateBack()
     }
 
-    private fun onValidateOTP(email: String?, otp: String) = executeUseCase {
+    private fun onValidateOTP() = executeUseCase {
+        queryValidatePinUseCase.invoke(
+            idBrand = uiState.idBrand ?: 0,
+            appSource = APP_SOURCE,
+            pkUser = uiState.pkUser ?: "",
+            pinSecurity = uiState.otp,
+            telephone = uiState.phoneNumber?.replace(" ", ""),
+            userCreate = uiState.userName ?: ""
+        )
+            .collectLatest { result ->
+                processValidateOTPResult(result)
+            }
+    }
+
+    private fun onValidateSecondOTPClicked() = executeUseCase {
         queryValidatePinUseCase.invoke(
             idBrand = uiState.idBrand ?: 0,
             appSource = APP_SOURCE,
@@ -297,7 +313,7 @@ class ValidateOTPViewModel @Inject constructor(
             userCreate = uiState.userName ?: ""
         )
             .collectLatest { result ->
-                processValidateOTPResult(result)
+                processValidateSecondOTPResult(result)
             }
     }
 
@@ -357,6 +373,9 @@ class ValidateOTPViewModel @Inject constructor(
                         uiState.newValue
                     ) ?: ""
                 )
+                dataStorePreferences.setUserPhoneNumber(
+                    uiState.newValue ?: ""
+                )
                 registerAdjustEvent(
                     AdjustEventType.SETTINGS_CHANGE_PHONE_SUCCESS_8001,
                     applyAdjust = false,
@@ -367,7 +386,13 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateBack(Screen.HomeScreen.route, isRestart = true)
+                navigateTo(
+                    "${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.email}/${
+                        uiState.newPhoneNumberCode?.plus(
+                            uiState.newValue
+                        ) ?: ""
+                    }/${uiState.identification}/${uiState.pkUser}/${uiState.userName}"
+                )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
         }
@@ -411,7 +436,11 @@ class ValidateOTPViewModel @Inject constructor(
             .onLoading { uiState = uiState.copy(isLoading = true) }
     }
 
-    private fun processValidateOTPResult(result: MultimoneyResult<ValidatePin?>) {
+    private fun navigateToConfirmChange() {
+        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
+    }
+
+    private fun processValidateSecondOTPResult(result: MultimoneyResult<ValidatePin?>) {
         result.onSuccess {
             when (uiState.changingField) {
                 FieldToChange.PHONE.value -> {
@@ -437,6 +466,25 @@ class ValidateOTPViewModel @Inject constructor(
                     )
                 }
             }
+        }.onMessage {
+            if (it?.messageError?.status == VALIDATE_OTP_FAILED_CODE) {
+                openMaxAttemptsReachedDialog()
+            } else {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    otpError = Pair(true, R.string.profile_error_phone_code_not_valid)
+                )
+            }
+        }
+            .onFailure {
+                uiState = uiState.copy(isLoading = false, isAlertResultVisible = true)
+            }
+            .onLoading { uiState = uiState.copy(isLoading = true) }
+    }
+
+    private fun processValidateOTPResult(result: MultimoneyResult<ValidatePin?>) {
+        result.onSuccess {
+            navigateToConfirmChange()
         }.onMessage {
             if (it?.messageError?.status == VALIDATE_OTP_FAILED_CODE) {
                 openMaxAttemptsReachedDialog()
@@ -498,8 +546,8 @@ class ValidateOTPViewModel @Inject constructor(
         val enterTheCodeTextResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
         val destination: String? = null,
-        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters()
-
+        val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),
+        val firstOTP: Boolean = true
     )
 
     private fun onNavigateBack() {
@@ -527,7 +575,8 @@ class ValidateOTPViewModel @Inject constructor(
                 event.sendMethod,
                 event.pkUser,
                 event.idBrand,
-                event.user
+                event.user,
+                event.flowOrigin
             )
             is UIEvent.OnValidateForm -> isFormValid()
             is UIEvent.OnCallMutationSendPinProcessSuccess -> onCallMutationSendPinProcessSuccess(
@@ -541,10 +590,12 @@ class ValidateOTPViewModel @Inject constructor(
                     openDialog = event.openDialog,
                     messageStatus = OTPMessageStatus.COULD_NOT_VERIFY_ID
                 )
-            is UIEvent.OnContinueButtonClicked -> onValidateOTP(uiState.email, uiState.otp)
+            is UIEvent.OnValidateOtpClicked -> onValidateOTP()
+            is UIEvent.OnValidateSecondOtpClicked -> onValidateSecondOTPClicked()
             is UIEvent.OpenMaxAttemptsReachedDialog -> openMaxAttemptsReachedDialog()
             is UIEvent.OnError -> uiState = uiState.copy(isAlertResultVisible = true)
             is UIEvent.OnGetWhatsAppLink -> onGetWhatsAppLink()
+            is UIEvent.OnInit -> init()
         }
     }
 
@@ -564,7 +615,8 @@ class ValidateOTPViewModel @Inject constructor(
             val sendMethod: String,
             val pkUser: String,
             val idBrand: Int,
-            val user: String
+            val user: String,
+            val flowOrigin: Int
         ) : UIEvent()
 
         data class OnCallMutationSendPinProcessSuccess(
@@ -579,9 +631,11 @@ class ValidateOTPViewModel @Inject constructor(
         data class OnOtpValueChange(val value: String) : UIEvent()
         object OnValidateForm : UIEvent()
         object OnNavigateBack : UIEvent()
-        object OnContinueButtonClicked : UIEvent()
+        object OnValidateOtpClicked : UIEvent()
+        object OnValidateSecondOtpClicked : UIEvent()
         object OpenMaxAttemptsReachedDialog : UIEvent()
         object OnGetWhatsAppLink : UIEvent()
+        object OnInit : UIEvent()
     }
 
     companion object {

@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.
 import com.multimoney.multimoney.presentation.ui.onboarding.OnBoardingViewModel.UIEvent.OnPress
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
+import com.multimoney.multimoney.presentation.util.SIM_CODE_MEXICO
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getUserCountry
@@ -115,6 +116,11 @@ class OnBoardingViewModel @Inject constructor(
                     R.string.onboarding_guatemala_step_one_sub_title,
                     R.drawable.ic_onboarding_step_one
                 )
+                SIM_CODE_MEXICO -> listOf(
+                    R.string.onboarding_mexico_step_one_title,
+                    R.string.onboarding_mexico_step_one_sub_title,
+                    R.drawable.ic_onboarding_step_one
+                )
                 else -> listOf(
                     R.string.onboarding_costa_rica_step_one_title,
                     R.string.onboarding_costa_rica_step_one_sub_title,
@@ -134,6 +140,11 @@ class OnBoardingViewModel @Inject constructor(
                 SIM_CODE_GUATEMALA -> listOf(
                     R.string.onboarding_guatemala_step_two_title,
                     R.string.onboarding_guatemala_step_two_sub_title,
+                    R.drawable.ic_onboarding_step_two
+                )
+                SIM_CODE_MEXICO -> listOf(
+                    R.string.onboarding_mexico_step_two_title,
+                    R.string.onboarding_mexico_step_two_sub_title,
                     R.drawable.ic_onboarding_step_two
                 )
                 else -> listOf(
@@ -157,11 +168,17 @@ class OnBoardingViewModel @Inject constructor(
                     R.string.onboarding_el_salvador_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
+                SIM_CODE_MEXICO -> listOf(
+                    R.string.onboarding_mexico_step_three_title,
+                    R.string.onboarding_mexico_step_three_sub_title,
+                    R.drawable.ic_onboarding_step_three
+                )
                 else -> listOf(
                     R.string.onboarding_costa_rica_step_three_title,
                     R.string.onboarding_costa_rica_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
+
             }
         }
     }

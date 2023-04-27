@@ -13,6 +13,7 @@ interface MutationSendPinProcessUseCase {
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): Flow<MultimoneyResult<SendPinProcess?>>
 }

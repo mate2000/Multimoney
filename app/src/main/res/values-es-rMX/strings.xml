@@ -113,7 +113,6 @@
     <string name="onboarding_costa_rica_step_three_title" translatable="false">Invertí en cripto</string>
     <string name="onboarding_costa_rica_step_three_sub_title" translatable="false">Comprá, vendé y transferí cripto de forma simple y segura.</string>
 
-
     <!-- OnBoarding Guatemala-->
     <string name="onboarding_guatemala_step_one_title" translatable="false">Compra con MultiMoney Visa</string>
     <string name="onboarding_guatemala_step_one_sub_title" translatable="false">Actívala en 5 minutos.</string>
@@ -122,6 +121,13 @@
     <string name="onboarding_guatemala_step_three_title" translatable="false">Paga tu crédito desde la app</string>
     <string name="onboarding_guatemala_step_three_sub_title" translatable="false">Sin salir de tu casa, en el momento que quieras.</string>
 
+    <!-- OnBoarding Mexico-->
+    <string name="onboarding_mexico_step_one_title" translatable="false">Obtén \nlibertad \nfinanciera</string>
+    <string name="onboarding_mexico_step_one_sub_title" translatable="false">Crea tu cuenta en 5 minutos.</string>
+    <string name="onboarding_mexico_step_two_title" translatable="false">Tu crédito \nen menos \nde 2 horas</string>
+    <string name="onboarding_mexico_step_two_sub_title" translatable="false">Solicita hasta $400,000 MXN.</string>
+    <string name="onboarding_mexico_step_three_title" translatable="false">Ten el \ncontrol de \ntu crédito</string>
+    <string name="onboarding_mexico_step_three_sub_title" translatable="false">Revisa tus fechas de pago y monto disponible 24/7.</string>
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
@@ -129,7 +135,8 @@
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
-    <string name="sign_in_activate_fingerprint" translatable="false">Activar biométricos</string>
+    <string name="sign_in_activate_fingerprint" translatable="false">Activar Face ID</string>
+    <string name="sign_in_activate_fingerprint_mx" translatable="false">Activar Face ID</string>
     <string name="sign_in_create_account" translatable="false">No tengo cuenta</string>
     <string name="sign_in_email_required" translatable="false">El correo electrónico es requerido</string>
     <string name="sign_in_email_not_valid" translatable="false">El correo ingresado es incorrecto</string>
@@ -189,12 +196,12 @@
 
 
     <!-- Sign Up Email -->
-    <string name="sign_up_email_header" translatable="false">Ingresá tu correo</string>
-    <string name="sign_up_email_header_sv" translatable="false">Ingresa tu correo</string>
-    <string name="sign_up_email_title" translatable="false">¡Nos emociona\nque estés acá!</string>
+    <string name="sign_up_email_header" translatable="false">Ingresa tu correo electrónico</string>
+    <string name="sign_up_email_header_sv" translatable="false">Ingresa tu correo electrónico</string>
+    <string name="sign_up_email_title" translatable="false">¡Nos entusiasma\nque estes aquí!</string>
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
-    <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
+    <string name="sign_up_email_not_valid" translatable="false">El correo ingresado no es válido.</string>
     <string name="sign_up_email_user_completed_dialog_title" translatable="false">Ya tenés una cuenta registrada con este correo</string>
     <string name="sign_up_email_user_completed_dialog_description" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
@@ -226,7 +233,7 @@
     <string name="sign_up_otp_expiration_time_phase_three_cr" translatable="false">Código enviado. Esperá %s segundos para reenviar</string>
     <string name="sign_up_otp_expiration_time_phase_one" translatable="false">Espera %s segundos para reenviar el código</string>
     <string name="sign_up_otp_expiration_time_phase_three" translatable="false">Código enviado. Espera %s segundos para reenviar</string>
-    <string name="sign_up_otp_expiration_time_phase_five" translatable="false">Código expira en %s segundos.</string>
+    <string name="sign_up_otp_expiration_time_phase_five" translatable="false">Espera %s segundos para reenviar</string>
     <string name="sign_up_otp_expiration_time_phase_six" translatable="false">Su número de teléfono no ha podido ser verificado.</string>
     <string name="sign_up_otp_code_placeholder" translatable="false">0</string>
     <string name="sign_up_otp_code_required" translatable="false">Código de verificación requerido</string>
@@ -280,7 +287,7 @@
     <string name="sign_up_password_requirement_one_characer" translatable="false">Carácter especial</string>
     <string name="sign_up_password_confirm_password_error" translatable="false">Las contraseñas son diferentes</string>
     <string name="sign_up_password_requirement_no_the_same_consecutive_character" translatable="false">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos.</string>
-    <string name="sign_up_password_requirement_max_three_characters_or_number_consecutive" translatable="false">Máximo 3 caracteres numérico o alfabéticos consecutivos.</string>
+    <string name="sign_up_password_requirement_max_three_characters_or_number_consecutive" translatable="false">No más de tres caracteres iguales consecutivos ya sean numéricos o alfabéticos</string>
 
     <string name="sign_up_password_requirement_forbidden_words" translatable="false">La contraseña no puede contener “%s“</string>
 
@@ -305,8 +312,8 @@
     <string name="sign_up_id_validation_three_sv" translatable="false">Tómate una selfie sin lentes o accesorios</string>
 
     <!-- Sign Up Complete -->
-    <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenido a MultiMoney</string>
-
+    <string name="sign_up_complete_title" translatable="false">Finanzas de estos tiempos.\nTe damos la bienvenida a \nMultiMoney</string>
+    <string name="sign_up_complete_title_mx" translatable="false">Finanzas de estos tiempos.\nTe damos la bienvenida a \nMultiMoney</string>
     <!-- Biometric Dialog -->
     <string name="biometric_dialog_title" translatable="false">¿Inicia sesión con tu biométrica?</string>
     <string name="biometric_dialog_subtitle" translatable="false">Utilice su biometría para autenticarse en la aplicación.</string>
@@ -321,22 +328,26 @@
     <string name="custom_dialog_default_negative_label" translatable="false">Cancelar</string>
 
     <!-- Active Biometric Dialog-->
-    <string name="active_biometric_title_cr" translatable="false">Activá tus biométricos</string>
-    <string name="active_biometric_title" translatable="false">Activa tus biométricos</string>
+    <string name="active_biometric_title_cr" translatable="false">Activa tu Face ID</string>
+    <string name="active_biometric_title_mx" translatable="false">Activa tu Face ID</string>
+    <string name="active_biometric_title" translatable="false">Activa tu Face ID</string>
     <string name="active_biometric_message_cr" translatable="false">Así podrás ingresar de forma rápida y segura.</string>
+    <string name="active_biometric_message_mx" translatable="false">Así podrás ingresar de forma rápida y segura.</string>
     <string name="active_biometric_message" translatable="false"> Así podrás ingresar de forma rápida y segura.</string>
     <string name="active_biometric_positive_button_label" translatable="false">Activar</string>
     <string name="active_biometric_negative_button_label" translatable="false">Cancelar</string>
 
     <!-- Biometric Dialog Success -->
     <string name="dialog_success_biometric_title" translatable="false">¡Listo!</string>
-    <string name="dialog_success_biometric_description" translatable="false">Tu Biometrico fue configurado exitosamente.</string>
+    <string name="dialog_success_biometric_description" translatable="false">Tu Face ID fue configurado exitosamente</string>
+    <string name="dialog_success_biometric_description_mx" translatable="false">Tu Face ID fue configurado exitosamente</string>
     <string name="dialog_success_biometric_positive_text" translatable="false">Finalizar</string>
 
     <!-- Biometric Dialog Failure -->
     <string name="dialog_failure_biometric_title" translatable="false">¡Oh no!</string>
-    <string name="dialog_failure_biometric_description" translatable="false">Hubo un error al configurar tus biométricos</string>
-    <string name="dialog_failure_biometric_positive_text" translatable="false">Intentalo más tarde</string>
+    <string name="dialog_failure_biometric_description" translatable="false">Hubo un error al configurar tu Face ID</string>
+    <string name="dialog_failure_biometric_description_mx" translatable="false">Hubo un error al configurar tu Face ID</string>
+    <string name="dialog_failure_biometric_positive_text" translatable="false">Intenta más tarde</string>
 
     <!-- Home -->
     <string name="home_active_credit_card_cr_label" translatable="false">Activá tu tarjeta digital</string>
@@ -349,6 +360,7 @@
     <string name="home_credit_sign_document_reject_description" translatable="false">Firmá el contrato y recibí tu dinero.</string>
     <string name="home_credit_sign_document_reject_action_text" translatable="false">Firmar</string>
     <string name="home_pay_fee_button_text" translatable="false">Pagar cuota</string>
+    <string name="home_see_payment_points_button_text" translatable="false">Ver opciones de pago</string>
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
     <string name="home_smart_in_process_crypto_card" translatable="false">Cripto</string>
@@ -391,6 +403,7 @@
     <string name="home_product_check_all" translatable="false">Ver Todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
+    <string name="home_product_fee_mx" translatable="false">Mensualidad</string>
     <string name="home_product_expiration" translatable="false">Vence</string>
     <string name="home_product_expired" translatable="false">Venció</string>
     <string name="home_product_remaining" translatable="false">Saldo %s</string>
@@ -911,14 +924,18 @@
     <string name="credit_detail_max_credit" translatable="false">Línea máxima de crédito</string>
     <string name="credit_detail_balance" translatable="false">Saldo a la fecha</string>
     <string name="credit_detail_fee" translatable="false">Cuota</string>
+    <string name="credit_detail_fee_mx" translatable="false">Mensualidad</string>
     <string name="credit_detail_min_payment" translatable="false">Pago mínimo</string>
     <string name="credit_detail_overdue_fee" translatable="false">Cuotas vencidas</string>
+    <string name="credit_detail_overdue_fee_mx" translatable="false">Mensualidades vencidas</string>
     <string name="credit_detail_iban" translatable="false">IBAN</string>
+    <string name="credit_detail_clabe_account" translatable="false">Cuenta CLABE</string>
     <string name="credit_detail_max_term" translatable="false">Plazo máximo</string>
     <string name="credit_detail_number" translatable="false">Número de crédito</string>
     <string name="credit_detail_title" translatable="false">Detalles de mi crédito</string>
     <string name="credit_detail_client" translatable="false">Cliente</string>
     <string name="credit_detail_iban_number" translatable="false">Numero de cuenta IBAN</string>
+    <string name="credit_detail_clabe_number" translatable="false">Cuenta CLABE de tu crédito</string>
 
     <!-- Credit Request Success -->
     <string name="credit_request_sent_successfully" translatable="false">Tu solicitud fue \nenviada \nexitosamente</string>
@@ -1100,15 +1117,24 @@
 
     <!-- Payment Options Transfer -->
     <string name="payment_options_transfer_title_sv" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title_mx" translatable="false">Formas de pago</string>
     <string name="payment_options_transfer_disclaimer" translatable="false">El pago se acreditará en 48 horas hábiles</string>
+    <string name="payment_options_transfer_disclaimer_mx" translatable="false">Si tienes domiciliada la mensualidad de tu crédito, el cargo se realizará automaticamente a tu cuenta cada mes.</string>
     <string name="payment_options_transfer_account" translatable="false">Número de cuenta</string>
     <string name="payment_options_transfer_bank" translatable="false">Banco</string>
     <string name="payment_options_transfer_type_transfer" translatable="false">Tipo de transferencia</string>
     <string name="payment_options_transfer_credit_number" translatable="false">Número de préstamo o producto</string>
+    <string name="payment_options_transfer_credit_clabe_account_number" translatable="false">Número de cuenta CLABE de tu crédito</string>
     <string name="payment_options_transfer_beneficiary_name" translatable="false">Nombre del beneficiario o recibidor</string>
     <string name="payment_options_transfer_go_home" translatable="false">Ir al inicio</string>
     <string name="payment_options_transfer_close_dialog_title" translatable="false">¿Estás seguro que querés salir? </string>
     <string name="payment_options_transfer_close_dialog_description" translatable="false">No olvides pagar tus cuotas para evitar moras.</string>
+    <string name="payment_options_transfer_interbank_title" translatable="false">Transferencia interbancaria</string>
+    <string name="payment_options_transfer_steps_disclaimer" translatable="false">Pasos</string>
+    <string name="payment_options_transfer_step_1_disclaimer" translatable="false">Ingresa a tu banco y selecciona transferir.</string>
+    <string name="payment_options_transfer_step_2_disclaimer" translatable="false">Ingresa el número de cuenta CLABE indicada.</string>
+    <string name="payment_options_transfer_step_3_disclaimer" translatable="false">Transfiere.</string>
+    <string name="payment_options_transfer_step_4_disclaimer" translatable="false">Tu pago se verá reflejado entre 24 y 48 horas.</string>
 
     <!-- Smart Saving Method - Transfer -->
     <string name="saving_method_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
@@ -1329,6 +1355,7 @@
     <!-- Credit Schedule Automatic Payment -->
     <string name="schedule_automatic_payment_credit_button" translatable="false">Programar pago automático</string>
     <string name="schedule_automatic_payment_credit_subtitle" translatable="false">Pago programado de cuota</string>
+    <string name="schedule_automatic_payment_credit_subtitle_mx" translatable="false">Pago programado de mensualidad</string>
     <string name="schedule_automatic_payment_credit_next_payment" translatable="false">Próximo pago</string>
     <string name="schedule_automatic_payment_credit_expired_payment_dialog_title" translatable="false">Error pago automático</string>
     <string name="schedule_automatic_payment_credit_expired_payment_dialog_description" translatable="false">No posees suficientes fondos para realizar el pago, por favor realiza el pago manual o registra otra cuenta.</string>
@@ -1679,8 +1706,9 @@
     <string name="registered_user_email_required" translatable="false">El correo electrónico es requerido</string>
 
     <!-- Registered User Otp Options-->
-    <string name="registered_user_otp_options_title" translatable="false">Verificación de identidad</string>
-    <string name="registered_user_otp_options_title_cr" translatable="false">Verificación de identidad</string>
+    <string name="registered_user_otp_options_title" translatable="false">Vamos a verificar\ntu identidad</string>
+    <string name="registered_user_otp_options_title_cr" translatable="false">Vamos a verificar\ntu identidad</string>
+    <string name="registered_user_otp_options_title_mx" translatable="false">Vamos a verificar\ntu identidad</string>
     <string name="registered_user_otp_options_message" translatable="false">¿Dónde quieres recibir el código?</string>
     <string name="registered_user_otp_options_message_cr" translatable="false">¿Dónde querés recibir el código?</string>
     <string name="registered_user_otp_options_email" translatable="false">Correo electrónico registrado</string>

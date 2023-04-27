@@ -27,14 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
-import com.multimoney.multimoney.R
-import com.multimoney.multimoney.R.drawable
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.SemanticNegative500
@@ -68,7 +66,6 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 
 @Composable
-@Preview
 fun RegisteredUserOtpScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -129,6 +126,7 @@ fun RegisteredUserOtpScreen(
     viewModel.apply {
         RegisteredUserOtpContent(
             uiState = uiState,
+            viewModel = viewModel,
             onOtpValueChange = { value -> onUIEvent(OnOtpValueChange(value)) },
             onOtherPhoneNumberClick = { onUIEvent(OnOtherPhoneNumberClick) },
             getPhaseResourceString = { getPhaseResourceString() },
@@ -140,12 +138,12 @@ fun RegisteredUserOtpScreen(
 }
 
 @Composable
-@Preview
 fun RegisteredUserOtpContent(
     uiState: UIState = UIState(),
+    viewModel: RegisteredUserOtpViewModel,
     onOtpValueChange: (String) -> Unit = {},
     onOtherPhoneNumberClick: () -> Unit = {},
-    getPhaseResourceString: () -> Int = { R.string.empty },
+    getPhaseResourceString: () -> Int = { string.empty },
     onCallMutationSendPinProcess: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onContinueClick: () -> Unit = {}
@@ -199,7 +197,7 @@ fun RegisteredUserOtpContent(
 
                 if (uiState.isOtherPhoneNumberVisible) {
                     ClickableText(
-                        text = AnnotatedString(stringResource(id = R.string.registered_user_otp_other_phone_number)),
+                        text = AnnotatedString(stringResource(id = string.registered_user_otp_other_phone_number)),
                         modifier = Modifier.padding(top = 24.dp),
                         style = Typography.body2.copy(
                             textDecoration = TextDecoration.Underline,
@@ -215,12 +213,12 @@ fun RegisteredUserOtpContent(
                     onValueChange = { onOtpValueChange(it) },
                     isValueFromSms = uiState.isOtpFromSms,
                     digits = TOTAL_DIGITS,
-                    placeHolder = stringResource(id = R.string.registered_user_otp_code_placeholder),
+                    placeHolder = stringResource(id = string.registered_user_otp_code_placeholder),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 32.dp),
                     isRequired = true,
-                    isRequiredMessage = stringResource(id = R.string.registered_user_otp_code_required),
+                    isRequiredMessage = stringResource(id = string.registered_user_otp_code_required),
                     isError = uiState.otpError.first,
                     errorMessage = stringResource(id = uiState.otpError.second)
                 )
@@ -246,7 +244,7 @@ fun RegisteredUserOtpContent(
                                 )
                             )
                             Text(
-                                text = stringResource(id = R.string.sign_in_otp_expiration_time_phase_seconds),
+                                text = stringResource(id = string.sign_in_otp_expiration_time_phase_seconds),
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(top = 32.dp),
                                 style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)

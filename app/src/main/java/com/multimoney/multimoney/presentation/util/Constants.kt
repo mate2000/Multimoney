@@ -5,6 +5,7 @@ const val HALF_SECOND_DELAY = 500L
 const val SIM_CODE_COSTA_RICA = "cr"
 const val SIM_CODE_GUATEMALA = "gt"
 const val SIM_CODE_EL_SALVADOR = "sv"
+const val SIM_CODE_MEXICO = "mx"
 const val DUPLICATED_SESSION = 403
 const val ONE = 1
 const val TWO = 2

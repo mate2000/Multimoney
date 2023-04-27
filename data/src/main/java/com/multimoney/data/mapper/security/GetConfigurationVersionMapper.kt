@@ -68,7 +68,7 @@ private fun GetConfigurationVersionQuery.Crypto.mapToDomainModel() = Crypto(
 )
 
 private fun GetConfigurationVersionQuery.VirtualCard.mapToDomainModel() = VirtualCard(
-    active = null
+    active = activo
 )
 
 private fun GetConfigurationVersionQuery.ConfiguracionVersion.mapToDomainModel() = Configuration(

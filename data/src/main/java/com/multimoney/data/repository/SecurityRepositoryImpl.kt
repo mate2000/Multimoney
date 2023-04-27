@@ -210,7 +210,8 @@ class SecurityRepositoryImpl @Inject constructor(
         sendMethod: String,
         pkUser: String,
         idBrand: Int,
-        user: String
+        user: String,
+        flowOrigin: Int
     ): Flow<MultimoneyResult<SendPinProcess?>> = fetchData(
         apolloCall = graphqlApi.mutationSendPinProcess(
             identification,
@@ -220,7 +221,8 @@ class SecurityRepositoryImpl @Inject constructor(
             sendMethod,
             pkUser.toInt(),
             idBrand,
-            user
+            user,
+            flowOrigin
         ),
         apolloCallMapper = { data ->
             if (data.sendPinProccess.status == null || data.sendPinProccess.status == 0) {

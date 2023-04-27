@@ -30,9 +30,10 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
+import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
-import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -263,26 +264,52 @@ class SignInViewModel @Inject constructor(
             )
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
+            val message = authException.cause?.message?.getCognitoError()?.message
+
+            uiState = if (message.isNullOrBlank()) {
+                val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
+                else string.sign_in_too_many_attempts
+
+                uiState.copy(
+                    userEmailError = Pair(true, string.error_empty),
+                    userPasswordError = Pair(true, messageResId),
+                    userPasswordErrorMessage = Pair(true, null),
+                    isLoading = false
+                )
+            } else {
+                uiState.copy(
+                    userEmailError = Pair(true, string.error_empty),
+                    userPasswordErrorMessage = Pair(true, message),
+                    isLoading = false
+                )
+            }
+        }
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedChangePasswordNeeded.code) == true -> {
+            viewModelScope.launch {
+                dataStorePreferences.clearData()
+            }
+            val titleResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_title_cr
+            else string.sign_in_account_blocked_title
+
+            val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_message_cr
+            else string.sign_in_account_blocked_message
+
             uiState = uiState.copy(
-                errorCode = CognitoErrorCode.UserBlockedForTooManyAttends,
                 openDialog = DialogParameters(
-                    titleResource = string.sign_in_user_blocked_for_too_many_attends_title,
-                    description = authException.cause?.message?.getCognitoError()?.message.orEmpty(),
+                    titleResource = titleResId,
+                    descriptionResource = messageResId,
+                    positiveResource = string.sign_in_restore_password,
+                    positiveAction = { onNavigateToForgotPassword() },
                     isActive = mutableStateOf(true)
                 ),
                 isLoading = false
             )
         }
-        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedChangePasswordNeeded.code) == true -> {
+        authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.DeviceChangeRequiredDueToInactivity.code) == true -> {
             uiState = uiState.copy(
-                errorCode = CognitoErrorCode.UserBlockedChangePasswordNeeded,
-                openDialog = DialogParameters(
-                    title = authException.cause?.message?.getCognitoError()?.message.orEmpty(),
-                    description = authException.cause?.message?.getCognitoError()?.detail.orEmpty(),
-                    isActive = mutableStateOf(true)
-                ),
                 isLoading = false
             )
+            onNavigateToOTPScreen()
         }
         else -> callQueryValidationUserExistsUseCase()
     }

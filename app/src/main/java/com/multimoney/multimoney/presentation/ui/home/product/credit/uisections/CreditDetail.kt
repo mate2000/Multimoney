@@ -27,6 +27,8 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIState
 import com.multimoney.multimoney.presentation.uielement.ExpandableSectionLayout
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 
 @Composable
 fun CreditDetail(
@@ -88,31 +90,33 @@ fun CreditDetail(
                     )
                 }
             })
-            CreditDetailItem(label = stringResource(id = string.credit_detail_min_payment), value = {
-                Row {
-                    balance?.getFirstSummary()?.minPaymentLabel?.let {
-                        Icon(
-                            imageVector = Filled.Circle,
-                            tint = if ((balance.getExpiredDays()) > 0) {
-                                MultimoneyTheme.colors.dotIndicatorExpired
-                            } else {
-                                MultimoneyTheme.colors.dotIndicatorColor
-                            },
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(16.dp)
-                                .padding(end = 4.dp)
+            CreditDetailItem(
+                label = stringResource(id = string.credit_detail_min_payment),
+                value = {
+                    Row {
+                        balance?.getFirstSummary()?.minPaymentLabel?.let {
+                            Icon(
+                                imageVector = Filled.Circle,
+                                tint = if ((balance.getExpiredDays()) > 0) {
+                                    MultimoneyTheme.colors.dotIndicatorExpired
+                                } else {
+                                    MultimoneyTheme.colors.dotIndicatorColor
+                                },
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .padding(end = 4.dp)
+                            )
+                        }
+                        Text(
+                            text = getMinPayment(balance?.balanceCredit),
+                            style = Typography.body2.copy(
+                                color = MultimoneyTheme.colors.text,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
-                    Text(
-                        text = getMinPayment(balance?.balanceCredit),
-                        style = Typography.body2.copy(
-                            color = MultimoneyTheme.colors.text,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
-                }
-            })
+                })
             CreditDetailItem(label = stringResource(
                 id = if (uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
                     string.credit_detail_overdue_fee_mx
@@ -129,70 +133,81 @@ fun CreditDetail(
                 )
             })
             if (uiState.idBrand == Brand.CostaRica.id.toString()) {
-                val clientLabel = stringResource(id = R.string.credit_detail_client)
-                val accountLabel = stringResource(id = R.string.credit_detail_iban_number)
-                CreditDetailItem(label = stringResource(id = string.credit_detail_iban), value = {
-                    Row {
-                        Text(
-                            text = balance?.getFirstSummary()?.ibanAccount ?: "",
-                            style = Typography.body2.copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                        balance?.getFirstSummary()?.ibanAccount?.let {
-                            Icon(
-                                imageVector = Outlined.Share,
-                                tint = MultimoneyTheme.colors.arrowColor,
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .clickable {
-                                        if (it.isNotEmpty()) {
-                                            onShareAccount(
-                                                clientLabel,
-                                                accountLabel,
-                                                it
-                                            )
-                                        }
-                                    }
-                                    .padding(start = 16.dp)
-                            )
+                val clientLabel = stringResource(id = string.credit_detail_client)
+                val accountLabel = stringResource(id = string.credit_detail_iban_number)
+                balance?.getFirstCredit()?.summary?.forEach { summary ->
+                    CreditDetailItem(
+                        label = stringResource(
+                            id = string.credit_detail_iban_with_currency,
+                            summary.idCurrency?.getCurrencyFromId()?.symbol
+                                ?: CurrencyType.Colon.symbol
+                        ),
+                        value = {
+                            Row {
+                                Text(
+                                    text = summary.ibanAccount ?: "",
+                                    style = Typography.body2.copy(
+                                        color = MultimoneyTheme.colors.text,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                )
+                                summary.ibanAccount?.let {
+                                    Icon(
+                                        imageVector = Outlined.Share,
+                                        tint = MultimoneyTheme.colors.arrowColor,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .clickable {
+                                                if (it.isNotEmpty()) {
+                                                    onShareAccount(
+                                                        clientLabel,
+                                                        accountLabel,
+                                                        it
+                                                    )
+                                                }
+                                            }
+                                            .padding(start = 16.dp)
+                                    )
+                                }
+                            }
                         }
-                    }
-                })
+                    )
+                }
             }
             if (uiState.idBrand == Brand.Mexico.id.toString()) {
                 val clientLabel = stringResource(id = R.string.credit_detail_client)
                 val accountLabel = stringResource(id = R.string.credit_detail_clabe_number)
-                CreditDetailItem(label = stringResource(id = string.credit_detail_clabe_account), value = {
-                    Row {
-                        Text(
-                            text = balance?.getFirstSummary()?.ibanAccount ?: "",
-                            style = Typography.body2.copy(
-                                color = MultimoneyTheme.colors.text,
-                                fontWeight = FontWeight.SemiBold
+                CreditDetailItem(
+                    label = stringResource(id = string.credit_detail_clabe_account),
+                    value = {
+                        Row {
+                            Text(
+                                text = balance?.getFirstSummary()?.ibanAccount ?: "",
+                                style = Typography.body2.copy(
+                                    color = MultimoneyTheme.colors.text,
+                                    fontWeight = FontWeight.SemiBold
+                                )
                             )
-                        )
-                        balance?.getFirstSummary()?.ibanAccount?.let {
-                            Icon(
-                                imageVector = Outlined.Share,
-                                tint = MultimoneyTheme.colors.arrowColor,
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .clickable {
-                                        if (it.isNotEmpty()) {
-                                            onShareAccount(
-                                                clientLabel,
-                                                accountLabel,
-                                                it
-                                            )
+                            balance?.getFirstSummary()?.ibanAccount?.let {
+                                Icon(
+                                    imageVector = Outlined.Share,
+                                    tint = MultimoneyTheme.colors.arrowColor,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .clickable {
+                                            if (it.isNotEmpty()) {
+                                                onShareAccount(
+                                                    clientLabel,
+                                                    accountLabel,
+                                                    it
+                                                )
+                                            }
                                         }
-                                    }
-                                    .padding(start = 16.dp)
-                            )
+                                        .padding(start = 16.dp)
+                                )
+                            }
                         }
-                    }
-                })
+                    })
             }
             CreditDetailItem(label = stringResource(id = string.credit_detail_max_term), value = {
                 Text(

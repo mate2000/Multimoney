@@ -110,7 +110,9 @@ fun SignDocumentProcessScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
-            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
+            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction,
+            isCancelable = false
         )
     }
 

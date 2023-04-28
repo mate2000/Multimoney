@@ -32,7 +32,6 @@ fun SmartSignScreen(
     val context = LocalContext.current
     val activity = context.findActivity()
 
-
     LaunchedEffect(true) {
         viewModel.onUIEvent(OnGetWhatsAppLink)
     }

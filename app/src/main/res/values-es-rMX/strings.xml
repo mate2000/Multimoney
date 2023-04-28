@@ -130,8 +130,8 @@
     <string name="onboarding_mexico_step_three_sub_title" translatable="false">Revisa tus fechas de pago y monto disponible 24/7.</string>
 
     <!-- Sign In -->
-    <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
-    <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
+    <string name="sign_in_title" translatable="false">¡Qué bueno \ntenerte por acá!</string>
+    <string name="sign_in_title_name" translatable="false">%s, ¡Qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
@@ -929,6 +929,7 @@
     <string name="credit_detail_overdue_fee" translatable="false">Cuotas vencidas</string>
     <string name="credit_detail_overdue_fee_mx" translatable="false">Mensualidades vencidas</string>
     <string name="credit_detail_iban" translatable="false">IBAN</string>
+    <string name="credit_detail_iban_with_currency" translatable="false">IBAN | %s</string>
     <string name="credit_detail_clabe_account" translatable="false">Cuenta CLABE</string>
     <string name="credit_detail_max_term" translatable="false">Plazo máximo</string>
     <string name="credit_detail_number" translatable="false">Número de crédito</string>

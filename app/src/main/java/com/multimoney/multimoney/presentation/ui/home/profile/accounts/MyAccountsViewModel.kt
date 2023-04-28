@@ -205,7 +205,7 @@ class MyAccountsViewModel @Inject constructor(
 
     private fun onEditNickname() {
         toggleBottomSheet(ModalBottomSheetState(ModalBottomSheetValue.Hidden))
-        uiState = uiState.copy(isEditing = true)
+        uiState = uiState.copy(isEditing = true, accountNickname = null)
     }
 
     private fun onValueChanged(value: String) {
@@ -279,7 +279,15 @@ class MyAccountsViewModel @Inject constructor(
         callListSinpeAccountUseCase(true)
         callListSinpeAccountUseCase(false)
         if (uiState.registeredAccounts.isEmpty() && uiState.favoriteAccounts.isEmpty()) {
-            registerAdjustEvent(AdjustEventType.SETTINGS_USER_WITHOUT_ACCOUNT_8004, applyAdjust = false, data = BaseEventDataDto(user = user, idBrand = uiState.idBrand, identification = identification).toJson())
+            registerAdjustEvent(
+                AdjustEventType.SETTINGS_USER_WITHOUT_ACCOUNT_8004,
+                applyAdjust = false,
+                data = BaseEventDataDto(
+                    user = user,
+                    idBrand = uiState.idBrand,
+                    identification = identification
+                ).toJson()
+            )
         }
     }
 

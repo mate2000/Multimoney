@@ -929,6 +929,7 @@
     <string name="credit_detail_overdue_fee" translatable="false">Cuotas vencidas</string>
     <string name="credit_detail_overdue_fee_mx" translatable="false">Mensualidades vencidas</string>
     <string name="credit_detail_iban" translatable="false">IBAN</string>
+    <string name="credit_detail_iban_with_currency" translatable="false">IBAN | %s</string>
     <string name="credit_detail_clabe_account" translatable="false">Cuenta CLABE</string>
     <string name="credit_detail_max_term" translatable="false">Plazo máximo</string>
     <string name="credit_detail_number" translatable="false">Número de crédito</string>

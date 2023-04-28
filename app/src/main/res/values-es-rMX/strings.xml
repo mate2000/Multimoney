@@ -130,7 +130,7 @@
     <string name="onboarding_mexico_step_three_sub_title" translatable="false">Revisa tus fechas de pago y monto disponible 24/7.</string>
 
     <!-- Sign In -->
-    <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
+    <string name="sign_in_title" translatable="false">¡Qué bueno \ntenerte por acá!</string>
     <string name="sign_in_title_name" translatable="false">%s, ¡Qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>

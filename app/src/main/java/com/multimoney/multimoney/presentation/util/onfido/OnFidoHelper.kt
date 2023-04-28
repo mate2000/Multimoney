@@ -93,7 +93,7 @@ class OnFidoHelper @Inject constructor(
     private fun createFlowStepOptions(stepFlow: FlowStep): Array<FlowStep> {
         return arrayOf(
             stepFlow,
-            FlowStep.CAPTURE_FACE,
+            FlowStep.CAPTURE_FACE
         )
     }
     companion object {

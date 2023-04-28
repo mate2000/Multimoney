@@ -222,7 +222,7 @@ class SmartSignViewModel @Inject constructor(
             alertResultButtonResource = string.contact,
             alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = {
-                emitBaseEvent(OpenWhatsAppLink(whatsAppLink ?: ""))
+                emitBaseEvent(OpenWhatsAppLink(whatsAppLink))
                 onUIEvent(OnNavigateToHome)
             }
         )

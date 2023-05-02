@@ -33,10 +33,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.DefaultWhite
-import com.multimoney.multimoney.presentation.theme.GrayScale500
 import com.multimoney.multimoney.presentation.theme.GrayScale700
-import com.multimoney.multimoney.presentation.theme.GrayScale800
-import com.multimoney.multimoney.presentation.theme.Primary500
 import com.multimoney.multimoney.presentation.theme.SemanticInformative400
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency80
@@ -124,7 +121,7 @@ fun CustomDialog(
                 onDismissAction()
                 openDialogCustom.value = false
             }
-        },
+        }
     ) {
         Card(
             shape = shape,

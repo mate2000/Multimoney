@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartOnFidoOrFirmStatus
 import com.multimoney.data.util.catalog.SmartWorkflow
@@ -120,7 +121,7 @@ class SmartSignViewModel @Inject constructor(
             isDialogShowed = true
             uiState = uiState.copy(
                 dialogParameters = DialogParameters(
-                    titleResource = string.sign_credit_dialog_title,
+                    titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
                     description = dialogDescription,
                     positiveResource = string.sign_credit_dialog_continue,
                     negativeResource = string.payment_points_dialog_negative_button,
@@ -221,7 +222,7 @@ class SmartSignViewModel @Inject constructor(
             alertResultButtonResource = string.contact,
             alertResultRightButtonClick = { onUIEvent(OnNavigateToHome) },
             alertResultButtonAction = {
-                emitBaseEvent(OpenWhatsAppLink(whatsAppLink ?: ""))
+                emitBaseEvent(OpenWhatsAppLink(whatsAppLink))
                 onUIEvent(OnNavigateToHome)
             }
         )

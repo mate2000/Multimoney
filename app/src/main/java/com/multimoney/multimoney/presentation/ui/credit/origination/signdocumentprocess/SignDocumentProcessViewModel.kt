@@ -104,16 +104,19 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun createDialog() {
-        uiState = uiState.copy(
-            dialogParameters = DialogParameters(
-                titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
-                descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
-                positiveResource = string.sign_credit_dialog_continue,
-                negativeResource = string.payment_points_dialog_negative_button,
-                negativeAction = { onUIEvent(OnNavigateToHome) },
-                isActive = mutableStateOf(true)
+        if (!uiState.dialogShown) {
+            uiState = uiState.copy(
+                dialogShown = true,
+                dialogParameters = DialogParameters(
+                    titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
+                    descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
+                    positiveResource = string.sign_credit_dialog_continue,
+                    negativeResource = string.payment_points_dialog_negative_button,
+                    negativeAction = { onUIEvent(OnNavigateToHome) },
+                    isActive = mutableStateOf(true)
+                )
             )
-        )
+        }
     }
 
     private fun onEvaluateWitchRequestCall() {
@@ -481,7 +484,8 @@ class SignDocumentProcessViewModel @Inject constructor(
         val alertResultDescriptionResource: Int = string.empty,
         val alertResultButtonResource: Int = string.empty,
         val alertResultRightButtonClick: () -> Unit = {},
-        val alertResultButtonAction: () -> Unit = {}
+        val alertResultButtonAction: () -> Unit = {},
+        val dialogShown: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

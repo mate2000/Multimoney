@@ -53,7 +53,7 @@ fun OnfidoAndEvicertiaErrorsContent(
                 iconResource = drawable.ic_alert,
                 titleResource = string.sign_document_reject_title,
                 descriptionResource = if (idBrand == CostaRica.id) string.sign_document_reject_description else string.sign_document_reject_description_sv,
-                buttonTextResource = string.sign,
+                buttonTextResource = string.understood,
                 isLeftButtonVisible = false,
                 onRightButtonClick = { onNavigateHome() },
                 onButtonClick = { onNavigateHome() }

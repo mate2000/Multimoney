@@ -852,7 +852,7 @@
     <string name="continue_validating_identity_subtitle_credit" translatable="false">Estamos verificando tus datos,\npronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
-    <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_title" translatable="false">¡Te vamos a extrañar!</string>
     <string name="sign_credit_max_attempts_message" translatable="false">Comunicate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_message_sv" translatable="false">Comunícate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>

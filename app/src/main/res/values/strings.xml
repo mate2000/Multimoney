@@ -485,6 +485,7 @@
     <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
     <string name="profile_my_accounts_delete_account" translatable="false">Eliminar cuenta</string>
     <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_change_phone_already_registered_error" translatable="false">%1$s</string>
     <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
     <string name="profile_my_accounts_add_as_fav" translatable="false">Agregar como favorita</string>
     <string name="profile_my_accounts_delete_as_fav" translatable="false">Eliminar como favorita</string>

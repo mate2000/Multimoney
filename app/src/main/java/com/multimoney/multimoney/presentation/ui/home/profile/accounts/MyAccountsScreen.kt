@@ -151,17 +151,17 @@ fun MyAccountsScreen(
             modalBottomSheetState = viewModel.uiState.bottomSheetVisibleState,
             coroutineScope = coroutineScope,
             firstActionTitle = stringResource(id = viewModel.uiState.favoriteTextResource),
-            firstActionIcon = if (viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_green else R.drawable.ic_star_outline,
+            firstActionIcon = if (viewModel.uiState.selectedAccount?.isFavorite == true) R.drawable.ic_error_background else R.drawable.ic_star_background,
             firstActionClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnChangeFavorite)
             },
             secondActionTitle = stringResource(id = R.string.profile_my_accounts_edit_nickname),
-            secondActionIcon = R.drawable.ic_edit_green,
+            secondActionIcon = R.drawable.ic_edit_green_background,
             secondActionClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnEditNickname)
             },
             thirdActionTitle = stringResource(id = R.string.profile_my_accounts_delete_account),
-            thirdActionIcon = R.drawable.ic_delete,
+            thirdActionIcon = R.drawable.ic_delete_background,
             thirdActionClick = {
                 viewModel.onUIEvent(MyAccountsViewModel.UIEvent.OnOpenDeleteDialog)
             }

@@ -556,7 +556,6 @@
     <string name="profile_sure_to_activate_biometrics" translatable="false">¿Querés activar tus biométricos?</string>
     <string name="profile_you_need_to_sign_in_again_sv" translatable="false">Necesitas volver a iniciar sesión para activarlo</string>
     <string name="profile_you_need_to_sign_in_again" translatable="false">Necesitas volver a iniciar sesión para activarlo</string>
-    <string name="profile_btn_ok" translatable="false">Aceptar</string>A
     <string name="profile_you_can_try_later_biometrics_sv" translatable="false">Puedes volver a configurarlo cuando quieras</string>
     <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
 

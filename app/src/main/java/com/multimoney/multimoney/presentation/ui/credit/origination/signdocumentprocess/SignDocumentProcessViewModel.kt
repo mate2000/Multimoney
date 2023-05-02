@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
@@ -491,7 +490,6 @@ class SignDocumentProcessViewModel @Inject constructor(
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallGetLinkCreditContractEvent -> onEvaluateWitchRequestCall()
-            is OnCallGetLinkCreditContractSecondTime -> callQueryGetLinkCreditContractUseCase(true)
             is OnStartListenerSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription()
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnShowDialogInformation -> createDialog()
@@ -503,7 +501,6 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnCallGetLinkCreditContractEvent : UIEvent()
-        object OnCallGetLinkCreditContractSecondTime : UIEvent()
         object OnStartListenerSubscriptionCreditContractEvent : UIEvent()
         object OnShowDialogInformation : UIEvent()
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
@@ -517,7 +514,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     companion object {
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 35000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 90000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val LOG_SUBSCRIPTION_TAG = "MM_SUBSCRIPTION_L"

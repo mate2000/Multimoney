@@ -712,7 +712,6 @@
     <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_monthly_income_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
     <string name="credit_monthly_income_job_phone_required" translatable="false">Número de teléfono requerido</string>
-    <string name="credit_monthly_income_job_phone_error" translatable="false">Número invalido</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -1702,7 +1701,7 @@
     <string name="registered_user_email_subtitle" translatable="false">Ingresa el correo electrónico completo para verificar que eres tú.</string>
     <string name="registered_user_email_subtitle_cr" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
     <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
-    <string name="registered_user_email_different" translatable="false">El correo es invalido</string>
+    <string name="registered_user_email_different" translatable="false">El correo es inválido</string>
     <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="registered_user_email_required" translatable="false">El correo electrónico es requerido</string>
 

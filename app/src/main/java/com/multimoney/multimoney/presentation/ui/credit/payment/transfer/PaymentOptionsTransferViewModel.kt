@@ -51,8 +51,12 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
                     disclaimerResource = string.payment_options_transfer_disclaimer_mx
                 )
             }
+            Brand.CostaRica.id -> uiState.copy(
+                titleResource = string.payment_options_transfer_title_cr,
+                disclaimerResource = string.payment_options_transfer_disclaimer
+            )
             else -> uiState.copy(
-                titleResource = string.payment_options_transfer_title_sv,
+                titleResource = string.payment_options_transfer_title,
                 disclaimerResource = string.payment_options_transfer_disclaimer
             )
         }

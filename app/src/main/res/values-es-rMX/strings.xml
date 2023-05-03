@@ -682,7 +682,8 @@
 
     <!-- Location   -->
     <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
-    <string name="payment_location_maps_info_sv" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info_cr" translatable="false">Podés pagar utilizando el código de barras.</string>
     <string name="payment_location_maps_address" translatable="false">Dirección</string>
     <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
     <string name="payment_location_maps_payment_amount" translatable="false">Monto a pagar:</string>
@@ -1117,7 +1118,8 @@
     <string name="smart_liv_address_district" translatable="false">Distrito</string>
 
     <!-- Payment Options Transfer -->
-    <string name="payment_options_transfer_title_sv" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title_cr" translatable="false">Transferí desde tu banco con estos datos</string>
     <string name="payment_options_transfer_title_mx" translatable="false">Formas de pago</string>
     <string name="payment_options_transfer_disclaimer" translatable="false">El pago se acreditará en 48 horas hábiles</string>
     <string name="payment_options_transfer_disclaimer_mx" translatable="false">Si tienes domiciliada la mensualidad de tu crédito, el cargo se realizará automaticamente a tu cuenta cada mes.</string>

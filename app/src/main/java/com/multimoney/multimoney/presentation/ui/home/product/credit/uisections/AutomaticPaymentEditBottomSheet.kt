@@ -11,11 +11,9 @@ import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.Companion.MODAL_BOTTOM_SHEET_DELAY
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.uielement.CustomThreePointsTextButton
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -43,7 +41,6 @@ fun AutomaticPaymentEditBottomSheet(
                 onClick = {
                     coroutineScope.launch {
                         modalBottomSheetState.hide()
-                        delay(MODAL_BOTTOM_SHEET_DELAY)
                         onEditClick()
                     }
                 }
@@ -55,7 +52,6 @@ fun AutomaticPaymentEditBottomSheet(
                 onClick = {
                     coroutineScope.launch {
                         modalBottomSheetState.hide()
-                        delay(MODAL_BOTTOM_SHEET_DELAY)
                         onDeleteClick()
                     }
                 }

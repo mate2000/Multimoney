@@ -1090,6 +1090,5 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val API_CALLS_TOTAL = 6
-        const val MODAL_BOTTOM_SHEET_DELAY = 50L
     }
 }

@@ -148,7 +148,7 @@ fun ContentSV(
         )
 
         Text(
-            text = stringResource(R.string.smart_facta_are_you_or_family_pep),
+            text = stringResource(R.string.smart_facta_are_you_or_family_pep_sv),
             style = Typography.body1,
             color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 32.dp)

@@ -35,6 +35,8 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency5
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency60
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency20
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency50
 import com.multimoney.multimoney.presentation.util.MAX_LINE_ONE
 
 @Composable
@@ -71,14 +73,14 @@ fun CustomInfoButton(
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
         background = if (enable.not() || transparent) Transparent else WhiteTransparency5
-        titleColor = WhiteTransparency90
-        subtitleColor = WhiteTransparency60
+        titleColor = if (enable.not()) WhiteTransparency50 else WhiteTransparency90
+        subtitleColor = if (enable.not()) WhiteTransparency20 else WhiteTransparency60
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
         background = if (enable.not() || transparent) Transparent else WhiteTransparency5
-        titleColor = WhiteTransparency90
-        subtitleColor = WhiteTransparency60
+        titleColor = if (enable.not()) WhiteTransparency50 else WhiteTransparency90
+        subtitleColor = if (enable.not()) WhiteTransparency20 else WhiteTransparency60
     }
 
     Button(

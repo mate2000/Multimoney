@@ -45,7 +45,7 @@ class OnFidoHelper @Inject constructor(
         createFlowStepOptions(
             DocumentCaptureStepBuilder.forGenericDocument().withCountry(getCountryCode(idBrand)).build()
         )
-    ).build()
+    ).withLocale(Locale.forLanguageTag(CR_LANGUAGE_TAG)).build()
 
     fun getOnFidoClient() = OnfidoFactory.create(context).client
 
@@ -93,8 +93,7 @@ class OnFidoHelper @Inject constructor(
     private fun createFlowStepOptions(stepFlow: FlowStep): Array<FlowStep> {
         return arrayOf(
             stepFlow,
-            FlowStep.CAPTURE_FACE,
-            FlowStep.FINAL
+            FlowStep.CAPTURE_FACE
         )
     }
     companion object {

@@ -35,7 +35,6 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
@@ -104,16 +103,19 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     private fun createDialog() {
-        uiState = uiState.copy(
-            dialogParameters = DialogParameters(
-                titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
-                descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
-                positiveResource = string.sign_credit_dialog_continue,
-                negativeResource = string.payment_points_dialog_negative_button,
-                negativeAction = { onUIEvent(OnNavigateToHome) },
-                isActive = mutableStateOf(true)
+        if (!uiState.dialogShown) {
+            uiState = uiState.copy(
+                dialogShown = true,
+                dialogParameters = DialogParameters(
+                    titleResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_title_cr else string.sign_credit_dialog_title,
+                    descriptionResource = if (idBrand == Brand.CostaRica.id) string.sign_credit_dialog_description_cr else string.sign_credit_dialog_description,
+                    positiveResource = string.sign_credit_dialog_continue,
+                    negativeResource = string.payment_points_dialog_negative_button,
+                    negativeAction = { onUIEvent(OnNavigateToHome) },
+                    isActive = mutableStateOf(true)
+                )
             )
-        )
+        }
     }
 
     private fun onEvaluateWitchRequestCall() {
@@ -481,13 +483,13 @@ class SignDocumentProcessViewModel @Inject constructor(
         val alertResultDescriptionResource: Int = string.empty,
         val alertResultButtonResource: Int = string.empty,
         val alertResultRightButtonClick: () -> Unit = {},
-        val alertResultButtonAction: () -> Unit = {}
+        val alertResultButtonAction: () -> Unit = {},
+        val dialogShown: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
             is OnCallGetLinkCreditContractEvent -> onEvaluateWitchRequestCall()
-            is OnCallGetLinkCreditContractSecondTime -> callQueryGetLinkCreditContractUseCase(true)
             is OnStartListenerSubscriptionCreditContractEvent -> onListenCreditContractEventSubscription()
             is OnChangeScreen -> uiState = uiState.copy(signDocumentProcessStep = uiEvent.signDocumentStep)
             is OnShowDialogInformation -> createDialog()
@@ -499,7 +501,6 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     sealed class UIEvent {
         object OnCallGetLinkCreditContractEvent : UIEvent()
-        object OnCallGetLinkCreditContractSecondTime : UIEvent()
         object OnStartListenerSubscriptionCreditContractEvent : UIEvent()
         object OnShowDialogInformation : UIEvent()
         data class OnChangeScreen(val signDocumentStep: String) : UIEvent()
@@ -513,7 +514,7 @@ class SignDocumentProcessViewModel @Inject constructor(
     }
 
     companion object {
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 35000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 90000L
         const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
         const val ID_PRINT_EMPTY = 0L
         const val LOG_SUBSCRIPTION_TAG = "MM_SUBSCRIPTION_L"

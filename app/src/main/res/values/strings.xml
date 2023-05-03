@@ -134,7 +134,7 @@
     <string name="onboarding_mexico_step_three_sub_title" translatable="false">Revisa tus fechas de pago y monto disponible 24/7.</string>
 
     <!-- Sign In -->
-    <string name="sign_in_title" translatable="false">¡Que bueno \ntenerte por acá!</string>
+    <string name="sign_in_title" translatable="false">¡Qué bueno \ntenerte por acá!</string>
     <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
@@ -252,6 +252,8 @@
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el registro ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_email_cr" translatable="false">No hemos podido verificar tu correo. Por tu seguridad no podés realizar el registro ahora. Intentálo más tarde o contactá a soporte.</string>
+    <string name="sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_email_sv" translatable="false">No hemos podido verificar tu correo. Por tu seguridad no puedes realizar el registro ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="sign_in_otp_expiration_time_phase_one" translatable="false">Código expira en </string>
     <string name="sign_in_otp_expiration_time_phase_three" translatable="false">Código reenviado expira en </string>
     <string name="sign_in_otp_expiration_time_phase_five" translatable="false">Código expira en </string>
@@ -483,6 +485,7 @@
     <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
     <string name="profile_my_accounts_delete_account" translatable="false">Eliminar cuenta</string>
     <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_change_phone_already_registered_error" translatable="false">%1$s</string>
     <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
     <string name="profile_my_accounts_add_as_fav" translatable="false">Agregar como favorita</string>
     <string name="profile_my_accounts_delete_as_fav" translatable="false">Eliminar como favorita</string>
@@ -491,7 +494,7 @@
     <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
     <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
     <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
-    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito después</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podrás seleccionarla como favorito después</string>
     <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
     <string name="profile_my_accounts_empty_state_title_sv" translatable="false">No tienes cuentas registradas</string>
     <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>
@@ -520,7 +523,7 @@
     <string name="profile_otp_to_previous_email" translatable="false">Correo electrónico anterior</string>
     <string name="profile_otp_to_sms" translatable="false">SMS</string>
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
-    <string name="profile_request_otp_code" translatable="false">Enviar código</string>
+    <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_verify" translatable="false">Verificar</string>
     <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
     <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
@@ -550,6 +553,10 @@
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
     <string name="profile_sure_to_deactivate_biometrics_sv" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
+    <string name="profile_sure_to_activate_biometrics_sv" translatable="false">¿Quieres activar tus biométricos?</string>
+    <string name="profile_sure_to_activate_biometrics" translatable="false">¿Querés activar tus biométricos?</string>
+    <string name="profile_you_need_to_sign_in_again_sv" translatable="false">Necesitas volver a iniciar sesión para activarlo</string>
+    <string name="profile_you_need_to_sign_in_again" translatable="false">Necesitas volver a iniciar sesión para activarlo</string>
     <string name="profile_you_can_try_later_biometrics_sv" translatable="false">Puedes volver a configurarlo cuando quieras</string>
     <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
 
@@ -731,7 +738,7 @@
     <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_monthly_income_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
     <string name="credit_monthly_income_job_phone_required" translatable="false">Número de teléfono requerido</string>
-    <string name="credit_monthly_income_job_phone_error" translatable="false">Número invalido</string>
+    <string name="credit_monthly_income_job_phone_error" translatable="false">Número inválido</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -846,7 +853,7 @@
     <string name="continue_validating_identity_subtitle_credit" translatable="false">Estamos verificando tus datos,\npronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
-    <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_title" translatable="false">¡Te vamos a extrañar!</string>
     <string name="sign_credit_max_attempts_message" translatable="false">Comunicate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_message_sv" translatable="false">Comunícate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>
@@ -951,6 +958,7 @@
     <string name="credit_detail_overdue_fee" translatable="false">Cuotas vencidas</string>
     <string name="credit_detail_overdue_fee_mx" translatable="false">Mensualidades vencidas</string>
     <string name="credit_detail_iban" translatable="false">IBAN</string>
+    <string name="credit_detail_iban_with_currency" translatable="false">IBAN | %s</string>
     <string name="credit_detail_clabe_account" translatable="false">Cuenta CLABE</string>
     <string name="credit_detail_max_term" translatable="false">Plazo máximo</string>
     <string name="credit_detail_number" translatable="false">Número de crédito</string>
@@ -1346,7 +1354,7 @@
     <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>
     <string name="crypto_purchase_flow_error_available_amount" translatable="false">"El monto disponible es de %1s"</string>
     <string name="crypto_purchase_flow_error_available_amount_commission" translatable="false">"El monto más la comisión supera el\nmonto disponible"</string>
-    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nmensual de $10,000</string>
+    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nsemanal de $10,000</string>
     <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
     <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
@@ -1729,7 +1737,8 @@
 
     <!-- Registeres User Email -->
     <string name="registered_user_email_title" translatable="false">Tenemos tu correo  %s registrado en MultiMoney</string>
-    <string name="registered_user_email_subtitle" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
+    <string name="registered_user_email_subtitle" translatable="false">Ingresa el correo electrónico completo para verificar que eres tú.</string>
+    <string name="registered_user_email_subtitle_cr" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
     <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
     <string name="registered_user_email_different" translatable="false">El correo es invalido</string>
     <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
@@ -1748,8 +1757,10 @@
     <!-- Registered User Otp -->
     <string name="registered_user_otp_title_sms" translatable="false">Te enviamos un SMS \na tu celular %s</string>
     <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
-    <string name="registered_user_otp_subtitle" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
-    <string name="registered_user_otp_subtitle_mx" translatable="false">Ingresa el código para vincular tu número de teléfono a tu cuenta.</string>
+    <string name="registered_user_otp_subtitle" translatable="false">Ingresa el código que te enviamos para verificar tu identidad.</string>
+    <string name="registered_user_otp_subtitle_cr" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
+    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda, nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá, nunca compartir este código.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
     <string name="registered_user_otp_other_phone_number" translatable="false">Tengo otro número</string>

@@ -167,9 +167,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 }
             }
             result.onFailure {
-                timer.stopTimer()
-                confirmationTimer.stopTimer()
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -195,9 +195,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 )
             }
             result.onFailure {
-                timer.stopTimer()
-                confirmationTimer.stopTimer()
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -370,11 +370,14 @@ class SellCurrencyScreenViewModel @Inject constructor(
             }
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
                 uiState = uiState.copy(
                     isLoading = false,
+                    genericError = false,
                     sellStatus = SellStatus.FAILED
                 )
             }
@@ -382,21 +385,12 @@ class SellCurrencyScreenViewModel @Inject constructor(
     }
 
     private fun onFailure() {
+        timer.stopTimer()
+        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             isLoading = false,
-            openDialog = DialogParameters(descriptionResource = R.string.error_occurred_title,
-                negativeResource = R.string.error_button_try_later,
-                positiveResource = R.string.error_button_retry,
-                isActive = mutableStateOf(true),
-                negativeAction = {
-                    uiState.failureAction()
-                },
-                positiveAction = {
-                    updateUiWithNewPricesAndCommissions()
-                    if (idCurrencyAccount == CurrencyType.Colon.id) {
-                        getExchangeRate()
-                    }
-                })
+            genericError = true,
+            sellStatus = SellStatus.FAILED
         )
     }
 
@@ -431,6 +425,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         val failureAction: () -> Unit = {},
         //** validations
         val isError: Boolean = false,
+        val genericError: Boolean = false,
         val focusError: Boolean = false,
         @StringRes val error: Int = R.string.empty,
         val errorMessageArg: Any = Any(),

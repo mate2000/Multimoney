@@ -27,6 +27,8 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.PhoneTextField
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.togitech.ccp.data.utils.getLibCountries
@@ -59,6 +61,21 @@ fun ChangePhoneScreen(
         )
     }
     ChangePhoneScreenContent(viewModel, focusManager)
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+    // full screen dialog
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = R.string.profile_error_changing_phone_title),
+            descriptionString = viewModel.uiState.alertResultMessage,
+            buttonTextResource = R.string.profile_error_changing_phone_button,
+            isLeftButtonVisible = false,
+            isRightButtonVisible = false,
+            onButtonClick = {
+                viewModel.onUIEvent(ChangePhoneViewModel.UIEvent.OnNavigateBack)
+            }
+        )
+    }
 }
 
 @Composable
@@ -122,13 +139,22 @@ private fun ChangePhoneScreenContent(
                 isRequired = true,
                 isRequiredMessage = stringResource(id = R.string.sign_up_phone_required),
                 isError = viewModel.uiState.phoneNumberError.first,
-                errorMessage = if (viewModel.uiState.phoneNumberError.second == R.string.profile_change_phone_check_format_template) {
-                    stringResource(
-                        id = R.string.profile_change_phone_check_format_template,
-                        viewModel.uiState.phoneNumberTemplateMinimalLength ?: 0
-                    )
-                } else {
-                    stringResource(id = viewModel.uiState.phoneNumberError.second)
+                errorMessage = when (viewModel.uiState.phoneNumberError.second) {
+                    R.string.profile_change_phone_check_format_template -> {
+                        stringResource(
+                            id = R.string.profile_change_phone_check_format_template,
+                            viewModel.uiState.phoneNumberTemplateMinimalLength ?: 0
+                        )
+                    }
+                    R.string.profile_change_phone_already_registered_error -> {
+                        stringResource(
+                            id = R.string.profile_change_phone_already_registered_error,
+                            viewModel.uiState.onErrorMessage
+                        )
+                    }
+                    else -> {
+                        stringResource(id = viewModel.uiState.phoneNumberError.second)
+                    }
                 },
                 defaultCountry = getLibCountries.find { it.countryCode == viewModel.uiState.currentBrand.countryCode }
                     ?: getLibCountries.first(),

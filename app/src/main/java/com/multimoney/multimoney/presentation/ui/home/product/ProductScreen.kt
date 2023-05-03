@@ -22,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -107,6 +108,7 @@ import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openIntent
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
@@ -203,9 +205,36 @@ fun ProductScreen(
                 is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(
                         OnDeleteAutomaticPayment {
-                            sharedViewModel.onUIEvent(
-                                OnCallMutationDeactivateClientAutomaticDebit
-                            )
+                            // This event will be executed if the id brand is different to Mexico
+                            if (viewModel.uiState.idBrand.toIntOrNull() != Brand.Mexico.id) {
+                                sharedViewModel.onUIEvent(
+                                    OnCallMutationDeactivateClientAutomaticDebit
+                                )
+                            } else {
+                                // If the id brand is equals to Mexico, a WhatsApp chat will be open through a deep link
+                                sharedViewModel.onUIEvent(
+                                    UIEvent.OnContactUs(
+                                        openWhatsAppIntent = { contactLink ->
+                                            // Setting the contact link depending on what's saved on the data store preferences
+                                            context.openWhatsAppDeepLink(contactLink) {
+                                                // In case of failure, a message dialog will be displayed
+                                                sharedViewModel.onUIEvent(UIEvent.OnFailureWithDialog(
+                                                    false,
+                                                    sharedViewModel.defaultDialogParameters.copy(
+                                                        isActive = mutableStateOf(true)
+                                                    )
+                                                ))
+                                            }
+                                        },
+                                        onFailureWithDialog = { isLoading, dialogParameters ->
+                                            sharedViewModel.onUIEvent(UIEvent.OnFailureWithDialog(
+                                                isLoading,
+                                                dialogParameters
+                                            ))
+                                        }
+                                    )
+                                )
+                            }
                         }
                     )
                 }

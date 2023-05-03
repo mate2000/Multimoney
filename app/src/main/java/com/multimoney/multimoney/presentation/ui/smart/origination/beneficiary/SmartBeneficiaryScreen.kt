@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps
 import com.multimoney.data.util.catalog.SmartSteps.Search
 import com.multimoney.multimoney.R
@@ -96,7 +97,11 @@ fun SmartBeneficiaryScreen(
             }
             val radioOptions = stringArrayResource(id = R.array.options_yes_no)
             Text(
-                text = stringResource(id = R.string.smart_beneficiary_header),
+                text = if (sharedViewModel.idBrandAsInt == Brand.CostaRica.id) {
+                    stringResource(id = R.string.smart_beneficiary_header_cr)
+                } else {
+                    stringResource(id = R.string.smart_beneficiary_header)
+                },
                 modifier = Modifier.padding(top = 24.dp),
                 style = Typography.subtitle1,
                 color = MultimoneyTheme.colors.labelText

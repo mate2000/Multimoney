@@ -8,9 +8,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.CreditOnFidoOrFirmStatus
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractSecondTime
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnStartListenerSubscriptionCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.documentgeneration.DocumentGenerationScreen
@@ -68,8 +68,8 @@ fun SignDocumentProcessScreen(
             }
             DocumentGenerationScreen(
                 idBrand = viewModel.idBrand,
-                onGetLinkAgain = {
-                    viewModel.onUIEvent(OnCallGetLinkCreditContractSecondTime)
+                actionWhenTimerFinish = {
+                    viewModel.onUIEvent(OnNavigateToHome)
                 }
             )
         }
@@ -110,7 +110,9 @@ fun SignDocumentProcessScreen(
             positiveButtonText = stringResource(id = viewModel.uiState.dialogParameters.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.dialogParameters.negativeResource),
             openDialogCustom = viewModel.uiState.dialogParameters.isActive,
-            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction
+            onPositiveAction = viewModel.uiState.dialogParameters.positiveAction,
+            onNegativeAction = viewModel.uiState.dialogParameters.negativeAction,
+            isCancelable = false
         )
     }
 

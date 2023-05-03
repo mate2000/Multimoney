@@ -7,8 +7,11 @@ import androidx.lifecycle.SavedStateHandle
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
+import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCase
 import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
 import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -33,7 +36,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChangePhoneViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase
+    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase,
+    private val mutationPhoneValidationUseCase: MutationPhoneValidationUseCase
 
 ) : BaseViewModel(true) {
     var phoneNumberTransformation: PhoneNumberTransformation? = null
@@ -205,8 +209,38 @@ class ChangePhoneViewModel @Inject constructor(
         uiState = uiState.copy(phoneNumberError = Pair(false, R.string.error_empty))
     }
 
-    private fun onContinueButtonClicked() {
+    private fun onNavigateToVerifyIdentityScreen() {
         navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.phoneCode}")
+    }
+
+    private fun onContinueButtonClicked() {
+        executeUseCase {
+            mutationPhoneValidationUseCase.invoke(
+                uiState.newPhoneNumber, uiState.identification, uiState.idBrand ?: 0
+            ).collectLatest {
+                it.onSuccess {
+                    uiState = uiState.copy(isLoading = false)
+                    onNavigateToVerifyIdentityScreen()
+                }.onMessage { response ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        phoneNumberError = Pair(
+                            true,
+                            (R.string.profile_change_phone_already_registered_error)
+                        ),
+                        onErrorMessage = response?.message.orEmpty()
+                    )
+                }.onFailure { error ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        alertResultMessage = error.getError().orEmpty(),
+                        isAlertResultVisible = true
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
     }
 
 
@@ -230,6 +264,9 @@ class ChangePhoneViewModel @Inject constructor(
         val selectedCountry: CountryData? = null,
         val countriesList: MutableList<CountryData>? = null,
         val isAlertResultVisible: Boolean = false,
+        val isLoading: Boolean = false,
+        val alertResultMessage: String = "",
+        val onErrorMessage: String = ""
     )
 
     fun onUIEvent(event: UIEvent) {

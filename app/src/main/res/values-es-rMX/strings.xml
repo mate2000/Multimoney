@@ -131,7 +131,7 @@
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Qué bueno \ntenerte por acá!</string>
-    <string name="sign_in_title_name" translatable="false">%s, ¡Qué bueno verte de nuevo!</string>
+    <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
@@ -475,7 +475,7 @@
     <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
     <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
     <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
-    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito después</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podrás seleccionarla como favorito después</string>
     <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
     <string name="profile_my_accounts_empty_state_title_sv" translatable="false">No tienes cuentas registradas</string>
     <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>

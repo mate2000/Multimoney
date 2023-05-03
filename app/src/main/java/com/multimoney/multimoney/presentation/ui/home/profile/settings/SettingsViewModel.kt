@@ -16,14 +16,14 @@ import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     // UIState
@@ -44,17 +44,29 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun onShowConfirmationDialog() {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_sure_to_deactivate_biometrics else R.string.profile_sure_to_deactivate_biometrics_sv,
-                descriptionResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_you_can_try_later_biometrics else R.string.profile_you_can_try_later_biometrics_sv,
-                positiveResource = R.string.button_continue,
-                negativeResource = R.string.cancel,
-                positiveAction = { deleteBiometrics() },
-                isActive = mutableStateOf(true),
-                negativeAction = {}
+        if (uiState.areBiometricsEnabled == false) {
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    titleResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_sure_to_activate_biometrics else R.string.profile_sure_to_activate_biometrics_sv,
+                    descriptionResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_you_need_to_sign_in_again else R.string.profile_you_need_to_sign_in_again_sv,
+                    positiveResource = R.string.accept,
+                    positiveAction = {},
+                    isActive = mutableStateOf(true)
+                )
             )
-        )
+        } else {
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    titleResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_sure_to_deactivate_biometrics else R.string.profile_sure_to_deactivate_biometrics_sv,
+                    descriptionResource = if (uiState.idBrand == Brand.CostaRica.id) R.string.profile_you_can_try_later_biometrics else R.string.profile_you_can_try_later_biometrics_sv,
+                    positiveResource = R.string.button_continue,
+                    negativeResource = R.string.cancel,
+                    positiveAction = { deleteBiometrics() },
+                    isActive = mutableStateOf(true),
+                    negativeAction = {}
+                )
+            )
+        }
     }
 
     private fun deleteBiometrics() {

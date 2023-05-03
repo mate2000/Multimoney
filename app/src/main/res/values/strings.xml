@@ -135,7 +135,7 @@
 
     <!-- Sign In -->
     <string name="sign_in_title" translatable="false">¡Qué bueno \ntenerte por acá!</string>
-    <string name="sign_in_title_name" translatable="false">%s, ¡Qué bueno verte de nuevo!</string>
+    <string name="sign_in_title_name" translatable="false">%s, ¡qué bueno verte de nuevo!</string>
     <string name="sign_in_label_password" translatable="false">Contraseña</string>
     <string name="sign_in_forgot_password" translatable="false">Olvidé mi contraseña</string>
     <string name="sign_in_access_with_biometrics" translatable="false">Ingresar con biométricos</string>
@@ -485,6 +485,7 @@
     <string name="profile_my_accounts_edit_nickname" translatable="false">Editar apodo</string>
     <string name="profile_my_accounts_delete_account" translatable="false">Eliminar cuenta</string>
     <string name="profile_my_account_account_updated" translatable="false">Cuenta actualizada</string>
+    <string name="profile_change_phone_already_registered_error" translatable="false">%1$s</string>
     <string name="profile_my_account_nickname_is_required" translatable="false">El apodo es requerido</string>
     <string name="profile_my_accounts_add_as_fav" translatable="false">Agregar como favorita</string>
     <string name="profile_my_accounts_delete_as_fav" translatable="false">Eliminar como favorita</string>
@@ -493,7 +494,7 @@
     <string name="profile_my_accounts_updated" translatable="false">Cuenta actualizada</string>
     <string name="profile_my_accounts_deleted" translatable="false">Cuenta eliminada</string>
     <string name="profile_my_accounts_removed_from_fav" translatable="false">Cuenta eliminada de favoritos</string>
-    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podras seleccionarla como favorito después</string>
+    <string name="profile_my_accounts_you_can_fav_later" translatable="false">Podrás seleccionarla como favorito después</string>
     <string name="profile_my_accounts_save_changes" translatable="false">Guardar cambios</string>
     <string name="profile_my_accounts_empty_state_title_sv" translatable="false">No tienes cuentas registradas</string>
     <string name="profile_my_accounts_empty_state_title" translatable="false">No tenés cuentas registradas</string>
@@ -552,6 +553,10 @@
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
     <string name="profile_sure_to_deactivate_biometrics_sv" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
+    <string name="profile_sure_to_activate_biometrics_sv" translatable="false">¿Quieres activar tus biométricos?</string>
+    <string name="profile_sure_to_activate_biometrics" translatable="false">¿Querés activar tus biométricos?</string>
+    <string name="profile_you_need_to_sign_in_again_sv" translatable="false">Necesitas volver a iniciar sesión para activarlo</string>
+    <string name="profile_you_need_to_sign_in_again" translatable="false">Necesitas volver a iniciar sesión para activarlo</string>
     <string name="profile_you_can_try_later_biometrics_sv" translatable="false">Puedes volver a configurarlo cuando quieras</string>
     <string name="profile_you_can_try_later_biometrics" translatable="false">Podés volver a configurarlo cuando querás</string>
 
@@ -848,7 +853,7 @@
     <string name="continue_validating_identity_subtitle_credit" translatable="false">Estamos verificando tus datos,\npronto te daremos una respuesta.</string>
 
     <!-- Sign Documents limit reached -->
-    <string name="sign_credit_max_attempts_title" translatable="false">!Te vamos a extrañar!</string>
+    <string name="sign_credit_max_attempts_title" translatable="false">¡Te vamos a extrañar!</string>
     <string name="sign_credit_max_attempts_message" translatable="false">Comunicate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_message_sv" translatable="false">Comunícate con nosotros para activar tu crédito</string>
     <string name="sign_credit_max_attempts_contact" translatable="false">Contactar</string>

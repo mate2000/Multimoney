@@ -242,26 +242,28 @@ fun PaymentCardList(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
+            item {
+                CustomButton(
+                    text = stringResource(id = string.payment_cards_list_create),
+                    modifier = Modifier
+                        .padding(top = 18.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        viewModel.logEvents(AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007)
+                        viewModel.onUIEvent(OnStopTimer)
+                        val intent = Intent(context, ReactActivity::class.java)
+                        val bundle = Bundle()
+                        bundle.putString(APPLICATION_NAME, viewModel.reactApplicationName)
+                        bundle.putString(VISA_USER_NAME, viewModel.reactUserName)
+                        bundle.putString(VISA_USER_PASS, viewModel.reactUserPass)
+                        bundle.putString(ENDPOINT, viewModel.reactEndPoint)
+                        intent.putExtras(bundle)
+                        addCardActivityResult.launch(intent)
+                    },
+                    buttonType = CustomButtonType.PrimaryTertiary,
+                    trailingIcon = R.drawable.ic_plus
+                )
+            }
         }
     }
-    CustomButton(
-        text = stringResource(id = string.payment_cards_list_create),
-        modifier = Modifier
-            .padding(top = 18.dp)
-            .fillMaxWidth(),
-        onClick = {
-            viewModel.logEvents(AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007)
-            viewModel.onUIEvent(OnStopTimer)
-            val intent = Intent(context, ReactActivity::class.java)
-            val bundle = Bundle()
-            bundle.putString(APPLICATION_NAME, viewModel.reactApplicationName)
-            bundle.putString(VISA_USER_NAME, viewModel.reactUserName)
-            bundle.putString(VISA_USER_PASS, viewModel.reactUserPass)
-            bundle.putString(ENDPOINT, viewModel.reactEndPoint)
-            intent.putExtras(bundle)
-            addCardActivityResult.launch(intent)
-        },
-        buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus
-    )
 }

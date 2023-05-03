@@ -228,7 +228,8 @@ class AddIbanAccountViewModel @Inject constructor(
     private fun onContinueClick() = executeUseCase {
         when (previousScreen) {
             Screen.DisbursementAccountScreen.baseRoute,
-            Screen.PaymentAccountScreen.baseRoute -> {
+            Screen.PaymentAccountScreen.baseRoute,
+            Screen.PaymentScheduleAccountScreen.baseRoute -> {
                 saveClientBankAccount()
             }
             Screen.HomeBNScreen.baseRoute,
@@ -253,6 +254,10 @@ class AddIbanAccountViewModel @Inject constructor(
             )
             Screen.PaymentAccountScreen.baseRoute -> navigateBack(
                 Screen.PaymentAccountScreen.route,
+                true
+            )
+            Screen.PaymentScheduleAccountScreen.baseRoute -> navigateBack(
+                Screen.PaymentScheduleAccountScreen.route,
                 true
             )
             Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(

@@ -234,6 +234,10 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
             )
         ) {
             PaymentScheduleAccountScreen(
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
+                onNavigate = {
+                    navController.navigate(it.route)
+                },
                 onPopAndNavigate = {
                     navController.navigate(it.route) {
                         popUpTo(it.popTo) { inclusive = true }
@@ -286,7 +290,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                         saveState = false
                     )
                 },
-                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true
             )
         }
         composable(
@@ -318,7 +322,7 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                         saveState = false
                     )
                 },
-                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true,
+                isRestart = navController.currentBackStackEntry?.savedStateHandle?.get(PREVIOUS_IS_RESTART) ?: true
             )
         }
         composable(

@@ -207,7 +207,8 @@ class ProductViewModel @Inject constructor(
         this.configurationVersion = configurationVersion
         uiState = uiState.copy(
             idBrand = idBrand,
-            wasSmartActive = uiState.productPageList?.singleOrNull { it.product == ProductType.Smart.value }?.enabled ?: false,
+            wasSmartActive = uiState.productPageList?.singleOrNull { it.product == ProductType.Smart.value }?.enabled
+                ?: false,
             productPageList = productPageList,
             expandedProductPageList = productPageList.filter { it.enabled }
         )
@@ -522,7 +523,7 @@ class ProductViewModel @Inject constructor(
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(ClientBankAccount())
-                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule"
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
             )
         } else {
             navigateTo(
@@ -570,7 +571,22 @@ class ProductViewModel @Inject constructor(
         summaryList?.firstOrNull { it.currentBalance == ZERO } == null
 
     private fun onNavigateToVisaActivateScreen() = navigateTo(
-            Screen.VisaIssuanceScreen.baseRoute
+        Screen.VisaIssuanceScreen.baseRoute
+            .plus(getNavParam(ID_BRAND, uiState.idBrand))
+            .plus(getNavParam(PK_USER, pkUser))
+            .plus(getNavParam(IDENTIFICATION, identification))
+            .plus(getNavParam(EMAIL, email))
+            .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone))
+            .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
+            .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
+            .plus(getNavParam(ID_CLIENT, idClient))
+            .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
+    )
+
+    private fun onNavigateToHomeMultimoneyVisa() {
+        logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
+        navigateTo(
+            Screen.VisaCardScreen.baseRoute
                 .plus(getNavParam(ID_BRAND, uiState.idBrand))
                 .plus(getNavParam(PK_USER, pkUser))
                 .plus(getNavParam(IDENTIFICATION, identification))
@@ -579,37 +595,22 @@ class ProductViewModel @Inject constructor(
                 .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
                 .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
                 .plus(getNavParam(ID_CLIENT, idClient))
-                .plus(getNavParam(ID_LOAN_CLIENT,uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
-        )
-
-    private fun onNavigateToHomeMultimoneyVisa() {
-        logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
-        navigateTo(
-            Screen.VisaCardScreen.baseRoute
-                    .plus(getNavParam(ID_BRAND, uiState.idBrand))
-                    .plus(getNavParam(PK_USER, pkUser))
-                    .plus(getNavParam(IDENTIFICATION, identification))
-                    .plus(getNavParam(EMAIL, email))
-                    .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone))
-                    .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
-                    .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
-                    .plus(getNavParam(ID_CLIENT, idClient))
-                    .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
+                .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
         )
     }
 
     private fun onNavigateToProfileScreen() {
         navigateTo(
             Screen.ProfileScreen.baseRoute
-                    .plus(getNavParam(ID_CLIENT, idClient))
-                    .plus(getNavParam(ID_BRAND, uiState.idBrand))
-                    .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }))
-                    .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName.orEmpty()))
-                    .plus(getNavParam(EMAIL, email))
-                    .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }))
-                    .plus(getNavParam(IDENTIFICATION, identification))
-                    .plus(getNavParam(PK_USER, pkUser))
-                    .plus(getNavParam(USER_NAME, userName))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }))
+                .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName.orEmpty()))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(USER_NAME, userName))
         )
     }
 

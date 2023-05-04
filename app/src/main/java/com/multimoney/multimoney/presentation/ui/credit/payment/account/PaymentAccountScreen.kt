@@ -166,15 +166,17 @@ fun PaymentAccountList(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
+            item {
+                CustomButton(
+                    text = stringResource(id = R.string.payment_account_create),
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .fillMaxWidth(),
+                    onClick = { viewModel.onUIEvent(OnAddAccountClick) },
+                    buttonType = CustomButtonType.PrimaryTertiary,
+                    trailingIcon = R.drawable.ic_plus
+                )
+            }
         }
     }
-    CustomButton(
-        text = stringResource(id = R.string.payment_account_create),
-        modifier = Modifier
-            .padding(top = 40.dp)
-            .fillMaxWidth(),
-        onClick = { viewModel.onUIEvent(OnAddAccountClick) },
-        buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus
-    )
 }

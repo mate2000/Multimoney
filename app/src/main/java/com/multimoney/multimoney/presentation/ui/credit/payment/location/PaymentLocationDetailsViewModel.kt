@@ -53,7 +53,12 @@ class LocationDetailsViewModel @Inject constructor(
     }
 
     private fun onStart() {
-        uiState = uiState.copy(informativeText =  R.string.payment_location_maps_info_sv)
+        uiState = uiState.copy(
+            informativeText = when (idBrand) {
+                Brand.CostaRica.id -> R.string.payment_location_maps_info_cr
+                else -> R.string.payment_location_maps_info
+            }
+        )
     }
 
     private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)

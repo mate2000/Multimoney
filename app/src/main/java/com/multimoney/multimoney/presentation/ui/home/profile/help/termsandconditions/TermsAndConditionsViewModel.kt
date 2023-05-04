@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.profile.help.termsandconditions
 
-import android.util.Base64
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,13 +16,16 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
-import com.multimoney.multimoney.presentation.navigation.UTF8
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -95,14 +97,12 @@ class TermsAndConditionsViewModel @Inject constructor(
         version: String,
         dateSigned: String
     ) {
-        //String with the HTML is too large, so here we encoded it as base64 to reduce the length and pass it as parameter
+        val tempFile = File.createTempFile("terms", ".txt")
+        val writer = BufferedWriter(FileWriter(tempFile))
+        writer.write(html)
+        writer.close()
         navigateTo(
-            "${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/${
-                Base64.encodeToString(
-                    html.toByteArray(charset(UTF8)),
-                    Base64.DEFAULT
-                )
-            }/$version/$dateSigned"
+            "${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/${tempFile.absolutePath.encodeURLToUTF()}/$version/$dateSigned"
         )
     }
 

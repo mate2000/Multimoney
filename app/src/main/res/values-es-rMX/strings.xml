@@ -682,7 +682,8 @@
 
     <!-- Location   -->
     <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
-    <string name="payment_location_maps_info_sv" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info_cr" translatable="false">Podés pagar utilizando el código de barras.</string>
     <string name="payment_location_maps_address" translatable="false">Dirección</string>
     <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
     <string name="payment_location_maps_payment_amount" translatable="false">Monto a pagar:</string>
@@ -712,7 +713,6 @@
     <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
     <string name="credit_monthly_income_job_phone_number_crosseling" translatable="false">Teléfono de la empresa</string>
     <string name="credit_monthly_income_job_phone_required" translatable="false">Número de teléfono requerido</string>
-    <string name="credit_monthly_income_job_phone_error" translatable="false">Número invalido</string>
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
@@ -1100,7 +1100,7 @@
     <string name="smart_salaried_average_salary" translatable="false">Ingreso promedio mensual</string>
     <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
     <string name="smart_salaried_salary_placeholder" translatable="false">%s 0.00</string>
-    <string name="smart_salaried_profession" translatable="false">Cargo que desempeña</string>
+    <string name="smart_salaried_profession" translatable="false">Cargo que desempeñas</string>
     <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
     <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>
     <string name="smart_salaried_company_name_required" translatable="false">Nombre requerido</string>
@@ -1117,7 +1117,8 @@
     <string name="smart_liv_address_district" translatable="false">Distrito</string>
 
     <!-- Payment Options Transfer -->
-    <string name="payment_options_transfer_title_sv" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title" translatable="false">Transfiere desde tu banco con estos datos</string>
+    <string name="payment_options_transfer_title_cr" translatable="false">Transferí desde tu banco con estos datos</string>
     <string name="payment_options_transfer_title_mx" translatable="false">Formas de pago</string>
     <string name="payment_options_transfer_disclaimer" translatable="false">El pago se acreditará en 48 horas hábiles</string>
     <string name="payment_options_transfer_disclaimer_mx" translatable="false">Si tienes domiciliada la mensualidad de tu crédito, el cargo se realizará automaticamente a tu cuenta cada mes.</string>
@@ -1240,7 +1241,8 @@
 
     <!-- Smart beneficiary -->
     <string name="smart_beneficiary_title" translatable="false">Mis beneficiarios</string>
-    <string name="smart_beneficiary_header" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
+    <string name="smart_beneficiary_header" translatable="false">¿Deseas agregar beneficiarios a esta cuenta?</string>
+    <string name="smart_beneficiary_header_cr" translatable="false">Deseás agregar beneficiarios a esta cuenta?</string>
 
     <!-- Smart Independent Professional -->
     <string name="smart_ind_professional_title" translatable="false">Profesional independiente</string>
@@ -1703,7 +1705,7 @@
     <string name="registered_user_email_subtitle" translatable="false">Ingresa el correo electrónico completo para verificar que eres tú.</string>
     <string name="registered_user_email_subtitle_cr" translatable="false">Ingresá el correo electrónico completo para verificar que sos vos.</string>
     <string name="registered_user_email_not_valid" translatable="false">Revisa formato. Debe contener “@” y “.”</string>
-    <string name="registered_user_email_different" translatable="false">El correo es invalido</string>
+    <string name="registered_user_email_different" translatable="false">El correo es inválido</string>
     <string name="registered_user_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="registered_user_email_required" translatable="false">El correo electrónico es requerido</string>
 

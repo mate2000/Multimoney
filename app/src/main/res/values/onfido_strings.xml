@@ -171,8 +171,8 @@
     <string name="onfido_doc_confirmation_alert_no_doc_title">No se detectó ningún documento</string>
     <string name="onfido_doc_confirmation_body">Asegúrese de haber subido la página completa del documento y de que pueda leerse con claridad, sin destellos ni partes borrosas</string>
     <string name="onfido_doc_confirmation_body_folded_doc">Asegúrese que su documento este completamente abierto y su que su foto sea claro</string>
-    <string name="onfido_doc_confirmation_body_generic">Asegurate que la información se vea de forma clara y detallada.</string>
-    <string name="onfido_doc_confirmation_body_visa">Asegurate que la información se vea de forma clara y detallada.</string>
+    <string name="onfido_doc_confirmation_body_generic">Asegúrate que la información se vea de forma clara y detallada.</string>
+    <string name="onfido_doc_confirmation_body_visa">Asegúrate que la información se vea de forma clara y detallada.</string>
     <string name="onfido_doc_confirmation_button_primary_barcode">Enviar foto</string>
     <string name="onfido_doc_confirmation_button_primary_folded_doc">Enviar foto</string>
     <string name="onfido_doc_confirmation_button_primary_generic">Enviar foto</string>
@@ -372,7 +372,7 @@
     <string name="onfido_selfie_capture_frame_accessibility">Ver desde la cámara selfie. Mantenga la cara dentro del óvalo y luego pulse el botón del obturador</string>
     <string name="onfido_selfie_confirmation_alert_no_face_detail">Asegúrese que su cara sea visible</string>
     <string name="onfido_selfie_confirmation_alert_no_face_title">Cara no encontrada</string>
-    <string name="onfido_selfie_confirmation_body">Asegurate que todo tu rostro sea visible</string>
+    <string name="onfido_selfie_confirmation_body">Asegúrate que todo tu rostro sea visible</string>
     <string name="onfido_selfie_confirmation_button_primary">Subir foto</string>
     <string name="onfido_selfie_confirmation_button_secondary">Tomar foto de nuevo</string>
     <string name="onfido_selfie_confirmation_image_accessibility">Foto de su cara</string>

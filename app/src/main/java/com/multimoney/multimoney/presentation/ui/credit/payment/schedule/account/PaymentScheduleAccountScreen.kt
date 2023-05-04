@@ -1,6 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,10 +23,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnAddAccountClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnClientBankAccountSelected
-import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.schedule.account.PaymentScheduleAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -40,15 +40,25 @@ import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun PaymentScheduleAccountScreen(
+    isRestart: Boolean = true,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     viewModel: PaymentScheduleAccountViewModel = hiltViewModel()
 ) {
     // Navigation
-    LaunchedEffect(true) {
-        viewModel.apply {
-            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnCallQueryGetClientBankAccount)
+    viewModel.apply {
+        isOnRestart = isRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                executeNavigation(
+                    onNavigate = onNavigate,
+                    onPopAndNavigate = onPopAndNavigate,
+                    onPopBackStack = onPopBackStack
+                )
+                onUIEvent(OnCallQueryGetClientBankAccount)
+                isOnRestart = false
+            }
         }
     }
     PaymentScheduleAccountContent(viewModel)
@@ -66,7 +76,7 @@ fun PaymentScheduleAccountContent(
     ) {
         TopNavBar(
             onLeftButtonClick = { viewModel.onUIEvent(OnNavigateBack) },
-            onRightButtonClick = {viewModel.onUIEvent(OnCloseClick)},
+            onRightButtonClick = { viewModel.onUIEvent(OnCloseClick) },
             isRightButtonVisible = true
         )
         Text(
@@ -96,19 +106,21 @@ fun PaymentScheduleAccountContent(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
+                item {
+                    CustomButton(
+                        text = stringResource(id = R.string.payment_account_create),
+                        modifier = Modifier
+                            .padding(top = 28.dp, start = 16.dp, end = 16.dp)
+                            .fillMaxWidth(),
+                        onClick = {
+                            viewModel.onUIEvent(OnAddAccountClick)
+                        },
+                        buttonType = CustomButtonType.PrimaryTertiary,
+                        trailingIcon = R.drawable.ic_plus
+                    )
+                }
             }
         }
-        CustomButton(
-            text = stringResource(id = R.string.payment_account_create),
-            modifier = Modifier
-                .padding(top = 28.dp, start = 16.dp, end = 16.dp)
-                .fillMaxWidth(),
-            onClick = {
-                Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
-            },
-            buttonType = CustomButtonType.PrimaryTertiary,
-            trailingIcon = R.drawable.ic_plus
-        )
         if (viewModel.uiState.openDialog.isActive.value) {
             CustomDialog(
                 title = stringResource(id = viewModel.uiState.openDialog.titleResource),

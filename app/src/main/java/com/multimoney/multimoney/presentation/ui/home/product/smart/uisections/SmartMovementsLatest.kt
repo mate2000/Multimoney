@@ -46,7 +46,7 @@ fun SmartMovementsLatest(viewModel: ProductViewModel, index: Int) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 8.dp),
+                .padding(top = 8.dp, bottom = 16.dp),
             horizontalArrangement = SpaceBetween
         ) {
             Text(

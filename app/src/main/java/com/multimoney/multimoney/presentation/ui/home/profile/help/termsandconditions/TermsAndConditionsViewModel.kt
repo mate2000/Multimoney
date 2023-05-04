@@ -97,7 +97,7 @@ class TermsAndConditionsViewModel @Inject constructor(
         version: String,
         dateSigned: String
     ) {
-        val tempFile = File.createTempFile("terms", ".txt")
+        val tempFile = File.createTempFile(TERMS_FILE_PREFIX, FILE_SUFFIX)
         val writer = BufferedWriter(FileWriter(tempFile))
         writer.write(html)
         writer.close()
@@ -154,5 +154,10 @@ class TermsAndConditionsViewModel @Inject constructor(
             val version: String,
             val dateSigned: String
         ) : UIEvent()
+    }
+
+    companion object {
+        const val TERMS_FILE_PREFIX = "terms"
+        const val FILE_SUFFIX = ".txt"
     }
 }

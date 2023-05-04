@@ -134,7 +134,11 @@ fun PaymentAccountContent(
                 }
             }
 
-            if ((viewModel.uiState.clientBankAccountList?.size ?: 0) >= DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER) {
+            if ((
+                viewModel.uiState.clientBankAccountList?.size
+                    ?: 0
+                ) >= DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
+            ) {
                 CustomInformativeText(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp),
                     leadingIcon = R.drawable.ic_informative_400,
@@ -177,18 +181,23 @@ fun PaymentAccountList(
                     }
                 )
             }
+            item {
+                CustomButton(
+                    text = stringResource(id = R.string.payment_account_create),
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        viewModel.onUIEvent(OnNavigateToDisbursementAddAccount)
+                    },
+                    buttonType = CustomButtonType.PrimaryTertiary,
+                    trailingIcon = R.drawable.ic_plus,
+                    enable = (
+                        viewModel.uiState.clientBankAccountList?.size
+                            ?: 0
+                        ) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
+                )
+            }
         }
     }
-    CustomButton(
-        text = stringResource(id = R.string.payment_account_create),
-        modifier = Modifier
-            .padding(top = 32.dp)
-            .fillMaxWidth(),
-        onClick = {
-            viewModel.onUIEvent(OnNavigateToDisbursementAddAccount)
-        },
-        buttonType = CustomButtonType.PrimaryTertiary,
-        trailingIcon = R.drawable.ic_plus,
-        enable = (viewModel.uiState.clientBankAccountList?.size ?: 0) < DisbursementAccountViewModel.MAX_ACCOUNT_NUMBER
-    )
 }

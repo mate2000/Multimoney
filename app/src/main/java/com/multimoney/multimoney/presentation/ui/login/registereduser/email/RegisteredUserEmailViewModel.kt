@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.UserData
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
@@ -17,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnContinueClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnEmailValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.registereduser.email.RegisteredUserEmailViewModel.UIEvent.OnValidateEmail
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -46,6 +48,15 @@ class RegisteredUserEmailViewModel @Inject constructor(
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         userData = savedStateHandle.get<UserData>(USER_DATA)
+    }
+
+    private fun onStart() {
+        uiState = uiState.copy(
+            subtitleResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.registered_user_email_subtitle_cr
+                else -> R.string.registered_user_email_subtitle
+            }
+        )
     }
 
     private fun clearEmailError() {
@@ -104,6 +115,7 @@ class RegisteredUserEmailViewModel @Inject constructor(
 
     data class UIState(
         // Fields
+        val subtitleResource: Int = R.string.empty,
         val email: String = "",
         val emailError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_email_required),
         val isFormValid: Boolean = false
@@ -111,6 +123,7 @@ class RegisteredUserEmailViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
+            is OnStart -> onStart()
             is OnEmailValueChange -> onEmailValueChange(event.value)
             is OnValidateEmail -> onValidateEmail()
             is OnBackClick -> onBackClick()
@@ -119,6 +132,7 @@ class RegisteredUserEmailViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
+        object OnStart : UIEvent()
         data class OnEmailValueChange(val value: String) : UIEvent()
         object OnValidateEmail : UIEvent()
         object OnBackClick : UIEvent()

@@ -153,7 +153,6 @@ class HelpScreenViewModel @Inject constructor(
                 uiEvent.onFailureWithDialog
             )
             is UIEvent.OnFAQClick -> openFAQ(uiEvent.openFAQIntent, uiEvent.onFailureWithDialog)
-            // Todo add terms and conditions action
             is UIEvent.OnTermsAndConditionsClick -> onNavigateToTermsAndConditions()
             is UIEvent.OnAlertResultButtonClick -> onNavigateBack()
             is UIEvent.OnFailureWithDialog ->
@@ -193,8 +192,8 @@ class HelpScreenViewModel @Inject constructor(
 
     companion object {
         const val TEL_PREFIX = "tel:"
-        const val FAQ_LINK_GT = "https://www.multimoney.com/gt/ayuda"
-        const val FAQ_LINK_SV = "https://www.multimoney.com/sv/ayuda"
-        const val FAQ_LINK_CR = "https://www.multimoney.com/cr/ayuda"
+        const val FAQ_LINK_GT = "https://www.multimoney.com/gt/finanzas-en-linea"
+        const val FAQ_LINK_SV = "https://www.multimoney.com/sv/finanzas-en-linea"
+        const val FAQ_LINK_CR = "https://www.multimoney.com/cr/finanzas-en-linea"
     }
 }

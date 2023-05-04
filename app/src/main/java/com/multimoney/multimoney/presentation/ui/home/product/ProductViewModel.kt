@@ -124,6 +124,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
@@ -206,6 +207,8 @@ class ProductViewModel @Inject constructor(
         this.configurationVersion = configurationVersion
         uiState = uiState.copy(
             idBrand = idBrand,
+            wasSmartActive = uiState.productPageList?.singleOrNull { it.product == ProductType.Smart.value }?.enabled
+                ?: false,
             productPageList = productPageList,
             expandedProductPageList = productPageList.filter { it.enabled }
         )
@@ -414,6 +417,7 @@ class ProductViewModel @Inject constructor(
         comingFromCrypto: Boolean = false,
         onIntent: () -> Unit? = { }
     ) {
+        uiState = uiState.copy(originationLaunchedFromCrypto = comingFromCrypto)
         val firmStatus =
             if (uiState.userStatus?.infoBankAccount?.statusFirm.isNullOrBlank().not()) {
                 uiState.userStatus?.infoBankAccount?.statusFirm
@@ -519,7 +523,7 @@ class ProductViewModel @Inject constructor(
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(ClientBankAccount())
-                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule"
+                }/${balanceCredit?.getFirstSummary()?.paymentDate}/${false}/${Screen.HomeScreen.route}/$isEditSchedule/$identification"
             )
         } else {
             navigateTo(
@@ -567,7 +571,22 @@ class ProductViewModel @Inject constructor(
         summaryList?.firstOrNull { it.currentBalance == ZERO } == null
 
     private fun onNavigateToVisaActivateScreen() = navigateTo(
-            Screen.VisaIssuanceScreen.baseRoute
+        Screen.VisaIssuanceScreen.baseRoute
+            .plus(getNavParam(ID_BRAND, uiState.idBrand))
+            .plus(getNavParam(PK_USER, pkUser))
+            .plus(getNavParam(IDENTIFICATION, identification))
+            .plus(getNavParam(EMAIL, email))
+            .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone))
+            .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
+            .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
+            .plus(getNavParam(ID_CLIENT, idClient))
+            .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
+    )
+
+    private fun onNavigateToHomeMultimoneyVisa() {
+        logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
+        navigateTo(
+            Screen.VisaCardScreen.baseRoute
                 .plus(getNavParam(ID_BRAND, uiState.idBrand))
                 .plus(getNavParam(PK_USER, pkUser))
                 .plus(getNavParam(IDENTIFICATION, identification))
@@ -576,37 +595,22 @@ class ProductViewModel @Inject constructor(
                 .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
                 .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
                 .plus(getNavParam(ID_CLIENT, idClient))
-                .plus(getNavParam(ID_LOAN_CLIENT,uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
-        )
-
-    private fun onNavigateToHomeMultimoneyVisa() {
-        logEvents(AdjustEventType.HOME_CTA_FIRST_ACTIVATE_MM_VISA_5036)
-        navigateTo(
-            Screen.VisaCardScreen.baseRoute
-                    .plus(getNavParam(ID_BRAND, uiState.idBrand))
-                    .plus(getNavParam(PK_USER, pkUser))
-                    .plus(getNavParam(IDENTIFICATION, identification))
-                    .plus(getNavParam(EMAIL, email))
-                    .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone))
-                    .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCredit?.balanceCardInformation)))
-                    .plus(getNavParam(AVAILABLE_BALANCE_LABEL, balanceCredit?.getFirstSummary()?.availableBalanceLabel))
-                    .plus(getNavParam(ID_CLIENT, idClient))
-                    .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
+                .plus(getNavParam(ID_LOAN_CLIENT, uiState.userStatus?.infoCredit?.idLoanClient ?: 0))
         )
     }
 
     private fun onNavigateToProfileScreen() {
         navigateTo(
             Screen.ProfileScreen.baseRoute
-                    .plus(getNavParam(ID_CLIENT, idClient))
-                    .plus(getNavParam(ID_BRAND, uiState.idBrand))
-                    .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }))
-                    .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName.orEmpty()))
-                    .plus(getNavParam(EMAIL, email))
-                    .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }))
-                    .plus(getNavParam(IDENTIFICATION, identification))
-                    .plus(getNavParam(PK_USER, pkUser))
-                    .plus(getNavParam(USER_NAME, userName))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                .plus(getNavParam(FIRST_NAME, uiState.userStatus?.infoUser?.firstName?.ifEmpty { email }))
+                .plus(getNavParam(LAST_NAME, uiState.userStatus?.infoUser?.lastName.orEmpty()))
+                .plus(getNavParam(EMAIL, email))
+                .plus(getNavParam(PHONE_NUMBER, uiState.userStatus?.infoUser?.phone?.ifEmpty { 0 }))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(PK_USER, pkUser))
+                .plus(getNavParam(USER_NAME, userName))
         )
     }
 
@@ -1401,6 +1405,10 @@ class ProductViewModel @Inject constructor(
         }
     }
 
+    private fun updateCryptoOriginationFlag(isFlagActive: Boolean) {
+        uiState = uiState.copy(originationLaunchedFromCrypto = isFlagActive)
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1422,7 +1430,9 @@ class ProductViewModel @Inject constructor(
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
-        val isCryptoTransferEnabled: Boolean = false
+        val isCryptoTransferEnabled: Boolean = false,
+        val wasSmartActive: Boolean = false,
+        val originationLaunchedFromCrypto: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1541,6 +1551,7 @@ class ProductViewModel @Inject constructor(
                 uiEvent.restartNotificationRoute
             )
             is UIEvent.OnSaveFirebaseToke -> onSaveFirebaseToken()
+            is UIEvent.UpdateCryptoFlag -> updateCryptoOriginationFlag(uiEvent.isActive)
         }
     }
 
@@ -1654,6 +1665,7 @@ class ProductViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnSaveFirebaseToke : UIEvent()
+        data class UpdateCryptoFlag(val isActive: Boolean) : UIEvent()
     }
 
     sealed class BaseEvent {

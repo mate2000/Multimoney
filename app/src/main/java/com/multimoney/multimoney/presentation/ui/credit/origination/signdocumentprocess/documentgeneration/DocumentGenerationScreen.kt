@@ -40,12 +40,12 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun DocumentGenerationScreen(
     idBrand: Int,
-    onGetLinkAgain: () -> Unit = {}
+    actionWhenTimerFinish: () -> Unit = {}
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
         openStepDebounce.debounce(TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND).onEach { status ->
-            onGetLinkAgain()
+            actionWhenTimerFinish()
             flowOf(status)
         }
     }

@@ -141,10 +141,8 @@ fun BiometricsCustomRow(viewModel: SettingsViewModel) {
                 end.linkTo(parent.end)
             },
             checked = viewModel.uiState.areBiometricsEnabled ?: false,
-            onCheckedChange = { newState ->
-                if (!newState) {
-                    viewModel.onUIEvent(SettingsViewModel.UIEvent.OnShowConfirmationDialog)
-                }
+            onCheckedChange = {
+                viewModel.onUIEvent(SettingsViewModel.UIEvent.OnShowConfirmationDialog)
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Primary500,

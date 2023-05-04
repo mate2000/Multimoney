@@ -128,7 +128,11 @@ fun ContentSV(
 
     Column(modifier) {
         Text(
-            text = stringResource(R.string.smart_facta_are_you_us_citizen),
+            text = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+                stringResource(id = R.string.smart_facta_are_you_or_family_pep_cr)
+            } else {
+                stringResource(id = R.string.smart_facta_are_you_or_family_pep)
+            },
             style = Typography.body1,
             color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 24.dp)
@@ -148,7 +152,11 @@ fun ContentSV(
         )
 
         Text(
-            text = stringResource(R.string.smart_facta_are_you_or_family_pep),
+            text =if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+                stringResource(id = R.string.smart_facta_are_you_or_family_pep_cr)
+            } else {
+                stringResource(id = R.string.smart_facta_are_you_or_family_pep)
+            },
             style = Typography.body1,
             color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 32.dp)
@@ -178,9 +186,14 @@ fun ContentOneCR(
 ) {
     val optionsYesNo = stringArrayResource(R.array.options_yes_no).toList()
     val optionsPep = stringArrayResource(R.array.smart_facta_is_pep_options).toList()
+    val activitiesAccording = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+        stringResource(id = R.string.smart_facta_activities_according_to_article_15_cr)
+    } else {
+        stringResource(id = R.string.smart_facta_activities_according_to_article_15)
+    }
 
     val annotatedText = buildAnnotatedString {
-        append(stringResource(R.string.smart_facta_activities_according_to_article_15) + " ")
+        append("$activitiesAccording ")
         pushStringAnnotation(INFO_TAG, INFO_TAG)
         withStyle(style = SpanStyle(MultimoneyTheme.colors.textInformation)) {
             append(stringResource(R.string.smart_facta_learn_more))
@@ -227,7 +240,11 @@ fun ContentOneCR(
             )
 
             Text(
-                text = stringResource(R.string.smart_facta_are_you_or_family_pep),
+                text = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+                    stringResource(id = R.string.smart_facta_are_you_or_family_pep_cr)
+                } else {
+                    stringResource(id = R.string.smart_facta_are_you_or_family_pep)
+                },
                 style = Typography.body1,
                 color = MultimoneyTheme.colors.labelText,
                 modifier = Modifier.padding(top = 32.dp)
@@ -273,7 +290,11 @@ fun ContentTwoCR(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.smart_facta_are_you_us_tax_payer),
+            text = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+                stringResource(id = R.string.smart_facta_are_you_us_tax_payer_cr)
+            } else {
+                stringResource(id = R.string.smart_facta_are_you_us_tax_payer)
+            },
             style = Typography.body1,
             color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 24.dp)
@@ -293,7 +314,11 @@ fun ContentTwoCR(
         )
 
         Text(
-            text = stringResource(R.string.smart_facta_are_you_other_country_tax_payer),
+            text = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+                stringResource(id = R.string.smart_facta_are_you_other_country_tax_payer_cr)
+            } else {
+                stringResource(id = R.string.smart_facta_are_you_other_country_tax_payer)
+            },
             style = Typography.body1,
             color = MultimoneyTheme.colors.labelText,
             modifier = Modifier.padding(top = 32.dp)

@@ -98,7 +98,7 @@ class PaymentVoucherViewModel @Inject constructor(
         encodeData(
             clientBankAccount
         )
-        }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}/${false}"
+        }/$paymentDate/${false}/${Screen.PaymentVoucherScreen.baseRoute}/${false}/$identification"
     )
 
     private fun onNavigateToHome() =

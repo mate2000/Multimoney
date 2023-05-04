@@ -17,6 +17,7 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
@@ -38,8 +39,8 @@ import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getDayFromString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @HiltViewModel
 class PaymentScheduleViewModel @Inject constructor(
@@ -65,6 +66,7 @@ class PaymentScheduleViewModel @Inject constructor(
     private var getBankAccountAttempts = 0
     private var getPaymentScheduleAttempts = 0
     private var setPaymentScheduleAttempts = 0
+    private var identification: String? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -75,6 +77,7 @@ class PaymentScheduleViewModel @Inject constructor(
         isEditBankAccount = savedStateHandle[IS_EDIT_BANK_ACCOUNT] ?: false
         isEditPaymentSchedule = savedStateHandle[IS_EDIT_PAYMENT_SCHEDULE] ?: false
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
         uiState = uiState.copy(day = getDayFromString(paymentDate, API_DATE_FORMAT))
     }
 
@@ -201,7 +204,7 @@ class PaymentScheduleViewModel @Inject constructor(
     }
 
     private fun onEditBankAccount() = navigateTo(
-        route = "${Screen.PaymentScheduleAccountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/$paymentDate/$previousScreen"
+        route = "${Screen.PaymentScheduleAccountScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/$paymentDate/$previousScreen/$identification"
     )
 
     private fun onOpenDisclaimerDialog() {

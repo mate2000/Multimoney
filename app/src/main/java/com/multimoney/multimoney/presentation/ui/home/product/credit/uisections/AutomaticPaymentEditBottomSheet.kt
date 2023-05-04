@@ -41,8 +41,8 @@ fun AutomaticPaymentEditBottomSheet(
                 onClick = {
                     coroutineScope.launch {
                         modalBottomSheetState.hide()
+                        onEditClick()
                     }
-                    onEditClick()
                 }
             )
             CustomThreePointsTextButton(
@@ -52,8 +52,8 @@ fun AutomaticPaymentEditBottomSheet(
                 onClick = {
                     coroutineScope.launch {
                         modalBottomSheetState.hide()
+                        onDeleteClick()
                     }
-                    onDeleteClick()
                 }
             )
         }

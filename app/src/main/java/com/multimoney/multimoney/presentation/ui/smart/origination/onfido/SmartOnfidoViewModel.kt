@@ -341,8 +341,6 @@ class SmartOnfidoViewModel @Inject constructor(
         val signDocumentStep =
             if (evicertiaStatus.lowercase() == SmartOnFidoOrFirmStatus.FIRMED.status.lowercase() || evicertiaStatus.lowercase() == SMART_FIRMED_ONFIDO_PENDING.workflow.lowercase()) {
                 VALIDATE_IDENTITY.value
-            } else if (evicertiaUrl.isNotBlank() && evicertiaUrl != URL_EMPTY) {
-                SIGN_DOCUMENTS_STEP.value
             } else {
                 GENERATE_DOCUMENT_STEP.value
             }

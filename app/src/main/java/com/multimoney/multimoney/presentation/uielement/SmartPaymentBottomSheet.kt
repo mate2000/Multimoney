@@ -117,7 +117,8 @@ fun SmartPaymentBottomSheet(
                 title = fromTitle.orEmpty(),
                 subtitle = fromSubtitle.orEmpty(),
                 endIcon = null,
-                enable = false
+                enable = false,
+                readOnly = true
             )
 
             Icon(
@@ -148,7 +149,8 @@ fun SmartPaymentBottomSheet(
                     subtitle2 = toSubtitle2.orEmpty(),
                     titleIcon = titleIcon,
                     endIcon = null,
-                    enable = false
+                    enable = false,
+                    readOnly = true
                 )
             } else {
                 toContactInfo()

@@ -29,6 +29,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPo
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -70,13 +71,13 @@ class PaymentPointsViewModel @Inject constructor(
             .plus(
                 getNavParam(
                     POINT_ADDRESS,
-                    pointAddress
+                    pointAddress.encodeURLToUTF()
                 )
             )
             .plus(
                 getNavParam(
                     POINT_ADDRESS_DESCRIPTION,
-                    pointAddressDescription
+                    pointAddressDescription.encodeURLToUTF()
                 )
             )
             .plus(getNavParam(POINT_SCHEDULE, pointSchedule))

@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.location.Locatio
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnNavigateMapsClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.location.LocationDetailsViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.decodeURLFromUTF
 import com.multimoney.multimoney.presentation.util.openMapsLink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class LocationDetailsViewModel @Inject constructor(
     init {
         pointName = savedStateHandle[POINT_NAME] ?: ""
         pointAddress = savedStateHandle[POINT_ADDRESS] ?: ""
-        pointAddressDescription = savedStateHandle[POINT_ADDRESS_DESCRIPTION] ?: ""
+        pointAddressDescription = (savedStateHandle[POINT_ADDRESS_DESCRIPTION] ?: "").decodeURLFromUTF()
         pointSchedule = savedStateHandle[POINT_SCHEDULE] ?: ""
         paymentAmount = savedStateHandle[PAYMENT_AMOUNT] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""

@@ -232,7 +232,7 @@ class AddIbanAccountViewModel @Inject constructor(
             Screen.PaymentScheduleAccountScreen.baseRoute -> {
                 saveClientBankAccount()
             }
-            Screen.HomeBNScreen.baseRoute,
+            Screen.HomeScreen.route,
             Screen.SmartPaymentOptionsScreenCR.baseRoute,
             Screen.SmartPaymentAccountScreenCR.baseRoute -> {
                 saveIbanAccount()

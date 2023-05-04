@@ -384,7 +384,7 @@ class HomeViewModel @Inject constructor(
         removeBlankCards(productPageList)
 
         // If idBrand is different from Guatemala and Mexico enable Smart
-        if (uiState.idBrand != Brand.Guatemala.id.toString() && uiState.idBrand.toInt() != Brand.Mexico.id) {
+        if (uiState.idBrand != Brand.Guatemala.id.toString() && (uiState.idBrand.toIntOrNull() ?: 0) != Brand.Mexico.id) {
             if (balance.balanceAccountSmart.isNullOrEmpty().not()) {
                 // Add the amount of account smart that user has
                 balance.balanceAccountSmart?.forEachIndexed { index, account ->
@@ -599,10 +599,10 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun onCallGetClientAutomaticDebitUseCase() = executeUseCase {
-        if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+        if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
             getClientAutomaticDebitUseCase.invoke(
                 user = uiState.email,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
                 idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0
             ).collectLatest { result ->
@@ -622,7 +622,7 @@ class HomeViewModel @Inject constructor(
             getCardAutomaticDebitUseCase.invoke(
                 user = uiState.email,
                 identification = uiState.identification,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0L,
                 idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0L
             ).collectLatest { result ->
@@ -644,7 +644,7 @@ class HomeViewModel @Inject constructor(
         executeUseCase {
             mutationDeactivateCardAutomaticDebitUseCase.invoke(
                 user = uiState.email,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0,
                 idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0,
                 idCard = idCard?.toLong() ?: 0L
@@ -653,7 +653,7 @@ class HomeViewModel @Inject constructor(
                     callQueryBalanceUseCase(
                         user = uiState.email,
                         identification = uiState.identification,
-                        idBrand = uiState.idBrand.toInt(),
+                        idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                         idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
                         idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0,
                         creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
@@ -676,7 +676,7 @@ class HomeViewModel @Inject constructor(
         executeUseCase {
             mutationDeactivateClientAutomaticDebitUseCase.invoke(
                 user = uiState.email,
-                idBrand = uiState.idBrand.toInt(),
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                 idClient = uiState.validateUserStatus?.infoUser?.idClient?.toLong() ?: 0,
                 idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient?.toLong() ?: 0,
                 origin = origin,
@@ -686,7 +686,7 @@ class HomeViewModel @Inject constructor(
                     callQueryBalanceUseCase(
                         user = uiState.email,
                         identification = uiState.identification,
-                        idBrand = uiState.idBrand.toInt(),
+                        idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                         idClient = uiState.validateUserStatus?.infoUser?.idClient ?: 0,
                         idLoanClient = uiState.validateUserStatus?.infoCredit?.idLoanClient ?: 0,
                         creditStatus = uiState.validateUserStatus?.infoCredit?.status ?: 0,
@@ -814,7 +814,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getCardIssuanceDescriptionError() = if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+    fun getCardIssuanceDescriptionError() = if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
         R.string.card_issuance_error_description
     } else {
         R.string.card_issuance_error_description_sv

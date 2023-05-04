@@ -233,10 +233,10 @@ class ProductViewModel @Inject constructor(
             firebaseHelper.registerFCMDevice { token ->
                 viewModelScope.launch {
                     mutationUserEventMobileSaveUseCase.invoke(
-                        idBrand = uiState.idBrand.toInt(),
+                        idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                         user = email,
                         pkSuvLogUserEventMobile = 0,
-                        fkSuvMtrUser = pkUser.toInt(),
+                        fkSuvMtrUser = pkUser.toIntOrNull() ?: 0,
                         platform = ANDROID_LABEL,
                         uuid = dataStorePreferences.getDeviceId().first(),
                         deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
@@ -338,7 +338,7 @@ class ProductViewModel @Inject constructor(
                         .plus(
                             getNavParam(
                                 SIGN_DOCUMENT_STEP_ARG,
-                                SignDocumentStep.GENERATE_DOCUMENT_STEP.value
+                                GENERATE_DOCUMENT_STEP.value
                             )
                         )
                         .plus(
@@ -347,7 +347,7 @@ class ProductViewModel @Inject constructor(
                                 uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
                             )
                         )
-                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toIntOrNull() ?: 0))
                         .plus(getNavParam(PK_USER, pkUser))
                         .plus(getNavParam(IDENTIFICATION, identification))
                         .plus(getNavParam(EMAIL, email))
@@ -380,7 +380,7 @@ class ProductViewModel @Inject constructor(
                 }
                 navigateTo(
                     Screen.CreditScreen.baseRoute
-                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toIntOrNull() ?: 0))
                         .plus(getNavParam(PK_USER, pkUser))
                         .plus(getNavParam(IDENTIFICATION, identification))
                         .plus(getNavParam(EMAIL, email))
@@ -463,7 +463,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                    "${encodeData(uiState.userStatus?.infoUser)}"
+                        encodeData(uiState.userStatus?.infoUser)
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
@@ -489,16 +489,16 @@ class ProductViewModel @Inject constructor(
         val route = if (
             (creditSummary?.size ?: 0) > 1 &&
             validateQuotas(creditSummary) &&
-            uiState.idBrand.toInt() == Brand.CostaRica.id
+            (uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(creditSummary)
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}"
-        } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+        } else if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
-        } else if (uiState.idBrand.toInt() == Brand.Mexico.id) {
+        } else if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.Mexico.id) {
             "${Screen.PaymentOptionsTransferScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstSummary()?.ibanAccount}/${
             encodeData(
                 configurationVersion?.configuration?.credit?.transferAccount
@@ -519,7 +519,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
         val infoCredit = uiState.userStatus?.infoCredit
         logEvents(AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032)
-        if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+        if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(ClientBankAccount())
@@ -541,7 +541,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onChipQuotaClick() {
-        if (uiState.idBrand.toInt() != Brand.Mexico.id) {
+        if ((uiState.idBrand.toIntOrNull() ?: 0) != Brand.Mexico.id) {
             uiState = uiState.copy(
                 openDialog = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     DialogParameters(
@@ -719,7 +719,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
             Screen.NonPreApprovedScreen.baseRoute
-                .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand.toIntOrNull() ?: 0))
                 .plus(getNavParam(PK_USER, pkUser))
                 .plus(getNavParam(IDENTIFICATION, identification))
                 .plus(getNavParam(EMAIL, email))
@@ -946,7 +946,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                    "${encodeData(uiState.userStatus?.infoUser)}"
+                        encodeData(uiState.userStatus?.infoUser)
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callSinpeAccountsListUseCase(account, onLoadingValueChange)
@@ -1040,7 +1040,7 @@ class ProductViewModel @Inject constructor(
                 identification = identification,
                 idLoanClient = uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
                 user = email,
-                idBrand = uiState.idBrand.toInt()
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
                     onCallQueryBalanceCardInformation(onLoadingValueChange)
@@ -1071,7 +1071,7 @@ class ProductViewModel @Inject constructor(
     private fun onCallMutationAccountStatusUseCase(comingFromCrypto: Boolean) = executeUseCase {
         mutationAccountStatusUseCase.invoke(
             user = userName,
-            idBrand = uiState.idBrand.toInt(),
+            idBrand = uiState.idBrand.toIntOrNull() ?: 0,
             identificationNumber = identification,
             newState = DEFAULT_NEW_STATE,
             typeState = DEFAULT_TYPE_STATE,
@@ -1287,7 +1287,7 @@ class ProductViewModel @Inject constructor(
         val infoCredit = uiState.userStatus?.infoCredit
         val baseAdjustEvent = BaseEventDataDto(
             user = email,
-            idBrand = uiState.idBrand.toInt(),
+            idBrand = uiState.idBrand.toIntOrNull() ?: 0,
             idClient = idClient,
             idLoanClient = infoCredit?.idLoanClient,
             identification = identification

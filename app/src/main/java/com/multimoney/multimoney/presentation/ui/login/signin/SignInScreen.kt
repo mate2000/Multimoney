@@ -38,8 +38,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPScreen
-import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnSetArguments
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
@@ -61,6 +59,7 @@ fun SignInScreen(
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel = hiltViewModel(),
+    forceChangeDevice: Boolean = false
 ) {
     // Properties
     val fragmentActivity = LocalContext.current as FragmentActivity
@@ -81,6 +80,7 @@ fun SignInScreen(
                 SignInViewModel.UIEvent.OnStart(
                     getDeviceName(fragmentActivity) ?: "",
                     getDeviceType(fragmentActivity).value,
+                    forceChangeDevice
                 )
             )
             onUIEvent(SignInViewModel.UIEvent.OnSetCountryCode(context.getUserCountry()))
@@ -101,13 +101,11 @@ fun SignInScreen(
         viewModel.onUIEvent(SignInViewModel.UIEvent.OnUpdateToastVisibility(false))
     }
 
-    SignInContent(onNavigate, onPopAndNavigate, viewModel, fragmentActivity, context)
+    SignInContent(viewModel, fragmentActivity, context)
 }
 
 @Composable
 fun SignInContent(
-    onNavigate: (NavEvent.Navigate) -> Unit = {},
-    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     viewModel: SignInViewModel,
     fragmentActivity: FragmentActivity,
     context: Context
@@ -245,10 +243,6 @@ fun SignInContent(
             },
             buttonType = PrimaryTertiaryUnderLined
         )
-    }
-
-    if (viewModel.uiState.showOtpScreen) {
-        SignInOTPScreen(onNavigate = onNavigate, onPopAndNavigate = onPopAndNavigate, signInViewModel = viewModel)
     }
 
     LoadingIndicator(viewModel.uiState.isLoading)

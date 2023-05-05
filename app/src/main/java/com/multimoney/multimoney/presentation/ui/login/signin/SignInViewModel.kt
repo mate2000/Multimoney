@@ -362,7 +362,7 @@ class SignInViewModel @Inject constructor(
         if (uiState.userEmail != biometricUserEmail) {
             dataStorePreferences.isBiometricsEnabled(false)
         }
-        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
+        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value?.trim().orEmpty()}")
         dataStorePreferences.setAuthToken(idToken)
         dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
@@ -478,7 +478,7 @@ class SignInViewModel @Inject constructor(
                 viewModelScope.launch {
                     dataStorePreferences.setUserEmail(uiState.userEmail)
                     dataStorePreferences.setUserPassword(uiState.userPassword, this@apply)
-                    dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
+                    dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value?.trim().orEmpty()}")
                     dataStorePreferences.isBiometricsEnabled(true)
                     navigateToHome()
                 }

@@ -1101,7 +1101,8 @@
 
     <!-- Smart Account - Other -->
     <string name="smart_other_title" translatable="false">Otro</string>
-    <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
+    <string name="smart_other_source_of_income_label" translatable="false">Especifica tu fuente de ingresos</string>
+    <string name="smart_other_source_of_income_label_cr" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
     <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>

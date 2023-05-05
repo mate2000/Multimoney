@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.View
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.ModalBottomSheetValue.Expanded
 import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.runtime.getValue
@@ -48,6 +47,7 @@ import com.multimoney.multimoney.presentation.util.getCurrentTime
 import com.multimoney.multimoney.presentation.util.getMaskedAccountIban
 import com.multimoney.multimoney.presentation.util.getMaskedVisaAccount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.workers.startTimedNotification
 import kotlinx.coroutines.delay
@@ -226,11 +226,19 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         )
 
         if (currentAmount > (smartAccount?.totalBalance ?: 0.0)) {
+            val totalBalance = amountUIState.totalBalance?.toCurrencyFormat(
+                symbol = originCurrency?.symbol ?: Dollar.symbol
+            ).orEmpty()
+            val errorBalanceStringResource = if (idBrand == Brand.CostaRica.id) {
+                R.string.smart_iban_transfer_error_balance_insufficient_cr
+            } else {
+                R.string.smart_iban_transfer_error_balance_insufficient
+            }
             amountUIState = amountUIState.copy(
                 amountError = Triple(
                     true,
-                    R.string.smart_iban_transfer_error_balance_insufficient,
-                    originCurrency?.symbol.plus(amountUIState.totalBalance)
+                    errorBalanceStringResource,
+                    totalBalance.ifEmpty { "${originCurrency?.symbol ?: Dollar.symbol}0.0" }
                 )
             )
         }
@@ -239,11 +247,19 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
             (amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0) >
             (amountUIState.maxAmount ?: 0.0)
         ) {
+            val maxAmount = amountUIState.maxAmount?.toCurrencyFormat(
+                symbol = destinyCurrency?.symbol ?: Dollar.symbol
+            ).orEmpty()
+            val errorMaxAmountStringResource = if (idBrand == Brand.CostaRica.id) {
+                R.string.smart_iban_transfer_error_max_amount_cr
+            } else {
+                R.string.smart_iban_transfer_error_max_amount
+            }
             amountUIState = amountUIState.copy(
                 amountError = Triple(
                     true,
-                    R.string.smart_iban_transfer_error_max_amount,
-                    destinyCurrency?.symbol.plus(amountUIState.maxAmount)
+                    errorMaxAmountStringResource,
+                    maxAmount.ifEmpty { "${destinyCurrency?.symbol ?: Dollar.symbol}0.0" }
                 )
             )
         }
@@ -459,7 +475,7 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         val placeholder: Int = R.string.smart_dollar_placeholder,
         val openDialog: DialogParameters = DialogParameters(),
         val idCard: Long = 0,
-        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        val bottomSheetState: ModalBottomSheetState = ModalBottomSheetState(Hidden),
         val cardBankName: String = "",
         val errorMessage: String = "",
         val errorDetail: String = "",

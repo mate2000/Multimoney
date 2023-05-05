@@ -77,7 +77,7 @@ fun SmartDocumentGenerationScreen(
             )
             Text(
                 text = stringResource(
-                    id = subtitle ?: string.smart_other_generating_document_subtitle
+                    id = subtitle ?: string.smart_other_generating_document_subtitle_cr
                 ),
                 modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,

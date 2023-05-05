@@ -398,7 +398,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Add Iban Account
     object AddIbanAccountScreen : Screen(
-        "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}",
+        "add_iban_account_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}?$SMART_ACCOUNT={$SMART_ACCOUNT}",
         "add_iban_account_screen"
     )
 
@@ -502,7 +502,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SmartPaymentAccountScreenCR : Screen(
-        "smart_payment_accounts_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$PREVIOUS_SCREEN}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SMART_PAYMENT_ACCOUNTS}/{$SMART_ACCOUNT}",
+        "smart_payment_accounts_screen?$USER={$USER}?$ID_BRAND={$ID_BRAND}?$IDENTIFICATION={$IDENTIFICATION}?$PREVIOUS_SCREEN={$PREVIOUS_SCREEN}?$ID_CLIENT={$ID_CLIENT}?$ID_LOAN_CLIENT={$ID_LOAN_CLIENT}?$SMART_PAYMENT_ACCOUNTS={$SMART_PAYMENT_ACCOUNTS}?$SMART_ACCOUNT={$SMART_ACCOUNT}",
         "smart_payment_accounts_screen"
     )
 

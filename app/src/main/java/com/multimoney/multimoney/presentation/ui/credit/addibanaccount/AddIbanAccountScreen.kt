@@ -51,6 +51,7 @@ import com.multimoney.multimoney.presentation.util.transformation.VisualTransfor
 @Composable
 fun AddIbanAccountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: AddIbanAccountViewModel = hiltViewModel()
 ) {
@@ -59,6 +60,7 @@ fun AddIbanAccountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(
+                onPopAndNavigate = onPopAndNavigate,
                 onPopBackStack = onPopBackStack,
                 onNavigate = onNavigate
             )

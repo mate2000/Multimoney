@@ -143,7 +143,11 @@ fun OtherIncomeContent(
             onValueChange = {
                 viewModel.onUIEvent(OnIncomeSourceChange(it))
             },
-            labelText = stringResource(R.string.smart_other_source_of_income_label),
+            labelText = if (idBrand == Brand.CostaRica.id) {
+                stringResource(R.string.smart_other_source_of_income_label_cr)
+            } else {
+                stringResource(R.string.smart_other_source_of_income_label)
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

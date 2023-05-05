@@ -192,7 +192,7 @@ fun OriginationVoucherScreen(
                         modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                         icon = drawable.ic_receipt,
                         title = stringResource(string.origination_voucher_reference),
-                        subTitle = viewModel.uiState.infoDeposit?.referenceNumber ?: ""
+                        subTitle = viewModel.uiState.infoDeposit?.creditNumber ?: ""
                     )
 
                     Row(

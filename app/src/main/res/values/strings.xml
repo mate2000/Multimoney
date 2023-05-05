@@ -997,7 +997,7 @@
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
-    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisa formato.</b> Debe tener 20 dígitos]]></string>
+    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisá formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
     <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
@@ -1101,10 +1101,12 @@
 
     <!-- Smart Account - Other -->
     <string name="smart_other_title" translatable="false">Otro</string>
-    <string name="smart_other_source_of_income_label" translatable="false">Especificá tu fuente de ingresos</string>
+    <string name="smart_othe_source_of_income_label" translatable="false">Especifica tu fuente de ingresos</string>
+    <string name="smart_other_source_of_income_label_cr" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_other_generating_document_subtitle_cr" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_other_generating_document_subtitle_sv" translatable="false">Después de firmar tu contrato puedes empezar a utilizar tu cuenta.</string>
     <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
@@ -1578,7 +1580,9 @@
     <string name="smart_iban_transfer_smart_account_dolar" translatable="false">Smart Dólares %s</string>
     <string name="smart_iban_transfer_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="smart_iban_transfer_error_balance_insufficient" translatable="false">No tienes fondos suficientes. Tu disponible es %s</string>
-    <string name="smart_iban_transfer_error_max_amount" translatable="false">El máximo monto que podés enviar es de %s</string>
+    <string name="smart_iban_transfer_error_balance_insufficient_cr" translatable="false">No tenés fondos suficientes. Tu disponible es %s</string>
+    <string name="smart_iban_transfer_error_max_amount" translatable="false">El máximo monto que puedes enviar es de %s</string>
+    <string name="smart_iban_transfer_error_max_amount_cr" translatable="false">El máximo monto que podés enviar es de %s</string>
     <string name="smart_iban_transfer_select_smart_account_title" translatable="false">Enviar dinero desde</string>
 
     <!-- Smart Payment Sheet-->

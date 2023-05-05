@@ -39,7 +39,7 @@ fun SmartDocumentGenerationScreen(
     viewModel: SmartSignViewModel,
     icon: Int? = null,
     title: Int? = null,
-    subtitle: Int? = null
+    subtitle: Int
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
@@ -77,7 +77,7 @@ fun SmartDocumentGenerationScreen(
             )
             Text(
                 text = stringResource(
-                    id = subtitle ?: string.smart_other_generating_document_subtitle
+                    id = subtitle
                 ),
                 modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,

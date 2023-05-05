@@ -13,6 +13,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDetailUseCase
 import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
 import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.metrics.BaseEventDataDto
 import com.multimoney.domain.model.util.error.MessageError
@@ -24,6 +25,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
 import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
@@ -61,6 +63,7 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCardDateFormat
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -345,7 +348,9 @@ class DisbursementAccountViewModel @Inject constructor(
         logEvents(AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003)
         if (idBrand == Brand.CostaRica.id) {
             navigateTo(
-                route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.DisbursementAccountScreen.baseRoute}/$idClient/$idLoanClient"
+                route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.DisbursementAccountScreen.baseRoute}/$idClient/$idLoanClient".plus(
+                    getNavParam(SMART_ACCOUNT, encodeData(SmartAccountID()))
+                )
             )
         } else {
             navigateTo(

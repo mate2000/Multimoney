@@ -131,6 +131,10 @@ class ValidateOTPViewModel @Inject constructor(
                 Brand.CostaRica.id -> R.string.profile_enter_the_code_sent_to_template
                 else -> R.string.profile_enter_the_code_sent_to_template_sv
             },
+            disclaimerResource = when (uiState.idBrand) {
+                Brand.CostaRica.id -> R.string.registered_user_otp_disclaimer_cr
+                else -> R.string.registered_user_otp_disclaimer
+            },
             statusTextResource = when (uiState.phaseCount) {
                 PHASE_ONE -> R.string.profile_code_expires_in_template
                 null -> R.string.empty
@@ -544,6 +548,7 @@ class ValidateOTPViewModel @Inject constructor(
         val dialogTextResource: Int = R.string.empty,
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
+        val disclaimerResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
         val destination: String? = null,
         val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),

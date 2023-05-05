@@ -11,6 +11,8 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.accountsmart.MutationSaveSinpeAccountUseCase
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
 import com.multimoney.domain.interaction.security.QueryValidateBankAccountUseCase
+import com.multimoney.domain.model.accountsmart.SinpeAccount
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.domain.model.security.ValidateAccount
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -18,12 +20,15 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnAccountValueChange
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnBackClick
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountViewModel.UIEvent.OnContinueClick
@@ -34,6 +39,7 @@ import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.BankAccountType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -58,6 +64,7 @@ class AddIbanAccountViewModel @Inject constructor(
     private var previousScreen: String?
     private var idClient: Int?
     private var idLoanClient: Int?
+    private var smartAccount: SmartAccountID = SmartAccountID()
     var validateAccount: ValidateAccount? = null
 
     init {
@@ -67,6 +74,7 @@ class AddIbanAccountViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN]
         idClient = savedStateHandle[ID_CLIENT]
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        smartAccount = savedStateHandle[SMART_ACCOUNT] ?: SmartAccountID()
     }
 
     private fun onStart() {
@@ -176,7 +184,7 @@ class AddIbanAccountViewModel @Inject constructor(
             it.onSuccess {
                 uiState = uiState.copy(isLoading = false)
                 restartMetricsPreferences()
-                navigateToPreviousScreen()
+                navigateToNextScreen()
             }.onFailure { error ->
                 uiState = uiState.copy(
                     isLoading = false,
@@ -210,7 +218,7 @@ class AddIbanAccountViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess {
                 restartMetricsPreferences()
-                navigateToPreviousScreen()
+                navigateToNextScreen()
             }.onFailure {
                 uiState = uiState.copy(
                     isLoading = false,
@@ -268,6 +276,43 @@ class AddIbanAccountViewModel @Inject constructor(
                 Screen.HomeScreen.route,
                 true,
                 HomeState.COLLAPSED
+            )
+            Screen.SmartPaymentOptionsScreenCR.baseRoute -> navigateBack(
+                Screen.SmartPaymentOptionsScreenCR.route,
+                true
+            )
+        }
+    }
+
+    private fun navigateToNextScreen() {
+        when (previousScreen) {
+            Screen.DisbursementAccountScreen.baseRoute -> navigateBack(
+                Screen.DisbursementAccountScreen.route,
+                true
+            )
+            Screen.PaymentAccountScreen.baseRoute -> navigateBack(
+                Screen.PaymentAccountScreen.route,
+                true
+            )
+            Screen.PaymentScheduleAccountScreen.baseRoute -> navigateBack(
+                Screen.PaymentScheduleAccountScreen.route,
+                true
+            )
+            Screen.SmartPaymentAccountScreenCR.baseRoute -> navigateBack(
+                Screen.SmartPaymentAccountScreenCR.route,
+                true
+            )
+            Screen.HomeScreen.route -> popAndNavigateTo(
+                route = Screen.SmartPaymentAccountScreenCR.baseRoute
+                    .plus(getNavParam(USER, user))
+                    .plus(getNavParam(ID_BRAND, idBrand))
+                    .plus(getNavParam(IDENTIFICATION, identification))
+                    .plus(getNavParam(PREVIOUS_SCREEN, Screen.HomeScreen.route))
+                    .plus(getNavParam(ID_CLIENT, idClient))
+                    .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                    .plus(getNavParam(SMART_PAYMENT_ACCOUNTS, encodeData(listOf<SinpeAccount?>())))
+                    .plus(getNavParam(SMART_ACCOUNT, encodeData(smartAccount))),
+                popTo = Screen.AddIbanAccountScreen.route
             )
             Screen.SmartPaymentOptionsScreenCR.baseRoute -> navigateBack(
                 Screen.SmartPaymentOptionsScreenCR.route,

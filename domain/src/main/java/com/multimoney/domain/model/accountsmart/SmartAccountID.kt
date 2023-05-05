@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class SmartAccountID(
-    val tokenAccount: String?,
-    val currencyID: Int?,
-    val accountNumber: String?,
+    val tokenAccount: String? = "",
+    val currencyID: Int? = 0,
+    val accountNumber: String? = "",
     val ibanAccountNumber: String? = "",
     val totalBalance: Double? = null,
     val customerId: Long? = null

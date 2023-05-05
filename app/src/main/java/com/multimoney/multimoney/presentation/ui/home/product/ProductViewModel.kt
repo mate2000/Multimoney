@@ -58,6 +58,7 @@ import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
@@ -72,9 +73,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
+import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
@@ -127,7 +131,6 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
@@ -463,7 +466,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                        encodeData(uiState.userStatus?.infoUser)
+                    encodeData(uiState.userStatus?.infoUser)
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
@@ -902,11 +905,17 @@ class ProductViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
                     onLoadingValueChange(false)
+                    val smartIds = SmartAccountID(
+                        tokenAccount = account?.tokenNumber,
+                        currencyID = account?.idCurrencyAccount,
+                        accountNumber = account?.accountNumber,
+                        ibanAccountNumber = account?.ibanAccountNumber
+                    )
                     if (accountList?.data?.isEmpty() == true) {
-                        navigateToAddIbanAccount()
+                        navigateToAddIbanAccount(smartIds)
                     } else {
                         accountList?.data?.let {
-                            navigateToSmartAccount(account = account, clientBankAccounts = it)
+                            navigateToSmartAccount(account = account, clientBankAccounts = it, smartIds)
                         }
                     }
                 }
@@ -946,7 +955,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                        encodeData(uiState.userStatus?.infoUser)
+                    encodeData(uiState.userStatus?.infoUser)
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callSinpeAccountsListUseCase(account, onLoadingValueChange)
@@ -954,25 +963,31 @@ class ProductViewModel @Inject constructor(
     }
 
     // This function opens the iban accounts list to choose to make the deposit
-    private fun navigateToSmartAccount(account: Account?, clientBankAccounts: List<SinpeAccount?>) {
+    private fun navigateToSmartAccount(
+        account: Account?,
+        clientBankAccounts: List<SinpeAccount?>,
+        smartIds: SmartAccountID
+    ) {
         val infoCredit = uiState.userStatus?.infoCredit
-        val smartIds = SmartAccountID(
-            tokenAccount = account?.tokenNumber,
-            currencyID = account?.idCurrencyAccount,
-            accountNumber = account?.accountNumber,
-            ibanAccountNumber = account?.ibanAccountNumber
-        )
         navigateTo(
-            route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/" +
-                "$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}/" +
-                "${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
+            route = Screen.SmartPaymentAccountScreenCR.baseRoute
+                .plus(getNavParam(USER, email))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(PREVIOUS_SCREEN, Screen.HomeScreen.route))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_LOAN_CLIENT, infoCredit?.idLoanClient))
+                .plus(getNavParam(SMART_PAYMENT_ACCOUNTS, encodeData(clientBankAccounts)))
+                .plus(getNavParam(SMART_ACCOUNT, encodeData(smartIds)))
         )
     }
 
-    private fun navigateToAddIbanAccount() {
+    private fun navigateToAddIbanAccount(smartIds: SmartAccountID) {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull() ?: 0}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}"
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull() ?: 0}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}".plus(
+                getNavParam(SMART_ACCOUNT, encodeData(smartIds))
+            )
         )
     }
 

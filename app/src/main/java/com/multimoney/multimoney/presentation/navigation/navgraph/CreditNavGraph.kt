@@ -11,7 +11,9 @@ import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.HOME_STATE
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PREVIOUS_IS_RESTART
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navtype.payment.SmartAccountIDNavType
 import com.multimoney.multimoney.presentation.ui.credit.addibanaccount.AddIbanAccountScreen
 import com.multimoney.multimoney.presentation.ui.credit.movements.CreditMovementsScreen
 import com.multimoney.multimoney.presentation.ui.credit.origination.CreditScreen
@@ -203,12 +205,20 @@ fun NavGraphBuilder.creditNavGraph(navController: NavHostController) {
                 },
                 navArgument(ID_LOAN_CLIENT) {
                     type = NavType.IntType
+                },
+                navArgument(SMART_ACCOUNT) {
+                    type = SmartAccountIDNavType()
                 }
             )
         ) {
             AddIbanAccountScreen(
                 onNavigate = {
                     navController.navigate(it.route)
+                },
+                onPopAndNavigate = {
+                    navController.navigate(it.route) {
+                        popUpTo(it.popTo) { inclusive = true }
+                    }
                 },
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(PREVIOUS_IS_RESTART, it.isRestart)

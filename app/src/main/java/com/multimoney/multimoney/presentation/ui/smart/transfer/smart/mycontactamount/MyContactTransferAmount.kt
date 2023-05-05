@@ -166,6 +166,7 @@ private fun MyContactsAmountBottomSheet(viewModel: MyContactsTransferAmountViewM
                     )
                 },
                 enable = false,
+                readOnly = true,
                 titleIcon = if (viewModel.phoneAccount?.isFavorite == true) R.drawable.ic_star_filled else null
             )
         },

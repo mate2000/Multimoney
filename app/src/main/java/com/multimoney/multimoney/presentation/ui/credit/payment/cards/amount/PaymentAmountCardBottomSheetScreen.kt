@@ -71,7 +71,8 @@ fun PaymentAmountCardBottomSheetScreen(
                     viewModel.uiState.card?.cardMaskedNumber?.takeLast(4) ?: 0
                 ),
                 endIcon = null,
-                enable = false
+                enable = false,
+                readOnly = true
             )
             Spacer(modifier = Modifier.height(32.dp))
             CustomCheckBox(

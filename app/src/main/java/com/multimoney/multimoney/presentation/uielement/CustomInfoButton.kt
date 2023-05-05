@@ -55,6 +55,7 @@ fun CustomInfoButton(
     onClick: () -> Unit = {},
     onEndIconClick: () -> Unit = {},
     enable: Boolean = true,
+    readOnly: Boolean = false,
     showBorder: Boolean = true,
     transparent: Boolean = false
 ) {
@@ -73,14 +74,14 @@ fun CustomInfoButton(
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
         background = if (enable.not() || transparent) Transparent else WhiteTransparency5
-        titleColor = if (enable.not()) WhiteTransparency50 else WhiteTransparency90
-        subtitleColor = if (enable.not()) WhiteTransparency20 else WhiteTransparency60
+        titleColor = if (enable || readOnly) WhiteTransparency90 else WhiteTransparency50
+        subtitleColor = if (enable || readOnly) WhiteTransparency60 else WhiteTransparency20
     } else {
         gradientBorderOneColor = GradientGrey1
         gradientBorderTwoColor = GradientGrey2
         background = if (enable.not() || transparent) Transparent else WhiteTransparency5
-        titleColor = if (enable.not()) WhiteTransparency50 else WhiteTransparency90
-        subtitleColor = if (enable.not()) WhiteTransparency20 else WhiteTransparency60
+        titleColor = if (enable || readOnly) WhiteTransparency90 else WhiteTransparency50
+        subtitleColor = if (enable || readOnly) WhiteTransparency60 else WhiteTransparency20
     }
 
     Button(

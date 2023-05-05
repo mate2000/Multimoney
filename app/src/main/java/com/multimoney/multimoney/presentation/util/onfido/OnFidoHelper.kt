@@ -22,6 +22,9 @@ class OnFidoHelper @Inject constructor(
 ) {
     var onRefreshToken: (injectNewToken: (String?) -> Unit) -> Unit = {}
 
+    /*This fun is filtering out the final screen of Onfido which is optional, to
+    follow figma design. If Onfido version is updated, there might be methods built in to
+     show or not this screen, but this is a workaround for 12.3.0v */
     private fun getOnFidoConfigForNationalIdentity(
         idBrand: Int?,
         onFidoSDKToken: String
@@ -31,7 +34,7 @@ class OnFidoHelper @Inject constructor(
     ).withCustomFlow(
         createFlowStepOptions(
             DocumentCaptureStepBuilder.forNationalIdentity().withCountry(getCountryCode(idBrand)).build()
-        )
+        ).filter { it != FlowStep.FINAL }.toTypedArray()
     ).withLocale(Locale.forLanguageTag(CR_LANGUAGE_TAG)).build()
 
     private fun getOnFidoConfigForSeveralDocuments(

@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +25,12 @@ import com.ireward.htmlcompose.HtmlText
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.uielement.MmWebViewHtml
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.parseApiDateToTermsAndConditionsDateTime
+import okio.ByteString.Companion.encode
 
 @Composable
 fun TermsAndConditionsDetailsScreen(
@@ -91,11 +95,14 @@ fun TermsAndConditionsDetailsContent(viewModel: TermsAndConditionsDetailsViewMod
                 )
             }
 
-            HtmlText(
-                modifier = Modifier.padding(top = 16.dp),
-                text = viewModel.uiState.html ?: "",
-                style = TextStyle(color = MultimoneyTheme.colors.text)
-            )
+            if (viewModel.uiState.html?.isNotEmpty() == true) {
+                Column(modifier = Modifier.padding(top = 16.dp)) {
+                    MmWebViewHtml(
+                        viewModel.uiState.html ?: "",
+                        LocalContext.current
+                    )
+                }
+            }
         }
     }
 }

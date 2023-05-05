@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.smart.payment.accounts.SmartPay
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -110,7 +111,9 @@ class SmartPaymentAccountViewModel @Inject constructor(
     private fun onAddAccountClick() {
         logEvents(AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003)
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentAccountScreenCR.baseRoute}/$idClient/$idLoanClient"
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.SmartPaymentAccountScreenCR.baseRoute}/$idClient/$idLoanClient".plus(
+                getNavParam(SMART_ACCOUNT, encodeData(SmartAccountID()))
+            )
         )
     }
 

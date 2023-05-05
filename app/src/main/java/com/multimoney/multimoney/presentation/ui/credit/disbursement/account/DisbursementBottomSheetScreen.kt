@@ -78,7 +78,8 @@ fun DisbursementBottomSheetScreen(
                     stringResource(id = R.string.payment_account_masked_text)
                 ),
                 endIcon = null,
-                enable = false
+                enable = false,
+                readOnly = true
             )
             Spacer(modifier = Modifier.height(60.dp))
             if (viewModel.shouldDisplayExchangeRate()) {

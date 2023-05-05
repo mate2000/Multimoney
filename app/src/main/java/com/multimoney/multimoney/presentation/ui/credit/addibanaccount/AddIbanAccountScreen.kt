@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType.Primary
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
@@ -50,6 +51,7 @@ import com.multimoney.multimoney.presentation.util.transformation.VisualTransfor
 @Composable
 fun AddIbanAccountScreen(
     onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     viewModel: AddIbanAccountViewModel = hiltViewModel()
 ) {
@@ -58,6 +60,7 @@ fun AddIbanAccountScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(
+                onPopAndNavigate = onPopAndNavigate,
                 onPopBackStack = onPopBackStack,
                 onNavigate = onNavigate
             )
@@ -161,6 +164,7 @@ fun AddIbanAccountScreen(
             enable = viewModel.uiState.isFormValid
         )
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
     if (viewModel.uiState.dialogParameters.isActive.value) {
         CustomDialog(
             title = stringResource(id = viewModel.uiState.dialogParameters.titleResource),

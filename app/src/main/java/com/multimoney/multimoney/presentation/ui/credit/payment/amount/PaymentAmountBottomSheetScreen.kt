@@ -96,7 +96,8 @@ fun PaymentAmountBottomSheetScreen(
                     stringResource(id = R.string.payment_account_masked_text)
                 ),
                 endIcon = null,
-                enable = false
+                enable = false,
+                readOnly = true
             )
             if (viewModel.shouldDisplayExchangeRate()) {
                 Spacer(modifier = Modifier.height(32.dp))

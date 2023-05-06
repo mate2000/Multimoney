@@ -147,8 +147,8 @@
     <string name="sign_in_password_required" translatable="false">La contraseña es requerida</string>
     <string name="sign_in_validation" translatable="false">El correo y/o contraseña es inválido</string>
     <string name="sign_in_biometric_title" translatable="false">Ingresar con biométrico</string>
-    <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
-    <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
+    <string name="sign_in_biometric_enter_with_password" translatable="false">O ingresar tu contraseña</string>
+    <string name="sign_in_biometric_email_hint" translatable="false">Correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
     <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
@@ -1810,7 +1810,8 @@
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 
     <!-- Security -->
-    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartas tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_title_cr" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
     <string name="password_security_bottom_sheet_general_description" translatable="false">Nunca te solicitaremos tu contraseña\nfuera de la aplicación.\n</string>
     <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, con\nella autorizarás todas tus transferencias.</string>
 

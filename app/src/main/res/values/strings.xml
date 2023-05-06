@@ -589,7 +589,7 @@
     <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
-    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_header_title" translatable="false">Mis productos</string>
     <string name="home_product_available_products_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
@@ -820,6 +820,7 @@
     <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
     <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
     <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios</string>
+    <string name="credit_origination_id_validation_three_cr" translatable="false">Tomate una selfie sin lentes o accesorios</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
@@ -1133,6 +1134,7 @@
     <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
     <string name="smart_salaried_salary_placeholder" translatable="false">%s 0.00</string>
     <string name="smart_salaried_profession" translatable="false">Cargo que desempeñas</string>
+    <string name="smart_salaried_profession_cr" translatable="false">Cargo que desempeñás</string>
     <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
     <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>
     <string name="smart_salaried_company_name_required" translatable="false">Nombre requerido</string>
@@ -1294,7 +1296,8 @@
     <string name="smart_facta_are_you_us_citizen" translatable="false">¿Eres ciudadano o residente de los Estados Unidos?</string>
     <string name="smart_facta_are_you_or_family_pep_sv" translatable="false">¿Tú o alguno de tus familiares califican como persona políticamente expuesta (PEP)?</string>
     <string name="smart_facta_are_you_or_family_pep" translatable="false">¿Vos o alguno de tus familiares califican como persona políticamente expuesta (PEP)?</string>
-    <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñás entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
+    <string name="smart_facta_activities_according_to_article_15" translatable="false">¿Desempeñas entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
+    <string name="smart_facta_activities_according_to_article_15_cr" translatable="false">¿Desempeñás entre tus actividades las citadas en los artículos 15 y 15 Bis de la ley 8204?</string>
     <string name="smart_facta_are_you_us_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en Estados Unidos?</string>
     <string name="smart_facta_are_you_other_country_tax_payer" translatable="false">¿Sos contribuyente al pago de impuestos en otro país diferente de Costa Rica?</string>
     <string name="smart_facta_article_15_info" translatable="false">

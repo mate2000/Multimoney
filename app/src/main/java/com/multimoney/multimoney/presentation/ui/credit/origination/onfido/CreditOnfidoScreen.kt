@@ -205,7 +205,7 @@ fun CreditOnfidoScreen(
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.Top)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
@@ -226,7 +226,7 @@ fun CreditOnfidoScreen(
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.Top)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
@@ -251,11 +251,15 @@ fun CreditOnfidoScreen(
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.Top)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
-                    text = stringResource(id = string.credit_origination_id_validation_three),
+                    text = if (viewModel.idBrand == CostaRica.id) {
+                        stringResource(id = string.credit_origination_id_validation_three_cr)
+                    } else {
+                        stringResource(id = string.credit_origination_id_validation_three)
+                    },
                     style = Typography.body2.copy(
                         color = MultimoneyTheme.colors.text,
                         fontWeight = FontWeight.SemiBold

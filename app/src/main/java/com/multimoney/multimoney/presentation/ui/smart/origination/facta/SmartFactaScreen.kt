@@ -179,8 +179,13 @@ fun ContentOneCR(
     val optionsYesNo = stringArrayResource(R.array.options_yes_no).toList()
     val optionsPep = stringArrayResource(R.array.smart_facta_is_pep_options).toList()
 
+    val activitiesAccordingStringResource = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+        R.string.smart_facta_activities_according_to_article_15_cr
+    } else {
+        R.string.smart_facta_activities_according_to_article_15
+    }
     val annotatedText = buildAnnotatedString {
-        append(stringResource(R.string.smart_facta_activities_according_to_article_15) + " ")
+        append(stringResource(activitiesAccordingStringResource) + " ")
         pushStringAnnotation(INFO_TAG, INFO_TAG)
         withStyle(style = SpanStyle(MultimoneyTheme.colors.textInformation)) {
             append(stringResource(R.string.smart_facta_learn_more))

@@ -879,14 +879,25 @@ class ProductViewModel @Inject constructor(
 
     private fun onDeleteAutomaticPayment(onAcceptClick: () -> Unit) {
         uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_title,
-                descriptionResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_description,
-                positiveResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_accept,
-                negativeResource = R.string.cancel,
-                positiveAction = { onAcceptClick() },
-                isActive = mutableStateOf(true)
-            )
+            openDialog = if (uiState.idBrand == Brand.Mexico.id.toString()) {
+                DialogParameters(
+                    titleResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_title_mx,
+                    descriptionResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_description_mx,
+                    positiveResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_accept_mx,
+                    negativeResource = R.string.exit,
+                    positiveAction = { onAcceptClick() },
+                    isActive = mutableStateOf(true)
+                )
+            } else {
+                DialogParameters(
+                    titleResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_title,
+                    descriptionResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_description,
+                    positiveResource = R.string.automatic_payment_edit_bottom_sheet_delete_dialog_accept,
+                    negativeResource = R.string.cancel,
+                    positiveAction = { onAcceptClick() },
+                    isActive = mutableStateOf(true)
+                )
+            }
         )
     }
 

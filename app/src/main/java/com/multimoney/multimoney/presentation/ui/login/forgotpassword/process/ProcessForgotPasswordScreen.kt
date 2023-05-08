@@ -39,6 +39,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
@@ -289,7 +290,11 @@ fun ProcessForgotPasswordContent(
     }
     LoadingIndicator(uiState.isLoading)
     CustomModalWarningBottomSheet(
-        titleResource = string.password_security_bottom_sheet_general_title,
+        titleResource = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+            string.password_security_bottom_sheet_general_title_cr
+        } else {
+            string.password_security_bottom_sheet_general_title
+        },
         descriptionText = buildAnnotatedString {
             withStyle(
                 style = Typography.subtitle1.toSpanStyle().copy(

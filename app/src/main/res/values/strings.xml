@@ -389,7 +389,7 @@
     <string name="home_my_products_title" translatable="false">Mi billetera MultiMoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
     <string name="home_my_products_title_credit" translatable="false">Crédito</string>
-    <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
+    <string name="home_my_products_label_credit" translatable="false">Mi crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
     <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
     <string name="home_my_products_label_smart_colones" translatable="false">Mi Cuenta Smart | ₡</string>
@@ -1220,13 +1220,13 @@
 
     <!-- Payment Schedule -->
     <string name="payment_schedule_title" translatable="false">Configurá tu pago \nautomático</string>
-    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínimo de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
     <string name="payment_schedule_label_origin" translatable="false">Desde tu cuenta</string>
     <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
     <string name="payment_schedule_button" translatable="false">Programar</string>
     <string name="payment_schedule_success_alert_title" translatable="false">Tu pago ha sido \nprogramado</string>
-    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago</string>
+    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago.</string>
     <string name="payment_schedule_success_alert_button" translatable="false">Ver mi crédito</string>
     <string name="payment_schedule_error_alert_title" translatable="false">¡Oh no! Error de conexión</string>
     <string name="payment_schedule_error_alert_subtitle_one" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo de nuevo.</string>

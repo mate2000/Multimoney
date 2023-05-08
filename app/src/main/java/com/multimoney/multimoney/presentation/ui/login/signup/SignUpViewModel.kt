@@ -446,37 +446,51 @@ class SignUpViewModel @Inject constructor(
     }
 
     fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
-        if (userData?.status == CognitoErrorCode.BlacklistedDevice.code.toIntOrNull()) {
-            val country = context.getUserCountry()
-            DialogParameters(
-                titleResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
-                    string.sign_up_session_blacklisted_title
-                } else {
-                    string.sign_up_session_blacklisted_title_cr
-                },
-                descriptionResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
-                    string.sign_up_session_blacklisted_message_sv
-                } else {
-                    string.sign_up_session_blacklisted_message_cr
-                },
-                positiveResource = string.sign_in_session_blacklisted_contact_support,
-                positiveAction = {
-                    whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
-                },
-                isActive = mutableStateOf(true)
-            )
-        } else {
-            DialogParameters(
-                title = userData?.message.orEmpty(),
-                description = userData?.detail.orEmpty(),
-                isActive = mutableStateOf(true),
-                positiveResource = if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) string.contact_support else string.accept,
-                positiveAction = {
-                    if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) {
+        when (userData?.status) {
+            CognitoErrorCode.BlacklistedDevice.code.toIntOrNull() -> {
+                val country = context.getUserCountry()
+                DialogParameters(
+                    titleResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
+                        string.sign_up_session_blacklisted_title
+                    } else {
+                        string.sign_up_session_blacklisted_title_cr
+                    },
+                    descriptionResource = if (country == SIM_CODE_EL_SALVADOR || country == SIM_CODE_GUATEMALA) {
+                        string.sign_up_session_blacklisted_message_sv
+                    } else {
+                        string.sign_up_session_blacklisted_message_cr
+                    },
+                    positiveResource = string.sign_in_session_blacklisted_contact_support,
+                    positiveAction = {
                         whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
+                    },
+                    isActive = mutableStateOf(true)
+                )
+            }
+            STATUS_IDENTIFICATION_REGISTERED -> {
+                DialogParameters(
+                    title = userData.message.orEmpty(),
+                    description = userData.detail.orEmpty(),
+                    isActive = mutableStateOf(true),
+                    positiveResource = string.sign_in,
+                    positiveAction = {
+                        onExit()
                     }
-                }
-            )
+                )
+            }
+            else -> {
+                DialogParameters(
+                    title = userData?.message.orEmpty(),
+                    description = userData?.detail.orEmpty(),
+                    isActive = mutableStateOf(true),
+                    positiveResource = if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) string.contact_support else string.accept,
+                    positiveAction = {
+                        if (evaluateStatusEmailOrPhoneEmpty(userData?.status)) {
+                            whatsAppLink?.let { context.openWhatsAppDeepLink(it) }
+                        }
+                    }
+                )
+            }
         }
 
     private fun evaluateStatusEmailOrPhoneEmpty(status: Int?): Boolean {
@@ -549,7 +563,6 @@ class SignUpViewModel @Inject constructor(
             is OnHidePasswordBottomSheet -> onHidePasswordBottomSheet()
             is OnShowPasswordBottomSheet -> onShowPasswordBottomSheet()
             is UIEvent.OnSetIdBrand -> onSetIdBrand(event.idBrand)
-            is UIEvent.OnExit -> onExit()
             is UIEvent.OnUpdateCountry -> {
                 uiState = uiState.copy(country = event.country)
                 idBrand = Brand.Search.getIdBrandByCountryCode(event.country)
@@ -615,7 +628,6 @@ class SignUpViewModel @Inject constructor(
         object OnHidePasswordBottomSheet : UIEvent()
         object OnShowPasswordBottomSheet : UIEvent()
         data class OnSetIdBrand(val idBrand: Int) : UIEvent()
-        object OnExit : UIEvent()
         data class OnUpdateCountry(val country: String) : UIEvent()
         data class OnUpdatePassword(val pass: String) : UIEvent()
         data class OnCheckIfEmailExists(val userData: UserData?) : UIEvent()
@@ -630,5 +642,6 @@ class SignUpViewModel @Inject constructor(
         const val MEXICO_ID_BRAND = 12
         const val STATUS_PHONE_EMPTY = 3108
         const val STATUS_EMAIL_EMPTY = 3109
+        const val STATUS_IDENTIFICATION_REGISTERED = 3101
     }
 }

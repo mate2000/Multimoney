@@ -20,7 +20,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SmartSteps.Search
 import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
 import com.multimoney.multimoney.R
@@ -160,11 +159,7 @@ fun FormalSalariedSvContent(
         CustomOutlinedTextField(
             value = viewModel.uiState.profession,
             onValueChange = { viewModel.onUiEvent(OnProfessionChange(it)) },
-            labelText = if (idBrand == Brand.CostaRica.id) {
-                stringResource(R.string.smart_salaried_profession_cr)
-            } else {
-                stringResource(R.string.smart_salaried_profession)
-            },
+            labelText = stringResource(R.string.smart_salaried_profession),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

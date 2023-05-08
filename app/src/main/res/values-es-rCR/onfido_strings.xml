@@ -370,7 +370,7 @@
     <string name="onfido_poa_upload_instructions_upload_button">Subir</string>
     <string name="onfido_poa_welcome_text">Tome una foto del documento con la dirección</string>
     <string name="onfido_selfie_capture_body">Mantén tu rostro dentro del óvalo</string>
-    <string name="onfido_selfie_capture_button_accessibility">Toma una selfie</string>
+    <string name="onfido_selfie_capture_button_accessibility">Tomar selfie</string>
     <string name="onfido_selfie_capture_frame_accessibility">Ver desde la cámara selfie. Mantenga la cara dentro del óvalo y luego pulse el botón del obturador</string>
     <string name="onfido_selfie_confirmation_alert_no_face_detail">Asegúrese que su cara sea visible</string>
     <string name="onfido_selfie_confirmation_alert_no_face_title">Cara no encontrada</string>
@@ -382,7 +382,7 @@
     <string name="onfido_selfie_intro_list_item_face_forward">Mantenerse serio, mirar al frente y asegurarse de que los ojos sean visibles</string>
     <string name="onfido_selfie_intro_list_item_no_glasses">Quitarse los lentes u otros accesorios</string>
     <string name="onfido_selfie_intro_subtitle">La vamos a comparar con tu identificación</string>
-    <string name="onfido_selfie_intro_title">Toma una selfie</string>
+    <string name="onfido_selfie_intro_title">Tomar selfie</string>
     <string name="onfido_user_consent_button_primary">Accept</string>
     <string name="onfido_user_consent_button_secondary">Do not accept</string>
     <string name="onfido_user_consent_prompt_button_primary">Yes, don’t verify me</string>

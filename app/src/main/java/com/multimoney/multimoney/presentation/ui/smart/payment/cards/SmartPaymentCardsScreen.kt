@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme

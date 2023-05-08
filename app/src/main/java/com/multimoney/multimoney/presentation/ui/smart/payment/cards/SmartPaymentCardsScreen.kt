@@ -153,7 +153,7 @@ fun PaymentCardsListContent(
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
             modifier = Modifier.padding(top = 32.dp),
-            text = stringResource(R.string.smart_payment_cards_list_card_title),
+            text = stringResource(R.string.smart_payment_cards_list_card_title_sv),
             style = Typography.h5.copy(
                 fontWeight = FontWeight.SemiBold,
                 color = MultimoneyTheme.colors.text

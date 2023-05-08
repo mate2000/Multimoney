@@ -39,7 +39,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.BaseEvent.OnOpenBiometricDialog
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
@@ -317,7 +316,11 @@ fun RegisteredUserPasswordContent(
         )
     }
     CustomModalWarningBottomSheet(
-        titleResource = string.password_security_bottom_sheet_general_title,
+        titleResource = if (viewModel.idBrand == Brand.CostaRica.id) {
+            R.string.password_security_bottom_sheet_general_title_cr
+        } else {
+            R.string.password_security_bottom_sheet_general_title
+        },
         descriptionText = buildAnnotatedString {
             withStyle(
                 style = Typography.subtitle1.toSpanStyle().copy(

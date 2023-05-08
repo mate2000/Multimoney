@@ -63,7 +63,6 @@ fun VoucherAccountInfo(
                 modifier = Modifier
                     .height(24.dp)
                     .width(24.dp)
-                    .alpha(0.4f)
             )
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {

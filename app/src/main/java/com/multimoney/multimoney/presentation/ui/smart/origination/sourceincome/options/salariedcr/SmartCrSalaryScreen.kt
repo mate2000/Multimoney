@@ -171,7 +171,7 @@ fun SmartCrSalaryScreen(
         CustomOutlinedTextField(
             value = viewModel.uiState.jobPosition,
             onValueChange = { viewModel.onUIEvent(OnJobPositionChange(it)) },
-            labelText = stringResource(string.smart_salaried_profession),
+            labelText = stringResource(string.smart_salaried_profession_cr),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next

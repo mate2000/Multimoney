@@ -593,7 +593,7 @@
     <string name="home_product_available_products_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
-    <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
+    <string name="home_product_credit_header_expanded_title" translatable="false">Mi crédito</string>
 
     <!-- Home Smart Header Expanded-->
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>

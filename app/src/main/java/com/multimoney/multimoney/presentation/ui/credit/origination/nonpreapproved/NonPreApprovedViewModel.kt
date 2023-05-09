@@ -55,12 +55,12 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 @HiltViewModel
 class NonPreApprovedViewModel @Inject constructor(
@@ -366,9 +366,9 @@ class NonPreApprovedViewModel @Inject constructor(
             maxDisbursementAmount = amount,
             alertResultIconResource = R.drawable.ic_success_symbol,
             alertResultTitleResource = R.string.non_pre_approved_additional_questions_success_alert_result_title,
-            alertResultDescriptionResource = when(idBrand){
-             Brand.CostaRica.id -> R.string.non_pre_approved_additional_questions_success_alert_result_description_cr
-             else -> R.string.non_pre_approved_additional_questions_success_alert_result_description
+            alertResultDescriptionResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.non_pre_approved_additional_questions_success_alert_result_description_cr
+                else -> R.string.non_pre_approved_additional_questions_success_alert_result_description
             },
             alertResultButtonResource = R.string.non_pre_approved_additional_questions_request_button_label,
             isLoading = false
@@ -407,12 +407,15 @@ class NonPreApprovedViewModel @Inject constructor(
             AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_INFORMATION_5019 -> {
                 getInfoExtraFromNonPreApprovedOriginationEvent(originationDto)
             }
+
             AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_APPROVED_5020 -> {
                 getApprovedFromNonPreApprovedOriginationEvent(originationDto)
             }
+
             AdjustEventType.ORIGINATION_FIRST_NON_PRE_APPROVED_IS_REJECTED_5021 -> {
                 getRejectedFromNonPreApprovedOriginationEvent(originationDto)
             }
+
             else -> suspend {}
         }
     }
@@ -480,11 +483,13 @@ class NonPreApprovedViewModel @Inject constructor(
             is OnFailureWithDialog ->
                 uiState =
                     uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+
             is OnBackClick -> navigateBack(false)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnUpdateScreenConfigData -> {
                 saveCreditStepsHelper.start(event.screenConfigData)
             }
+
             is OnRequestClick -> onNavigateToOrigination()
             is OnCloseClick -> navigateBack(true)
         }

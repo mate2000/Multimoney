@@ -298,18 +298,23 @@ fun CardWithCreditInProcess(
         CreditProcessOnfidoMaxAttempts -> {
             startIcon = drawable.ic_warning
         }
+
         CreditProcessOnFidoIncomplete -> {
             startIcon = drawable.ic_warning
         }
+
         CreditProcessOnfidoReject -> {
             startIcon = drawable.ic_warning
         }
+
         CreditProcessCreateAccountFailure -> {
             startIcon = drawable.ic_warning
         }
+
         CreditOfferApproved -> {
             startIcon = 0
         }
+
         else -> Unit
     }
 
@@ -416,7 +421,7 @@ fun OngoingCredit(
             style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.text
         )
-        if (viewModel.uiState.isCreditAvailable) {
+        if (viewModel.uiState.isCreditAvailable && viewModel.uiState.canExpandCredit) {
             viewModel.balanceCredit?.getFirstSummary()?.let {
                 BalanceTextView(
                     modifier = Modifier.padding(bottom = 10.dp),
@@ -457,7 +462,7 @@ fun OngoingCredit(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = if (viewModel.uiState.isCreditAvailable) {
+                        top = if (viewModel.uiState.isCreditAvailable && viewModel.uiState.canExpandCredit) {
                             0.dp
                         } else {
                             40.dp

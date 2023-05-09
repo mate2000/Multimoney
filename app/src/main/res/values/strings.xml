@@ -1176,7 +1176,7 @@
     <string name="saving_method_transfer_title_sv" translatable="false"> Transfiere desde tu banco con estos datos</string>
     <string name="saving_method_transfer_disclaimer" translatable="false">La transferencia se verá reflejada en 48 horas hábiles</string>
     <string name="saving_method_transfer_bank" translatable="false">Banco</string>
-    <string name="saving_method_transfer_bank_name" translatable="false">SAC Gente</string>
+    <string name="saving_method_transfer_bank_name" translatable="false">SAC MultiMoney</string>
     <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
     <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
     <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>

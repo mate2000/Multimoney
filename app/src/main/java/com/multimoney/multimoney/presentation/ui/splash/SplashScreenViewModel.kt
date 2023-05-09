@@ -30,18 +30,24 @@ class SplashScreenViewModel @Inject constructor(
     private val queryGetConfigurationVersionUseCase: QueryGetConfigurationVersionUseCase
 ) : BaseViewModel(false) {
 
-    private fun callQueryGetConfigurationVersion(context: Context) = executeUseCase {
-        queryGetConfigurationVersionUseCase.invoke(
-            platform = ConfigurationPlatform.Android.value,
-            appVersion = BuildConfig.VERSION_NAME,
-            idBrand = getIdBrand(context)
-        ).collectLatest { result ->
-            result.onSuccess {
-                navigateToNextScreen()
+    private fun callQueryGetConfigurationVersion(context: Context) {
+        if (connectivity.hasNetworkAccess()) {
+            executeUseCase {
+                queryGetConfigurationVersionUseCase.invoke(
+                    platform = ConfigurationPlatform.Android.value,
+                    appVersion = BuildConfig.VERSION_NAME,
+                    idBrand = getIdBrand(context)
+                ).collectLatest { result ->
+                    result.onSuccess {
+                        navigateToNextScreen()
+                    }
+                    result.onFailure {
+                        navigateToForceUpdateScreen(getIdBrand(context))
+                    }
+                }
             }
-            result.onFailure {
-                navigateToForceUpdateScreen(getIdBrand(context))
-            }
+        } else {
+            navigateToNextScreen()
         }
     }
 

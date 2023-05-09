@@ -134,6 +134,7 @@ const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
 const val ACCOUNT_ID = "account_id"
 const val EDIT_SUCCESS = "edit_success"
+const val BENEFICIARY = "beneficiary"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -454,7 +455,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentOptionsTransferScreen : Screen(
-        "payment_options_transfer_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$TRANSFER_ACCOUNT}",
+        "payment_options_transfer_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$TRANSFER_ACCOUNT}/{$BENEFICIARY}",
         "payment_options_transfer_screen"
     )
 

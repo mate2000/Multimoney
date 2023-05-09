@@ -298,23 +298,18 @@ fun CardWithCreditInProcess(
         CreditProcessOnfidoMaxAttempts -> {
             startIcon = drawable.ic_warning
         }
-
         CreditProcessOnFidoIncomplete -> {
             startIcon = drawable.ic_warning
         }
-
         CreditProcessOnfidoReject -> {
             startIcon = drawable.ic_warning
         }
-
         CreditProcessCreateAccountFailure -> {
             startIcon = drawable.ic_warning
         }
-
         CreditOfferApproved -> {
             startIcon = 0
         }
-
         else -> Unit
     }
 

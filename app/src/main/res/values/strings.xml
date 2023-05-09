@@ -98,6 +98,7 @@
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
     <string name="error_try_again" translatable="false">Intentalo nuevamente</string>
     <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
+    <string name="error_no_connection_sign_in" translatable="false">La conexión a internet parece estar desactivada.</string>
 
     <!-- OnBoarding El Salvador-->
     <string name="onboarding_el_salvador_step_one_title" translatable="false">Multiplica tus ahorros</string>

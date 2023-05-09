@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnGetTextResources
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.options.PaymentOptionsViewModel.UIEvent.OnPaymentMethodClick
+import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -76,12 +77,16 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
 
     private fun onPaymentMethodClick(paymentMethodType: String) {
         val route = when (paymentMethodType) {
-            PaymentMethodType.TransferBank.value ->
+            PaymentMethodType.TransferBank.value -> {
+                val beneficiaryName =
+                    "${infoUser?.firstName} ${infoUser?.secondName} ${infoUser?.lastName} ${infoUser?.secondLastName}"
+
                 "${Screen.PaymentOptionsTransferScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/${
                     encodeData(
                         transferAccount
                     )
-                }"
+                }/${beneficiaryName.capitalizedAllWords()}"
+            }
             PaymentMethodType.VisaDirect.value -> {
                 "${Screen.PaymentCardsListScreen.baseRoute}/$identification/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate/${
                     encodeData(

@@ -8,6 +8,7 @@ import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.TransferAccount
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.BENEFICIARY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
@@ -37,6 +38,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         uiState = uiState.copy(
             creditNumber = savedStateHandle[CREDIT_NUMBER],
             transferAccount = savedStateHandle[TRANSFER_ACCOUNT],
+            beneficiaryName = savedStateHandle[BENEFICIARY] ?: "",
             isAccountNumberVisible = idBrand == Brand.ElSalvador.id
         )
         onGetTextResource()
@@ -96,6 +98,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         val disclaimerResource: Int = string.empty,
         val creditNumber: String? = null,
         val transferAccount: TransferAccount? = null,
+        val beneficiaryName: String = "",
         val isAccountNumberVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )

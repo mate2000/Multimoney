@@ -366,7 +366,10 @@ class NonPreApprovedViewModel @Inject constructor(
             maxDisbursementAmount = amount,
             alertResultIconResource = R.drawable.ic_success_symbol,
             alertResultTitleResource = R.string.non_pre_approved_additional_questions_success_alert_result_title,
-            alertResultDescriptionResource = R.string.non_pre_approved_additional_questions_success_alert_result_description,
+            alertResultDescriptionResource = when(idBrand){
+             Brand.CostaRica.id -> R.string.non_pre_approved_additional_questions_success_alert_result_description_cr
+             else -> R.string.non_pre_approved_additional_questions_success_alert_result_description
+            },
             alertResultButtonResource = R.string.non_pre_approved_additional_questions_request_button_label,
             isLoading = false
         )

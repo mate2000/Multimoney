@@ -13,6 +13,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -41,6 +42,10 @@ fun SellConfirmationBottomSheet(
     coroutineScope: CoroutineScope,
     viewModel: SellCurrencyScreenViewModel
 ) {
+    // Update fees instantly whit current amount when bottom sheet is open
+    LaunchedEffect(key1 = viewModel.uiState.isConfirmationBottomSheetOpen) {
+        viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnUpdateFees)
+    }
     Column(modifier = Modifier
         .wrapContentSize()
         .background(color = MultimoneyTheme.colors.creditDetailBackground)

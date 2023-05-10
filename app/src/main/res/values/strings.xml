@@ -98,6 +98,7 @@
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
     <string name="error_try_again" translatable="false">Intentalo nuevamente</string>
     <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
+    <string name="error_no_connection_sign_in" translatable="false">La conexión a internet parece estar desactivada.</string>
 
     <!-- OnBoarding El Salvador-->
     <string name="onboarding_el_salvador_step_one_title" translatable="false">Multiplica tus ahorros</string>
@@ -147,8 +148,8 @@
     <string name="sign_in_password_required" translatable="false">La contraseña es requerida</string>
     <string name="sign_in_validation" translatable="false">El correo y/o contraseña es inválido</string>
     <string name="sign_in_biometric_title" translatable="false">Ingresar con biométrico</string>
-    <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
-    <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
+    <string name="sign_in_biometric_enter_with_password" translatable="false">O ingresar tu contraseña</string>
+    <string name="sign_in_biometric_email_hint" translatable="false">Correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
     <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
@@ -389,7 +390,7 @@
     <string name="home_my_products_title" translatable="false">Mi billetera MultiMoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
     <string name="home_my_products_title_credit" translatable="false">Crédito</string>
-    <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
+    <string name="home_my_products_label_credit" translatable="false">Mi crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
     <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
     <string name="home_my_products_label_smart_colones" translatable="false">Mi Cuenta Smart | ₡</string>
@@ -418,7 +419,7 @@
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
     <string name="home_product_movement_pending" translatable="false">Pendiente</string>
     <string name="home_product_movement_release_button" translatable="false">Liberar transferencia</string>
-    <string name="home_product_check_all" translatable="false">Ver Todos</string>
+    <string name="home_product_check_all" translatable="false">Ver todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_fee_mx" translatable="false">Mensualidad</string>
@@ -589,11 +590,11 @@
     <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
-    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_header_title" translatable="false">Mis productos</string>
     <string name="home_product_available_products_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
-    <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
+    <string name="home_product_credit_header_expanded_title" translatable="false">Mi crédito</string>
 
     <!-- Home Smart Header Expanded-->
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
@@ -803,7 +804,8 @@
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
     <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s pre aprobados!</string>
-    <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en solo unas horas.</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_description_cr" translatable="false">Solicitá tu dinero y recibilo en solo unas horas.</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>
     <string name="non_pre_approved_additional_questions_processing_alert_result_label" translatable="false">Procesando datos...</string>
@@ -820,6 +822,7 @@
     <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
     <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
     <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios</string>
+    <string name="credit_origination_id_validation_three_cr" translatable="false">Tomate una selfie sin lentes o accesorios</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
@@ -997,7 +1000,7 @@
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
-    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisa formato.</b> Debe tener 20 dígitos]]></string>
+    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisá formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
     <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
@@ -1105,7 +1108,8 @@
     <string name="smart_other_source_of_income_label_cr" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
-    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_other_generating_document_subtitle_cr" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_other_generating_document_subtitle_sv" translatable="false">Después de firmar tu contrato puedes empezar a utilizar tu cuenta.</string>
     <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
@@ -1132,6 +1136,7 @@
     <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
     <string name="smart_salaried_salary_placeholder" translatable="false">%s 0.00</string>
     <string name="smart_salaried_profession" translatable="false">Cargo que desempeñas</string>
+    <string name="smart_salaried_profession_cr" translatable="false">Cargo que desempeñás</string>
     <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
     <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>
     <string name="smart_salaried_company_name_required" translatable="false">Nombre requerido</string>
@@ -1170,10 +1175,10 @@
     <string name="payment_options_transfer_step_4_disclaimer" translatable="false">Tu pago se verá reflejado entre 24 y 48 horas.</string>
 
     <!-- Smart Saving Method - Transfer -->
-    <string name="saving_method_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="saving_method_transfer_title_sv" translatable="false"> Transfiere desde tu banco con estos datos</string>
     <string name="saving_method_transfer_disclaimer" translatable="false">La transferencia se verá reflejada en 48 horas hábiles</string>
     <string name="saving_method_transfer_bank" translatable="false">Banco</string>
-    <string name="saving_method_transfer_bank_name" translatable="false">SAC Gente</string>
+    <string name="saving_method_transfer_bank_name" translatable="false">SAC MultiMoney</string>
     <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
     <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
     <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
@@ -1219,13 +1224,13 @@
 
     <!-- Payment Schedule -->
     <string name="payment_schedule_title" translatable="false">Configurá tu pago \nautomático</string>
-    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
     <string name="payment_schedule_label_origin" translatable="false">Desde tu cuenta</string>
     <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
     <string name="payment_schedule_button" translatable="false">Programar</string>
     <string name="payment_schedule_success_alert_title" translatable="false">Tu pago ha sido \nprogramado</string>
-    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago</string>
+    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago.</string>
     <string name="payment_schedule_success_alert_button" translatable="false">Ver mi crédito</string>
     <string name="payment_schedule_error_alert_title" translatable="false">¡Oh no! Error de conexión</string>
     <string name="payment_schedule_error_alert_subtitle_one" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo de nuevo.</string>
@@ -1415,7 +1420,7 @@
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
     <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="payment_cards_resume_bottom_sheet" translatable="false">Retomar verificación</string>
-    <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
+    <string name="smart_payment_cards_list_card_title_sv" translatable="false">Selecciona la tarjeta con la que quieres ahorrar</string>
 
     <!-- Payment Amount Card -->
     <string name="payment_amount_card_title_sv" translatable="false">¿Cuánto quieres abonar?</string>
@@ -1515,7 +1520,8 @@
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
     <!-- Smart Saving Amount -->
-    <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_amount_title_cr" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_amount_title_sv" translatable="false">¿Cuánto quieres ahorrar?</string>
     <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
     <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
     <string name="smart_saving_total_to_deposit" translatable="false">Total a depositar</string>
@@ -1809,7 +1815,8 @@
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 
     <!-- Security -->
-    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartas tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_title_cr" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
     <string name="password_security_bottom_sheet_general_description" translatable="false">Nunca te solicitaremos tu contraseña\nfuera de la aplicación.\n</string>
     <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, con\nella autorizarás todas tus transferencias.</string>
 

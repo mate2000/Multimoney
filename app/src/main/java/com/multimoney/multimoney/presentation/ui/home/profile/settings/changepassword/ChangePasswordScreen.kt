@@ -39,6 +39,7 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
@@ -339,7 +340,11 @@ fun ChangePasswordContent(
         }
     }
     CustomModalWarningBottomSheet(
-        titleResource = R.string.password_security_bottom_sheet_general_title,
+        titleResource = if (viewModel.uiState.idBrand == Brand.CostaRica.id) {
+            R.string.password_security_bottom_sheet_general_title_cr
+        } else {
+            R.string.password_security_bottom_sheet_general_title
+        },
         descriptionText = buildAnnotatedString {
             withStyle(
                 style = Typography.subtitle1.toSpanStyle().copy(

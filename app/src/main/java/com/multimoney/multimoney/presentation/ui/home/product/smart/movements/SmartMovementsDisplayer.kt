@@ -23,6 +23,7 @@ import com.multimoney.domain.model.accountsmart.SmartMovement
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.util.TWO_DECIMALS_FORMAT
 import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.parseApiDateToCardDate
 
@@ -71,7 +72,7 @@ fun SmartMovementDisplayer(
                 modifier = Modifier.padding(end = 4.dp, bottom = 6.dp)
             )
             Text(
-                text = stringResource(currencySymbol) + move.amount.toString()
+                text = stringResource(currencySymbol) + String.format(TWO_DECIMALS_FORMAT, move.amount)
                     .removePrefix(MINUS_SIGN),
                 style = Typography.subtitle1.copy(
                     textAlign = TextAlign.End,

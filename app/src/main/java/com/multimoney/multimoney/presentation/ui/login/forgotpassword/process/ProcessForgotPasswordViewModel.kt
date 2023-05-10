@@ -70,10 +70,16 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private fun onStart() {
         uiState = when (idBrand) {
             Brand.CostaRica.id -> {
-                uiState.copy(titleResource = string.process_forgot_password_title)
+                uiState.copy(
+                    titleResource = string.process_forgot_password_title,
+                    idBrand = idBrand
+                )
             }
             else -> {
-                uiState.copy(titleResource = string.process_forgot_password_title_sv)
+                uiState.copy(
+                    titleResource = string.process_forgot_password_title_sv,
+                    idBrand = idBrand
+                )
             }
         }
     }
@@ -331,6 +337,8 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     fun getForbiddenWords(value: String): String = passwordValidationHelper.getForbiddenWords(value)
 
     data class UIState(
+        // idBrand for resource validation in the screen
+        val idBrand: Int = Brand.Default.id,
         // Interactions
         val titleResource: Int = string.empty,
         val otp: String = "",

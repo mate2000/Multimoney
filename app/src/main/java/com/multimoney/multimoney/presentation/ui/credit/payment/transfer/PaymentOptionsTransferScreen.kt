@@ -221,7 +221,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                             .padding(top = 18.dp)
                             .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_beneficiary_name),
-                        descriptionText = viewModel.uiState.transferAccount?.beneficiaryName ?: ""
+                        descriptionText = viewModel.uiState.beneficiaryName
                     )
                 }
 

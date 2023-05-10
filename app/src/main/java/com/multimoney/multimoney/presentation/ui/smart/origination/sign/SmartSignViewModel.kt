@@ -425,7 +425,6 @@ class SmartSignViewModel @Inject constructor(
         val signDocumentUrl: String = "",
         val loadingIcon: Int = drawable.ic_logo_multimoney3,
         val loadingTitle: Int = string.document_generation_title,
-        val loadingSubtitle: Int = string.smart_other_generating_document_subtitle,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
         val alertResultIsLeftButtonVisible: Boolean = false,

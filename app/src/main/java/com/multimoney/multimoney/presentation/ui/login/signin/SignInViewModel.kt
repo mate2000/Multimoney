@@ -74,23 +74,26 @@ class SignInViewModel @Inject constructor(
     private var biometricPromptTitle = ""
     private var biometricPromptDescription = ""
     private var biometricPromptNegative = ""
-    var deviceId = ""
-    var uniqueId = ""
-    var ipAddress = ""
-    var deviceType = ""
-    var deviceName = ""
-    var appVersion = getAppVersion()
-    var deviceBrand = getDeviceBrand()
-    var deviceModel = getDeviceModel()
-    var isEmulator = checkIfEmulator()
-    var forceShowBiometricsPrompt = false
+    private var deviceId = ""
+    private var uniqueId = ""
+    private var ipAddress = ""
+    private var deviceType = ""
+    private var deviceName = ""
+    private var appVersion = getAppVersion()
+    private var deviceBrand = getDeviceBrand()
+    private var deviceModel = getDeviceModel()
+    private var isEmulator = checkIfEmulator()
+    private var forceDeviceChange = false
+    private var forceShowBiometricsPrompt = false
 
     private fun onStart(
         deviceName: String,
-        deviceType: String
+        deviceType: String,
+        forceDeviceChange: Boolean
     ) {
         this.deviceName = deviceName
         this.deviceType = deviceType
+        this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
         viewModelScope.launch(Dispatchers.IO) { ipAddress = getIPAddress() ?: "" }
         viewModelScope.launch {
@@ -113,100 +116,110 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun callCognitoSignIn(forceDeviceChange: Boolean = false) {
-        uiState = uiState.copy(isLoading = true, showOtpScreen = false)
-        clearUserEmailError()
+    private fun callCognitoSignIn() {
+        if (connectivity.hasNetworkAccess()) {
+            uiState = uiState.copy(isLoading = true)
+            clearUserEmailError()
 
-        val attrs = mapOf(
-            DEVICE_ID to deviceId,
-            BRAND to deviceBrand,
-            UNIQUE_ID to uniqueId,
-            MODEL to deviceModel,
-            DEVICE_NAME to deviceName,
-            APP_VERSION to appVersion,
-            IS_EMULATOR to isEmulator.toString(),
-            IP_ADDRESS to ipAddress,
-            FORCE to forceDeviceChange.toString()
-        )
+            val attrs = mapOf(
+                DEVICE_ID to deviceId,
+                BRAND to deviceBrand,
+                UNIQUE_ID to uniqueId,
+                MODEL to deviceModel,
+                DEVICE_NAME to deviceName,
+                APP_VERSION to appVersion,
+                IS_EMULATOR to isEmulator.toString(),
+                IP_ADDRESS to ipAddress,
+                FORCE to forceDeviceChange.toString()
+            )
 
-        val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
+            val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
 
-        Amplify.Auth.signOut({
-            Amplify.Auth.signIn(
-                uiState.userEmail,
-                uiState.userPassword,
-                options,
-                { authSignInResult ->
-                    if (authSignInResult.isSignInComplete) {
-                        Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
-                            val session = authSessionSuccess as AWSCognitoAuthSession
-                            when (session.identityId.type) {
-                                AuthSessionResult.Type.SUCCESS -> {
-                                    // Get user attributes in order to save user name for welcome message
-                                    Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                        viewModelScope.launch {
-                                            // If isBiometricActive false that means the userName has to be saved
-                                            val payload =
-                                                CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-                                            saveUserData(
-                                                payload,
-                                                session.userPoolTokens.value?.idToken.orEmpty(),
-                                                authUserAttribute
-                                            )
-                                            if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
-                                                .toBoolean()
-                                            ) {
-                                                uiState = uiState.copy(
-                                                    openDialog = DialogParameters(
-                                                        titleResource = string.sign_in_expired_password_dialog_title,
-                                                        descriptionResource = string.sign_in_expired_password_dialog_description,
-                                                        positiveResource = string.sign_in_expired_password_dialog_positive_button,
-                                                        positiveAction = {
-                                                            onNavigateToChangePassword(
-                                                                idBrand = payload.getString(
-                                                                    SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND
-                                                                ).toIntOrNull() ?: 0,
-                                                                pkUser = payload.getString(
-                                                                    SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER
-                                                                ),
-                                                                userName = uiState.userEmail
-                                                            )
-                                                        },
-                                                        isActive = mutableStateOf(true)
-                                                    ),
-                                                    isLoading = false
+            Amplify.Auth.signOut({
+                Amplify.Auth.signIn(
+                    uiState.userEmail,
+                    uiState.userPassword,
+                    options,
+                    { authSignInResult ->
+                        if (authSignInResult.isSignInComplete) {
+                            Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
+                                val session = authSessionSuccess as AWSCognitoAuthSession
+                                when (session.identityId.type) {
+                                    AuthSessionResult.Type.SUCCESS -> {
+                                        // Get user attributes in order to save user name for welcome message
+                                        Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                            viewModelScope.launch {
+                                                // If isBiometricActive false that means the userName has to be saved
+                                                val payload =
+                                                    CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                                saveUserData(
+                                                    payload,
+                                                    session.userPoolTokens.value?.idToken.orEmpty(),
+                                                    authUserAttribute
                                                 )
-                                            } else {
-                                                uiState = uiState.copy(isLoading = false)
-                                                if (uiState.isFingerprintChecked) {
+                                                if (payload.getString(SignUpPasswordViewModel.COGNITO_CHANGE_PASSWORD_REQUIRED)
+                                                        .toBoolean()
+                                                ) {
                                                     uiState = uiState.copy(
-                                                        configureBiometric = true
+                                                        openDialog = DialogParameters(
+                                                            titleResource = string.sign_in_expired_password_dialog_title,
+                                                            descriptionResource = string.sign_in_expired_password_dialog_description,
+                                                            positiveResource = string.sign_in_expired_password_dialog_positive_button,
+                                                            positiveAction = {
+                                                                onNavigateToChangePassword(
+                                                                    idBrand = payload.getString(
+                                                                        SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND
+                                                                    ).toIntOrNull() ?: 0,
+                                                                    pkUser = payload.getString(
+                                                                        SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER
+                                                                    ),
+                                                                    userName = uiState.userEmail
+                                                                )
+                                                            },
+                                                            isActive = mutableStateOf(true)
+                                                        ),
+                                                        isLoading = false
                                                     )
                                                 } else {
-                                                    navigateToHome()
+                                                    uiState = uiState.copy(isLoading = false)
+                                                    if (uiState.isFingerprintChecked) {
+                                                        uiState = uiState.copy(
+                                                            configureBiometric = true
+                                                        )
+                                                    } else {
+                                                        navigateToHome()
+                                                    }
                                                 }
                                             }
-                                        }
-                                    }, {
-                                        callQueryValidationUserExistsUseCase()
-                                    })
+                                        }, {
+                                            callQueryValidationUserExistsUseCase()
+                                        })
+                                    }
+                                    AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
                                 }
-                                AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
-                            }
-                        }, {
+                            }, {
+                                callQueryValidationUserExistsUseCase()
+                            })
+                        } else {
                             callQueryValidationUserExistsUseCase()
-                        })
-                    } else {
-                        callQueryValidationUserExistsUseCase()
+                        }
+                    },
+                    {
+                        checkSessionState(it)
                     }
-                },
-                {
-                    checkSessionState(it)
-                }
+                )
+            }, {
+                callQueryValidationUserExistsUseCase()
+            })
+        } else {
+            uiState = uiState.copy(
+                openDialog = DialogParameters(
+                    isActive = mutableStateOf(true),
+                    titleResource = string.error,
+                    descriptionResource = string.error_no_connection_sign_in,
+                )
             )
-        }, {
-            callQueryValidationUserExistsUseCase()
-        })
+        }
     }
 
     private fun onNavigateToChangePassword(idBrand: Int, pkUser: String, userName: String) =
@@ -362,7 +375,7 @@ class SignInViewModel @Inject constructor(
         if (uiState.userEmail != biometricUserEmail) {
             dataStorePreferences.isBiometricsEnabled(false)
         }
-        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value.orEmpty()}")
+        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value?.trim().orEmpty()}")
         dataStorePreferences.setAuthToken(idToken)
         dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
@@ -478,7 +491,7 @@ class SignInViewModel @Inject constructor(
                 viewModelScope.launch {
                     dataStorePreferences.setUserEmail(uiState.userEmail)
                     dataStorePreferences.setUserPassword(uiState.userPassword, this@apply)
-                    dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value.orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value.orEmpty()}")
+                    dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value?.trim().orEmpty()}")
                     dataStorePreferences.isBiometricsEnabled(true)
                     navigateToHome()
                 }
@@ -695,7 +708,10 @@ class SignInViewModel @Inject constructor(
             applyAdjust = false,
             data = EmailDto(uiState.userEmail).toJson()
         )
-        uiState = uiState.copy(showOtpScreen = true)
+        popAndNavigateTo(
+            "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
+            Screen.SignInOTPScreen.baseRoute
+        )
     }
 
     private fun onUpdateToastVisibility(value: Boolean) {
@@ -757,8 +773,7 @@ class SignInViewModel @Inject constructor(
         val toastIsVisible: Boolean = false,
         val country: String = "",
         val linkWhatsapp: String = "",
-        val errorCode: CognitoErrorCode? = null,
-        val showOtpScreen: Boolean = false
+        val errorCode: CognitoErrorCode? = null
     )
 
     fun onUIEvent(event: UIEvent) {
@@ -785,10 +800,11 @@ class SignInViewModel @Inject constructor(
 
             is UIEvent.OnStart -> onStart(
                 event.deviceName,
-                event.deviceType
+                event.deviceType,
+                event.forceDeviceChange
             )
             is UIEvent.OnValidateUserEmail -> isUserEmailValid()
-            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn(event.forceDeviceChange)
+            is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn()
             is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()
             is UIEvent.OnCloseDialog -> onCloseDialog()
             is UIEvent.OnNavigateToOTPScreen -> onNavigateToOTPScreen()
@@ -797,7 +813,6 @@ class SignInViewModel @Inject constructor(
             is UIEvent.OnUpdateCountry -> uiState = uiState.copy(country = event.country)
             is UIEvent.OnOpenWhatsappLink -> openWhatsAppLink(event.context)
             is UIEvent.OnSetCountryCode -> setContactInfo()
-            is UIEvent.OnShowSignInScreen -> uiState = uiState.copy(showOtpScreen = false)
         }
     }
 
@@ -831,18 +846,18 @@ class SignInViewModel @Inject constructor(
 
         data class OnStart(
             val deviceName: String,
-            val deviceType: String
+            val deviceType: String,
+            val forceDeviceChange: Boolean
         ) : UIEvent()
 
         object OnValidateUserEmail : UIEvent()
-        data class OnCallCognitoSignIn(val forceDeviceChange: Boolean = false) : UIEvent()
+        object OnCallCognitoSignIn : UIEvent()
         object OnNavigateToForgotPassword : UIEvent()
         object OnNavigateToSignUp : UIEvent()
         data class OnUpdateToastVisibility(val value: Boolean) : UIEvent()
         data class OnUpdateCountry(val country: String) : UIEvent()
         data class OnOpenWhatsappLink(val context: Context) : UIEvent()
         data class OnSetCountryCode(val countryCode: String) : UIEvent()
-        object OnShowSignInScreen : UIEvent()
     }
 
     companion object {

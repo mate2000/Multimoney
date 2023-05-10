@@ -55,12 +55,12 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 @HiltViewModel
 class NonPreApprovedViewModel @Inject constructor(
@@ -271,36 +271,35 @@ class NonPreApprovedViewModel @Inject constructor(
         )
     }
 
-    private fun onCallMutationSaveCreditFlowStep() =
-        executeUseCase {
-            mutationSaveCreditFlowStepUseCase.invoke(
-                user = email ?: "",
-                idBrand = idBrand ?: 0,
-                infoQuestion = saveCreditStepsHelper.creditFlowData,
-                idLogUserRequest = idUserRequest ?: 0,
-                idUser = pkUser ?: 0,
-                currentStep = CreditStep.Search.getNameById(0)
-            ).collectLatest { result ->
-                result.onSuccess {
-                    uiState = uiState.copy(isLoading = false)
-                    onCallMutationSaveCreditOffer(
-                        pkUser = pkUser?.toLong() ?: 0,
-                        idUserRequest = idUserRequest?.toLong() ?: 0,
-                        idBrand = idBrand ?: 0
+    private fun onCallMutationSaveCreditFlowStep() = executeUseCase {
+        mutationSaveCreditFlowStepUseCase.invoke(
+            user = email ?: "",
+            idBrand = idBrand ?: 0,
+            infoQuestion = saveCreditStepsHelper.creditFlowData,
+            idLogUserRequest = idUserRequest ?: 0,
+            idUser = pkUser ?: 0,
+            currentStep = CreditStep.Search.getNameById(0)
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(isLoading = false)
+                onCallMutationSaveCreditOffer(
+                    pkUser = pkUser?.toLong() ?: 0,
+                    idUserRequest = idUserRequest?.toLong() ?: 0,
+                    idBrand = idBrand ?: 0
+                )
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
                     )
-                }.onFailure {
-                    uiState = uiState.copy(
-                        isLoading = false,
-                        openDialog = DialogParameters(
-                            description = it.getError() ?: "",
-                            isActive = mutableStateOf(true)
-                        )
-                    )
-                }.onLoading {
-                    uiState = uiState.copy(isLoading = true)
-                }
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
             }
         }
+    }
 
     private fun onCallMutationSaveCreditOffer(
         pkUser: Long,
@@ -335,29 +334,21 @@ class NonPreApprovedViewModel @Inject constructor(
         }
     }
 
-    private fun navigateBack(isRestart: Boolean) =
-        navigateBack(
-            isRestart = isRestart,
-            popTo = Screen.HomeScreen.route
-        )
+    private fun navigateBack(isRestart: Boolean) = navigateBack(
+        isRestart = isRestart,
+        popTo = Screen.HomeScreen.route
+    )
 
-    private fun onNavigateToOrigination() =
-        popAndNavigateTo(
-            Screen.CreditScreen.baseRoute
-                .plus(getNavParam(ID_BRAND, idBrand ?: 0))
-                .plus(getNavParam(PK_USER, pkUser ?: 0))
-                .plus(getNavParam(IDENTIFICATION, identification.orEmpty()))
-                .plus(getNavParam(EMAIL, email.orEmpty()))
-                .plus(getNavParam(CREDIT_STEP, lastStep ?: CreditStep.One.id))
-                .plus(getNavParam(ID_USER_REQUEST, idUserRequest ?: 0))
-                .plus(getNavParam(FIRST_NAME, firstName.orEmpty()))
-                .plus(getNavParam(LAST_NAME, lastName.orEmpty()))
-                .plus(getNavParam(ONFIDO_STATUS, statusOnfido.orEmpty()))
-                .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia.orEmpty()))
-                .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint ?: 0))
-                .plus(getNavParam(CROSSELING, crosseling ?: false)),
-            popTo = Screen.NonPreApprovedScreen.route
-        )
+    private fun onNavigateToOrigination() = popAndNavigateTo(
+        Screen.CreditScreen.baseRoute.plus(getNavParam(ID_BRAND, idBrand ?: 0)).plus(getNavParam(PK_USER, pkUser ?: 0))
+            .plus(getNavParam(IDENTIFICATION, identification.orEmpty())).plus(getNavParam(EMAIL, email.orEmpty()))
+            .plus(getNavParam(CREDIT_STEP, lastStep ?: CreditStep.One.id))
+            .plus(getNavParam(ID_USER_REQUEST, idUserRequest ?: 0)).plus(getNavParam(FIRST_NAME, firstName.orEmpty()))
+            .plus(getNavParam(LAST_NAME, lastName.orEmpty())).plus(getNavParam(ONFIDO_STATUS, statusOnfido.orEmpty()))
+            .plus(getNavParam(EVICERTIA_STATUS, statusEvicertia.orEmpty()))
+            .plus(getNavParam(SIGN_DOCUMENT_ID_PRINT, idPrint ?: 0)).plus(getNavParam(CROSSELING, crosseling ?: false)),
+        popTo = Screen.NonPreApprovedScreen.route
+    )
 
     private fun setSuccessAlertResult(amount: String) {
         uiState = uiState.copy(
@@ -366,7 +357,10 @@ class NonPreApprovedViewModel @Inject constructor(
             maxDisbursementAmount = amount,
             alertResultIconResource = R.drawable.ic_success_symbol,
             alertResultTitleResource = R.string.non_pre_approved_additional_questions_success_alert_result_title,
-            alertResultDescriptionResource = R.string.non_pre_approved_additional_questions_success_alert_result_description,
+            alertResultDescriptionResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.non_pre_approved_additional_questions_success_alert_result_description_cr
+                else -> R.string.non_pre_approved_additional_questions_success_alert_result_description
+            },
             alertResultButtonResource = R.string.non_pre_approved_additional_questions_request_button_label,
             isLoading = false
         )
@@ -474,9 +468,7 @@ class NonPreApprovedViewModel @Inject constructor(
             is OnBirthDateValueChange -> onBirthDateValueChange(event.date)
             is OnPaymentAmountValueChange -> onAmountValueChange(event.paymentAmount)
             is OnEmploymentSituationValueChanged -> onEmploymentSituationValueChanged(event.employmentSituationSelected)
-            is OnFailureWithDialog ->
-                uiState =
-                    uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
+            is OnFailureWithDialog -> uiState = uiState.copy(isLoading = event.isLoading, openDialog = event.openDialog)
             is OnBackClick -> navigateBack(false)
             is OnContinueClick -> onContinueClick(event.focusManager)
             is OnUpdateScreenConfigData -> {
@@ -492,12 +484,10 @@ class NonPreApprovedViewModel @Inject constructor(
         object OnValidateForm : UIEvent()
         data class OnBirthDateValueChange(val date: String) : UIEvent()
         data class OnPaymentAmountValueChange(val paymentAmount: String) : UIEvent()
-        data class OnEmploymentSituationValueChanged(val employmentSituationSelected: CreditCatalogOption?) :
-            UIEvent()
+        data class OnEmploymentSituationValueChanged(val employmentSituationSelected: CreditCatalogOption?) : UIEvent()
 
         data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
-        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) :
-            UIEvent()
+        data class OnFailureWithDialog(val isLoading: Boolean, val openDialog: DialogParameters) : UIEvent()
 
         data class OnBackClick(val focusManager: FocusManager) : UIEvent()
         data class OnContinueClick(val focusManager: FocusManager) : UIEvent()

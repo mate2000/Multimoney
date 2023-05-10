@@ -77,7 +77,7 @@ class SmartPaymentCardsViewModel @Inject constructor(
 
     // Stateless
     private var identification: String = ""
-    private var infoUser: InfoUser? = null
+    var infoUser: InfoUser? = null
     private var smartAccount: SmartAccountID? = null
     var reactApplicationName: String = ""
     var reactUserName: String = ""

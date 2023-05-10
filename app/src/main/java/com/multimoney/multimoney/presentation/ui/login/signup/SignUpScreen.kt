@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -137,7 +138,11 @@ fun SignUpScreen(
 
     if (viewModel.uiState.currentStep == SignUpStep.Six.id) {
         CustomModalWarningBottomSheet(
-            titleResource = R.string.password_security_bottom_sheet_general_title,
+            titleResource = if (viewModel.idBrand == Brand.CostaRica.id) {
+                R.string.password_security_bottom_sheet_general_title_cr
+            } else {
+                R.string.password_security_bottom_sheet_general_title
+            },
             descriptionText = buildAnnotatedString {
                 withStyle(
                     style = Typography.subtitle1.toSpanStyle().copy(

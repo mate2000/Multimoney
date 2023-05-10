@@ -81,7 +81,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     private var biometricDialogSuccessDescription = ""
     private var biometricDialogFailureDescription = ""
     private var isBiometricAvailable = false
-    private var idBrand: Int = 0
+    var idBrand: Int = 0
     var userData: UserData? = null
     private var deviceId = ""
     private var uniqueId = ""

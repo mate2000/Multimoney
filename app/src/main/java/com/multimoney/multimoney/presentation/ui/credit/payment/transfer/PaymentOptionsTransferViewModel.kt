@@ -6,9 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.TransferAccount
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.BENEFICIARY
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.Screen.HomeScreen
@@ -38,6 +38,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         uiState = uiState.copy(
             creditNumber = savedStateHandle[CREDIT_NUMBER],
             transferAccount = savedStateHandle[TRANSFER_ACCOUNT],
+            beneficiaryName = savedStateHandle[BENEFICIARY] ?: "",
             isAccountNumberVisible = idBrand == Brand.ElSalvador.id
         )
         onGetTextResource()
@@ -80,7 +81,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
                 )
             )
         } else {
-            navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+            navigateBack(popTo = HomeScreen.route, isRestart = false)
         }
     }
 
@@ -93,10 +94,11 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
 
     data class UIState(
         // Interactions
-        val titleResource: Int = R.string.empty,
-        val disclaimerResource: Int = R.string.empty,
+        val titleResource: Int = string.empty,
+        val disclaimerResource: Int = string.empty,
         val creditNumber: String? = null,
         val transferAccount: TransferAccount? = null,
+        val beneficiaryName: String = "",
         val isAccountNumberVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )

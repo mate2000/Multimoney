@@ -43,8 +43,10 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.qrcodescanner.QrCodeScannerViewModel.Companion.SCHEME_PACKAGE
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.URL_REGEX
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import com.multimoney.multimoney.presentation.util.checkPermission
@@ -86,7 +88,9 @@ fun QrCodeScannerScreen(
         permissionFlow(false)
     }
 
-    QrCodeScannerContent(context, onPopBackStack)
+    QrCodeScannerContent(context, onPopBackStack) {
+        viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.ShowErrorScreen(true))
+    }
 
     if (viewModel.uiState.permissionDialog.isActive.value) {
         CustomDialog(
@@ -115,10 +119,30 @@ fun QrCodeScannerScreen(
         viewModel.onUIEvent(QrCodeScannerViewModel.UIEvent.OnPermissionInSettingsOpened)
         onPopBackStack("")
     }
+
+    if (viewModel.uiState.showErrorScreen) {
+        AlertResult(
+            titleString = stringResource(id = R.string.crypto_send_address_error_invalid_qr),
+            descriptionResource = R.string.crypto_send_address_error_invalid_qr_description,
+            buttonTextResource = R.string.crypto_send_address_btn_go_back,
+            isRightButtonVisible = true,
+            isLeftButtonVisible = false,
+            onButtonClick = {
+                onPopBackStack("")
+            },
+            onRightButtonClick = {
+                onPopBackStack("")
+            }
+        )
+    }
 }
 
 @Composable
-fun QrCodeScannerContent(context: Context, onPopBackStack: (String) -> Unit) {
+fun QrCodeScannerContent(
+    context: Context,
+    onPopBackStack: (String) -> Unit,
+    onInvalidQR: () -> Unit = {},
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var preview by remember { mutableStateOf<Preview?>(null) }
     val barCodeVal = remember { mutableStateOf("") }
@@ -159,6 +183,10 @@ fun QrCodeScannerContent(context: Context, onPopBackStack: (String) -> Unit) {
                         val barcodeAnalyser = QrCodeAnalyser { barcodes ->
                             barcodes.first().rawValue?.let { barcodeValue ->
                                 barCodeVal.value = barcodeValue
+                                if (barcodeValue.isNotEmpty() and validateQrCode(barcodeValue)) {
+                                    onInvalidQR()
+                                    return@let
+                                }
                                 onPopBackStack(barcodeValue)
                             }
                         }
@@ -202,3 +230,20 @@ fun QrCodeScannerContent(context: Context, onPopBackStack: (String) -> Unit) {
         }
     }
 }
+
+fun validateQrCode(qrCode: String): Boolean {
+    var filteredQrCode: String = qrCode
+    if(qrCode.contains(CONTAINS_DOUBLE_POINT)) {
+        filteredQrCode = qrCode.split(CONTAINS_DOUBLE_POINT).toTypedArray()[1]
+    }
+    return when {
+        filteredQrCode.isEmpty() -> true
+        filteredQrCode.contains(URL_REGEX) -> true
+        filteredQrCode.contains(CONTAINS_POINT) || filteredQrCode.contains(CONTAINS_QUESTION_MARK) -> true
+        else -> false
+    }
+}
+
+const val CONTAINS_POINT = "."
+const val CONTAINS_QUESTION_MARK = "?"
+const val CONTAINS_DOUBLE_POINT = ":"

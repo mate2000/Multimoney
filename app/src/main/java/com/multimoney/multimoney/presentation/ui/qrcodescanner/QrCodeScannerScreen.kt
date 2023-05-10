@@ -185,9 +185,9 @@ fun QrCodeScannerContent(
                                 barCodeVal.value = barcodeValue
                                 if (barcodeValue.isNotEmpty() and validateQrCode(barcodeValue)) {
                                     onInvalidQR()
-                                    return@let
+                                } else {
+                                    onPopBackStack(barcodeValue)
                                 }
-                                onPopBackStack(barcodeValue)
                             }
                         }
                         val imageAnalysis: ImageAnalysis = ImageAnalysis.Builder()

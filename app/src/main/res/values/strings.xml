@@ -1717,7 +1717,7 @@
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"Monto mayor al disponible"</string>
-    <string name="crypto_send_address_error_invalid_qr" translatable="false">¡Oh no! Código QR inválido</string>
+    <string name="crypto_send_address_error_invalid_qr" translatable="false">Código QR inválido</string>
     <string name="crypto_send_address_error_invalid_qr_description" translatable="false">Inténtalo nuevamente</string>
     <string name="crypto_send_address_btn_go_back" translatable="false">Regresar</string>
 

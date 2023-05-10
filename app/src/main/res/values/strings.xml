@@ -419,7 +419,7 @@
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
     <string name="home_product_movement_pending" translatable="false">Pendiente</string>
     <string name="home_product_movement_release_button" translatable="false">Liberar transferencia</string>
-    <string name="home_product_check_all" translatable="false">Ver Todos</string>
+    <string name="home_product_check_all" translatable="false">Ver todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_fee_mx" translatable="false">Mensualidad</string>

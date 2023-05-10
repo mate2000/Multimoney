@@ -19,13 +19,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AutomaticPaymentEditBottomSheet(
+    title: Int = string.empty,
     coroutineScope: CoroutineScope,
     modalBottomSheetState: ModalBottomSheetState,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
     CustomModalBottomSheet(
-        title = string.automatic_payment_edit_bottom_sheet_title,
+        title = title,
         closeIcon = drawable.ic_close_bottom_sheet,
         modalBottomSheetState = modalBottomSheetState,
         coroutineScope = coroutineScope

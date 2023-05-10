@@ -102,6 +102,8 @@ class HomeViewModel @Inject constructor(
     private var biometricPromptNegative = ""
     private var isBiometricActive = false
     private var apiCallCount = 0
+    val defaultDialogParameters =
+        DialogParameters(descriptionResource = R.string.something_went_wrong)
 
     // UIState
     var uiState by mutableStateOf(UIState())
@@ -915,6 +917,23 @@ class HomeViewModel @Inject constructor(
         )
     }
 
+    private fun openContactUs(
+        openWhatsAppIntent: (String) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+    ) {
+        viewModelScope.launch {
+            val link: String = dataStorePreferences.getWhatsAppLink().first()
+            if (link.isNotEmpty()) {
+                openWhatsAppIntent(link)
+            } else {
+                onFailureWithDialog(
+                    false,
+                    defaultDialogParameters.copy(isActive = mutableStateOf(true))
+                )
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         var isLoading: Boolean = false,
@@ -1004,6 +1023,16 @@ class HomeViewModel @Inject constructor(
             is UIEvent.OnShowReleaseToast -> {
                 uiState = uiState.copy(releaseToastIsVisible = true)
             }
+            is UIEvent.OnContactUs -> openContactUs(
+                uiEvent.openWhatsAppIntent,
+                uiEvent.onFailureWithDialog
+            )
+            is UIEvent.OnFailureWithDialog ->
+                uiState =
+                    uiState.copy(
+                        isLoading = uiEvent.isLoading,
+                        openDialog = uiEvent.dialogParameters
+                    )
             UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
             UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
             UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
@@ -1068,6 +1097,14 @@ class HomeViewModel @Inject constructor(
         object OnRegisterAdjustPressSellFirstTime : UIEvent()
         object OnRegisterAdjustPressSendFirstTime : UIEvent()
         object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
+        data class OnContactUs(
+            val openWhatsAppIntent: (String) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit
+        ) : UIEvent()
+        data class OnFailureWithDialog(
+            val isLoading: Boolean,
+            val dialogParameters: DialogParameters
+        ) : UIEvent()
     }
 
     sealed class BaseEvent {

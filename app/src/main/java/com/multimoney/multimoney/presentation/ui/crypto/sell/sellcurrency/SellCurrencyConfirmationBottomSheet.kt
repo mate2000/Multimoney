@@ -42,7 +42,7 @@ fun SellConfirmationBottomSheet(
     coroutineScope: CoroutineScope,
     viewModel: SellCurrencyScreenViewModel
 ) {
-    // Update fees instantly whit current amount when bottom sheet is open
+    // Update fees instantly with current amount when bottom sheet is open
     LaunchedEffect(key1 = viewModel.uiState.isConfirmationBottomSheetOpen) {
         viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnUpdateFees)
     }

@@ -1381,7 +1381,7 @@
 
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
-    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos.</string>
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
     <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>

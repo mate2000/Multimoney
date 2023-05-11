@@ -140,9 +140,9 @@ fun JobInfoScreen(
 
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 24.dp),
-            placeHolder = stringResource(id = R.string.credit_job_workplace_label),
+            placeHolder = stringResource(id = viewModel.uiState.workplaceLabelResource),
             value = viewModel.uiState.companyName,
-            labelText = stringResource(id = R.string.credit_job_workplace_label),
+            labelText = stringResource(id = viewModel.uiState.workplaceLabelResource),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -150,7 +150,7 @@ fun JobInfoScreen(
                 focusManager.clearFocus()
             }),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.credit_job_workplace_required),
+            isRequiredMessage = stringResource(id = viewModel.uiState.workplaceRequiredResource),
             onValueChange = {
                 viewModel.onUIEvent(OnCompanyNameValueChange(it))
             }

@@ -69,7 +69,14 @@ class IbanAccountViewModel @Inject constructor(
                 onValidForm(false)
                 uiState.copy(
                     accountNumber = bankAccountFormatted,
-                    accountError = Pair(true, R.string.iban_account_error)
+                    accountError = Pair(
+                        true,
+                        if (idBrand == Brand.CostaRica.id) {
+                            R.string.iban_account_error_cr
+                        } else {
+                            R.string.iban_account_error
+                        }
+                    )
                 )
             } else {
                 uiState.copy(

@@ -41,9 +41,9 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AddIbanAccountViewModel @Inject constructor(
@@ -95,7 +95,14 @@ class AddIbanAccountViewModel @Inject constructor(
                 isFormValid = false,
                 accountNumber = bankAccount.replace(Brand.CostaRica.iban, ""),
                 accountError = if (bankAccount.length < IBAN_MAX_LENGTH) {
-                    Pair(true, R.string.iban_account_error)
+                    Pair(
+                        true,
+                        if (idBrand == Brand.CostaRica.id) {
+                            R.string.iban_account_error_cr
+                        } else {
+                            R.string.iban_account_error
+                        }
+                    )
                 } else {
                     Pair(false, R.string.empty)
                 },

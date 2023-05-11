@@ -31,7 +31,7 @@ fun HomeCryptoGraphic(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
+            .padding(start = 16.dp),
         graphicsPoints = convertedBalances,
         graphicColor = graphicColor
     )

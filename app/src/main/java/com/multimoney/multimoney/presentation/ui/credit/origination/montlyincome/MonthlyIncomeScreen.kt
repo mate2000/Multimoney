@@ -181,7 +181,7 @@ fun MonthlyIncomeScreen(
             if (sharedViewModel.crosseling) {
                 CustomOutlinedTextField(
                     modifier = Modifier.padding(top = 16.dp),
-                    labelText = stringResource(id = R.string.credit_monthly_income_job_workplace_label),
+                    labelText = stringResource(id = viewModel.uiState.workplaceLabelResource),
                     value = viewModel.uiState.companyName,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next
@@ -190,7 +190,7 @@ fun MonthlyIncomeScreen(
                         focusManager.clearFocus()
                     }),
                     isRequired = true,
-                    isRequiredMessage = stringResource(id = R.string.credit_monthly_income_job_workplace_required),
+                    isRequiredMessage = stringResource(id = viewModel.uiState.workplaceRequiredResource),
                     onValueChange = {
                         viewModel.onUIEvent(OnCompanyNameValueChange(it))
                     }

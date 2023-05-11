@@ -180,8 +180,8 @@
     <string name="sign_in_too_many_attempts" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, intenta de nuevo</string>
     <string name="sign_in_account_blocked_title_cr" translatable="false">Restablecé tu contraseña</string>
     <string name="sign_in_account_blocked_title" translatable="false">Restablece tu contraseña</string>
-    <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad debés restablecer la contraseña para poder ingresar al app</string>
-    <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad debes restablecer la contraseña para poder ingresar al app</string>
+    <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablecé tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
+    <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablece tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
     <string name="sign_in_restore_password" translatable="false">Restablecer</string>
 
     <!-- Sign Up General-->

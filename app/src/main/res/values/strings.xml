@@ -213,8 +213,10 @@
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
-    <string name="sign_up_email_user_completed_dialog_title" translatable="false">Ya tenés una cuenta registrada con este correo</string>
-    <string name="sign_up_email_user_completed_dialog_description" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
+    <string name="sign_up_email_user_completed_dialog_title" translatable="false">Ya tienes una cuenta registrada con este correo</string>
+    <string name="sign_up_email_user_completed_dialog_description" translatable="false">Si olvidaste tu contraseña, sigue el proceso para recuperarla.</string>
+    <string name="sign_up_email_user_completed_dialog_title_cr" translatable="false">Ya tenés una cuenta registrada con este correo</string>
+    <string name="sign_up_email_user_completed_dialog_description_cr" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>

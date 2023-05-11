@@ -114,6 +114,8 @@ fun SignUpEmailScreen(
             }.onMessage {
                 viewModel.onUIEvent(
                     SignUpEmailViewModel.UIEvent.OnHandleUserStatus(
+                        title = it?.message.orEmpty(),
+                        description = it?.detail.orEmpty(),
                         context = context,
                         userData = it,
                         previousStepAction = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnPreviousStep) },
@@ -152,7 +154,6 @@ fun SignUpEmailScreen(
 
     viewModel.onUIEvent(
         SignUpEmailViewModel.UIEvent.OnStart(
-            userCompletedDialogDescription = stringResource(id = string.sign_up_email_user_completed_dialog_description),
             sharedViewModel.whatsAppLink ?: "",
             blockedMessage = stringResource(id = string.sign_up_email_blocked_dialog_description)
         )

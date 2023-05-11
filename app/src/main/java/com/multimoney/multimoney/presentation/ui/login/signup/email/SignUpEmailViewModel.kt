@@ -44,7 +44,6 @@ class SignUpEmailViewModel @Inject constructor(
     // Stateless
     private var previousUserEmail = ""
     private var isUserStatusIncomplete = true
-    private var userCompletedDialogDescription = ""
     private var linkWhatsapp = ""
     private var blockedMessage = ""
 
@@ -52,11 +51,9 @@ class SignUpEmailViewModel @Inject constructor(
     val onValidateUserExistsEvent = MutableSharedFlow<MultimoneyResult<UserData?>>()
 
     private fun onStart(
-        userCompletedDialogDescription: String,
         linkWhatsapp: String,
         blockedMessage: String
     ) {
-        this.userCompletedDialogDescription = userCompletedDialogDescription
         this.linkWhatsapp = linkWhatsapp
         this.blockedMessage = blockedMessage
     }
@@ -142,6 +139,8 @@ class SignUpEmailViewModel @Inject constructor(
     }
 
     private fun onHandleUserState(
+        title: String,
+        description: String,
         previousStepAction: () -> Unit,
         onLoadingValueChange: () -> Unit,
         onOpenDialog: (DialogParameters) -> Unit
@@ -150,8 +149,8 @@ class SignUpEmailViewModel @Inject constructor(
         isUserStatusIncomplete = false
         onOpenDialog(
             DialogParameters(
-                titleResource = string.sign_up_email_user_completed_dialog_title,
-                description = userCompletedDialogDescription,
+                title = title,
+                description = description,
                 positiveResource = string.sign_up_email_user_completed_dialog_positive,
                 positiveAction = { previousStepAction() },
                 isActive = mutableStateOf(true)
@@ -221,13 +220,14 @@ class SignUpEmailViewModel @Inject constructor(
     fun onUIEvent(event: UIEvent) {
         when (event) {
             is OnStart -> onStart(
-                event.userCompletedDialogDescription,
                 event.linkWhatsapp,
                 event.blockedMessage
             )
             is OnValidateForm -> isFormValid()
             is OnNextActionClick -> onNextActionClick(event.nextStepAction)
             is OnHandleUserStatus -> onHandleUserState(
+                event.title,
+                event.description,
                 event.previousStepAction,
                 event.onLoadingValueChange,
                 event.onOpenDialog
@@ -243,7 +243,6 @@ class SignUpEmailViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class OnStart(
-            val userCompletedDialogDescription: String,
             val linkWhatsapp: String,
             val blockedMessage: String
         ) : UIEvent()
@@ -251,6 +250,8 @@ class SignUpEmailViewModel @Inject constructor(
         data class OnNextActionClick(val nextStepAction: () -> Unit) : UIEvent()
 
         data class OnHandleUserStatus(
+            val title: String,
+            val description: String,
             val context: Context,
             val userData: UserData?,
             val previousStepAction: () -> Unit,

@@ -75,7 +75,6 @@ fun RegisteredUserPasswordScreen(
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-
     viewModel.onUIEvent(
         RegisteredUserPasswordViewModel.UIEvent.OnInitializeDialogTexts(
             biometricPromptTitle = stringResource(id = string.biometric_dialog_title),
@@ -92,7 +91,7 @@ fun RegisteredUserPasswordScreen(
         viewModel.onUIEvent(
             RegisteredUserPasswordViewModel.UIEvent.OnSetupDeviceInfo(
                 getDeviceName(fragmentActivity) ?: "",
-                getDeviceType(fragmentActivity).value ?: "",
+                getDeviceType(fragmentActivity).value ?: ""
             )
         )
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
@@ -147,8 +146,8 @@ fun RegisteredUserPasswordScreen(
     // Dialog
     if (viewModel.uiState.openDialogCustom.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource),
-            message = viewModel.uiState.openDialogCustom.description,
+            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource).ifEmpty { viewModel.uiState.openDialogCustom.title },
+            message = stringResource(id = viewModel.uiState.openDialogCustom.descriptionResource).ifEmpty { viewModel.uiState.openDialogCustom.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeResource),
             onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,

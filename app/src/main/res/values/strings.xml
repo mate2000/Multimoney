@@ -685,7 +685,7 @@
     <string name="credit_amount_term_value" translatable="false">%1$s meses</string>
     <string name="credit_amount_commission_for_disbursement" translatable="false">Comisión por desembolso:\u00A0</string>
     <string name="credit_amount_term_and_conditions_first" translatable="false">Acepto los</string>
-    <string name="credit_amount_term_and_conditions_second" translatable="false">Términos y Condiciones</string>
+    <string name="credit_amount_term_and_conditions_second" translatable="false">Términos y condiciones</string>
     <string name="credit_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_amount_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
@@ -1000,7 +1000,8 @@
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
-    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisá formato.</b> Debe tener 20 dígitos]]></string>
+    <string name="iban_account_error_cr" translatable="false"><![CDATA[<b>Revisá formato.</b> Debe tener 20 dígitos]]></string>
+    <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisa formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
     <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
 
@@ -1380,7 +1381,7 @@
 
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
-    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos.</string>
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
     <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>
@@ -1571,7 +1572,8 @@
     <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
     <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
-    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
+    <string name="smart_iban_register_account_length_error_cr" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
+    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisa el formato.</b> Es un número de 20 dígitos]]></string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
     <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>

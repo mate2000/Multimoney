@@ -475,8 +475,13 @@ fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
  * @param phoneWithCode The phone number with the country code.
  * @param phoneWithoutCode The phone number without the country code.
  */
-fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?) =
-    phoneWithCode?.replace(phoneWithoutCode ?: "", " ").plus(phoneWithoutCode)
+fun formatPhoneNumber(phoneWithCode: String?, phoneWithoutCode: String?): String  {
+    val stringBuilder = StringBuilder()
+    val areaCode = phoneWithCode?.replace(phoneWithoutCode ?: "", "")
+    val spacedNumber = stringBuilder.append(phoneWithoutCode?.takeLast(PHONE_NUMBER_LENGTH))
+        .insert(PHONE_NUMBER_LENGTH / TWO, SPACE).toString()
+    return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
+}
 
 /**
  * Convert any data class in json String using Gson library

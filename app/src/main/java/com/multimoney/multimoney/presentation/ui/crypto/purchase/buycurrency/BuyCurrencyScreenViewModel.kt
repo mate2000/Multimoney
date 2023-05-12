@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
@@ -145,7 +146,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         if (currentQuote > MAX_AMOUNT_ALLOWED) {
             timer.startTimer()
             isError(
-                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                errorMessage = if (idBrand == Brand.CostaRica.id) {
+                    R.string.crypto_purchase_flow_error_daily_amount_exceeded
+                } else {
+                    R.string.crypto_purchase_flow_error_weekly_amount_exceeded
+                },
                 isError = true,
                 focusError = true
             )
@@ -275,7 +280,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 focusError = true
             )
             amountPlusFee > MAX_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                errorMessage = if (idBrand == Brand.CostaRica.id) {
+                    R.string.crypto_purchase_flow_error_daily_amount_exceeded
+                } else {
+                    R.string.crypto_purchase_flow_error_weekly_amount_exceeded
+                },
                 isError = true,
                 focusError = true
             )

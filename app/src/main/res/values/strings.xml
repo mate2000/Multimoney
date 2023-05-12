@@ -711,7 +711,7 @@
 
     <!-- Location   -->
     <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
-    <string name="payment_location_maps_info" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info" translatable="false">Puedes pagar utilizando el código de barras.</string>
     <string name="payment_location_maps_info_cr" translatable="false">Podés pagar utilizando el código de barras.</string>
     <string name="payment_location_maps_address" translatable="false">Dirección</string>
     <string name="payment_location_maps_opening_time" translatable="false">Horario</string>

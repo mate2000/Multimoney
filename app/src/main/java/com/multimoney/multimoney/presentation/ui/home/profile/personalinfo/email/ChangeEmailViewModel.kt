@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangeEmailViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -37,12 +38,13 @@ class ChangeEmailViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
             idClient = savedStateHandle.get<Int>(ID_CLIENT)?.toInt()
         )
     }
 
     private fun onContinueButtonClicked() {
-        navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileVerifyIdentityEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.newEmail}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.lastName}")
     }
 
     private fun isFormValid() {
@@ -132,6 +134,7 @@ class ChangeEmailViewModel @Inject constructor(
         val newPhoneNumber: String? = null,
         val idBrand: Int? = null,
         val firstName: String? = null,
+        val lastName: String? = null,
         val pkUser: String? = null,
         val idClient: Int? = null,
         val phoneCode: String = "",
@@ -139,16 +142,16 @@ class ChangeEmailViewModel @Inject constructor(
         val userEmailError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_email_required)
     )
 
-    fun onUIEvent(event: ChangeEmailViewModel.UIEvent) {
+    fun onUIEvent(event: UIEvent) {
         when (event) {
-            is ChangeEmailViewModel.UIEvent.OnUserEmailValueChange -> onUserEmailChange(event.newEmail)
-            is ChangeEmailViewModel.UIEvent.OnUserEmailConfirmationValueChange -> onUserEmailConfirmationChange(
+            is UIEvent.OnUserEmailValueChange -> onUserEmailChange(event.newEmail)
+            is UIEvent.OnUserEmailConfirmationValueChange -> onUserEmailConfirmationChange(
                 event.newEmailConfirmation
             )
-            is ChangeEmailViewModel.UIEvent.OnValidateUserEmail -> isUserEmailValid()
-            is ChangeEmailViewModel.UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
-            is ChangeEmailViewModel.UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
-            is ChangeEmailViewModel.UIEvent.OnNavigateBack -> navigateBack(
+            is UIEvent.OnValidateUserEmail -> isUserEmailValid()
+            is UIEvent.OnValidateUserEmailConfirmation -> isUserEmailConfirmationValid()
+            is UIEvent.OnContinueButtonClicked -> onContinueButtonClicked()
+            is UIEvent.OnNavigateBack -> navigateBack(
                 Screen.ProfilePersonalInfoScreen.route,
                 false
             )

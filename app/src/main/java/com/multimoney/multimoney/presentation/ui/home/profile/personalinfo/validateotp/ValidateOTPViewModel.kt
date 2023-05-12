@@ -100,6 +100,7 @@ class ValidateOTPViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
             firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
@@ -391,11 +392,22 @@ class ValidateOTPViewModel @Inject constructor(
                     ).toJson()
                 )
                 navigateTo(
-                    "${Screen.ProfileScreen.baseRoute}/${uiState.idClient}/${uiState.idBrand}/${uiState.firstName}/${uiState.email}/${
-                        uiState.newPhoneNumberCode?.plus(
-                            uiState.newValue
-                        ) ?: ""
-                    }/${uiState.identification}/${uiState.pkUser}/${uiState.userName}"
+                    Screen.ProfileScreen.baseRoute
+                        .plus(getNavParam(ID_CLIENT, uiState.idClient))
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                        .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
+                        .plus(getNavParam(LAST_NAME, uiState.lastName ?: ""))
+                        .plus(getNavParam(EMAIL, uiState.email))
+                        .plus(
+                            getNavParam(
+                                PHONE_NUMBER, uiState.newPhoneNumberCode?.plus(
+                                    uiState.newValue
+                                ) ?: ""
+                            )
+                        )
+                        .plus(getNavParam(IDENTIFICATION, uiState.identification))
+                        .plus(getNavParam(PK_USER, uiState.pkUser))
+                        .plus(getNavParam(USER_NAME, uiState.userName))
                 )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -425,7 +437,7 @@ class ValidateOTPViewModel @Inject constructor(
                         .plus(getNavParam(ID_CLIENT, uiState.idClient))
                         .plus(getNavParam(ID_BRAND, uiState.idBrand))
                         .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
-                        .plus(getNavParam(LAST_NAME, ""))
+                        .plus(getNavParam(LAST_NAME, uiState.lastName ?: ""))
                         .plus(getNavParam(EMAIL, uiState.newValue))
                         .plus(getNavParam(PHONE_NUMBER, uiState.phoneNumber?.ifEmpty { 0 }))
                         .plus(getNavParam(IDENTIFICATION, uiState.identification))
@@ -441,7 +453,7 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun navigateToConfirmChange() {
-        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
+        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
     }
 
     private fun processValidateSecondOTPResult(result: MultimoneyResult<ValidatePin?>) {
@@ -528,6 +540,7 @@ class ValidateOTPViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val newPhoneNumberCode: String? = null,
         val firstName: String? = null,
+        val lastName: String? = null,
         val newValue: String? = null,
         val sendMethod: String? = null,
         val isLoading: Boolean = true,

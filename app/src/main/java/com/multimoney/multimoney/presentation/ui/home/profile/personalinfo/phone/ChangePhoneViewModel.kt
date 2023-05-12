@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
@@ -55,6 +56,7 @@ class ChangePhoneViewModel @Inject constructor(
             countryCode = initCountryCode(),
             pkUser = savedStateHandle[PK_USER],
             firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
             idClient = savedStateHandle[ID_CLIENT]
         )
         phoneNumberTransformation =
@@ -210,7 +212,7 @@ class ChangePhoneViewModel @Inject constructor(
     }
 
     private fun onNavigateToVerifyIdentityScreen() {
-        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.phoneCode}")
+        navigateTo("${Screen.ProfileVerifyIdentityPhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.newPhoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.lastName}/${uiState.phoneCode}")
     }
 
     private fun onContinueButtonClicked() {
@@ -254,6 +256,7 @@ class ChangePhoneViewModel @Inject constructor(
         val idBrand: Int? = null,
         val idClient: Int? = null,
         val firstName: String? = null,
+        val lastName: String? = null,
         val pkUser: String? = null,
         val phoneNumberTemplateMinimalLength: Int? = 0,
         val phoneCode: String = "",

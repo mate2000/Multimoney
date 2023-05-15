@@ -1,0 +1,10 @@
+query BankAccountTypes($user: String!, $idBrand: Int!) {
+    regularExpression(regularExpressionInput: {user: $user, idBrand: $idBrand}) {
+        regularExpression: iNT_PK_VEN_CAT_EXPRESION_REGULAR
+        key: sTR_LLAVE_04
+        description: sTR_DESCRIPCION
+        expression: sTR_PATRON_EXPRESION
+        foreignKey: iNT_FK_LLAVE_FORANEA
+        disbursementAccount: iNT_ID_TIPO_CUENTA_DESEMBOLSO
+    }
+}

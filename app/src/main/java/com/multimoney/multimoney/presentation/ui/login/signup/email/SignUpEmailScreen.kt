@@ -155,7 +155,10 @@ fun SignUpEmailScreen(
     viewModel.onUIEvent(
         SignUpEmailViewModel.UIEvent.OnStart(
             sharedViewModel.whatsAppLink ?: "",
-            blockedMessage = stringResource(id = string.sign_up_email_blocked_dialog_description)
+            blockedMessage = stringResource(
+                if (sharedViewModel.uiState.country == SIM_CODE_EL_SALVADOR || sharedViewModel.uiState.country == SIM_CODE_GUATEMALA) string.sign_up_email_blocked_dialog_description_sv
+                else string.sign_up_email_blocked_dialog_description_cr
+            )
         )
     )
 

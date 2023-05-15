@@ -7,148 +7,7 @@ import com.apollographql.apollo3.cache.normalized.FetchPolicy
 import com.apollographql.apollo3.cache.normalized.FetchPolicy.NetworkOnly
 import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.multimoney.data.mapper.credit.mapToApolloModel
-import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteDeleteMutation
-import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteGetQuery
-import com.multimoney.data.networking.graphql.apollomodel.ACHTransferFavoriteListQuery
-import com.multimoney.data.networking.graphql.apollomodel.AccountSmartContractEventSubscription
-import com.multimoney.data.networking.graphql.apollomodel.AccountStatementQuery
-import com.multimoney.data.networking.graphql.apollomodel.ActivatedCardAutomaticDebitMutation
-import com.multimoney.data.networking.graphql.apollomodel.ActivatedClientAutomaticDebitMutation
-import com.multimoney.data.networking.graphql.apollomodel.AddACHAccountMutation
-import com.multimoney.data.networking.graphql.apollomodel.AddressLevel1Query
-import com.multimoney.data.networking.graphql.apollomodel.AddressLevel2Query
-import com.multimoney.data.networking.graphql.apollomodel.AddressLevel3Query
-import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformationQuery
-import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
-import com.multimoney.data.networking.graphql.apollomodel.BankList365TypeAndTypeAccountQuery
-import com.multimoney.data.networking.graphql.apollomodel.BankListTransfer365Query
-import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
-import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyHQRMutation
-import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
-import com.multimoney.data.networking.graphql.apollomodel.CardIssuanceNVQuery
-import com.multimoney.data.networking.graphql.apollomodel.CardUnblockingNVMutation
-import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
-import com.multimoney.data.networking.graphql.apollomodel.ChangeDeviceMutation
-import com.multimoney.data.networking.graphql.apollomodel.ChangeEmailMutation
-import com.multimoney.data.networking.graphql.apollomodel.ChangePhoneMutation
-import com.multimoney.data.networking.graphql.apollomodel.CivilStatusQuery
-import com.multimoney.data.networking.graphql.apollomodel.CompanyCantonQuery
-import com.multimoney.data.networking.graphql.apollomodel.CompanyDistrictQuery
-import com.multimoney.data.networking.graphql.apollomodel.CompanyProvinceQuery
-import com.multimoney.data.networking.graphql.apollomodel.CreateCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.CreateUserVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.CreditContractEventSubscription
-import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionAmountQuery
-import com.multimoney.data.networking.graphql.apollomodel.CreditExtensionMessageQuery
-import com.multimoney.data.networking.graphql.apollomodel.CreditOfferQuery
-import com.multimoney.data.networking.graphql.apollomodel.DataInformationClientQuery
-import com.multimoney.data.networking.graphql.apollomodel.DeactivatedCardAutomaticDebitMutation
-import com.multimoney.data.networking.graphql.apollomodel.DeactivatedClientAutomaticDebitMutation
-import com.multimoney.data.networking.graphql.apollomodel.DeleteCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.DeleteTokenDeviceNVMutation
-import com.multimoney.data.networking.graphql.apollomodel.EmissionPlaceQuery
-import com.multimoney.data.networking.graphql.apollomodel.EmploymentSituationQuery
-import com.multimoney.data.networking.graphql.apollomodel.ExchangeRateQuery
-import com.multimoney.data.networking.graphql.apollomodel.GeneralEconomicActivityQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetAvailableListOfCryptoCoinsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetBalanceCryptoAccountQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCardAutomaticDebitQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetClientAutomaticDebitQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetClientBankAccountQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCompanyNameByIdentificationQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetConfigurationVersionQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCoreBankMovementsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCountryContactQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCountryPhoneCodesQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCountryQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyMovementQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoCurrencyNewsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoMovementsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoPriceHistoryQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetCryptoReceiveAddressQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetExchangeRateCreditQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetHistoricClientBalanceQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetHistoricalCurrencyPricesQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetInfoDepositQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetLinkCreditContractQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetParametersMobileByCategoryQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetPaymentPointsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetPricesQuoteAndCommissionQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetPromissoryNoteDetailQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetSmartAccountsQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetTokenQuery
-import com.multimoney.data.networking.graphql.apollomodel.GetTransferCommissionQuery
-import com.multimoney.data.networking.graphql.apollomodel.GlobalRequestMutation
-import com.multimoney.data.networking.graphql.apollomodel.HomeCantonQuery
-import com.multimoney.data.networking.graphql.apollomodel.HomeDistrictQuery
-import com.multimoney.data.networking.graphql.apollomodel.HomeProvinceQuery
-import com.multimoney.data.networking.graphql.apollomodel.InitialRequestSmartAccountMutation
-import com.multimoney.data.networking.graphql.apollomodel.ListCardVDQuery
-import com.multimoney.data.networking.graphql.apollomodel.ListMiniCardsQuery
-import com.multimoney.data.networking.graphql.apollomodel.ListSavedSACAccountsQuery
-import com.multimoney.data.networking.graphql.apollomodel.ListSinpeAccountQuery
-import com.multimoney.data.networking.graphql.apollomodel.LocalTransferFavoriteQuery
-import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountDeleteMutation
-import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountSaveMutation
-import com.multimoney.data.networking.graphql.apollomodel.ManageSinpeAccountUpdateMutation
-import com.multimoney.data.networking.graphql.apollomodel.MicroDepositVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.NationalityQuery
-import com.multimoney.data.networking.graphql.apollomodel.OcupationsQuery
-import com.multimoney.data.networking.graphql.apollomodel.OnfidoCheckProcessMutation
-import com.multimoney.data.networking.graphql.apollomodel.OnfidoIntialProcessMutation
-import com.multimoney.data.networking.graphql.apollomodel.PayCreditVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.PaymentAmountQuery
-import com.multimoney.data.networking.graphql.apollomodel.PhoneValidationMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProccessPaymentListMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProcessCreditExtensionDetailMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProcessLocalTransferMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProcessSinpeTransferMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProcessTransfer365MobileMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProcessTransfer365Mutation
-import com.multimoney.data.networking.graphql.apollomodel.ProcessTransferVisaToSmartVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.ProfessionSmartQuery
-import com.multimoney.data.networking.graphql.apollomodel.ProfessionsQuery
-import com.multimoney.data.networking.graphql.apollomodel.QuickActionsQuery
-import com.multimoney.data.networking.graphql.apollomodel.RelatedContactsByPhoneQuery
-import com.multimoney.data.networking.graphql.apollomodel.RelationshipQuery
-import com.multimoney.data.networking.graphql.apollomodel.ReleaseCryptoTransferMutation
-import com.multimoney.data.networking.graphql.apollomodel.RequestChangeDeviceMutation
-import com.multimoney.data.networking.graphql.apollomodel.ResendMicroDepositVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveAutomatedSmartAccountMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveClientBankAccountMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveCreditApplicationMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveCreditExtensionDetailMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveCreditFlowInputMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOfferMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveCreditOperationMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveLogTrackingMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveRegisterCoreLogMutation
-import com.multimoney.data.networking.graphql.apollomodel.SaveTermsAndConditionsCreditMutation
-import com.multimoney.data.networking.graphql.apollomodel.ScreenConfigQuery
-import com.multimoney.data.networking.graphql.apollomodel.SellCryptoCurrencyMutation
-import com.multimoney.data.networking.graphql.apollomodel.SendCreditContractEventMutation
-import com.multimoney.data.networking.graphql.apollomodel.SendCryptoToAddressMutation
-import com.multimoney.data.networking.graphql.apollomodel.SendPinProcessMutation
-import com.multimoney.data.networking.graphql.apollomodel.SmartAccountTypeQuery
-import com.multimoney.data.networking.graphql.apollomodel.StepByStepQuery
-import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsQuery
-import com.multimoney.data.networking.graphql.apollomodel.TermsAndConditionsSignedQuery
-import com.multimoney.data.networking.graphql.apollomodel.UpdateACHAccountMutation
-import com.multimoney.data.networking.graphql.apollomodel.UpdateCardVDMutation
-import com.multimoney.data.networking.graphql.apollomodel.UpdateFavoriteContactSmartMutation
-import com.multimoney.data.networking.graphql.apollomodel.UpdateSmartAccountStatusMutation
-import com.multimoney.data.networking.graphql.apollomodel.UpdateUserRegisterMutation
-import com.multimoney.data.networking.graphql.apollomodel.UserEventMobileSaveMutation
-import com.multimoney.data.networking.graphql.apollomodel.UserPhoneMobileSaveMutation
-import com.multimoney.data.networking.graphql.apollomodel.UserValidationMutation
-import com.multimoney.data.networking.graphql.apollomodel.ValidateBankAccountQuery
-import com.multimoney.data.networking.graphql.apollomodel.ValidateDepositAddressMutation
-import com.multimoney.data.networking.graphql.apollomodel.ValidateOTPMutation
-import com.multimoney.data.networking.graphql.apollomodel.ValidatePasswordStructureQuery
-import com.multimoney.data.networking.graphql.apollomodel.ValidatePinQuery
-import com.multimoney.data.networking.graphql.apollomodel.ValidateUserExistsQuery
-import com.multimoney.data.networking.graphql.apollomodel.ValidateUserStatusQuery
-import com.multimoney.data.networking.graphql.apollomodel.ValidationSecurityQuery
+import com.multimoney.data.networking.graphql.apollomodel.*
 import com.multimoney.data.networking.graphql.apollomodel.type.BeneficiaryRequestDtoInput
 import com.multimoney.data.networking.graphql.apollomodel.type.ContactsInput
 import com.multimoney.domain.model.accountsmart.Beneficiary
@@ -857,7 +716,15 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         actionSecurity: Int
     ): ApolloCall<ValidationSecurityQuery.Data> =
-        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand, actionSecurity))
+        apolloAuthorizedClient.query(
+            ValidationSecurityQuery(
+                pkUser,
+                password,
+                user,
+                idBrand,
+                actionSecurity
+            )
+        )
             .fetchPolicy(
                 FetchPolicy.NetworkOnly
             )
@@ -2671,4 +2538,10 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryBankAmpliation(user: String, idBrand: Int): ApolloCall<BanksAmpliationQuery.Data> =
+        apolloAuthorizedClient.query(BanksAmpliationQuery(user, idBrand)).fetchPolicy(NetworkOnly)
+
+    fun queryBankAccountTypes(user: String, idBrand: Int): ApolloCall<BankAccountTypesQuery.Data> =
+        apolloAuthorizedClient.query(BankAccountTypesQuery(user, idBrand)).fetchPolicy(NetworkOnly)
 }

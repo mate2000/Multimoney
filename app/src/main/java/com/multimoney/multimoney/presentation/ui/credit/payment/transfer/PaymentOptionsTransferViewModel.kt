@@ -38,8 +38,7 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         uiState = uiState.copy(
             creditNumber = savedStateHandle[CREDIT_NUMBER],
             transferAccount = savedStateHandle[TRANSFER_ACCOUNT],
-            beneficiaryName = savedStateHandle[BENEFICIARY] ?: "",
-            isAccountNumberVisible = idBrand == Brand.ElSalvador.id
+            beneficiaryName = savedStateHandle[BENEFICIARY] ?: ""
         )
         onGetTextResource()
     }
@@ -99,7 +98,6 @@ class PaymentOptionsTransferViewModel @Inject constructor(savedStateHandle: Save
         val creditNumber: String? = null,
         val transferAccount: TransferAccount? = null,
         val beneficiaryName: String = "",
-        val isAccountNumberVisible: Boolean = false,
         val openDialog: DialogParameters = DialogParameters()
     )
 

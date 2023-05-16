@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -57,13 +58,7 @@ fun SignUpEmailScreen(
         sharedViewModel.onUIEvent(
             SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
                 viewModel.onUIEvent(
-                    SignUpEmailViewModel.UIEvent.OnNextActionClick(
-                        nextStepAction = {
-                            sharedViewModel.onUIEvent(
-                                SignUpViewModel.UIEvent.OnNextStep
-                            )
-                        }
-                    )
+                    SignUpEmailViewModel.UIEvent.OnNextActionClick
                 )
                 sharedViewModel.logEvents(FireBaseEvents.SignUpOne, AdjustEventType.SIGNUP_1_2001)
             }, nextStep = SignUpStep.Two.id, previousStep = SignUpStep.One.id)
@@ -155,7 +150,10 @@ fun SignUpEmailScreen(
     viewModel.onUIEvent(
         SignUpEmailViewModel.UIEvent.OnStart(
             sharedViewModel.whatsAppLink ?: "",
-            blockedMessage = stringResource(id = string.sign_up_email_blocked_dialog_description)
+            blockedMessage = stringResource(
+                if (sharedViewModel.uiState.country == SIM_CODE_EL_SALVADOR || sharedViewModel.uiState.country == SIM_CODE_GUATEMALA) string.sign_up_email_blocked_dialog_description_sv
+                else string.sign_up_email_blocked_dialog_description_cr
+            )
         )
     )
 

@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.credit.origination.montlyincom
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.text.isDigitsOnly
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.credit.QueryEmissionPlaceUseCase
 import com.multimoney.domain.interaction.credit.QueryOccupationUseCase
@@ -39,7 +38,6 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
 import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
-import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.transformation.FORMAT_MONEY_MAX_LENGTH
 import com.multimoney.multimoney.presentation.util.validateDecimalIncomeWithZeros
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -76,6 +74,14 @@ class MonthlyIncomeViewModel @Inject constructor(
             titleResource = when (idBrand) {
                 Brand.ElSalvador.id -> R.string.credit_monthly_income_title_sv
                 else -> R.string.credit_monthly_income_title
+            },
+            workplaceLabelResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.credit_monthly_income_job_workplace_label_cr
+                else -> R.string.credit_monthly_income_job_workplace_label
+            },
+            workplaceRequiredResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.credit_monthly_income_job_workplace_required_cr
+                else -> R.string.credit_monthly_income_job_workplace_required
             }
         )
     }
@@ -524,6 +530,8 @@ class MonthlyIncomeViewModel @Inject constructor(
 
     data class UIState(
         val titleResource: Int = R.string.empty,
+        val workplaceLabelResource: Int = R.string.empty,
+        val workplaceRequiredResource: Int = R.string.empty,
         val income: String = "",
         val duiEmissionDate: String = "",
         val duiExpirationDate: String = "",

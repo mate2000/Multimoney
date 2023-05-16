@@ -277,22 +277,34 @@ class SignInViewModel @Inject constructor(
             )
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
-            val message = authException.cause?.message?.getCognitoError()?.message
+            val error = authException.cause?.message?.getCognitoError()
+            val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
+            else string.sign_in_too_many_attempts
 
-            uiState = if (message.isNullOrBlank()) {
-                val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
-                else string.sign_in_too_many_attempts
-
+            uiState = if (error == null) {
                 uiState.copy(
+                    openDialog = DialogParameters(
+                        descriptionResource = messageResId,
+                        positiveResource = string.accept,
+                        isActive = mutableStateOf(true)
+                    ),
                     userEmailError = Pair(true, string.error_empty),
-                    userPasswordError = Pair(true, messageResId),
-                    userPasswordErrorMessage = Pair(true, null),
+                    userPasswordError = Pair(true, string.sign_in_validation),
+                    userPasswordErrorMessage = Pair(false, null),
                     isLoading = false
                 )
             } else {
                 uiState.copy(
+                    openDialog = DialogParameters(
+                        title = error.detail,
+                        description = error.message,
+                        descriptionResource = if (error.message.isEmpty()) messageResId else string.empty,
+                        positiveResource = string.accept,
+                        isActive = mutableStateOf(true)
+                    ),
                     userEmailError = Pair(true, string.error_empty),
-                    userPasswordErrorMessage = Pair(true, message),
+                    userPasswordError = Pair(true, string.sign_in_validation),
+                    userPasswordErrorMessage = Pair(false, null),
                     isLoading = false
                 )
             }
@@ -301,22 +313,38 @@ class SignInViewModel @Inject constructor(
             viewModelScope.launch {
                 dataStorePreferences.clearData()
             }
+            val error = authException.cause?.message?.getCognitoError()
             val titleResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_title_cr
             else string.sign_in_account_blocked_title
 
             val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_account_blocked_message_cr
             else string.sign_in_account_blocked_message
 
-            uiState = uiState.copy(
-                openDialog = DialogParameters(
-                    titleResource = titleResId,
-                    descriptionResource = messageResId,
-                    positiveResource = string.sign_in_restore_password,
-                    positiveAction = { onNavigateToForgotPassword() },
-                    isActive = mutableStateOf(true)
-                ),
-                isLoading = false
-            )
+            if (error == null) {
+                uiState = uiState.copy(
+                    openDialog = DialogParameters(
+                        titleResource = titleResId,
+                        descriptionResource = messageResId,
+                        positiveResource = string.sign_in_restore_password,
+                        positiveAction = { onNavigateToForgotPassword() },
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
+            } else {
+                uiState = uiState.copy(
+                    openDialog = DialogParameters(
+                        title = error.message,
+                        titleResource = if (error.message.isEmpty()) titleResId else string.empty,
+                        description = error.detail,
+                        descriptionResource = if (error.detail.isEmpty()) messageResId else string.empty,
+                        positiveResource = string.sign_in_restore_password,
+                        positiveAction = { onNavigateToForgotPassword() },
+                        isActive = mutableStateOf(true)
+                    ),
+                    isLoading = false
+                )
+            }
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.DeviceChangeRequiredDueToInactivity.code) == true -> {
             uiState = uiState.copy(

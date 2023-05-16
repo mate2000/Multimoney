@@ -32,8 +32,8 @@ import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class SmartTransferRegisterIbanViewModel @Inject constructor(
@@ -87,7 +87,14 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         val bankAccount = uiState.ibanAccountNumber.replace(Brand.CostaRica.iban, "")
         uiState = uiState.copy(
             accountError = if (bankAccount.length < AddIbanAccountViewModel.IBAN_MAX_LENGTH) {
-                Pair(true, R.string.smart_iban_register_account_length_error)
+                Pair(
+                    true,
+                    if (idBrand == Brand.CostaRica.id) {
+                        R.string.smart_iban_register_account_length_error_cr
+                    } else {
+                        R.string.smart_iban_register_account_length_error
+                    }
+                )
             } else {
                 Pair(false, R.string.empty)
             }
@@ -192,6 +199,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             }
         )
     }
+
     private fun onContinueButtonClick() = executeUseCase {
         mutationAddACHAccount(
             idBrand = idBrand ?: Brand.CostaRica.id,
@@ -249,8 +257,8 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
         )
         navigateTo(
             "${Screen.SmartTransferAmountScreen.baseRoute}/" +
-                "${encodeData(smartAccount)}/$ibanAccount/" +
-                "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferRegisterIbanScreen.baseRoute}"
+                    "${encodeData(smartAccount)}/$ibanAccount/" +
+                    "${SmartTransferTypes.SmartToIban.id}/${Screen.SmartTransferRegisterIbanScreen.baseRoute}"
         )
     }
 

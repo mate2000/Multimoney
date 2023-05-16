@@ -20,6 +20,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -41,6 +42,7 @@ class VerifyIdentityViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             userName = savedStateHandle[USER_NAME],
             firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
             email = savedStateHandle[EMAIL],
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
@@ -90,7 +92,7 @@ class VerifyIdentityViewModel @Inject constructor(
         }
         navigateTo(
             "${Screen.ProfileValidateOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/" +
-                    "$newValue/$sendMethod/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/" +
+                    "$newValue/$sendMethod/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/" +
                     "${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}"
         )
     }
@@ -111,6 +113,7 @@ class VerifyIdentityViewModel @Inject constructor(
         val questionOneValue: Boolean = false,
         val questionTwoValue: Boolean = false,
         val firstName: String? = null,
+        val lastName: String? = null,
         val pkUser: String? = null,
         val changingField: String? = null,
         val titleResource: Int = R.string.empty,

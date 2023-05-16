@@ -178,6 +178,43 @@ class SellCurrencyScreenViewModel @Inject constructor(
         }
     }
 
+    private fun updateFees(): Unit = executeUseCase {
+        getPriceQuoteAndCommissionsUseCase.invoke(
+            asset = asset,
+            crypto_network = cryptoNetWork,
+            idBrand = idBrand,
+            user = user,
+            market = market,
+            identification = identification,
+            side = side,
+            base_amount = uiState.baseAmount.value.ifEmpty {
+                DEFAULT_BASE_AMOUNT_STRING
+            }.toDouble(),
+            quote_amount = uiState.quoteAmount.value.ifEmpty {
+                if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
+            }.toDouble()
+        ).collectLatest { result ->
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+            result.onSuccess { pricesQuotesAndCommission ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                )
+            }
+            result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    confirmationTimer.stopTimer()
+                    openMaintenanceAction()
+                    return@onFailure
+                }
+                onFailure()
+            }
+        }
+    }
+
     private fun getExchangeRate(): Unit = executeUseCase {
         getExchangeRate.invoke(
             user = user,
@@ -473,6 +510,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             }
             UIEvent.OnClearInputData -> clearInputData()
             UIEvent.OnRegisterAdjustSellCryptoCurrency -> registerAdjustSellCrypto()
+            UIEvent.OnUpdateFees -> updateFees()
         }
     }
 
@@ -502,6 +540,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         object OnCloseSellConfirmationBottomSheet : UIEvent()
         object OnClearInputData : UIEvent()
         object OnRegisterAdjustSellCryptoCurrency : UIEvent()
+        object OnUpdateFees : UIEvent()
     }
 
     companion object {

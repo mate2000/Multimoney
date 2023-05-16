@@ -62,8 +62,8 @@ fun SavingAmountScreen(
         val notificationBody = stringResource(R.string.smart_saving_try_later_notification_body)
         AlertResult(
             isTopNavBarVisible = false,
-            titleString = viewModel.amountUIState.errorMessage,
-            descriptionString = viewModel.amountUIState.errorDetail,
+            titleString = viewModel.amountUIState.errorMessage.ifEmpty { stringResource(R.string.error_occurred_title) },
+            descriptionString = viewModel.amountUIState.errorDetail.ifEmpty { stringResource(R.string.error_try_again) },
             buttonTextResource = R.string.error_button_retry,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) },
             isSecondaryButtonVisible = true,

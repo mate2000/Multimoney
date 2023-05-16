@@ -57,6 +57,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
+import com.multimoney.multimoney.presentation.util.separatePhoneNumber
 
 @Preview
 @Composable
@@ -259,7 +260,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                viewModel.uiState.destination?.replace(" ", "") ?: ""
+                separatePhoneNumber(viewModel.uiState.destination?.replace(" ", "") ?: "")
             ),
             style = Typography.body2,
             color = MultimoneyTheme.colors.labelText

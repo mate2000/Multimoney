@@ -113,6 +113,7 @@ class QrCodeScannerViewModel @Inject constructor(
             is UIEvent.OnPermissionInSettingsOpened -> onPermissionInSettingsOpened()
             is UIEvent.OnSetQrCodeFromSavedState -> onGetQrCodeFromSavedState(event.qrCodeResult)
             is UIEvent.OnPermissionResult -> onPermissionResult()
+            is UIEvent.ShowErrorScreen -> uiState = uiState.copy(showErrorScreen = event.show)
         }
     }
 
@@ -121,6 +122,7 @@ class QrCodeScannerViewModel @Inject constructor(
         val permissionDialog: DialogParameters = DialogParameters(),
         val requestCameraPermission: MutableState<Boolean> = mutableStateOf(false),
         val openPermissionInSettings: MutableState<Boolean> = mutableStateOf(false),
+        val showErrorScreen: Boolean = false
     )
 
     sealed interface UIEvent {
@@ -128,6 +130,7 @@ class QrCodeScannerViewModel @Inject constructor(
         object OnShowEnablePermissionsInSettingsDialog : UIEvent
         object OnPermissionInSettingsOpened : UIEvent
         object OnPermissionResult : UIEvent
+        data class ShowErrorScreen(val show: Boolean) : UIEvent
         data class OnSetQrCodeFromSavedState(val qrCodeResult: String) : UIEvent
     }
 

@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -38,16 +39,17 @@ class PersonalInfoViewModel @Inject constructor(
             identification = savedStateHandle[IDENTIFICATION],
             email = savedStateHandle.get<String>(EMAIL)?.trim()?.lowercase(Locale.getDefault()),
             firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
             userName = savedStateHandle[USER_NAME],
         )
     }
 
     private fun navigateToEditEmail() {
-        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileChangeEmailScreen.baseRoute}/${uiState.idClient}/${FieldToChange.EMAIL.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.lastName}")
     }
 
     private fun navigateToEditPhone() {
-        navigateTo("${Screen.ProfileChangePhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}")
+        navigateTo("${Screen.ProfileChangePhoneScreen.baseRoute}/${uiState.idClient}/${FieldToChange.PHONE.value}/${uiState.idBrand}/${uiState.pkUser}/${uiState.phoneNumber}/${uiState.email}/${uiState.identification}/${uiState.userName}/${uiState.firstName}/${uiState.lastName}")
     }
 
     data class UIState(
@@ -58,6 +60,7 @@ class PersonalInfoViewModel @Inject constructor(
         val identification: String? = null,
         val pkUser: String? = null,
         val firstName: String? = null,
+        val lastName: String? = null,
         val phoneNumber: String? = null,
         val idBrand: Int? = null,
         val idClient: Int? = null

@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.domain.model.credit.BanksAmpliation
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -206,9 +207,9 @@ private fun AccountType(
 
 @Composable
 private fun BankDestiny(
-    items: List<CreditCatalogOption?>?,
-    value: CreditCatalogOption?,
-    onValueChange: (CreditCatalogOption?) -> Unit
+    items: List<BanksAmpliation?>?,
+    value: BanksAmpliation?,
+    onValueChange: (BanksAmpliation?) -> Unit
 ) {
     CustomDropdown(
         modifier = Modifier

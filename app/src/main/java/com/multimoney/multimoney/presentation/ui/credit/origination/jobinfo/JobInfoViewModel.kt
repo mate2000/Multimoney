@@ -27,10 +27,10 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCre
 import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
-import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.validatePhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class JobInfoViewModel @Inject constructor(
@@ -172,13 +172,13 @@ class JobInfoViewModel @Inject constructor(
 
     private fun validatePhone(phone: String): Pair<Boolean, Int> {
         return when {
-            uiState.phoneNumber.length < PHONE_NUMBER_MAX_LENGTH -> {
+            phone.length < PHONE_NUMBER_MAX_LENGTH -> {
                 Pair(
                     true,
                     R.string.credit_monthly_income_job_phone_error
                 )
             }
-            isPhoneNumberValid(phone = phone, idBrand).not() -> {
+            validatePhoneNumber(phone, idBrand).not() -> {
                 Pair(
                     true,
                     R.string.credit_monthly_income_job_phone_error

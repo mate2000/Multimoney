@@ -2,7 +2,6 @@ package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
 import com.google.i18n.phonenumbers.PhoneNumberUtil
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE
 import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.Nationalities
@@ -32,33 +31,6 @@ fun isPhoneNumberValid(
             if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
                     .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
                     .getNumberType(number) == phoneNumberType
-            ) {
-                PhoneNumberUtil.getInstance()
-                    .isValidNumberForRegion(number, countryCode.uppercase())
-            } else {
-                false
-            }
-        } catch (ex: Exception) {
-            false
-        }
-    }
-    return false
-}
-
-fun isMobileOrFixedLinePhoneNumberValid(
-    phone: String,
-    fullPhoneNumber: String,
-    countryCode: String,
-): Boolean {
-    val number: Phonenumber.PhoneNumber?
-    if (phone.length > 6) {
-        return try {
-            number = PhoneNumberUtil.getInstance().parse(
-                fullPhoneNumber,
-                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name,
-            )
-            if (PhoneNumberUtil.getInstance().getNumberType(number) == PhoneNumberUtil.PhoneNumberType.MOBILE ||
-                PhoneNumberUtil.getInstance().getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE
             ) {
                 PhoneNumberUtil.getInstance()
                     .isValidNumberForRegion(number, countryCode.uppercase())
@@ -156,35 +128,57 @@ fun validateEightDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(EIGHT_DECIMAL_REGEX, value) || value.isEmpty()))
 }
 
-fun isPhoneNumberValid(phone: String, idBrand: Int): Boolean {
+fun validatePhoneNumber(phoneNumber: String, idBrand: Int): Boolean {
     return when (idBrand) {
+        Brand.CostaRica.id -> {
+            phoneNumber.startsWith(PHONE_START_NUMBER_TWO)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_SIX)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
+        }
         Brand.ElSalvador.id -> {
-            isMobileOrFixedLinePhoneNumberValid(
-                phone = phone,
-                fullPhoneNumber = "${Brand.ElSalvador.phoneCode}$phone",
-                countryCode = Brand.ElSalvador.countryCode,
-            )
+            phoneNumber.startsWith(PHONE_START_NUMBER_TWO)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_SIX)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
         }
         Brand.Guatemala.id -> {
-            isMobileOrFixedLinePhoneNumberValid(
-                phone = phone,
-                fullPhoneNumber = "${Brand.Guatemala.phoneCode}$phone",
-                countryCode = Brand.Guatemala.countryCode
-            )
-        }
-        Brand.CostaRica.id -> {
-            isMobileOrFixedLinePhoneNumberValid(
-                phone = phone,
-                fullPhoneNumber = "${Brand.CostaRica.phoneCode}$phone",
-                countryCode = Brand.CostaRica.countryCode
-            )
+            phoneNumber.startsWith(PHONE_START_NUMBER_TWO)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_THREE)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_SIX)
+                    || phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
         }
         else -> false
     }
 }
 
-const val INVALID_CHARACTERS_CHUNKS = 4
-const val CHARACTER_NEED_TO_VALIDATE = 3
+fun validateMobilePhoneNumber(mobilePhoneNumber: String, idBrand: Int): Boolean {
+    return if (mobilePhoneNumber.length > 7) {
+        when (idBrand) {
+            Brand.CostaRica.id -> {
+                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
+                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX)
+                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
+            }
+            Brand.ElSalvador.id -> {
+                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX)
+                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+            }
+            Brand.Guatemala.id -> {
+                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_THREE)
+                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
+                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
+            }
+            else -> false
+        }
+    } else {
+        return false
+    }
+}
+
 const val EIGHT_MINIMUM_CHARACTERS = 8
 const val DESCRIPTION_MAX_LENGTH = 150
 const val ADDRESS_MAX_LENGTH = 150
@@ -192,3 +186,10 @@ const val MIN_INCOME = 0
 const val MAX_CRYPTO_ITEMS = 3
 const val MIN_SMART_ACCOUNT_DIGITS = 9
 const val MAX_SMART_ACCOUNT_DIGITS = 16
+const val PHONE_START_NUMBER_TWO = "2"
+const val PHONE_START_NUMBER_THREE = "3"
+const val PHONE_START_NUMBER_FOUR = "4"
+const val PHONE_START_NUMBER_FIVE = "5"
+const val PHONE_START_NUMBER_SIX = "6"
+const val PHONE_START_NUMBER_SEVEN = "7"
+const val PHONE_START_NUMBER_EIGHT = "8"

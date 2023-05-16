@@ -618,8 +618,10 @@
     <!-- Home Credit Footer Expanded-->
     <string name="crypto_footer_expanded_btn_wallet" translatable="false">Mi portafolio</string>
     <string name="crypto_footer_expanded_btn_market" translatable="false">Mercado</string>
-    <string name="crypto_footer_expanded_notice_title" translatable="false">Empezá a invertir en Cripto</string>
-    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_notice_title_cr" translatable="false">Empezá a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_title" translatable="false">Empieza a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_description_cr" translatable="false">Consultá la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y compra desde el Mercado</string>
     <string name="crypto_footer_expanded_buy_crypto_label" translatable="false">Comprar</string>
     <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>

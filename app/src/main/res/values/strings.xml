@@ -52,7 +52,7 @@
     <string name="common_go_home" translatable="false">Ir al inicio</string>
     <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
-        <item>Si</item>
+        <item>Sí</item>
         <item>No</item>
     </string-array>
     <string name="colons" translatable="false">Colones</string>
@@ -1318,11 +1318,11 @@
     <string name="smart_facta_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
     <string name="smart_facta_learn_more" translatable="false">¿De qué se trata?</string>
     <string-array name="smart_facta_is_pep_options">
-        <item>Si, si califican</item>
+        <item>Sí, si califican</item>
         <item>No, no califican</item>
     </string-array>
     <string-array name="smart_facta_is_us_citizen_options">
-        <item>Si, lo soy</item>
+        <item>Sí, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
 

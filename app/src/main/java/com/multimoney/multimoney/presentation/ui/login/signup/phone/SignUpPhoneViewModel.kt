@@ -3,7 +3,6 @@ package com.multimoney.multimoney.presentation.ui.login.signup.phone
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberType.MOBILE
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCase
@@ -16,7 +15,7 @@ import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
-import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.validateMobilePhoneNumber
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,14 +72,12 @@ class SignUpPhoneViewModel @Inject constructor(
         emitBaseEvent(OnFormValidateCompleted(phoneNumber.isNotBlank()))
     }
 
-    private fun isFormValid(countryCode: String) {
+    private fun isFormValid() {
         val isPhoneValid = when {
             uiState.phoneCode.isBlank() || uiState.phoneNumber.isBlank() -> false
-            isPhoneNumberValid(
-                phone = uiState.phoneNumber,
-                fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
-                countryCode = countryCode,
-                phoneNumberType = MOBILE
+            validateMobilePhoneNumber(
+                uiState.phoneNumber,
+                uiState.idBrand
             ).not() -> false
             else -> true
         }
@@ -101,7 +98,7 @@ class SignUpPhoneViewModel @Inject constructor(
                 phoneNumber = phoneNumber,
                 phoneNumberError = Triple(false, string.error_empty, "")
             )
-        isFormValid(countryCode)
+        isFormValid()
         updateUserInfoPhone.invoke()
     }
 
@@ -115,16 +112,14 @@ class SignUpPhoneViewModel @Inject constructor(
             phoneNumber = "",
             phoneNumberError = Triple(false, string.error_empty, "")
         )
-        isFormValid(countryCode)
+        isFormValid()
         updateUserCountryCode.invoke()
     }
 
-    private fun isPhoneValid(countryCode: String) {
-        if (isPhoneNumberValid(
-                phone = uiState.phoneNumber,
-                fullPhoneNumber = "${uiState.phoneCode}${uiState.phoneNumber}",
-                countryCode = countryCode,
-                phoneNumberType = MOBILE
+    private fun isPhoneValid() {
+        if (validateMobilePhoneNumber(
+                uiState.phoneNumber,
+                uiState.idBrand
             ).not()
         ) uiState = uiState.copy(phoneNumberError = Triple(true, string.sign_up_phone_not_valid, ""))
     }
@@ -231,7 +226,7 @@ class SignUpPhoneViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is UIEvent.OnValidatePhone -> isPhoneValid(event.countryCode)
+            is UIEvent.OnValidatePhone -> isPhoneValid()
             is UIEvent.OnUserPhoneValueChanged -> onUserPhoneValueChanged(
                 event.phoneNumber,
                 event.countryCode,

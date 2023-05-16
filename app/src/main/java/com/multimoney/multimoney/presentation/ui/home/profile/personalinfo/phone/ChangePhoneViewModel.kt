@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCase
@@ -25,14 +24,14 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
-import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
 import com.multimoney.multimoney.presentation.util.transformation.PhoneNumberTransformation
+import com.multimoney.multimoney.presentation.util.validateMobilePhoneNumber
 import com.togitech.ccp.data.CountryData
 import com.togitech.ccp.data.utils.getLibCountries
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class ChangePhoneViewModel @Inject constructor(
@@ -108,11 +107,9 @@ class ChangePhoneViewModel @Inject constructor(
         when {
             uiState.phoneCode.isBlank() || uiState.newPhoneNumber?.isBlank() == true -> uiState =
                 uiState.copy(isButtonEnabled = false)
-            isPhoneNumberValid(
-                phone = uiState.newPhoneNumber.toString(),
-                fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
-                countryCode = countryCode,
-                phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
+            validateMobilePhoneNumber(
+                uiState.newPhoneNumber.toString(),
+                uiState.idBrand ?: 0
             ).not() -> uiState = uiState.copy(isButtonEnabled = false)
             uiState.phoneCode.plus(uiState.newPhoneNumber) == uiState.phoneNumber?.replace(
                 " ",
@@ -178,11 +175,9 @@ class ChangePhoneViewModel @Inject constructor(
                         )
                     )
                 } else {
-                    if (isPhoneNumberValid(
-                            phone = uiState.newPhoneNumber.toString(),
-                            fullPhoneNumber = "${uiState.phoneCode}${uiState.newPhoneNumber}",
-                            countryCode = countryCode ?: "",
-                            phoneNumberType = PhoneNumberUtil.PhoneNumberType.MOBILE
+                    if (validateMobilePhoneNumber(
+                            uiState.newPhoneNumber.toString(),
+                            uiState.idBrand ?: 0
                         ).not()
                     ) uiState = uiState.copy(
                         phoneNumberError = Pair(

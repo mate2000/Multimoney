@@ -31,11 +31,16 @@ class SettingsViewModel @Inject constructor(
         private set
 
     init {
+        val idBrand: Int? = savedStateHandle[ID_BRAND]
         uiState = uiState.copy(
-            idBrand = savedStateHandle[ID_BRAND],
+            idBrand = idBrand,
             pkUser = savedStateHandle[PK_USER],
             userName = savedStateHandle[USER_NAME],
-            email = savedStateHandle[EMAIL]
+            email = savedStateHandle[EMAIL],
+            enableBiometricsLabel = when(idBrand){
+                Brand.CostaRica.id -> R.string.profile_enter_the_app_with_biometrics_cr
+                else -> R.string.profile_enter_the_app_with_biometrics
+            }
         )
         viewModelScope.launch {
             val isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
@@ -87,7 +92,8 @@ class SettingsViewModel @Inject constructor(
         val pkUser: String? = null,
         val userName: String? = null,
         val email: String? = null,
-        val areBiometricsEnabled: Boolean? = null
+        val areBiometricsEnabled: Boolean? = null,
+        val enableBiometricsLabel: Int = R.string.empty
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

@@ -131,7 +131,7 @@ fun BiometricsCustomRow(viewModel: SettingsViewModel) {
                 color = titleColor
             )
             Text(
-                text = stringResource(id = R.string.profile_enter_the_app_with_biometrics),
+                text = stringResource(id = viewModel.uiState.enableBiometricsLabel),
                 style = Typography.body2.copy(fontWeight = FontWeight.ExtraLight),
                 color = subtitleColor
             )

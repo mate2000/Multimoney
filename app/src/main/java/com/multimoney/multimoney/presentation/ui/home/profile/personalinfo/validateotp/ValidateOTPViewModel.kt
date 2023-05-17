@@ -54,12 +54,6 @@ import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -70,6 +64,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -391,7 +391,10 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateToProfile(uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "")
+                navigateToProfile(
+                    uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "",
+                    uiState.email ?: ""
+                )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
         }
@@ -415,7 +418,10 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateToProfile(uiState.phoneNumber?.ifEmpty { 0 }.toString())
+                navigateToProfile(
+                    uiState.phoneNumber?.ifEmpty { 0 }.toString(),
+                    uiState.newValue ?: ""
+                )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }
@@ -428,7 +434,7 @@ class ValidateOTPViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
     }
 
-    private fun navigateToProfile(phoneNumber: String){
+    private fun navigateToProfile(phoneNumber: String, email: String) {
         navigateTo(
             Screen.ProfileScreen.baseRoute
                 .plus(getNavParam(ID_CLIENT, uiState.idClient))

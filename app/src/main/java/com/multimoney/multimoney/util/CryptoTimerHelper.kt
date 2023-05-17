@@ -10,14 +10,13 @@ import kotlin.time.Duration.Companion.seconds
 class CryptoTimerHelper(
     val coroutineScope: CoroutineScope ,
     val time: Int,
-    val isBottomSheetOpen: Boolean = false,
     val onTick: (Int) -> Unit,
     val onFinished: () -> Unit
 ) {
     private var counter = time
     private var job: Job? = null
 
-    fun startTimer() {
+    fun startTimer(isBottomSheetOpen: Boolean = false) {
         job?.let {
             if (isBottomSheetOpen) {
                 resetTimerWithSpecificTime()

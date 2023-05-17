@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.CryptoAccountStatus
 import com.multimoney.domain.model.balance.Balance
 import com.multimoney.domain.model.crypto.CryptoCurrencyMovement
@@ -38,6 +39,7 @@ fun CryptoFooterExpanded(
         CryptoFooterExpandedContent(
             balance,
             cryptoMovements,
+            userStatus.infoUser?.idBrand ?: Brand.Default.id,
             actionMarket,
             actionWallet,
             onShowAllClick,
@@ -50,6 +52,7 @@ fun CryptoFooterExpanded(
 fun CryptoFooterExpandedContent(
     balance: Balance?,
     cryptoMovements: Flow<PagingData<CryptoCurrencyMovement>>,
+    idBrand: Int,
     actionMarket: () -> Unit,
     actionWallet: () -> Unit,
     onShowAllClick: () -> Unit,
@@ -85,9 +88,9 @@ fun CryptoFooterExpandedContent(
                 )
             }
             profileEnable and outOfService -> MaintenanceSection()
-            profileEnable.not() and outOfService.not() -> NoticeSection()
+            profileEnable.not() and outOfService.not() -> NoticeSection(idBrand)
             profileEnable.not() and outOfService -> MaintenanceSection()
-            else -> NoticeSection()
+            else -> NoticeSection(idBrand)
         }
     }
 }

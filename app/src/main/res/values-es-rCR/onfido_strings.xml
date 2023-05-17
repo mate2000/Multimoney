@@ -80,8 +80,8 @@
     <string name="onfido_doc_capture_detail_folded_doc_front">Asegúrese que su documento este completmente abierto (debe incluir su foto)</string>
     <string name="onfido_doc_capture_detail_generic_back"/>
     <string name="onfido_doc_capture_detail_generic_front"/>
-    <string name="onfido_doc_capture_detail_id_back">Tu identificación debe estar dentro del recuadro</string>
-    <string name="onfido_doc_capture_detail_id_front">Tu identificación debe estar dentro del recuadro</string>
+    <string name="onfido_doc_capture_detail_id_back">Tu identificación debe estar dentro del recuadro.</string>
+    <string name="onfido_doc_capture_detail_id_front">Tu identificación debe estar dentro del recuadro.</string>
     <string name="onfido_doc_capture_detail_license_back"/>
     <string name="onfido_doc_capture_detail_license_front"/>
     <string name="onfido_doc_capture_detail_passport"/>
@@ -379,9 +379,9 @@
     <string name="onfido_selfie_confirmation_button_secondary">Tomar foto de nuevo</string>
     <string name="onfido_selfie_confirmation_image_accessibility">Foto de su cara</string>
     <string name="onfido_selfie_intro_button_primary">Tomar selfie</string>
-    <string name="onfido_selfie_intro_list_item_face_forward">Mantenerse serio, mirar al frente y asegurarse de que los ojos sean visibles</string>
-    <string name="onfido_selfie_intro_list_item_no_glasses">Quitarse los lentes u otros accesorios</string>
-    <string name="onfido_selfie_intro_subtitle">La vamos a comparar con tu identificación</string>
+    <string name="onfido_selfie_intro_list_item_face_forward">Mantenerse serio, mirar al frente y asegurarse de que los ojos sean visibles.</string>
+    <string name="onfido_selfie_intro_list_item_no_glasses">Quitarse los lentes u otros accesorios.</string>
+    <string name="onfido_selfie_intro_subtitle">La vamos a comparar con tu identificación.</string>
     <string name="onfido_selfie_intro_title">Tomar selfie</string>
     <string name="onfido_user_consent_button_primary">Accept</string>
     <string name="onfido_user_consent_button_secondary">Do not accept</string>

@@ -52,7 +52,7 @@
     <string name="common_go_home" translatable="false">Ir al inicio</string>
     <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
-        <item>Si</item>
+        <item>Sí</item>
         <item>No</item>
     </string-array>
     <string name="colons" translatable="false">Colones</string>
@@ -219,7 +219,8 @@
     <string name="sign_up_email_user_completed_dialog_description_cr" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
-    <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
+    <string name="sign_up_email_blocked_dialog_description_cr" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
+    <string name="sign_up_email_blocked_dialog_description_sv" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContacta a servicio al cliente.</string>
     <string name="sign_up_email_another_device_registered_dialog_title" translatable="false">Registro en proceso en otro dispositivo</string>
     <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
@@ -472,10 +473,11 @@
     <string name="profile_terms_and_conditions_title_template" translatable="false">Términos y condiciones: %1$s</string>
     <string name="profile_terms_and_conditions_version_template" translatable="false">Versión: %1$s</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
-    <string name="profile_change_password" translatable="false">Cambio de contraseña</string>
+    <string name="profile_change_password" translatable="false">Cambiar contraseña</string>
     <string name="profile_notifications" translatable="false">Notificationes</string>
     <string name="profile_biometrics" translatable="false">Biométricos</string>
     <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
+    <string name="profile_enter_the_app_with_biometrics_cr" translatable="false">Ingresá al app con tus biométricos</string>
     <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_phone_check_format_template" translatable="false">Revisar formato. Debe tener %1$s digitos </string>
@@ -604,7 +606,7 @@
 
     <!--Crypto-->
     <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
-    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart.</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
 
@@ -618,8 +620,10 @@
     <!-- Home Credit Footer Expanded-->
     <string name="crypto_footer_expanded_btn_wallet" translatable="false">Mi portafolio</string>
     <string name="crypto_footer_expanded_btn_market" translatable="false">Mercado</string>
-    <string name="crypto_footer_expanded_notice_title" translatable="false">Empezá a invertir en Cripto</string>
-    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_notice_title_cr" translatable="false">Empezá a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_title" translatable="false">Empieza a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_description_cr" translatable="false">Consultá la información de tu inversión en \"Portafolio\" y comprá desde el \"Mercado\".</string>
+    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en \"Portafolio\" y compra desde el \"Mercado\".</string>
     <string name="crypto_footer_expanded_buy_crypto_label" translatable="false">Comprar</string>
     <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
@@ -633,7 +637,7 @@
 
     <!-- Home Maintenance State-->
     <string name="home_maintenance_state_title" translatable="false">Servicio en mantenimiento</string>
-    <string name="home_maintenance_state_description" translatable="false">Pronto podrás consultar a detalle la información de tus criptomonedas</string>
+    <string name="home_maintenance_state_description" translatable="false">Pronto podrás consultar a detalle la información de tus criptomonedas.</string>
     <string name="home_maintenance_btn_text" translatable="false">Entendido</string>
 
     <!-- Home Smart - Account Details -->
@@ -837,7 +841,7 @@
     <string name="document_generation_subtitle_cr" translatable="false">Firmá el contrato y recibe tu crédito</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
-    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
+    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta.</string>
     <string name="origination_processing_transaction" translatable="false">Procesando transacción…</string>
 
     <!-- Onfido errors -->
@@ -857,8 +861,8 @@
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title_cr" translatable="false">Firmá en la siguiente pantalla</string>
     <string name="sign_credit_dialog_title" translatable="false">Firma en la siguiente pantalla</string>
-    <string name="sign_credit_dialog_description_cr" translatable="false">Seguí las indicaciones a continuación</string>
-    <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación</string>
+    <string name="sign_credit_dialog_description_cr" translatable="false">Seguí las indicaciones a continuación.</string>
+    <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación.</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <string name="continue_validating_identity_title" translatable="false">Tu solicitud fue enviada\nexitosamente</string>
@@ -1316,11 +1320,11 @@
     <string name="smart_facta_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
     <string name="smart_facta_learn_more" translatable="false">¿De qué se trata?</string>
     <string-array name="smart_facta_is_pep_options">
-        <item>Si, si califican</item>
+        <item>Sí, si califican</item>
         <item>No, no califican</item>
     </string-array>
     <string-array name="smart_facta_is_us_citizen_options">
-        <item>Si, lo soy</item>
+        <item>Sí, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
 
@@ -1794,8 +1798,8 @@
     <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
     <string name="registered_user_otp_subtitle" translatable="false">Ingresa el código que te enviamos para verificar tu identidad.</string>
     <string name="registered_user_otp_subtitle_cr" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
-    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda, nunca compartir este código.</string>
-    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá, nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá nunca compartir este código.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
     <string name="registered_user_otp_other_phone_number" translatable="false">Tengo otro número</string>

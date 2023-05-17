@@ -105,6 +105,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalizeAllWords
 import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.openIntent
@@ -476,7 +477,7 @@ fun TipsAndOffer(
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = viewModel.uiState.userStatus?.wording?.textTwo ?: "",
+                    text = viewModel.uiState.userStatus?.wording?.textTwo?.capitalizeAllWords() ?: "",
                     style = Typography.h5.copy(
                         fontSize = 24.sp,
                         lineHeight = 32.sp,

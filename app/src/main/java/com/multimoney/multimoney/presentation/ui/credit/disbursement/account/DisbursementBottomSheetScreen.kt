@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
+import com.multimoney.multimoney.presentation.util.getAccountPrefixByCurrencyId
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +76,8 @@ fun DisbursementBottomSheetScreen(
                 title = viewModel.uiState.clientBankAccountSelected?.bankDescription ?: "",
                 subtitle = getMaskedAccount(
                     viewModel.uiState.clientBankAccountSelected?.accountNumber ?: "",
-                    stringResource(id = R.string.payment_account_masked_text)
+                    stringResource(id = R.string.payment_account_masked_text),
+                    viewModel.uiState.clientBankAccountSelected?.idCurrency?.getAccountPrefixByCurrencyId() ?: ""
                 ),
                 endIcon = null,
                 enable = false,

@@ -73,6 +73,17 @@ fun String.capitalized(): String {
     }
 }
 
+fun String.capitalizeAllWords(): String {
+    val capitalizedWords = splitByWhiteSpace().map { it.capitalized() }
+    val lastIndex = capitalizedWords.size.minus(ONE)
+    return buildString {
+        capitalizedWords.forEachIndexed { i, word ->
+            append(word)
+            if (i < lastIndex) append(WHITE_SPACE)
+        }
+    }
+}
+
 fun getMaskedAccount(
     accountNumber: String,
     maskedText: String = ACCOUNT_MASK,
@@ -133,3 +144,4 @@ const val VISA_MASK = "Visa"
 const val DOCUMENT_FORMAT_VALUE = '0'
 const val SEPARATOR = " | "
 const val PHONE_NUMBER_LENGTH = 8
+const val WHITE_SPACE = " "

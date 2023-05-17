@@ -841,7 +841,7 @@
     <string name="document_generation_subtitle_cr" translatable="false">Firmá el contrato y recibe tu crédito</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
-    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
+    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta.</string>
     <string name="origination_processing_transaction" translatable="false">Procesando transacción…</string>
 
     <!-- Onfido errors -->
@@ -1794,8 +1794,8 @@
     <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
     <string name="registered_user_otp_subtitle" translatable="false">Ingresa el código que te enviamos para verificar tu identidad.</string>
     <string name="registered_user_otp_subtitle_cr" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
-    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda, nunca compartir este código.</string>
-    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá, nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá nunca compartir este código.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
     <string name="registered_user_otp_other_phone_number" translatable="false">Tengo otro número</string>

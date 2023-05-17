@@ -1,6 +1,9 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.intl.Locale.Companion
+import androidx.compose.ui.text.toLowerCase
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.data.util.catalog.Brand
@@ -99,7 +102,7 @@ fun passwordHasSpecialCharacterValidation(value: String): Boolean {
 
 fun haveMoreThanThreeConsecutiveLetterOrNumber(value: String): Boolean {
     val regEx = Regex(FOUR_REPEATED_CHARS_REGEX)
-    return regEx.containsMatchIn(value)
+    return regEx.containsMatchIn(value.toLowerCase(Locale.current))
 }
 
 fun haveMoreThanThreeSequentialLetterOrNumber(value: String): Boolean {

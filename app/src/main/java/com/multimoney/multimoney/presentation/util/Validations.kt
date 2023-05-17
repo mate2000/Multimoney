@@ -102,7 +102,7 @@ fun passwordHasSpecialCharacterValidation(value: String): Boolean {
 
 fun haveMoreThanThreeConsecutiveLetterOrNumber(value: String): Boolean {
     val regEx = Regex(FOUR_REPEATED_CHARS_REGEX)
-    return regEx.containsMatchIn(value.toLowerCase(Locale.current))
+    return regEx.containsMatchIn(value.lowercase())
 }
 
 fun haveMoreThanThreeSequentialLetterOrNumber(value: String): Boolean {

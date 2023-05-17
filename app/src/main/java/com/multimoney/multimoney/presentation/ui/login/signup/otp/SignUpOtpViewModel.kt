@@ -75,14 +75,18 @@ class SignUpOtpViewModel @Inject constructor(
         } else {
             R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
         }
-        uiState = uiState.copy(
-            idBrand = idBrand,
-            subtitleResource = if (idBrand == Brand.CostaRica.id) {
-                R.string.sign_up_otp_subtitle_cr
-            } else {
-                R.string.sign_up_otp_subtitle
-            }
-        )
+        uiState = uiState.copy(idBrand = idBrand)
+        uiState = if (idBrand == Brand.CostaRica.id) {
+            uiState.copy(
+                subtitleResource = R.string.sign_up_otp_subtitle_cr,
+                disclaimerResource = R.string.registered_user_otp_disclaimer_cr
+            )
+        } else {
+            uiState.copy(
+                subtitleResource = R.string.sign_up_otp_subtitle,
+                disclaimerResource = R.string.registered_user_otp_disclaimer
+            )
+        }
     }
 
     private fun getOtpFromMessage(message: String) {
@@ -346,6 +350,7 @@ class SignUpOtpViewModel @Inject constructor(
         val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
         val openUserBlockedDialog: DialogParameters = DialogParameters(),
         val subtitleResource: Int = R.string.empty,
+        val disclaimerResource: Int = R.string.empty,
 
         // Interactions
         val phaseCount: Int = PHASE_ONE,

@@ -220,6 +220,13 @@ fun Int.getCurrencyFromId(): CurrencyType {
     }
 }
 
+fun Int.getAccountPrefixByCurrencyId(): String {
+    return when (this) {
+        Colon.id -> Brand.CostaRica.iban
+        else -> ""
+    }
+}
+
 fun String.getCurrencyFromValue(): CurrencyType {
     return when (this.lowercase()) {
         Colon.value.lowercase() -> Colon

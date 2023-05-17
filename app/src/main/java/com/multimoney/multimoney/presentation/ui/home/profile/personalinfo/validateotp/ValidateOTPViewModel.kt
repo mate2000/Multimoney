@@ -392,8 +392,7 @@ class ValidateOTPViewModel @Inject constructor(
                     ).toJson()
                 )
                 navigateToProfile(
-                    uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "",
-                    uiState.email ?: ""
+                    phoneNumber = uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: ""
                 )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -418,10 +417,7 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateToProfile(
-                    uiState.phoneNumber?.ifEmpty { 0 }.toString(),
-                    uiState.newValue ?: ""
-                )
+                navigateToProfile(email = uiState.newValue ?: "")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }
@@ -434,15 +430,20 @@ class ValidateOTPViewModel @Inject constructor(
         navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
     }
 
-    private fun navigateToProfile(phoneNumber: String, email: String) {
+    private fun navigateToProfile(phoneNumber: String? = null, email: String? = null) {
         navigateTo(
             Screen.ProfileScreen.baseRoute
                 .plus(getNavParam(ID_CLIENT, uiState.idClient))
                 .plus(getNavParam(ID_BRAND, uiState.idBrand))
                 .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
                 .plus(getNavParam(LAST_NAME, ""))
-                .plus(getNavParam(EMAIL, uiState.newValue))
-                .plus(getNavParam(PHONE_NUMBER, phoneNumber))
+                .plus(getNavParam(EMAIL, email ?: uiState.email ?: ""))
+                .plus(
+                    getNavParam(
+                        PHONE_NUMBER,
+                        phoneNumber ?: uiState.phoneNumber?.ifEmpty { 0 }.toString()
+                    )
+                )
                 .plus(getNavParam(IDENTIFICATION, uiState.identification))
                 .plus(getNavParam(PK_USER, uiState.pkUser))
                 .plus(getNavParam(USER_NAME, uiState.userName))

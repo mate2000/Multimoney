@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
@@ -163,7 +164,7 @@ fun SignUpIdVerificationScreen(
         ) {
             CustomImage(
                 drawableResource = R.drawable.ic_validation,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.Top)
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
@@ -181,7 +182,7 @@ fun SignUpIdVerificationScreen(
         ) {
             CustomImage(
                 drawableResource = R.drawable.ic_validation,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.Top)
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
@@ -199,11 +200,15 @@ fun SignUpIdVerificationScreen(
         ) {
             CustomImage(
                 drawableResource = R.drawable.ic_validation,
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.Top)
             )
             Text(
                 modifier = Modifier.padding(start = 8.dp),
-                text = stringResource(id = R.string.sign_up_id_validation_three),
+                text = if (sharedViewModel.idBrand == Brand.CostaRica.id) {
+                    stringResource(id = R.string.sign_up_id_validation_three)
+                } else {
+                    stringResource(id = R.string.sign_up_id_validation_three_sv)
+                },
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.text,
                     fontWeight = FontWeight.SemiBold

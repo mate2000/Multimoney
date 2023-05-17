@@ -27,14 +27,14 @@ import com.multimoney.multimoney.presentation.ui.credit.origination.util.SaveCre
 import com.multimoney.multimoney.presentation.util.HYPHEN
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.getFormatDateByString
-import com.multimoney.multimoney.presentation.util.isPhoneNumberValid
+import com.multimoney.multimoney.presentation.util.validatePhoneNumber
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class JobInfoViewModel @Inject constructor(
-    private val queryProfessionsUseCase: QueryProfessionsUseCase,
+    private val queryProfessionsUseCase: QueryProfessionsUseCase
 ) : BaseViewModel(true) {
 
     var uiState by mutableStateOf(UIState())
@@ -53,10 +53,20 @@ class JobInfoViewModel @Inject constructor(
         idUserRequest: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
         onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
-        isCrosseling: Boolean,
+        isCrosseling: Boolean
     ) {
         this.idBrand = idBrand
         this.isCrosseling = isCrosseling
+        uiState = uiState.copy(
+            workplaceLabelResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.credit_job_workplace_label_cr
+                else -> R.string.credit_job_workplace_label
+            },
+            workplaceRequiredResource = when (idBrand) {
+                Brand.CostaRica.id -> R.string.credit_job_workplace_required_cr
+                else -> R.string.credit_job_workplace_required
+            }
+        )
         if (isCrosseling) {
             onCallQueryProfession(
                 pkUser = pkUser,
@@ -64,7 +74,7 @@ class JobInfoViewModel @Inject constructor(
                 idBrand = idBrand,
                 idUserRequest = idUserRequest,
                 onLoadingValueChange = onLoadingValueChange,
-                onFailureWithDialog = onFailureWithDialog,
+                onFailureWithDialog = onFailureWithDialog
             )
         }
     }
@@ -75,7 +85,7 @@ class JobInfoViewModel @Inject constructor(
         idBrand: Int,
         idUserRequest: Int,
         onLoadingValueChange: (status: Boolean) -> Unit,
-        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit,
+        onFailureWithDialog: (status: Boolean, dialogParameter: DialogParameters) -> Unit
     ) = executeUseCase {
         queryProfessionsUseCase.invoke(pkUser.toInt(), user, idBrand, idUserRequest)
             .collectLatest { result ->
@@ -90,7 +100,7 @@ class JobInfoViewModel @Inject constructor(
                     uiState = uiState.copy(
                         divisionProfessionList = profession?.subOptions?.filter { filter ->
                             filter?.description != CompanyAddressViewModel.MIDDLE_DASH
-                        },
+                        }
                     )
                     if (!profession?.pkCatalog.isNullOrEmpty()) {
                         val selectedProfession =
@@ -110,8 +120,8 @@ class JobInfoViewModel @Inject constructor(
                         false,
                         DialogParameters(
                             description = it.getError() ?: "",
-                            isActive = mutableStateOf(true),
-                        ),
+                            isActive = mutableStateOf(true)
+                        )
                     )
                 }
             }
@@ -132,8 +142,8 @@ class JobInfoViewModel @Inject constructor(
                     } else {
                         uiState.companyName.isNotEmpty() && uiState.date.isNotEmpty() && uiState.phoneNumber.isNotEmpty() && uiState.phoneNumber.length == PHONE_NUMBER_MAX_LENGTH && uiState.phoneNumberError.first.not()
                     }
-                },
-            ),
+                }
+            )
         )
     }
 
@@ -162,22 +172,22 @@ class JobInfoViewModel @Inject constructor(
 
     private fun validatePhone(phone: String): Pair<Boolean, Int> {
         return when {
-            uiState.phoneNumber.length < PHONE_NUMBER_MAX_LENGTH -> {
+            phone.length < PHONE_NUMBER_MAX_LENGTH -> {
                 Pair(
                     true,
-                    R.string.credit_monthly_income_job_phone_error,
+                    R.string.credit_monthly_income_job_phone_error
                 )
             }
-            isPhoneNumberValid(phone = phone, idBrand).not() -> {
+            validatePhoneNumber(phone, idBrand).not() -> {
                 Pair(
                     true,
-                    R.string.credit_monthly_income_job_phone_error,
+                    R.string.credit_monthly_income_job_phone_error
                 )
             }
             else -> {
                 Pair(
                     false,
-                    R.string.empty,
+                    R.string.empty
                 )
             }
         }
@@ -194,7 +204,7 @@ class JobInfoViewModel @Inject constructor(
             val dateParsed = getFormatDateByString(
                 it,
                 BACKEND_DATE_FORMAT,
-                DATE_FORMAT,
+                DATE_FORMAT
             )
             onDateValueChange(dateParsed)
         }
@@ -210,7 +220,7 @@ class JobInfoViewModel @Inject constructor(
             val dateFirstJobParsed = getFormatDateByString(
                 it,
                 BACKEND_DATE_FORMAT,
-                DATE_FORMAT,
+                DATE_FORMAT
             )
             onDateFirstJobValueChange(dateFirstJobParsed)
         }
@@ -219,7 +229,7 @@ class JobInfoViewModel @Inject constructor(
     private fun onNexActionClick(
         user: String,
         nextStepAction: () -> Unit,
-        saveCreditStepsHelper: SaveCreditStepsHelper,
+        saveCreditStepsHelper: SaveCreditStepsHelper
     ) {
         saveCreditStepsHelper.saveStepThree(
             idBrand = idBrand,
@@ -228,42 +238,44 @@ class JobInfoViewModel @Inject constructor(
             startedJobDate = getFormatDateByString(
                 uiState.date.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL),
                 DATE_FORMAT,
-                BACKEND_DATE_FORMAT,
+                BACKEND_DATE_FORMAT
             ),
             companyPhone = uiState.phoneNumber,
             dateFirstJob = if (uiState.dateFirstJob.isNotEmpty()) {
                 getFormatDateByString(
                     uiState.dateFirstJob.replace(VISUAL_DATE_SYMBOL, DASH_SYMBOL),
                     DATE_FORMAT,
-                    BACKEND_DATE_FORMAT,
+                    BACKEND_DATE_FORMAT
                 )
             } else {
                 ""
             },
             isCrosseling = isCrosseling,
             profession = profession,
-            professionSelected = uiState.divisionProfessionSelected,
+            professionSelected = uiState.divisionProfessionSelected
         )
         nextStepAction()
     }
 
     private fun onDivisionProfessionValueChange(
-        divisionProfession: CreditCatalogOption?,
+        divisionProfession: CreditCatalogOption?
     ) {
         uiState = uiState.copy(
-            divisionProfessionSelected = divisionProfession,
+            divisionProfessionSelected = divisionProfession
         )
         onValidForm()
     }
 
     data class UIState(
+        val workplaceLabelResource: Int = R.string.empty,
+        val workplaceRequiredResource: Int = R.string.empty,
         val companyName: String = "",
         val date: String = "",
         val dateFirstJob: String = "",
         val phoneNumber: String = "",
         val phoneNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
         val divisionProfessionList: List<CreditCatalogOption?>? = listOf(),
-        val divisionProfessionSelected: CreditCatalogOption? = null,
+        val divisionProfessionSelected: CreditCatalogOption? = null
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -276,7 +288,7 @@ class JobInfoViewModel @Inject constructor(
                 uiEvent.idUserRequest,
                 uiEvent.onLoadingValueChange,
                 uiEvent.onFailureWithDialog,
-                uiEvent.isCrosseling,
+                uiEvent.isCrosseling
             )
             is OnDateValueChange -> onDateValueChange(uiEvent.date)
             is OnDateFirstJobValueChange -> onDateFirstJobValueChange(uiEvent.date)
@@ -285,7 +297,7 @@ class JobInfoViewModel @Inject constructor(
             is OnNextActionClick -> onNexActionClick(
                 uiEvent.user,
                 uiEvent.nextStepAction,
-                uiEvent.saveCreditStepsHelper,
+                uiEvent.saveCreditStepsHelper
             )
             is OnLoadCreditSteps -> loadStepsInfo(uiEvent.list)
             is OnDivisionProfessionValueChange -> onDivisionProfessionValueChange(uiEvent.divisionProfession)
@@ -296,7 +308,7 @@ class JobInfoViewModel @Inject constructor(
         data class OnNextActionClick(
             val user: String,
             val nextStepAction: () -> Unit,
-            val saveCreditStepsHelper: SaveCreditStepsHelper,
+            val saveCreditStepsHelper: SaveCreditStepsHelper
         ) : UIEvent()
 
         data class OnCompanyNameValueChange(val companyName: String) : UIEvent()
@@ -311,7 +323,7 @@ class JobInfoViewModel @Inject constructor(
             val idUserRequest: Int,
             val onLoadingValueChange: (status: Boolean) -> Unit,
             val onFailureWithDialog: (isLoading: Boolean, dialogParameters: DialogParameters) -> Unit,
-            val isCrosseling: Boolean,
+            val isCrosseling: Boolean
         ) : UIEvent()
 
         data class OnLoadCreditSteps(val list: List<CreditCatalog?>?) : UIEvent()

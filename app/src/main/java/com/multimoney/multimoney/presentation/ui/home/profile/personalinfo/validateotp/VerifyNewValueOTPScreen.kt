@@ -58,6 +58,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
+import com.multimoney.multimoney.presentation.util.formatStringPhoneNumber
 
 @Preview
 @Composable
@@ -263,9 +264,14 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                if (viewModel.uiState.changingField == FieldToChange.PHONE.value) viewModel.uiState.newPhoneNumberCode.plus(
-                    viewModel.uiState.newValue
-                ) else viewModel.uiState.newValue ?: ""
+                if (viewModel.uiState.changingField == FieldToChange.PHONE.value) {
+                    formatStringPhoneNumber(
+                        number = viewModel.uiState.newValue.orEmpty(),
+                        areaCode = viewModel.uiState.newPhoneNumberCode.orEmpty()
+                    )
+                } else {
+                    viewModel.uiState.newValue ?: ""
+                }
             ),
             style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
         )

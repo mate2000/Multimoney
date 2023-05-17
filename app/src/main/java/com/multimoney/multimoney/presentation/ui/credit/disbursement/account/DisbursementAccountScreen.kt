@@ -41,6 +41,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getAccountPrefixByCurrencyId
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 import kotlinx.coroutines.CoroutineScope
@@ -174,7 +175,8 @@ fun PaymentAccountList(
                     title = clientBankAccount?.bankDescription ?: "",
                     subtitle = getMaskedAccount(
                         clientBankAccount?.accountNumber ?: "",
-                        stringResource(id = R.string.payment_account_masked_text)
+                        stringResource(id = R.string.payment_account_masked_text),
+                        clientBankAccount?.idCurrency?.getAccountPrefixByCurrencyId() ?: ""
                     ),
                     onClick = {
                         viewModel.onUIEvent(OnClientBankAccountSelected(clientBankAccount))

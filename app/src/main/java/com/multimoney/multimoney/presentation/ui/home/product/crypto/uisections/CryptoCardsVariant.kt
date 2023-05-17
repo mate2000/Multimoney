@@ -155,7 +155,7 @@ fun CryptoCardWithBalance(
                 top = 24.dp,
                 start = 16.dp,
                 end = 16.dp,
-                bottom = if (isEmptyStateDisable.not()) 136.dp else 0.dp
+                bottom = if (isEmptyStateDisable.not()) 124.dp else 0.dp
             )
     ) {
         Text(

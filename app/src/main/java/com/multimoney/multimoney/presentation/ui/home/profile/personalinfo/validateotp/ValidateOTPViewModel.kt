@@ -100,6 +100,7 @@ class ValidateOTPViewModel @Inject constructor(
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
             firstName = savedStateHandle[FIRST_NAME],
+            lastName = savedStateHandle[LAST_NAME],
             userName = savedStateHandle[USER],
             sendMethod = savedStateHandle[SEND_METHOD],
             changingField = savedStateHandle[CHANGING_FIELD],
@@ -130,6 +131,10 @@ class ValidateOTPViewModel @Inject constructor(
             enterTheCodeTextResource = when (uiState.idBrand) {
                 Brand.CostaRica.id -> R.string.profile_enter_the_code_sent_to_template
                 else -> R.string.profile_enter_the_code_sent_to_template_sv
+            },
+            disclaimerResource = when (uiState.idBrand) {
+                Brand.CostaRica.id -> R.string.registered_user_otp_disclaimer_cr
+                else -> R.string.registered_user_otp_disclaimer
             },
             statusTextResource = when (uiState.phaseCount) {
                 PHASE_ONE -> R.string.profile_code_expires_in_template
@@ -386,7 +391,7 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateToProfile()
+                navigateToProfile(uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: "")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
         }
@@ -410,7 +415,7 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateToProfile()
+                navigateToProfile(uiState.phoneNumber?.ifEmpty { 0 }.toString())
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }
@@ -420,10 +425,10 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun navigateToConfirmChange() {
-        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
+        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
     }
 
-    private fun navigateToProfile(){
+    private fun navigateToProfile(phoneNumber: String){
         navigateTo(
             Screen.ProfileScreen.baseRoute
                 .plus(getNavParam(ID_CLIENT, uiState.idClient))
@@ -431,7 +436,7 @@ class ValidateOTPViewModel @Inject constructor(
                 .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
                 .plus(getNavParam(LAST_NAME, ""))
                 .plus(getNavParam(EMAIL, uiState.newValue))
-                .plus(getNavParam(PHONE_NUMBER, uiState.phoneNumber?.ifEmpty { 0 }))
+                .plus(getNavParam(PHONE_NUMBER, phoneNumber))
                 .plus(getNavParam(IDENTIFICATION, uiState.identification))
                 .plus(getNavParam(PK_USER, uiState.pkUser))
                 .plus(getNavParam(USER_NAME, uiState.userName))
@@ -522,6 +527,7 @@ class ValidateOTPViewModel @Inject constructor(
         val phoneNumber: String? = null,
         val newPhoneNumberCode: String? = null,
         val firstName: String? = null,
+        val lastName: String? = null,
         val newValue: String? = null,
         val sendMethod: String? = null,
         val isLoading: Boolean = true,
@@ -542,6 +548,7 @@ class ValidateOTPViewModel @Inject constructor(
         val dialogTextResource: Int = R.string.empty,
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,
+        val disclaimerResource: Int = R.string.empty,
         val statusTextResource: Int = R.string.empty,
         val destination: String? = null,
         val openmaxAttemptsReachedDialog: DialogParameters = DialogParameters(),

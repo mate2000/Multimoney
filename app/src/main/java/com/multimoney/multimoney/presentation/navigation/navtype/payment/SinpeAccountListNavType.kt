@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.multimoney.domain.model.accountsmart.SinpeAccount
 
-class SinpeAccountListNavType : NavType<List<SinpeAccount>>(isNullableAllowed = false) {
+class SinpeAccountListNavType : NavType<List<SinpeAccount>>(isNullableAllowed = true) {
 
     override fun get(bundle: Bundle, key: String): List<SinpeAccount>? {
         return bundle.getParcelableArrayList(key)

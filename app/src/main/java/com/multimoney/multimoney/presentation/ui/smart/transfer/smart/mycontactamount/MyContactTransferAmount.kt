@@ -56,8 +56,8 @@ fun MyContactsTransferAmountScreen(
         AlertResult(
             isLeftButtonVisible = false,
             onRightButtonClick = { viewModel.onAmountUIEvent(OnNavigateHome) },
-            titleString = viewModel.amountUIState.errorMessage,
-            descriptionString = viewModel.amountUIState.errorDetail,
+            titleString = viewModel.amountUIState.errorMessage.ifEmpty { stringResource(string.error_occurred_title) },
+            descriptionString = viewModel.amountUIState.errorDetail.ifEmpty { stringResource(string.error_try_again) },
             buttonTextResource = string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )
@@ -166,6 +166,7 @@ private fun MyContactsAmountBottomSheet(viewModel: MyContactsTransferAmountViewM
                     )
                 },
                 enable = false,
+                readOnly = true,
                 titleIcon = if (viewModel.phoneAccount?.isFavorite == true) R.drawable.ic_star_filled else null
             )
         },

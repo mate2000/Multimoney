@@ -106,8 +106,12 @@ import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventU
 import com.multimoney.domain.interaction.credit.MutationSendCreditContractEventUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCase
 import com.multimoney.domain.interaction.credit.QueryAccountStatementUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryAccountTypeUseCase
+import com.multimoney.domain.interaction.credit.QueryAccountTypeUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryBankList365TypeAndAccountTypeUseCase
 import com.multimoney.domain.interaction.credit.QueryBankList365TypeAndAccountTypeUseCaseImpl
+import com.multimoney.domain.interaction.credit.QueryBanksAmpliationUseCase
+import com.multimoney.domain.interaction.credit.QueryBanksAmpliationUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCaseImpl
 import com.multimoney.domain.interaction.credit.QueryCompanyCantonUseCase
@@ -1018,4 +1022,13 @@ class InteractionModule {
     @Singleton
     fun provideQueryBankLis365TypeAndTypeAccountUseCase(creditRepository: CreditRepository): QueryBankList365TypeAndAccountTypeUseCase =
         QueryBankList365TypeAndAccountTypeUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryBankAmpliationUseCase(creditRepository: CreditRepository): QueryBanksAmpliationUseCase =
+        QueryBanksAmpliationUseCaseImpl(creditRepository)
+
+    @Provides
+    @Singleton
+    fun provideQueryAccountTypeUseCase(creditRepository: CreditRepository): QueryAccountTypeUseCase = QueryAccountTypeUseCaseImpl(creditRepository)
 }

@@ -58,6 +58,7 @@ import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
@@ -72,9 +73,12 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUES
 import com.multimoney.multimoney.presentation.navigation.navgraph.LAST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.ONFIDO_STATUS
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVICERTIA_LINK
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
+import com.multimoney.multimoney.presentation.navigation.navgraph.SMART_PAYMENT_ACCOUNTS
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
@@ -127,7 +131,6 @@ import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
 import com.multimoney.multimoney.presentation.util.catalog.ProfileCardListOrigin
 import com.multimoney.multimoney.presentation.util.catalog.QuickActionFlow
-import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.GENERATE_DOCUMENT_STEP
 import com.multimoney.multimoney.presentation.util.catalog.SignDocumentStep.SIGN_DOCUMENTS_STEP
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
@@ -233,10 +236,10 @@ class ProductViewModel @Inject constructor(
             firebaseHelper.registerFCMDevice { token ->
                 viewModelScope.launch {
                     mutationUserEventMobileSaveUseCase.invoke(
-                        idBrand = uiState.idBrand.toInt(),
+                        idBrand = uiState.idBrand.toIntOrNull() ?: 0,
                         user = email,
                         pkSuvLogUserEventMobile = 0,
-                        fkSuvMtrUser = pkUser.toInt(),
+                        fkSuvMtrUser = pkUser.toIntOrNull() ?: 0,
                         platform = ANDROID_LABEL,
                         uuid = dataStorePreferences.getDeviceId().first(),
                         deviceVersion = android.os.Build.VERSION.SDK_INT.toString(),
@@ -259,8 +262,9 @@ class ProductViewModel @Inject constructor(
             balanceCredit = it
             val isCreditAvailable =
                 (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
+            val canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false
             uiState = uiState.copy(
-                canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
+                canExpandCredit = canExpandCredit,
                 paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
@@ -270,7 +274,7 @@ class ProductViewModel @Inject constructor(
                     null
                 },
                 isCreditAvailable = isCreditAvailable,
-                onGoingCreditCardTitle = if (isCreditAvailable) {
+                onGoingCreditCardTitle = if (isCreditAvailable && canExpandCredit) {
                     R.string.home_product_title
                 } else {
                     R.string.detail
@@ -338,7 +342,7 @@ class ProductViewModel @Inject constructor(
                         .plus(
                             getNavParam(
                                 SIGN_DOCUMENT_STEP_ARG,
-                                SignDocumentStep.GENERATE_DOCUMENT_STEP.value
+                                GENERATE_DOCUMENT_STEP.value
                             )
                         )
                         .plus(
@@ -347,7 +351,7 @@ class ProductViewModel @Inject constructor(
                                 uiState.userStatus?.infoCredit?.infoPreApprove?.idPrint ?: 0
                             )
                         )
-                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toIntOrNull() ?: 0))
                         .plus(getNavParam(PK_USER, pkUser))
                         .plus(getNavParam(IDENTIFICATION, identification))
                         .plus(getNavParam(EMAIL, email))
@@ -380,7 +384,7 @@ class ProductViewModel @Inject constructor(
                 }
                 navigateTo(
                     Screen.CreditScreen.baseRoute
-                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                        .plus(getNavParam(ID_BRAND, uiState.idBrand.toIntOrNull() ?: 0))
                         .plus(getNavParam(PK_USER, pkUser))
                         .plus(getNavParam(IDENTIFICATION, identification))
                         .plus(getNavParam(EMAIL, email))
@@ -463,7 +467,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                    "${encodeData(uiState.userStatus?.infoUser)}"
+                    encodeData(uiState.userStatus?.infoUser)
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             val infoCredit = uiState.userStatus?.infoCredit
@@ -489,16 +493,16 @@ class ProductViewModel @Inject constructor(
         val route = if (
             (creditSummary?.size ?: 0) > 1 &&
             validateQuotas(creditSummary) &&
-            uiState.idBrand.toInt() == Brand.CostaRica.id
+            (uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(creditSummary)
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}"
-        } else if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+        } else if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
             }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
-        } else if (uiState.idBrand.toInt() == Brand.Mexico.id) {
+        } else if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.Mexico.id) {
             "${Screen.PaymentOptionsTransferScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstSummary()?.ibanAccount}/${
             encodeData(
                 configurationVersion?.configuration?.credit?.transferAccount
@@ -519,7 +523,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToAutomaticPaymentScheduleScreen(isEditSchedule: Boolean) {
         val infoCredit = uiState.userStatus?.infoCredit
         logEvents(AdjustEventType.HOME_CTA_ENABLED_FIRST_AUTOMATIC_PAYMENT_5032)
-        if (uiState.idBrand.toInt() == Brand.CostaRica.id) {
+        if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
             navigateTo(
                 route = "${Screen.PaymentScheduleScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
                 encodeData(ClientBankAccount())
@@ -541,7 +545,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun onChipQuotaClick() {
-        if (uiState.idBrand.toInt() != Brand.Mexico.id) {
+        if ((uiState.idBrand.toIntOrNull() ?: 0) != Brand.Mexico.id) {
             uiState = uiState.copy(
                 openDialog = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     DialogParameters(
@@ -719,7 +723,7 @@ class ProductViewModel @Inject constructor(
     private fun onNavigateToGtSvNonPreApproved() =
         navigateTo(
             Screen.NonPreApprovedScreen.baseRoute
-                .plus(getNavParam(ID_BRAND, uiState.idBrand.toInt()))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand.toIntOrNull() ?: 0))
                 .plus(getNavParam(PK_USER, pkUser))
                 .plus(getNavParam(IDENTIFICATION, identification))
                 .plus(getNavParam(EMAIL, email))
@@ -902,11 +906,17 @@ class ProductViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess { accountList ->
                     onLoadingValueChange(false)
+                    val smartIds = SmartAccountID(
+                        tokenAccount = account?.tokenNumber,
+                        currencyID = account?.idCurrencyAccount,
+                        accountNumber = account?.accountNumber,
+                        ibanAccountNumber = account?.ibanAccountNumber
+                    )
                     if (accountList?.data?.isEmpty() == true) {
-                        navigateToAddIbanAccount()
+                        navigateToAddIbanAccount(smartIds)
                     } else {
                         accountList?.data?.let {
-                            navigateToSmartAccount(account = account, clientBankAccounts = it)
+                            navigateToSmartAccount(account = account, clientBankAccounts = it, smartIds)
                         }
                     }
                 }
@@ -946,7 +956,7 @@ class ProductViewModel @Inject constructor(
             )
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/$smartIds/" +
-                    "${encodeData(uiState.userStatus?.infoUser)}"
+                    encodeData(uiState.userStatus?.infoUser)
             )
         } else if (uiState.idBrand == Brand.CostaRica.id.toString()) {
             callSinpeAccountsListUseCase(account, onLoadingValueChange)
@@ -954,25 +964,31 @@ class ProductViewModel @Inject constructor(
     }
 
     // This function opens the iban accounts list to choose to make the deposit
-    private fun navigateToSmartAccount(account: Account?, clientBankAccounts: List<SinpeAccount?>) {
+    private fun navigateToSmartAccount(
+        account: Account?,
+        clientBankAccounts: List<SinpeAccount?>,
+        smartIds: SmartAccountID
+    ) {
         val infoCredit = uiState.userStatus?.infoCredit
-        val smartIds = SmartAccountID(
-            tokenAccount = account?.tokenNumber,
-            currencyID = account?.idCurrencyAccount,
-            accountNumber = account?.accountNumber,
-            ibanAccountNumber = account?.ibanAccountNumber
-        )
         navigateTo(
-            route = "${Screen.SmartPaymentAccountScreenCR.baseRoute}/$email/${uiState.idBrand}/" +
-                "$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}/" +
-                "${encodeData(clientBankAccounts)}/${encodeData(smartIds)}"
+            route = Screen.SmartPaymentAccountScreenCR.baseRoute
+                .plus(getNavParam(USER, email))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                .plus(getNavParam(IDENTIFICATION, identification))
+                .plus(getNavParam(PREVIOUS_SCREEN, Screen.HomeScreen.route))
+                .plus(getNavParam(ID_CLIENT, idClient))
+                .plus(getNavParam(ID_LOAN_CLIENT, infoCredit?.idLoanClient))
+                .plus(getNavParam(SMART_PAYMENT_ACCOUNTS, encodeData(clientBankAccounts)))
+                .plus(getNavParam(SMART_ACCOUNT, encodeData(smartIds)))
         )
     }
 
-    private fun navigateToAddIbanAccount() {
+    private fun navigateToAddIbanAccount(smartIds: SmartAccountID) {
         val infoCredit = uiState.userStatus?.infoCredit
         navigateTo(
-            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull() ?: 0}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}"
+            route = "${Screen.AddIbanAccountScreen.baseRoute}/$email/${uiState.idBrand.toIntOrNull() ?: 0}/$identification/${Screen.HomeScreen.route}/$idClient/${infoCredit?.idLoanClient}".plus(
+                getNavParam(SMART_ACCOUNT, encodeData(smartIds))
+            )
         )
     }
 
@@ -1040,7 +1056,7 @@ class ProductViewModel @Inject constructor(
                 identification = identification,
                 idLoanClient = uiState.userStatus?.infoCredit?.idLoanClient ?: 0,
                 user = email,
-                idBrand = uiState.idBrand.toInt()
+                idBrand = uiState.idBrand.toIntOrNull() ?: 0
             ).collectLatest { result ->
                 result.onSuccess {
                     onCallQueryBalanceCardInformation(onLoadingValueChange)
@@ -1071,7 +1087,7 @@ class ProductViewModel @Inject constructor(
     private fun onCallMutationAccountStatusUseCase(comingFromCrypto: Boolean) = executeUseCase {
         mutationAccountStatusUseCase.invoke(
             user = userName,
-            idBrand = uiState.idBrand.toInt(),
+            idBrand = uiState.idBrand.toIntOrNull() ?: 0,
             identificationNumber = identification,
             newState = DEFAULT_NEW_STATE,
             typeState = DEFAULT_TYPE_STATE,
@@ -1287,7 +1303,7 @@ class ProductViewModel @Inject constructor(
         val infoCredit = uiState.userStatus?.infoCredit
         val baseAdjustEvent = BaseEventDataDto(
             user = email,
-            idBrand = uiState.idBrand.toInt(),
+            idBrand = uiState.idBrand.toIntOrNull() ?: 0,
             idClient = idClient,
             idLoanClient = infoCredit?.idLoanClient,
             identification = identification

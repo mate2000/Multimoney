@@ -6,10 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
 import com.multimoney.domain.interaction.credit.MutationSaveClientBankAccountUseCase
+import com.multimoney.domain.interaction.credit.QueryAccountTypeUseCase
+import com.multimoney.domain.interaction.credit.QueryBanksAmpliationUseCase
 import com.multimoney.domain.interaction.credit.QueryBanksAndRegularExpressionUseCase
-import com.multimoney.domain.model.credit.CreditCatalog
-import com.multimoney.domain.model.credit.CreditCatalogOption
+import com.multimoney.domain.model.credit.BanksAmpliation
 import com.multimoney.domain.model.credit.RegularExpression
+import com.multimoney.domain.model.credit.RegularExpressionList
 import com.multimoney.domain.model.util.onFailure
 import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
@@ -33,8 +35,9 @@ import javax.inject.Inject
 @HiltViewModel
 class DisbursementAddAccountViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val queryBanksAndRegularExpressionUseCase: QueryBanksAndRegularExpressionUseCase,
-    private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase
+    private val mutationSaveClientBankAccountUseCase: MutationSaveClientBankAccountUseCase,
+    private val queryBanksAmpliationUseCase: QueryBanksAmpliationUseCase,
+    private val queryAccountTypeUseCase: QueryAccountTypeUseCase
 ) : BaseViewModel(true) {
 
     // UIState
@@ -42,9 +45,9 @@ class DisbursementAddAccountViewModel @Inject constructor(
         private set
 
     // Stateless
-    private var bank: CreditCatalog? = null
-    private var bankList: List<CreditCatalogOption?>? = listOf()
-    private var accountTypeList: List<RegularExpression?>? = listOf()
+    private var bank: BanksAmpliation? = null
+    private var bankList: List<BanksAmpliation?>? = listOf()
+    private var accountTypeList: RegularExpressionList? = null
     private var idBrand: Int? = null
     private var pkUser: String = ""
     private var email: String = ""
@@ -69,62 +72,14 @@ class DisbursementAddAccountViewModel @Inject constructor(
     }
 
     private fun onStart() {
-        onCallQueryBanksAndRegularExpressions(
-            pkUser = pkUser.toInt(),
-            user = email,
-            idBrand = idBrand ?: 0,
-            idUserRequest = idUserRequest ?: 0,
-            onLoadingValueChange = { isLoading ->
-                onUIEvent(UIEvent.OnLoadingValueChange(isLoading))
-            },
-            onFailureWithDialog = { isLoading, dialogParameter ->
-                onUIEvent(
-                    UIEvent.OnFailureWithDialog(
-                        isLoading,
-                        dialogParameter
-                    )
-                )
-            }
-        )
+        callQueryBankAmpliation()
     }
 
-    private fun onCallQueryBanksAndRegularExpressions(
-        pkUser: Int,
-        user: String,
-        idBrand: Int,
-        idUserRequest: Int,
-        onLoadingValueChange: (isLoading: Boolean) -> Unit,
-        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
-    ) = executeUseCase {
-        queryBanksAndRegularExpressionUseCase.invoke(pkUser, user, idBrand, idUserRequest)
-            .collectLatest { result ->
-                result.onSuccess {
-                    bank = it.banks?.first()
-                    accountTypeList = it.regularExpression
-                    bankList = bank?.subOptions?.filter { filter ->
-                        filter?.description != MIDDLE_DASH
-                    }
-                    uiState = uiState.copy(bankList = bankList)
-                    onLoadingValueChange(false)
-                }.onLoading {
-                    onLoadingValueChange(true)
-                }.onFailure {
-                    onFailureWithDialog(
-                        false,
-                        DialogParameters(
-                            description = it.getError().toString(),
-                            isActive = mutableStateOf(true)
-                        )
-                    )
-                }
-            }
-    }
-
-    private fun onBankValueChanged(bankSelected: CreditCatalogOption?) {
+    private fun onBankValueChanged(bankSelected: BanksAmpliation?) {
         uiState = uiState.copy(
             bankSelected = bankSelected,
-            accountTypeListFiltered = accountTypeList?.filter {
-                it?.fkRegularExpression == bankSelected?.pkCatalog?.toInt()
+            accountTypeListFiltered = accountTypeList?.regularExpressionList?.filter {
+                it?.fkRegularExpression == bankSelected?.id
             },
             accountTypeSelectedString = "",
             accountTypeSelected = null,
@@ -136,7 +91,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
 
     private fun onAccountTypeValueChange(regulaExpression: RegularExpression?) {
         uiState = uiState.copy(
-            accountTypeSelectedString = regulaExpression?.key ?: "",
+            accountTypeSelectedString = regulaExpression?.description ?: "",
             accountTypeSelected = regulaExpression,
             accountNumber = "",
             accountNumberError = Pair(false, R.string.empty)
@@ -169,7 +124,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
     private fun callMutationSaveClientBankAccount() = executeUseCase {
         mutationSaveClientBankAccountUseCase(
             idClient = idClient?.toLong() ?: 0,
-            idBank = uiState.bankSelected?.pkCatalog?.toInt() ?: 0,
+            idBank = uiState.bankSelected?.id ?: 0,
             accountNumber = uiState.accountNumber,
             idCurrency = idCurrency ?: 0,
             idAccountType = uiState.accountTypeSelected?.idTypeAccount ?: 0,
@@ -196,6 +151,44 @@ class DisbursementAddAccountViewModel @Inject constructor(
         }
     }
 
+    private fun callQueryAccountTypeUseCase() = executeUseCase {
+        queryAccountTypeUseCase.invoke(email, idBrand ?: 0).collectLatest { result ->
+            result.onSuccess {
+                accountTypeList = it
+                uiState = uiState.copy(isLoading = false)
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading { uiState = uiState.copy(isLoading = true) }
+        }
+    }
+
+    private fun callQueryBankAmpliation() = executeUseCase {
+        queryBanksAmpliationUseCase(email, idBrand ?: 0).collectLatest { result ->
+            result.onSuccess {
+                bank = it?.banksAmpliationList?.first()
+                bankList = it?.banksAmpliationList
+                uiState = uiState.copy(bankList = bankList)
+                callQueryAccountTypeUseCase()
+                uiState = uiState.copy(isLoading = false)
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false, openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
     private fun onContinueClick(focusManager: FocusManager) {
         focusManager.clearFocus()
         callMutationSaveClientBankAccount()
@@ -205,8 +198,8 @@ class DisbursementAddAccountViewModel @Inject constructor(
         val titleResource: Int = R.string.empty,
         val accountNumber: String = "",
         val accountNumberError: Pair<Boolean, Int> = Pair(false, R.string.empty),
-        val bankList: List<CreditCatalogOption?>? = listOf(),
-        val bankSelected: CreditCatalogOption? = null,
+        val bankList: List<BanksAmpliation?>? = listOf(),
+        val bankSelected: BanksAmpliation? = null,
         val accountTypeListFiltered: List<RegularExpression?>? = listOf(),
         val accountTypeSelectedString: String = "",
         val accountTypeSelected: RegularExpression? = null,
@@ -241,7 +234,7 @@ class DisbursementAddAccountViewModel @Inject constructor(
         object OnCallQueryBanksAndRegularExpression : UIEvent()
         object OnValidateForm : UIEvent()
         data class OnAccountNumberValueChange(val accountNumber: String) : UIEvent()
-        data class OnBankValueChanged(val bankSelected: CreditCatalogOption?) : UIEvent()
+        data class OnBankValueChanged(val bankSelected: BanksAmpliation?) : UIEvent()
         data class OnAccountTypeValueChanged(val regularExpressionSelected: RegularExpression?) :
             UIEvent()
 

@@ -183,7 +183,7 @@ fun SmartOnfidoScreen(
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.Top)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
@@ -202,7 +202,7 @@ fun SmartOnfidoScreen(
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.Top)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
@@ -221,7 +221,7 @@ fun SmartOnfidoScreen(
             ) {
                 CustomImage(
                     drawableResource = drawable.ic_validation,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.Top)
                 )
                 Text(
                     modifier = Modifier.padding(start = 8.dp),

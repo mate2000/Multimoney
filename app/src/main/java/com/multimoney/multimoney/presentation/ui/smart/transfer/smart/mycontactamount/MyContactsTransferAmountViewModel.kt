@@ -19,9 +19,11 @@ import com.multimoney.multimoney.presentation.navigation.ORIGIN_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel
 import com.multimoney.multimoney.presentation.util.SEPARATOR
+import com.multimoney.multimoney.presentation.util.capitalizedAllWords
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType.Dollar
 import com.multimoney.multimoney.presentation.util.catalog.DisplayAccount
+import com.multimoney.multimoney.presentation.util.formatStringPhoneNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getCurrentDate
 import com.multimoney.multimoney.presentation.util.getCurrentTime
@@ -64,9 +66,12 @@ class MyContactsTransferAmountViewModel @Inject constructor(
                     icon = R.drawable.ic_multimoney_smart
                 ),
                 destinyAccountDisplay = DisplayAccount(
-                    sheetTitle = phoneAccount?.titular,
+                    sheetTitle = phoneAccount?.titular?.capitalizedAllWords(),
                     sheetSubtitle = if (phoneAccount?.number.isNullOrEmpty().not()) {
-                        phoneAccount?.number?.plus(
+                        formatStringPhoneNumber(
+                            number = phoneAccount?.number.orEmpty(),
+                            areaCode = phoneAccount?.areaCode.orEmpty()
+                        ).plus(
                             if (idBrand == ElSalvador.id) ""
                             else SEPARATOR.plus(destinyCurrency?.stringName)
                         )

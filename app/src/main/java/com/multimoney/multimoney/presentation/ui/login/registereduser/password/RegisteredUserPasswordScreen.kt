@@ -39,7 +39,6 @@ import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.BaseEvent.OnOpenBiometricDialog
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
@@ -76,7 +75,6 @@ fun RegisteredUserPasswordScreen(
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-
     viewModel.onUIEvent(
         RegisteredUserPasswordViewModel.UIEvent.OnInitializeDialogTexts(
             biometricPromptTitle = stringResource(id = string.biometric_dialog_title),
@@ -93,7 +91,7 @@ fun RegisteredUserPasswordScreen(
         viewModel.onUIEvent(
             RegisteredUserPasswordViewModel.UIEvent.OnSetupDeviceInfo(
                 getDeviceName(fragmentActivity) ?: "",
-                getDeviceType(fragmentActivity).value ?: "",
+                getDeviceType(fragmentActivity).value ?: ""
             )
         )
         viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
@@ -148,8 +146,8 @@ fun RegisteredUserPasswordScreen(
     // Dialog
     if (viewModel.uiState.openDialogCustom.isActive.value) {
         CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource),
-            message = viewModel.uiState.openDialogCustom.description,
+            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource).ifEmpty { viewModel.uiState.openDialogCustom.title },
+            message = stringResource(id = viewModel.uiState.openDialogCustom.descriptionResource).ifEmpty { viewModel.uiState.openDialogCustom.description },
             positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveResource),
             negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeResource),
             onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,
@@ -317,7 +315,11 @@ fun RegisteredUserPasswordContent(
         )
     }
     CustomModalWarningBottomSheet(
-        titleResource = string.password_security_bottom_sheet_general_title,
+        titleResource = if (viewModel.idBrand == Brand.CostaRica.id) {
+            R.string.password_security_bottom_sheet_general_title_cr
+        } else {
+            R.string.password_security_bottom_sheet_general_title
+        },
         descriptionText = buildAnnotatedString {
             withStyle(
                 style = Typography.subtitle1.toSpanStyle().copy(

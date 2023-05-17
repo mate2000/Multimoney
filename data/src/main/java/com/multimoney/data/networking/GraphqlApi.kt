@@ -22,6 +22,8 @@ import com.multimoney.data.networking.graphql.apollomodel.BalanceCardInformation
 import com.multimoney.data.networking.graphql.apollomodel.BalanceQuery
 import com.multimoney.data.networking.graphql.apollomodel.BankList365TypeAndTypeAccountQuery
 import com.multimoney.data.networking.graphql.apollomodel.BankListTransfer365Query
+import com.multimoney.data.networking.graphql.apollomodel.BanksAmpliationQuery
+import com.multimoney.data.networking.graphql.apollomodel.BankAccountTypesQuery
 import com.multimoney.data.networking.graphql.apollomodel.BanksAndRegularExpressionQuery
 import com.multimoney.data.networking.graphql.apollomodel.BuyCryptoCurrencyHQRMutation
 import com.multimoney.data.networking.graphql.apollomodel.CardBlockingNVMutation
@@ -857,7 +859,15 @@ class GraphqlApi @Inject constructor(
         idBrand: Int,
         actionSecurity: Int
     ): ApolloCall<ValidationSecurityQuery.Data> =
-        apolloAuthorizedClient.query(ValidationSecurityQuery(pkUser, password, user, idBrand, actionSecurity))
+        apolloAuthorizedClient.query(
+            ValidationSecurityQuery(
+                pkUser,
+                password,
+                user,
+                idBrand,
+                actionSecurity
+            )
+        )
             .fetchPolicy(
                 FetchPolicy.NetworkOnly
             )
@@ -2671,4 +2681,10 @@ class GraphqlApi @Inject constructor(
             idBrand
         )
     ).fetchPolicy(FetchPolicy.NetworkOnly)
+
+    fun queryBankAmpliation(user: String, idBrand: Int): ApolloCall<BanksAmpliationQuery.Data> =
+        apolloAuthorizedClient.query(BanksAmpliationQuery(user, idBrand)).fetchPolicy(NetworkOnly)
+
+    fun queryBankAccountTypes(user: String, idBrand: Int): ApolloCall<BankAccountTypesQuery.Data> =
+        apolloAuthorizedClient.query(BankAccountTypesQuery(user, idBrand)).fetchPolicy(NetworkOnly)
 }

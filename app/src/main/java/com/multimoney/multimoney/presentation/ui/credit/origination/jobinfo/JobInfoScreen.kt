@@ -140,9 +140,9 @@ fun JobInfoScreen(
 
         CustomOutlinedTextField(
             modifier = Modifier.padding(top = 24.dp),
-            placeHolder = stringResource(id = R.string.credit_job_workplace_label),
+            placeHolder = stringResource(id = viewModel.uiState.workplaceLabelResource),
             value = viewModel.uiState.companyName,
-            labelText = stringResource(id = R.string.credit_job_workplace_label),
+            labelText = stringResource(id = viewModel.uiState.workplaceLabelResource),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next
             ),
@@ -150,7 +150,7 @@ fun JobInfoScreen(
                 focusManager.clearFocus()
             }),
             isRequired = true,
-            isRequiredMessage = stringResource(id = R.string.credit_job_workplace_required),
+            isRequiredMessage = stringResource(id = viewModel.uiState.workplaceRequiredResource),
             onValueChange = {
                 viewModel.onUIEvent(OnCompanyNameValueChange(it))
             }
@@ -227,7 +227,13 @@ fun JobInfoScreen(
                 items = viewModel.uiState.divisionProfessionList,
                 value = viewModel.uiState.divisionProfessionSelected,
                 onValueChange = { viewModel.onUIEvent(OnDivisionProfessionValueChange(it)) },
-                labelText = stringResource(id = R.string.credit_monthly_income_profession_label),
+                labelText = stringResource(
+                    id = if (viewModel.idBrand == Brand.CostaRica.id) {
+                        R.string.credit_monthly_income_profession_label_cr
+                    } else {
+                        R.string.credit_monthly_income_profession_label
+                    }
+                ),
                 placeHolder = stringResource(id = R.string.credit_monthly_income_profession_hint)
             )
         }

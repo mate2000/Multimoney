@@ -153,8 +153,7 @@ class SmartSignViewModel @Inject constructor(
             newState = ProductViewModel.DEFAULT_NEW_STATE,
             typeState = ProductViewModel.DEFAULT_TYPE_STATE,
             idAccountSysde = idUserRequest,
-            idAccountRequest = globalId
-                ?: 0L
+            idAccountRequest = globalId ?: 0L
         ).collectLatest { result ->
             result.onSuccess {
                 uiState = uiState.copy(
@@ -425,7 +424,6 @@ class SmartSignViewModel @Inject constructor(
         val signDocumentUrl: String = "",
         val loadingIcon: Int = drawable.ic_logo_multimoney3,
         val loadingTitle: Int = string.document_generation_title,
-        val loadingSubtitle: Int = string.smart_other_generating_document_subtitle,
         val isAlertResultVisible: Boolean = false,
         val alertResultIconResource: Int = 0,
         val alertResultIsLeftButtonVisible: Boolean = false,
@@ -475,8 +473,8 @@ class SmartSignViewModel @Inject constructor(
     companion object {
         const val WAIT_TIME = 5000L
         const val MAX_NUMBER_ATTEMPTS_TO_START_SUBSCRIPTION = 3
-        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 30000L
-        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 30000L
+        const val TIME_TO_WAIT_GENERATE_DOCUMENT_IN_MILLI_SECOND = 90000L
+        const val TIME_TO_WAIT_VALIDATE_IDENTITY_IN_MILLI_SECOND = 40000L
 
         private const val ID_PRINT = "idPrint"
         private const val LINK = "link"

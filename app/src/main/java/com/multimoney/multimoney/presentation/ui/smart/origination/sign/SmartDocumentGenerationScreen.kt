@@ -3,12 +3,9 @@ package com.multimoney.multimoney.presentation.ui.smart.origination.sign
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -43,7 +39,7 @@ fun SmartDocumentGenerationScreen(
     viewModel: SmartSignViewModel,
     icon: Int? = null,
     title: Int? = null,
-    subtitle: Int? = null
+    subtitle: Int
 ) {
     val openStepDebounce = remember { MutableStateFlow(true) }
     val openStepFlow: Flow<Boolean> = remember {
@@ -81,7 +77,7 @@ fun SmartDocumentGenerationScreen(
             )
             Text(
                 text = stringResource(
-                    id = subtitle ?: string.smart_other_generating_document_subtitle
+                    id = subtitle
                 ),
                 modifier = Modifier.padding(top = 10.dp),
                 style = Typography.body1,
@@ -93,10 +89,9 @@ fun SmartDocumentGenerationScreen(
         //LoadingIndicator(viewModel.uiState.isLoading)
         loadingProgressIndicator(
             viewModel.uiState.isLoading,
-            stringResource(id = R.string.smart_loading_label)
+            stringResource(id = string.smart_loading_label)
         )
     }
-
 
     // this is required to execute the debounce
     val openStepFlowValue by openStepFlow.collectAsState(false)

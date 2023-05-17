@@ -6,6 +6,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.OpenWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.smart.origination.sign.SmartSignViewModel.BaseEvent.SimulateUserInteraction
@@ -62,7 +64,8 @@ fun SmartSignScreen(
                 viewModel = viewModel,
                 icon = viewModel.uiState.loadingIcon,
                 title = viewModel.uiState.loadingTitle,
-                subtitle = viewModel.uiState.loadingSubtitle
+                subtitle = if (viewModel.idBrand == Brand.CostaRica.id) R.string.smart_other_generating_document_subtitle_cr
+                else R.string.smart_other_generating_document_subtitle_sv
             )
         }
         SIGN_DOCUMENTS_STEP.value -> {

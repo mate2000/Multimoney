@@ -43,6 +43,12 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -51,12 +57,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class RegisteredUserOtpViewModel @Inject constructor(
@@ -246,9 +246,9 @@ class RegisteredUserOtpViewModel @Inject constructor(
                             title = it.messageError.message.orEmpty(),
                             description = it.messageError.detail.orEmpty(),
                             isActive = mutableStateOf(true),
-                            positiveResource = R.string.common_go_back,
+                            positiveResource = R.string.contact_support,
                             positiveAction = {
-                                onBackClick()
+                                emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
                             }
                         )
                     )

@@ -290,7 +290,8 @@ private fun AccountInfoSection(
             } else {
                 CurrencyType.Dollar.stringName
             },
-            enable = false
+            enable = false,
+            readOnly = true
         )
     }
 }

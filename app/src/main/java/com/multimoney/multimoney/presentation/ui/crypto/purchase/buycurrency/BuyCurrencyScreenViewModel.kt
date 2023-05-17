@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.PurchaseStatus
 import com.multimoney.domain.interaction.accountsmart.QuerySmartExchangeRateUseCase
 import com.multimoney.domain.interaction.crypto.BuyCryptoCurrencyUseCase
@@ -117,25 +118,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     )
 
-    private val confirmationTimer = CryptoTimerHelper(
-        coroutineScope = viewModelScope,
-        time = CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT,
-        isBottomSheetOpen = true,
-        onTick = { seconds ->
-            val remainingTime = seconds.seconds
-            uiState = uiState.copy(
-                remainingTime = remainingTime,
-                remainingTimeText = remainingTime.format()
-            )
-        },
-        onFinished = {
-            updateUiWithNewPricesAndCommissions()
-            if (idCurrencyAccount == CurrencyType.Colon.id) {
-                getExchangeRate()
-            }
-        }
-    )
-
     private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
         val currentQuote = calculateQuote(
             quoteAmount = uiState.quoteAmount.value,
@@ -143,9 +125,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
         )
         if (currentQuote > MAX_AMOUNT_ALLOWED) {
-            timer.startTimer()
+            timer.startTimer(uiState.isConfirmationBottomSheetOpen)
             isError(
-                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                errorMessage = if (idBrand == Brand.CostaRica.id) {
+                    R.string.crypto_purchase_flow_error_daily_amount_exceeded
+                } else {
+                    R.string.crypto_purchase_flow_error_weekly_amount_exceeded
+                },
                 isError = true,
                 focusError = true
             )
@@ -174,16 +160,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         isLoading = false,
                         pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
                     )
-                    if (!uiState.isConfirmationBottomSheetOpen) {
-                        timer.startTimer()
-                    } else {
-                        confirmationTimer.startTimer()
-                    }
+                    timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                 }
                 result.onFailure {
                     if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                         timer.stopTimer()
-                        confirmationTimer.stopTimer()
                         openMaintenanceAction()
                         return@onFailure
                     }
@@ -218,7 +199,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     this.smartAccountAvailableBalance = 0.0
                     if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                         timer.stopTimer()
-                        confirmationTimer.stopTimer()
                         openMaintenanceAction()
                         return@onFailure
                     }
@@ -246,7 +226,40 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                     timer.stopTimer()
-                    confirmationTimer.stopTimer()
+                    openMaintenanceAction()
+                    return@onFailure
+                }
+                onFailure()
+            }
+        }
+    }
+
+    private fun updateFees(): Unit = executeUseCase {
+        getPriceQuoteAndCommissionsUseCase.invoke(
+            asset = asset,
+            crypto_network = cryptoNetWork,
+            idBrand = idBrand,
+            user = user,
+            market = market,
+            identification = identification,
+            side = side,
+            base_amount = uiState.baseAmount.value.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble(),
+            quote_amount = uiState.quoteAmount.value.ifEmpty {
+                if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
+            }.toDouble()
+        ).collectLatest { result ->
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+            result.onSuccess { pricesQuotesAndCommission ->
+                uiState = uiState.copy(
+                    isLoading = false,
+                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                )
+            }
+            result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -275,7 +288,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 focusError = true
             )
             amountPlusFee > MAX_AMOUNT_ALLOWED -> isError(
-                errorMessage = R.string.crypto_purchase_flow_error_weekly_amount_exceeded,
+                errorMessage = if (idBrand == Brand.CostaRica.id) {
+                    R.string.crypto_purchase_flow_error_daily_amount_exceeded
+                } else {
+                    R.string.crypto_purchase_flow_error_weekly_amount_exceeded
+                },
                 isError = true,
                 focusError = true
             )
@@ -436,7 +453,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onFailure {
                     if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                         timer.stopTimer()
-                        confirmationTimer.stopTimer()
                         openMaintenanceAction()
                         return@onFailure
                     }
@@ -452,7 +468,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     private fun onFailure() {
         timer.stopTimer()
-        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             isLoading = false,
             genericError = true,
@@ -462,7 +477,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
 
     private fun clearInputData() {
         timer.stopTimer()
-        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             baseAmount = mutableStateOf(""),
             quoteAmount = mutableStateOf(""),
@@ -531,21 +545,18 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 failureAction = event.failureAction
             )
             UIEvent.OnOpenPurchaseConfirmationBottomSheet -> {
-                timer.stopTimer()
                 uiState = uiState.copy(
                     isConfirmationBottomSheetOpen = true
                 )
-                confirmationTimer.startTimer()
             }
             UIEvent.OnClosePurchaseConfirmationBottomSheet -> {
-                confirmationTimer.stopTimer()
                 uiState = uiState.copy(
                     isConfirmationBottomSheetOpen = false
                 )
-                timer.startTimer()
             }
             UIEvent.OnClearInputData -> clearInputData()
             UIEvent.OnRegisterAdjustPurchase -> registerAdjustPurchaseCrypto()
+            UIEvent.OnUpdateFees -> updateFees()
         }
     }
 
@@ -576,6 +587,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         object OnClosePurchaseConfirmationBottomSheet : UIEvent()
         object OnClearInputData : UIEvent()
         object OnRegisterAdjustPurchase : UIEvent()
+        object OnUpdateFees : UIEvent()
     }
 
     companion object {
@@ -585,7 +597,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         const val DEFAULT_AMOUNT_NUMBER = 1.0
         const val MINIMUM_AMOUNT_ALLOWED = 5.0
         const val DEFAULT_TIMER_COUNT = 15
-        const val CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT = 5
         const val MAX_AMOUNT_ALLOWED = 10000.0
     }
 }

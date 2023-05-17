@@ -1,9 +1,6 @@
 package com.multimoney.multimoney.presentation.util
 
 import android.util.Patterns
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.intl.Locale.Companion
-import androidx.compose.ui.text.toLowerCase
 import com.google.i18n.phonenumbers.PhoneNumberUtil
 import com.google.i18n.phonenumbers.Phonenumber
 import com.multimoney.data.util.catalog.Brand
@@ -22,17 +19,17 @@ fun isPhoneNumberValid(
     phone: String,
     fullPhoneNumber: String,
     countryCode: String,
-    phoneNumberType: PhoneNumberUtil.PhoneNumberType,
+    phoneNumberType: PhoneNumberUtil.PhoneNumberType
 ): Boolean {
     val number: Phonenumber.PhoneNumber?
     if (phone.length > 6) {
         return try {
             number = PhoneNumberUtil.getInstance().parse(
                 fullPhoneNumber,
-                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name,
+                Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name
             )
             if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
-                    .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
+                .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
                     .getNumberType(number) == phoneNumberType
             ) {
                 PhoneNumberUtil.getInstance()
@@ -67,7 +64,7 @@ fun validDui(personalDocumentValue: String) =
             10 - verificationNumber.mod(SignUpPersonalDataViewModel.DUI_VERIFICATION_MODULE)
         Pair(
             verificationValue != 10 && verificationValue != duiSplit[duiSplit.lastIndex].toInt(),
-            R.string.sign_up_personal_data_id_not_valid,
+            R.string.sign_up_personal_data_id_not_valid
         )
     } else {
         Pair(true, R.string.sign_up_personal_data_id_not_valid)
@@ -134,24 +131,24 @@ fun validateEightDecimalIncome(value: String): Boolean {
 fun validatePhoneNumber(phoneNumber: String, idBrand: Int): Boolean {
     return when (idBrand) {
         Brand.CostaRica.id -> {
-            phoneNumber.startsWith(PHONE_START_NUMBER_TWO)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_SIX)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
+            phoneNumber.startsWith(PHONE_START_NUMBER_TWO) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
         }
         Brand.ElSalvador.id -> {
-            phoneNumber.startsWith(PHONE_START_NUMBER_TWO)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_SIX)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+            phoneNumber.startsWith(PHONE_START_NUMBER_TWO) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
         }
         Brand.Guatemala.id -> {
-            phoneNumber.startsWith(PHONE_START_NUMBER_TWO)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_THREE)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_SIX)
-                    || phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+            phoneNumber.startsWith(PHONE_START_NUMBER_TWO) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_THREE) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_FIVE) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
         }
         else -> false
     }
@@ -161,19 +158,19 @@ fun validateMobilePhoneNumber(mobilePhoneNumber: String, idBrand: Int): Boolean 
     return if (mobilePhoneNumber.length > 7) {
         when (idBrand) {
             Brand.CostaRica.id -> {
-                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
-                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX)
-                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
-                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
+                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN) ||
+                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
             }
             Brand.ElSalvador.id -> {
-                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX)
-                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
             }
             Brand.Guatemala.id -> {
-                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_THREE)
-                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR)
-                        || mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
+                mobilePhoneNumber.startsWith(PHONE_START_NUMBER_THREE) ||
+                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
             }
             else -> false
         }

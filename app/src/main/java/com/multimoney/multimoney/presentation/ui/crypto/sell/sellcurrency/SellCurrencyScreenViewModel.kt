@@ -117,25 +117,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
         }
     )
 
-    private val confirmationTimer = CryptoTimerHelper(
-        coroutineScope = viewModelScope,
-        time = CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT,
-        isBottomSheetOpen = true,
-        onTick = { seconds ->
-            val remainingTime = seconds.seconds
-            uiState = uiState.copy(
-                remainingTime = remainingTime,
-                remainingTimeText = remainingTime.format()
-            )
-        },
-        onFinished = {
-            updateUiWithNewPricesAndCommissions()
-            if (idCurrencyAccount == CurrencyType.Colon.id) {
-                getExchangeRate()
-            }
-        }
-    )
-
     private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
         getPriceQuoteAndCommissionsUseCase.invoke(
             asset = asset,
@@ -160,16 +141,11 @@ class SellCurrencyScreenViewModel @Inject constructor(
                     isLoading = false,
                     pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
                 )
-                if (!uiState.isConfirmationBottomSheetOpen) {
-                    timer.startTimer()
-                } else {
-                    confirmationTimer.startTimer()
-                }
+                timer.startTimer(uiState.isConfirmationBottomSheetOpen)
             }
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                     timer.stopTimer()
-                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -206,7 +182,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                     timer.stopTimer()
-                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -234,7 +209,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                     timer.stopTimer()
-                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -408,7 +382,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
                     timer.stopTimer()
-                    confirmationTimer.stopTimer()
                     openMaintenanceAction()
                     return@onFailure
                 }
@@ -423,7 +396,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
 
     private fun onFailure() {
         timer.stopTimer()
-        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             isLoading = false,
             genericError = true,
@@ -433,7 +405,6 @@ class SellCurrencyScreenViewModel @Inject constructor(
 
     private fun clearInputData() {
         timer.stopTimer()
-        confirmationTimer.stopTimer()
         uiState = uiState.copy(
             baseAmount = mutableStateOf(""),
             quoteAmount = mutableStateOf(""),
@@ -495,18 +466,14 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 failureAction = event.failureAction
             )
             UIEvent.OnOpenSellConfirmationBottomSheet -> {
-                timer.stopTimer()
                 uiState = uiState.copy(
                     isConfirmationBottomSheetOpen = true
                 )
-                confirmationTimer.startTimer()
             }
             UIEvent.OnCloseSellConfirmationBottomSheet -> {
-                confirmationTimer.stopTimer()
                 uiState = uiState.copy(
                     isConfirmationBottomSheetOpen = false
                 )
-                timer.startTimer()
             }
             UIEvent.OnClearInputData -> clearInputData()
             UIEvent.OnRegisterAdjustSellCryptoCurrency -> registerAdjustSellCrypto()
@@ -550,6 +517,5 @@ class SellCurrencyScreenViewModel @Inject constructor(
         const val DEFAULT_AMOUNT_NUMBER = 1.0
         const val MINIMUM_AMOUNT_ALLOWED = 5.0
         const val DEFAULT_TIMER_COUNT = 15
-        const val CONFIRMATION_BOTTOM_SHEET_INITIAL_TIMER_COUNT = 5
     }
 }

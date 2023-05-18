@@ -137,7 +137,13 @@ class ValidateOTPViewModel @Inject constructor(
                 else -> R.string.registered_user_otp_disclaimer
             },
             statusTextResource = when (uiState.phaseCount) {
-                PHASE_ONE -> R.string.profile_code_expires_in_template
+                PHASE_ONE -> {
+                    if (uiState.idBrand == Brand.CostaRica.id) {
+                        R.string.profile_code_expires_in_template_cr
+                    } else {
+                        R.string.profile_code_expires_in_template
+                    }
+                }
                 null -> R.string.empty
                 else -> R.string.profile_code_resend_expires_in_template
             },

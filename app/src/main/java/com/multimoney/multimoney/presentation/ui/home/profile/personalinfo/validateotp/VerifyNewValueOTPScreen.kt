@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.ireward.htmlcompose.HtmlText
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.domain.model.util.onFailure
@@ -246,14 +248,12 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(titleText) {
                     top.linkTo(topNavBar.bottom)
                 },
-            text = stringResource(
-                id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_identity_verification_verify_your_new_phone else R.string.profile_identity_verification_verify_your_new_email
-            ),
+            text = stringResource(viewModel.uiState.titleResource),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        Text(
+        HtmlText(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -271,8 +271,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                     viewModel.uiState.newValue ?: ""
                 }
             ),
-            style = Typography.body2,
-            color = MultimoneyTheme.colors.labelText
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
         )
 
         when (viewModel.uiState.messageStatus) {
@@ -357,7 +356,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
-                    .fillMaxWidth(),
+                    .wrapContentWidth(),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.timerColor,
                     fontWeight = FontWeight.SemiBold

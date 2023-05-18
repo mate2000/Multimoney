@@ -219,6 +219,7 @@
     <string name="sign_up_email_user_completed_dialog_description_cr" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
+    <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
     <string name="sign_up_email_blocked_dialog_description_cr" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
     <string name="sign_up_email_blocked_dialog_description_sv" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContacta a servicio al cliente.</string>
     <string name="sign_up_email_another_device_registered_dialog_title" translatable="false">Registro en proceso en otro dispositivo</string>
@@ -516,8 +517,10 @@
     <string name="automatic_logout_biometric_title" translatable="false">Reanudar mi sesión</string>
     <string name="automatic_logout_biometric_description" translatable="false">Utilice su biometría para autenticarse en la aplicación</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Verifica tu nuevo teléfono</string>
-    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Verifica tu nuevo email</string>
+    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Verificá tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Confirmá tu nuevo correo electrónico</string>
+    <string name="profile_identity_verification_verify_your_new_phone_cr" translatable="false">Verifica tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email_cr" translatable="false">Confirma tu nuevo correo electrónico</string>
     <string name="profile_identity_verification_phone" translatable="false">teléfono</string>
     <string name="profile_identity_verification_email" translatable="false">email</string>
     <string name="profile_where_do_you_want_to_receive_the_code_sv" translatable="false">¿Dónde quieres recibir el código?</string>
@@ -530,13 +533,13 @@
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
     <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_verify" translatable="false">Verificar</string>
-    <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a\n%1$s</string>
-    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a\n%1$s</string>
+    <string name="profile_enter_the_code_sent_to_template_sv" translatable="false"><![CDATA[Ingresa el código de verificación enviado a <b>%1$s</b>]]></string>
+    <string name="profile_enter_the_code_sent_to_template" translatable="false"><![CDATA[Ingresá el código de verificación enviado a <b>%1$s</b>]]></string>
     <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_phone_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email_sv" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
+    <string name="profile_code_expires_in_template" translatable="false">Esperá %1$s segundos para reenviar</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
     <string name="profile_error_changing_email_title" translatable="false">No pudimos cambiar tu correo</string>
@@ -1121,6 +1124,7 @@
     <string name="smart_other_source_of_income_label_cr" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
     <string name="smart_other_generating_document_subtitle_cr" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
     <string name="smart_other_generating_document_subtitle_sv" translatable="false">Después de firmar tu contrato puedes empezar a utilizar tu cuenta.</string>
     <string name="smart_loading_label" translatable="false">Generando documentos...</string>
@@ -1434,6 +1438,7 @@
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
     <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="payment_cards_resume_bottom_sheet" translatable="false">Retomar verificación</string>
+    <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
     <string name="smart_payment_cards_list_card_title_sv" translatable="false">Selecciona la tarjeta con la que quieres ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1534,6 +1539,7 @@
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
     <!-- Smart Saving Amount -->
+    <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
     <string name="smart_saving_amount_title_cr" translatable="false">¿Cuánto querés ahorrar?</string>
     <string name="smart_saving_amount_title_sv" translatable="false">¿Cuánto quieres ahorrar?</string>
     <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>

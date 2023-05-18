@@ -82,8 +82,8 @@ fun TermsAndConditionsContent(viewModel: TermsAndConditionsViewModel) {
             )
 
             if (viewModel.uiState.termsAndConditionsSigned?.items != null && viewModel.uiState.termsAndConditionsSigned?.items?.isNotEmpty() == true) {
-                LazyColumn() {
-                    items(viewModel.uiState.termsAndConditionsSigned!!.items) { terms ->
+                LazyColumn {
+                    items(viewModel.uiState.termsAndConditionsSigned?.items ?: listOf()) { terms ->
                         val title = stringResource(id = viewModel.getStringResource(terms.type))
                         CustomInfoButton(
                             modifier = Modifier.padding(bottom = 16.dp),

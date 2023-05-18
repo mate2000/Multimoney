@@ -224,7 +224,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileTermsAndConditionsDetailScreen : Screen(
-        "profile_terms_and_conditions_detail_screen/{$TITLE}/{$HTML}/{$VERSION}/{$DATE_SIGNED}",
+        "profile_terms_and_conditions_detail_screen?$TITLE={$TITLE}?$HTML={$HTML}?$VERSION={$VERSION}?$DATE_SIGNED={$DATE_SIGNED}",
         "profile_terms_and_conditions_detail_screen"
     )
 

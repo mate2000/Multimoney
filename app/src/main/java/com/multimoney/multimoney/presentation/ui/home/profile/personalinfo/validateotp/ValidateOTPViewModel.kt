@@ -54,12 +54,6 @@ import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -70,6 +64,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class ValidateOTPViewModel @Inject constructor(
@@ -391,23 +391,8 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateTo(
-                    Screen.ProfileScreen.baseRoute
-                        .plus(getNavParam(ID_CLIENT, uiState.idClient))
-                        .plus(getNavParam(ID_BRAND, uiState.idBrand))
-                        .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
-                        .plus(getNavParam(LAST_NAME, uiState.lastName ?: ""))
-                        .plus(getNavParam(EMAIL, uiState.email))
-                        .plus(
-                            getNavParam(
-                                PHONE_NUMBER, uiState.newPhoneNumberCode?.plus(
-                                    uiState.newValue
-                                ) ?: ""
-                            )
-                        )
-                        .plus(getNavParam(IDENTIFICATION, uiState.identification))
-                        .plus(getNavParam(PK_USER, uiState.pkUser))
-                        .plus(getNavParam(USER_NAME, uiState.userName))
+                navigateToProfile(
+                    phoneNumber = uiState.newPhoneNumberCode?.plus(uiState.newValue) ?: ""
                 )
                 emitBaseEvent(HomeViewModel.BaseEvent.OnPhoneNumberChangedToastEvent)
             }
@@ -432,18 +417,7 @@ class ValidateOTPViewModel @Inject constructor(
                         identification = uiState.identification
                     ).toJson()
                 )
-                navigateTo(
-                    Screen.ProfileScreen.baseRoute
-                        .plus(getNavParam(ID_CLIENT, uiState.idClient))
-                        .plus(getNavParam(ID_BRAND, uiState.idBrand))
-                        .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
-                        .plus(getNavParam(LAST_NAME, uiState.lastName ?: ""))
-                        .plus(getNavParam(EMAIL, uiState.newValue))
-                        .plus(getNavParam(PHONE_NUMBER, uiState.phoneNumber?.ifEmpty { 0 }))
-                        .plus(getNavParam(IDENTIFICATION, uiState.identification))
-                        .plus(getNavParam(PK_USER, uiState.pkUser))
-                        .plus(getNavParam(USER_NAME, uiState.userName))
-                )
+                navigateToProfile(email = uiState.newValue ?: "")
                 emitBaseEvent(HomeViewModel.BaseEvent.OnEmailChangedToastEvent)
             }
         }
@@ -454,6 +428,26 @@ class ValidateOTPViewModel @Inject constructor(
 
     private fun navigateToConfirmChange() {
         navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
+    }
+
+    private fun navigateToProfile(phoneNumber: String? = null, email: String? = null) {
+        navigateTo(
+            Screen.ProfileScreen.baseRoute
+                .plus(getNavParam(ID_CLIENT, uiState.idClient))
+                .plus(getNavParam(ID_BRAND, uiState.idBrand))
+                .plus(getNavParam(FIRST_NAME, uiState.firstName?.ifEmpty { uiState.newValue }))
+                .plus(getNavParam(LAST_NAME, ""))
+                .plus(getNavParam(EMAIL, email ?: uiState.email ?: ""))
+                .plus(
+                    getNavParam(
+                        PHONE_NUMBER,
+                        phoneNumber ?: uiState.phoneNumber?.ifEmpty { 0 }.toString()
+                    )
+                )
+                .plus(getNavParam(IDENTIFICATION, uiState.identification))
+                .plus(getNavParam(PK_USER, uiState.pkUser))
+                .plus(getNavParam(USER_NAME, uiState.userName))
+        )
     }
 
     private fun processValidateSecondOTPResult(result: MultimoneyResult<ValidatePin?>) {

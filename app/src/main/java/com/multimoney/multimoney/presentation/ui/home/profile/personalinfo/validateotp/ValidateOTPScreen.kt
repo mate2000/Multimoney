@@ -46,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnInit
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -262,7 +263,11 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                separatePhoneNumber(viewModel.uiState.destination?.replace(" ", "") ?: "")
+                if (viewModel.uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) {
+                    separatePhoneNumber(viewModel.uiState.destination?.replace(" ", "") ?: "")
+                } else {
+                    viewModel.uiState.destination?.replace(" ", "") ?: ""
+                }
             ),
             style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
         )

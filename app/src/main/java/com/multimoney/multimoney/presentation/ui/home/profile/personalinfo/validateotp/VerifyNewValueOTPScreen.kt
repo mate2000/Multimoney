@@ -248,9 +248,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(titleText) {
                     top.linkTo(topNavBar.bottom)
                 },
-            text = stringResource(
-                id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_identity_verification_verify_your_new_phone else R.string.profile_identity_verification_verify_your_new_email
-            ),
+            text = stringResource(viewModel.uiState.titleResource),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left

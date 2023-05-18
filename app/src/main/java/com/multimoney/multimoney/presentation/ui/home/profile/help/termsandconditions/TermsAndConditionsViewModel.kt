@@ -13,13 +13,18 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.DATE_SIGNED
+import com.multimoney.multimoney.presentation.navigation.HTML
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.TITLE
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.VERSION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
+import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -102,7 +107,13 @@ class TermsAndConditionsViewModel @Inject constructor(
         writer.write(html)
         writer.close()
         navigateTo(
-            "${Screen.ProfileTermsAndConditionsDetailScreen.baseRoute}/$title/${tempFile.absolutePath.encodeURLToUTF()}/$version/$dateSigned"
+            Screen.ProfileTermsAndConditionsDetailScreen.baseRoute.plus(
+                getNavParam(
+                    TITLE,
+                    title
+                )
+            ).plus(getNavParam(HTML, tempFile.absolutePath.encodeURLToUTF()))
+                .plus(getNavParam(VERSION, version)).plus(getNavParam(DATE_SIGNED, dateSigned))
         )
     }
 

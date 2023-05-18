@@ -33,9 +33,9 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.SHOULD_GET_EVI
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_ID_PRINT
 import com.multimoney.multimoney.presentation.navigation.navgraph.SIGN_DOCUMENT_STEP_ARG
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.BaseEvent.OpenWhatsAppLink
-import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnCallGetLinkCreditContractEvent
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnChangeScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToContinueValidatingIdentity
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnNavigateToHome
 import com.multimoney.multimoney.presentation.ui.credit.origination.signdocumentprocess.SignDocumentProcessViewModel.UIEvent.OnShowDialogInformation
@@ -206,7 +206,7 @@ class SignDocumentProcessViewModel @Inject constructor(
 
     private fun handleSubscriptionsSteps(creditContractEvent: CreditContractEvent?) {
         when (creditContractEvent?.currentStep) {
-            CreditSubscriptionStep.LinkGenerated.step -> {
+            CreditSubscriptionStep.LinkGenerated.step, CreditSubscriptionStep.LinkRegenerated.step -> {
                 uiState = uiState.copy(
                     signDocumentProcessStep = SIGN_DOCUMENTS_STEP.value,
                     signDocumentUrl = creditContractEvent.link ?: ""

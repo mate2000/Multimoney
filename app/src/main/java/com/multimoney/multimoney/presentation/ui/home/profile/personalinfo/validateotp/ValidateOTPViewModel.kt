@@ -140,6 +140,19 @@ class ValidateOTPViewModel @Inject constructor(
                 PHASE_ONE -> R.string.profile_code_expires_in_template
                 null -> R.string.empty
                 else -> R.string.profile_code_resend_expires_in_template
+            },
+            titleResource = when (uiState.idBrand) {
+                Brand.CostaRica.id ->
+                    if (uiState.changingField == FieldToChange.PHONE.value) {
+                        R.string.profile_identity_verification_verify_your_new_phone_cr
+                    } else {
+                        R.string.profile_identity_verification_verify_your_new_email_cr
+                    }
+                else -> if (uiState.changingField == FieldToChange.PHONE.value) {
+                    R.string.profile_identity_verification_verify_your_new_phone
+                } else {
+                    R.string.profile_identity_verification_verify_your_new_email
+                }
             }
         )
     }
@@ -552,6 +565,7 @@ class ValidateOTPViewModel @Inject constructor(
         val isOtpFromSms: Boolean = false,
         val openDialog: DialogParameters = DialogParameters(),
         val changingField: String? = null,
+        val titleResource: Int = R.string.empty,
         val dialogTextResource: Int = R.string.empty,
         val alertTextResource: Int = R.string.empty,
         val enterTheCodeTextResource: Int = R.string.empty,

@@ -517,10 +517,10 @@
     <string name="automatic_logout_biometric_title" translatable="false">Reanudar mi sesión</string>
     <string name="automatic_logout_biometric_description" translatable="false">Utilice su biometría para autenticarse en la aplicación</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Verificá tu nuevo teléfono</string>
-    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Confirmá tu nuevo correo electrónico</string>
-    <string name="profile_identity_verification_verify_your_new_phone_cr" translatable="false">Verifica tu nuevo teléfono</string>
-    <string name="profile_identity_verification_verify_your_new_email_cr" translatable="false">Confirma tu nuevo correo electrónico</string>
+    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Confirma tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Confirma tu nuevo correo electrónico</string>
+    <string name="profile_identity_verification_verify_your_new_phone_cr" translatable="false">Confirmá tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email_cr" translatable="false">Confirmá tu nuevo correo electrónico</string>
     <string name="profile_identity_verification_phone" translatable="false">teléfono</string>
     <string name="profile_identity_verification_email" translatable="false">email</string>
     <string name="profile_where_do_you_want_to_receive_the_code_sv" translatable="false">¿Dónde quieres recibir el código?</string>

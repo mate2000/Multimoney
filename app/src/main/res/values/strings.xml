@@ -391,8 +391,8 @@
     <string name="home_my_products_title_credit" translatable="false">Crédito</string>
     <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
-    <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
-    <string name="home_my_products_label_smart_colones" translatable="false">Mi Cuenta Smart | ₡</string>
+    <string name="home_my_products_label_smart" translatable="false">Mi Smart | $</string>
+    <string name="home_my_products_label_smart_colones" translatable="false">Mi Smart | ₡</string>
     <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
     <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
@@ -428,7 +428,7 @@
 
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
-    <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
+    <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi Smart | %1$s</string>
     <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
     <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
@@ -596,11 +596,11 @@
     <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
 
     <!-- Home Smart Header Expanded-->
-    <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
+    <string name="home_product_smart_header_expanded_title" translatable="false">Mi Smart</string>
 
     <!--Crypto-->
     <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
-    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu Smart</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
 
@@ -621,7 +621,7 @@
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
     <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
     <string name="crypto_footer_expanded_dialog_title" translatable="false">Compra con Smart</string>
-    <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu cuenta Smart</string>
+    <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu Smart</string>
     <string name="crypto_footer_expanded_dialog_btn_cancel" translatable="false">Cancelar</string>
     <string name="crypto_footer_expanded_dialog_btn_saving" translatable="false">Ahorrar</string>
     <string name="buy_crypto_warning_bs_content" translatable="false">Las criptomonedas son activos altamente volátiles que pueden generar pérdidas de capital. \nEsta inversión es por voluntad y riesgo propio del inversionista ya que MultiMoney no se hace responsable ante eventuales perjuicios. Te recomendamos tomar decisiones de inversión informadas.</string>
@@ -633,7 +633,7 @@
     <string name="home_maintenance_btn_text" translatable="false">Entendido</string>
 
     <!-- Home Smart - Account Details -->
-    <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
+    <string name="smart_account_detail_title" translatable="false">Detalles de mi Smart</string>
     <string name="smart_account_detail_cr_account_label" translatable="false">IBAN | %s</string>
     <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
     <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
@@ -1015,7 +1015,7 @@
 
     <!-- Smart payment success -->
     <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
-    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Monto ahorrado a tu cuenta Smart | %s</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Monto ahorrado a tu Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
@@ -1198,7 +1198,7 @@
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 
     <!-- Smart Payment Amount Bottom Sheet -->
-    <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
+    <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_save_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_account" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_from" translatable="false">Desde</string>
@@ -1351,7 +1351,7 @@
     <!--Crypto Purchase Flow - Confirmation-->
     <string name="crypto_purchase_flow_confirmation_title" translatable="false">Monto a comprar</string>
     <string name="crypto_purchase_flow_confirmation_from_account_title" translatable="false">Desde la cuenta</string>
-    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi cuenta Smart | %1s</string>
+    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi Smart | %1s</string>
     <string name="crypto_purchase_flow_confirmation_estimated_amount" translatable="false">Valor aproximado en</string>
     <string name="crypto_purchase_flow_confirmation_btn_buy" translatable="false">Comprar</string>
 
@@ -1451,13 +1451,13 @@
     <string name="payment_select_sending_type_transfer_365_mobile" translatable="false">Transfer 365 móvil</string>
     <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
     <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
-    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>
-    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
+    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi Smart Dólares</string>
+    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi Smart Colones</string>
 
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
-    <string name="payment_account_colon" translatable="false">Mi Cuenta Smart | Colones</string>
-    <string name="payment_account_dollar" translatable="false">Mi Cuenta Smart | Dólares</string>
+    <string name="payment_account_colon" translatable="false">Mi Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">Mi Smart | Dólares</string>
 
     <!-- IBAN Account -->
     <string name="payment_account_iban_title" translatable="false">¿En qué cuenta IBAN querés recibir tu dinero?</string>
@@ -1500,7 +1500,7 @@
 
     <!-- Smart Movements -->
     <string name="smart_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
-    <string name="smart_movements_empty_state_description" translatable="false">Empezá a ahorrar en tu cuenta para ver registros.</string>
+    <string name="smart_movements_empty_state_description" translatable="false">Empezá a ahorrar en tu Smart para ver registros.</string>
 
     <!-- Download Account Statement Worker -->
     <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>

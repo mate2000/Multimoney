@@ -110,13 +110,6 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                     color = MultimoneyTheme.colors.text,
                     textAlign = TextAlign.Left
                 )
-                CustomInformativeText(
-                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                    leadingIcon = R.drawable.ic_information,
-                    text = stringResource(id = viewModel.uiState.disclaimerResource),
-                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.text),
-                    alignmentVertical = Alignment.Top
-                )
                 if (viewModel.idBrand == Brand.Mexico.id) {
 
                     Text(
@@ -177,16 +170,6 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                     )
 
                 } else {
-
-                    if (viewModel.uiState.isAccountNumberVisible) {
-                        CustomLabelDescRow(
-                            modifier = Modifier
-                                .padding(top = 18.dp)
-                                .fillMaxWidth(),
-                            labelText = stringResource(id = R.string.payment_options_transfer_account),
-                            descriptionText = viewModel.uiState.transferAccount?.account ?: ""
-                        )
-                    }
                     CustomLabelDescRow(
                         modifier = Modifier
                             .padding(top = 18.dp)
@@ -221,7 +204,7 @@ fun PaymentOptionsTransferContent(viewModel: PaymentOptionsTransferViewModel = h
                             .padding(top = 18.dp)
                             .fillMaxWidth(),
                         labelText = stringResource(id = R.string.payment_options_transfer_beneficiary_name),
-                        descriptionText = viewModel.uiState.transferAccount?.beneficiaryName ?: ""
+                        descriptionText = viewModel.uiState.beneficiaryName
                     )
                 }
 

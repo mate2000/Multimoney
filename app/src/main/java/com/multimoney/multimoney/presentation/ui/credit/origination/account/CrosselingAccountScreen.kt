@@ -32,12 +32,14 @@ import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.getAccountPrefixByCurrencyId
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.getMaskedAccount
 
 @Composable
 fun CrosselingAccountScreen(
-    sharedViewModel: CreditViewModel, viewModel: CrosselingAccountViewModel = hiltViewModel()
+    sharedViewModel: CreditViewModel,
+    viewModel: CrosselingAccountViewModel = hiltViewModel()
 ) {
     LaunchedEffect(true) {
         sharedViewModel.onUIEvent(
@@ -45,44 +47,53 @@ fun CrosselingAccountScreen(
                 nextAction = {
                     viewModel.onUIEvent(
                         OnNextActionClick(
-                            user = sharedViewModel.email, nextStepAction = {
+                            user = sharedViewModel.email,
+                            nextStepAction = {
                                 sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnCallMutationSaveCreditFlowStep)
-                            }, saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
+                            },
+                            saveCreditStepsHelper = sharedViewModel.saveCreditStepsHelper
                         )
                     )
                     sharedViewModel.logEvents(
                         AdjustEventType.CROSSELLING_FIRST_FILL_ACCOUNT_5028
                     )
-                }, nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
+                },
+                nextStep = if (sharedViewModel.idBrand.toInt() == Brand.ElSalvador.id) {
                     CreditStep.Three.id
                 } else {
                     CreditStep.Four.id
-                }, previousStep = CreditStep.One.id
+                },
+                previousStep = CreditStep.One.id
             )
         )
-        viewModel.onUIEvent(OnStart(pkUser = sharedViewModel.pkUser.toInt(),
-            user = sharedViewModel.email,
-            idBrand = sharedViewModel.idBrand.toInt(),
-            idUserRequest = sharedViewModel.idUserRequest,
-            identification = sharedViewModel.identification,
-            country = "",
-            idAccount = 0,
-            accountNumber = "",
-            onLoadingValueChange = { isLoading ->
-                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
-            },
-            onFailureWithDialog = { isLoading, dialogParameter ->
-                sharedViewModel.onUIEvent(
-                    CreditViewModel.UIEvent.OnFailureWithDialog(
-                        isLoading, dialogParameter
+        viewModel.onUIEvent(
+            OnStart(
+                pkUser = sharedViewModel.pkUser.toInt(),
+                user = sharedViewModel.email,
+                idBrand = sharedViewModel.idBrand.toInt(),
+                idUserRequest = sharedViewModel.idUserRequest,
+                identification = sharedViewModel.identification,
+                country = "",
+                idAccount = 0,
+                accountNumber = "",
+                onLoadingValueChange = { isLoading ->
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnLoadingValueChange(isLoading))
+                },
+                onFailureWithDialog = { isLoading, dialogParameter ->
+                    sharedViewModel.onUIEvent(
+                        CreditViewModel.UIEvent.OnFailureWithDialog(
+                            isLoading,
+                            dialogParameter
+                        )
                     )
-                )
-            }) { isEmpty ->
-            if (isEmpty) {
-                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.NavigateToAccountScreen)
+                }
+            ) { isEmpty ->
+                if (isEmpty) {
+                    sharedViewModel.onUIEvent(CreditViewModel.UIEvent.NavigateToAccountScreen)
+                }
+                sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetBankListEmpty(isEmpty))
             }
-            sharedViewModel.onUIEvent(CreditViewModel.UIEvent.OnSetBankListEmpty(isEmpty))
-        })
+        )
     }
 
     PaymentAccountContent(viewModel, sharedViewModel)
@@ -91,12 +102,11 @@ fun CrosselingAccountScreen(
 @Composable
 @Preview
 fun PaymentAccountContent(
-    viewModel: CrosselingAccountViewModel = hiltViewModel(), sharedViewModel: CreditViewModel = hiltViewModel()
+    viewModel: CrosselingAccountViewModel = hiltViewModel(),
+    sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
     Column(
-        modifier = Modifier
-            .background(MultimoneyTheme.colors.background)
-            .fillMaxSize()
+        modifier = Modifier.background(MultimoneyTheme.colors.background).fillMaxSize()
     ) {
         Text(
             modifier = Modifier.padding(top = 8.dp, start = 24.dp, end = 24.dp, bottom = 20.dp),
@@ -123,37 +133,35 @@ fun PaymentAccountContent(
 @Composable
 @Preview
 fun PaymentAccountList(
-    viewModel: CrosselingAccountViewModel = hiltViewModel(), sharedViewModel: CreditViewModel = hiltViewModel()
+    viewModel: CrosselingAccountViewModel = hiltViewModel(),
+    sharedViewModel: CreditViewModel = hiltViewModel()
 ) {
     viewModel.uiState.clientBankAccountList?.let { clientBankAccountList ->
         LazyColumn(modifier = Modifier.padding(top = 20.dp, start = 24.dp, end = 24.dp)) {
             items(clientBankAccountList) { clientBankAccount ->
-                CustomInfoButton(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
+                CustomInfoButton(
+                    modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                     startIcon = clientBankAccount?.currencyId?.getCurrencyFromId()?.accountIcon ?: 0,
                     title = clientBankAccount?.bank ?: "",
                     subtitle = getMaskedAccount(
-                        clientBankAccount?.sinpeAccount ?: "", stringResource(id = R.string.payment_account_masked_text)
+                        clientBankAccount?.sinpeAccount ?: "",
+                        stringResource(id = R.string.payment_account_masked_text),
+                        clientBankAccount?.currencyId?.getAccountPrefixByCurrencyId() ?: ""
                     ),
                     endIcon = R.drawable.ic_right_chevron,
                     onClick = {
                         viewModel.onUIEvent(
-                            OnClientBankAccountSelected(
-                                clientBankAccount,
-                                onContinueClick = {
-                                    sharedViewModel.onUIEvent(OnContinueClick())
-                                }
-                            )
+                            OnClientBankAccountSelected(clientBankAccount, onContinueClick = {
+                                sharedViewModel.onUIEvent(OnContinueClick())
+                            })
                         )
-                    })
+                    }
+                )
             }
             item {
                 CustomButton(
                     text = stringResource(id = R.string.payment_account_create),
-                    modifier = Modifier
-                        .padding(top = 32.dp)
-                        .fillMaxWidth(),
+                    modifier = Modifier.padding(top = 32.dp).fillMaxWidth(),
                     onClick = {
                         sharedViewModel.onUIEvent(CreditViewModel.UIEvent.NavigateToAccountScreen)
                     },

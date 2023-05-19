@@ -16,12 +16,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 
 @Composable
-fun NoticeSection() {
+fun NoticeSection(
+    idBrand: Int = Brand.Default.id,
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,18 +39,26 @@ fun NoticeSection() {
             verticalArrangement = Arrangement.Center,
         ) {
             Image(
-                modifier = Modifier.padding(6.dp),
+                modifier = Modifier.padding(4.dp),
                 painter = painterResource(id = R.drawable.ic_crypto_empty_state_notice),
                 contentDescription = null
             )
             Text(
-                text = stringResource(R.string.crypto_footer_expanded_notice_title),
+                text = if (idBrand == Brand.CostaRica.id) {
+                    stringResource(R.string.crypto_footer_expanded_notice_title_cr)
+                } else {
+                    stringResource(R.string.crypto_footer_expanded_notice_title)
+                },
                 modifier = Modifier.padding(bottom = 0.dp),
                 style = Typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
                 color = MultimoneyTheme.colors.labelText
             )
             Text(
-                text = stringResource(R.string.crypto_footer_expanded_notice_description),
+                text = if (idBrand == Brand.CostaRica.id) {
+                    stringResource(R.string.crypto_footer_expanded_notice_description_cr)
+                } else {
+                    stringResource(R.string.crypto_footer_expanded_notice_description)
+                },
                 modifier = Modifier.padding(bottom = 0.dp),
                 style = Typography.subtitle2,
                 color = MultimoneyTheme.colors.labelText,

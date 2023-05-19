@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Popup
+import com.multimoney.domain.model.credit.BanksAmpliation
 import com.multimoney.domain.model.credit.CreditCatalogOption
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.extension.findActivity
@@ -253,6 +254,31 @@ fun CustomDropdown(
         modifier = modifier,
         items = items?.map { it?.description ?: "" } ?: listOf(),
         value = value?.description ?: "",
+        onValueChange = { _, index ->
+            onValueChange(items?.get(index))
+        },
+        labelText = labelText,
+        placeHolder = placeHolder,
+        isError = isError,
+        enabled = enabled
+    )
+}
+
+@Composable
+fun CustomDropdown(
+    modifier: Modifier,
+    items: List<BanksAmpliation?>?,
+    value: BanksAmpliation?,
+    onValueChange: (newText: BanksAmpliation?) -> Unit = {},
+    labelText: String,
+    placeHolder: String?,
+    isError: Boolean = false,
+    enabled: Boolean = true
+) {
+    CustomDropdown(
+        modifier = modifier,
+        items = items?.map { it?.bank ?: "" } ?: listOf(),
+        value = value?.bank ?: "",
         onValueChange = { _, index ->
             onValueChange(items?.get(index))
         },

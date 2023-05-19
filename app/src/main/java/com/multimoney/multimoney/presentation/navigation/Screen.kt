@@ -134,6 +134,7 @@ const val SYS_ID_ACCOUNT_REQUEST = "sys_id_request"
 const val WORK_FLOW = "work_flow"
 const val ACCOUNT_ID = "account_id"
 const val EDIT_SUCCESS = "edit_success"
+const val BENEFICIARY = "beneficiary"
 
 // Previous
 const val PREVIOUS_IS_RESTART = "previous_is_restart"
@@ -155,7 +156,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     object OnBoardingScreen : Screen("onboarding_screen")
     object SignInScreen :
-        Screen("sign_in_screen", "sign_in_screen")
+        Screen("sign_in_screen?$FORCE_CHANGE_DEVICE={$FORCE_CHANGE_DEVICE}", "sign_in_screen")
 
     object SignUpScreen :
         Screen("sign_up_screen/{$SIGN_UP_STEP}?$ID_BRAND={$ID_BRAND}", "sign_up_screen")
@@ -195,6 +196,11 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
         "sign_up_splash_come_back_screen"
     )
 
+    object SignInOTPScreen : Screen(
+        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
+        "sign_in_otp_screen"
+    )
+
     object SignUpCompleted : Screen("sign_up_completed/{$EMAIL}/{$PASSWORD}", "sign_up_completed")
 
     // HomeNavGraph Screens
@@ -218,42 +224,42 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileTermsAndConditionsDetailScreen : Screen(
-        "profile_terms_and_conditions_detail_screen/{$TITLE}/{$HTML}/{$VERSION}/{$DATE_SIGNED}",
+        "profile_terms_and_conditions_detail_screen?$TITLE={$TITLE}?$HTML={$HTML}?$VERSION={$VERSION}?$DATE_SIGNED={$DATE_SIGNED}",
         "profile_terms_and_conditions_detail_screen"
     )
 
     object ProfilePersonalInfoScreen : Screen(
-        "profile_personal_info_screen/{$ID_CLIENT}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_personal_info_screen/{$ID_CLIENT}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$LAST_NAME}",
         "profile_personal_info_screen"
     )
 
     object ProfileVerifyIdentityPhoneScreen : Screen(
-        "profile_verify_identity_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$PHONE_NUMBER_CODE}",
+        "profile_verify_identity_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$NEW_PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$LAST_NAME}/{$PHONE_NUMBER_CODE}",
         "profile_verify_identity_phone_screen"
     )
 
     object ProfileVerifyIdentityEmailScreen : Screen(
-        "profile_verify_identity_email_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$NEW_EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_verify_identity_email_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$NEW_EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$LAST_NAME}",
         "profile_verify_identity_email_screen"
     )
 
     object ProfileChangePhoneScreen : Screen(
-        "profile_change_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_change_phone_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$LAST_NAME}",
         "profile_change_phone_screen"
     )
 
     object ProfileChangeEmailScreen : Screen(
-        "profile_change_email_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}",
+        "profile_change_email_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$ID_BRAND}/{$PK_USER}/{$PHONE_NUMBER}/{$EMAIL}/{$IDENTIFICATION}/{$USER_NAME}/{$FIRST_NAME}/{$LAST_NAME}",
         "profile_change_email_screen"
     )
 
     object ProfileValidateOTPScreen : Screen(
-        "profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}",
+        "profile_validate_otp_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$SEND_METHOD}/{$IDENTIFICATION}/{$FIRST_NAME}/{$LAST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}",
         "profile_validate_otp_screen"
     )
 
     object ProfileVerifyNewValueOTPScreen : Screen(
-        "profile_verify_new_value_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$IDENTIFICATION}/{$FIRST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}/{$SEND_METHOD}",
+        "profile_verify_new_value_screen/{$ID_CLIENT}/{$CHANGING_FIELD}/{$NEW_VALUE}/{$IDENTIFICATION}/{$FIRST_NAME}/{$LAST_NAME}/{$EMAIL}/{$PHONE_NUMBER}/{$PK_USER}/{$ID_BRAND}/{$USER}/{$PHONE_NUMBER_CODE}/{$SEND_METHOD}",
         "profile_verify_new_value_screen"
     )
 
@@ -449,7 +455,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentOptionsTransferScreen : Screen(
-        "payment_options_transfer_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$TRANSFER_ACCOUNT}",
+        "payment_options_transfer_screen/{$ID_BRAND}/{$CREDIT_NUMBER}/{$TRANSFER_ACCOUNT}/{$BENEFICIARY}",
         "payment_options_transfer_screen"
     )
 

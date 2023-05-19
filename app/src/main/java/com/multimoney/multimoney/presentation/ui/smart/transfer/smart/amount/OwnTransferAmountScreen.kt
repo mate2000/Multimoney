@@ -50,8 +50,8 @@ fun OwnTransferAmountScreen(
     } else if (viewModel.amountUIState.showErrorScreen) {
         AlertResult(
             isTopNavBarVisible = false,
-            titleString = viewModel.amountUIState.errorMessage,
-            descriptionString = viewModel.amountUIState.errorMessage,
+            titleString = viewModel.amountUIState.errorMessage.ifEmpty { stringResource(R.string.error_occurred_title) },
+            descriptionString = viewModel.amountUIState.errorDetail.ifEmpty { stringResource(R.string.error_try_again) },
             buttonTextResource = R.string.error_button_try_again,
             onButtonClick = { viewModel.onAmountUIEvent(OnRetryTransfer) }
         )

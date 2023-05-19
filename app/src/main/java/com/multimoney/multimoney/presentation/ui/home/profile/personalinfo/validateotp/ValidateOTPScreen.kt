@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.ireward.htmlcompose.HtmlText
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.domain.model.util.onFailure
@@ -44,6 +46,7 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel.UIEvent.OnInit
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
@@ -57,6 +60,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
+import com.multimoney.multimoney.presentation.util.separatePhoneNumber
 
 @Preview
 @Composable
@@ -250,7 +254,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        Text(
+        HtmlText(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -259,10 +263,13 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 },
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
-                viewModel.uiState.destination?.replace(" ", "") ?: ""
+                if (viewModel.uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) {
+                    separatePhoneNumber(viewModel.uiState.destination?.replace(" ", "") ?: "")
+                } else {
+                    viewModel.uiState.destination?.replace(" ", "") ?: ""
+                }
             ),
-            style = Typography.body2,
-            color = MultimoneyTheme.colors.labelText
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
         )
 
         CustomInformativeText(
@@ -358,7 +365,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
-                    .fillMaxWidth(),
+                    .wrapContentWidth(),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.timerColor,
                     fontWeight = FontWeight.SemiBold

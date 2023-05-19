@@ -52,7 +52,7 @@
     <string name="common_go_home" translatable="false">Ir al inicio</string>
     <string name="sign" translatable="false">Firmar</string>
     <string-array name="options_yes_no">
-        <item>Si</item>
+        <item>Sí</item>
         <item>No</item>
     </string-array>
     <string name="colons" translatable="false">Colones</string>
@@ -98,6 +98,7 @@
     <string name="error_button_try_later" translatable="false">Intentar más tarde</string>
     <string name="error_try_again" translatable="false">Intentalo nuevamente</string>
     <string name="error_button_try_again" translatable="false">Intentar de nuevo</string>
+    <string name="error_no_connection_sign_in" translatable="false">La conexión a internet parece estar desactivada.</string>
 
     <!-- OnBoarding El Salvador-->
     <string name="onboarding_el_salvador_step_one_title" translatable="false">Multiplica tus ahorros</string>
@@ -147,8 +148,8 @@
     <string name="sign_in_password_required" translatable="false">La contraseña es requerida</string>
     <string name="sign_in_validation" translatable="false">El correo y/o contraseña es inválido</string>
     <string name="sign_in_biometric_title" translatable="false">Ingresar con biométrico</string>
-    <string name="sign_in_biometric_enter_with_password" translatable="false">O podés ingresar tu contraseña</string>
-    <string name="sign_in_biometric_email_hint" translatable="false">Ingresá tu correo electrónico</string>
+    <string name="sign_in_biometric_enter_with_password" translatable="false">O ingresar tu contraseña</string>
+    <string name="sign_in_biometric_email_hint" translatable="false">Correo electrónico</string>
     <string name="sign_in_session_active_on_another_device_title" translatable="false">Sesión activa en otro dispositivo</string>
     <string name="sign_in_session_blocked_title" translatable="false">Cambio de dispositivo bloqueado</string>
     <string name="sign_in_session_blacklisted_title_cr" translatable="false">¿No podés entrar a MultiMoney?</string>
@@ -179,8 +180,8 @@
     <string name="sign_in_too_many_attempts" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, intenta de nuevo</string>
     <string name="sign_in_account_blocked_title_cr" translatable="false">Restablecé tu contraseña</string>
     <string name="sign_in_account_blocked_title" translatable="false">Restablece tu contraseña</string>
-    <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad debés restablecer la contraseña para poder ingresar al app</string>
-    <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad debes restablecer la contraseña para poder ingresar al app</string>
+    <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablecé tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
+    <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablece tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
     <string name="sign_in_restore_password" translatable="false">Restablecer</string>
 
     <!-- Sign Up General-->
@@ -212,17 +213,21 @@
     <string name="sign_up_email_required" translatable="false">Correo electrónico requerido</string>
     <string name="sign_up_email_placeholder" translatable="false">nombre@email.com</string>
     <string name="sign_up_email_not_valid" translatable="false">Correo electrónico inválido</string>
-    <string name="sign_up_email_user_completed_dialog_title" translatable="false">Ya tenés una cuenta registrada con este correo</string>
-    <string name="sign_up_email_user_completed_dialog_description" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
+    <string name="sign_up_email_user_completed_dialog_title" translatable="false">Ya tienes una cuenta registrada con este correo</string>
+    <string name="sign_up_email_user_completed_dialog_description" translatable="false">Si olvidaste tu contraseña, sigue el proceso para recuperarla.</string>
+    <string name="sign_up_email_user_completed_dialog_title_cr" translatable="false">Ya tenés una cuenta registrada con este correo</string>
+    <string name="sign_up_email_user_completed_dialog_description_cr" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
-    <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
+    <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
+    <string name="sign_up_email_blocked_dialog_description_cr" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
+    <string name="sign_up_email_blocked_dialog_description_sv" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContacta a servicio al cliente.</string>
     <string name="sign_up_email_another_device_registered_dialog_title" translatable="false">Registro en proceso en otro dispositivo</string>
     <string name="sign_up_email_another_device_registered_dialog_description" translatable="false">Al ingresar aquí, cerrarás la sesion que se encuentra abierta en otro dispositivo y deberás empezar el registro desde el principio</string>
 
     <!-- Sign Up Phone -->
     <string name="sign_up_phone_title" translatable="false">¿Cuál es tu número de teléfono\ncelular?</string>
-    <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad</string>
+    <string name="sign_up_phone_information" translatable="false">Lo registramos por motivos de seguridad.</string>
     <string name="sign_up_phone_label_phone" translatable="false">Celular</string>
     <string name="sign_up_phone_required" translatable="false">Número de celular requerido</string>
     <string name="sign_up_phone_not_valid" translatable="false">Número de celular incorrecto</string>
@@ -234,8 +239,8 @@
 
     <!-- Sign Up Otp -->
     <string name="sign_up_otp_title" translatable="false">Te enviamos un SMS \nal %s</string>
-    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para conectar tu teléfono a tu cuenta</string>
-    <string name="sign_up_otp_subtitle_cr" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta</string>
+    <string name="sign_up_otp_subtitle" translatable="false">Ingresa el código para conectar tu teléfono a tu cuenta.</string>
+    <string name="sign_up_otp_subtitle_cr" translatable="false">Ingresá el código para conectar tu teléfono a tu cuenta.</string>
     <string name="sign_up_otp_change_phone" translatable="false">Corregir celular</string>
     <string name="sign_up_otp_resend" translatable="false">Reenviar código</string>
     <string name="sign_up_otp_call" translatable="false">Recibir código por llamada</string>
@@ -323,10 +328,10 @@
     <!-- Sign Up Id Validation-->
     <string name="sign_up_id_validation_title" translatable="false">Confirmá tu identidad</string>
     <string name="sign_up_id_validation_subtitle" translatable="false">Recomendaciones:</string>
-    <string name="sign_up_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
-    <string name="sign_up_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
-    <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios</string>
-    <string name="sign_up_id_validation_three_sv" translatable="false">Tómate una selfie sin lentes o accesorios</string>
+    <string name="sign_up_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos.</string>
+    <string name="sign_up_id_validation_two" translatable="false">Tené a mano tu documento de identificación.</string>
+    <string name="sign_up_id_validation_three" translatable="false">Tomate una selfie sin lentes o accesorios.</string>
+    <string name="sign_up_id_validation_three_sv" translatable="false">Tómate una selfie sin lentes o accesorios.</string>
 
     <!-- Sign Up Complete -->
     <string name="sign_up_complete_title" translatable="false">¡Felices finanzas!\nBienvenido a MultiMoney</string>
@@ -389,7 +394,7 @@
     <string name="home_my_products_title" translatable="false">Mi billetera MultiMoney</string>
     <string name="home_my_products_subtitle" translatable="false">Tus productos</string>
     <string name="home_my_products_title_credit" translatable="false">Crédito</string>
-    <string name="home_my_products_label_credit" translatable="false">Mi Crédito</string>
+    <string name="home_my_products_label_credit" translatable="false">Mi crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
     <string name="home_my_products_label_smart" translatable="false">Mi Smart | $</string>
     <string name="home_my_products_label_smart_colones" translatable="false">Mi Smart | ₡</string>
@@ -418,7 +423,7 @@
     <string name="home_product_movement_title" translatable="false">Mis movimientos</string>
     <string name="home_product_movement_pending" translatable="false">Pendiente</string>
     <string name="home_product_movement_release_button" translatable="false">Liberar transferencia</string>
-    <string name="home_product_check_all" translatable="false">Ver Todos</string>
+    <string name="home_product_check_all" translatable="false">Ver todos</string>
     <string name="home_product_title" translatable="false">Disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_fee_mx" translatable="false">Mensualidad</string>
@@ -469,10 +474,11 @@
     <string name="profile_terms_and_conditions_title_template" translatable="false">Términos y condiciones: %1$s</string>
     <string name="profile_terms_and_conditions_version_template" translatable="false">Versión: %1$s</string>
     <string name="profile_change_email_address" translatable="false">Cambio de correo electrónico</string>
-    <string name="profile_change_password" translatable="false">Cambio de contraseña</string>
+    <string name="profile_change_password" translatable="false">Cambiar contraseña</string>
     <string name="profile_notifications" translatable="false">Notificationes</string>
     <string name="profile_biometrics" translatable="false">Biométricos</string>
     <string name="profile_enter_the_app_with_biometrics" translatable="false">Ingresa al app con tus biométricos</string>
+    <string name="profile_enter_the_app_with_biometrics_cr" translatable="false">Ingresá al app con tus biométricos</string>
     <string name="profile_change_phone" translatable="false">Cambio de teléfono</string>
     <string name="profile_change_phone_title" translatable="false">Cambiar teléfono</string>
     <string name="profile_change_phone_check_format_template" translatable="false">Revisar formato. Debe tener %1$s digitos </string>
@@ -511,8 +517,10 @@
     <string name="automatic_logout_biometric_title" translatable="false">Reanudar mi sesión</string>
     <string name="automatic_logout_biometric_description" translatable="false">Utilice su biometría para autenticarse en la aplicación</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Verifica tu nuevo teléfono</string>
-    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Verifica tu nuevo email</string>
+    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Confirma tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Confirma tu nuevo correo electrónico</string>
+    <string name="profile_identity_verification_verify_your_new_phone_cr" translatable="false">Confirmá tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email_cr" translatable="false">Confirmá tu nuevo correo electrónico</string>
     <string name="profile_identity_verification_phone" translatable="false">teléfono</string>
     <string name="profile_identity_verification_email" translatable="false">email</string>
     <string name="profile_where_do_you_want_to_receive_the_code_sv" translatable="false">¿Dónde quieres recibir el código?</string>
@@ -525,13 +533,14 @@
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
     <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_verify" translatable="false">Verificar</string>
-    <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a %1$s</string>
-    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a %1$s</string>
+    <string name="profile_enter_the_code_sent_to_template_sv" translatable="false"><![CDATA[Ingresa el código de verificación enviado a <b>%1$s</b>]]></string>
+    <string name="profile_enter_the_code_sent_to_template" translatable="false"><![CDATA[Ingresá el código de verificación enviado a <b>%1$s</b>]]></string>
     <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_phone_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email_sv" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
+    <string name="profile_code_expires_in_template_cr" translatable="false">Esperá %1$s segundos para reenviar</string>
+    <string name="profile_code_expires_in_template" translatable="false">Espera %1$s segundos para reenviar</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
     <string name="profile_error_changing_email_title" translatable="false">No pudimos cambiar tu correo</string>
@@ -549,7 +558,8 @@
     <string name="profile_change_email_button" translatable="false">Cambiar correo electrónico</string>
     <string name="profile_we_will_send_you_a_code_to_your_email" translatable="false">Te enviaremos un código de verificación para confirmar tu nuevo correo</string>
     <string name="profile_email_check_format_error" translatable="false">Revisa formato. Debe contener "@" y "."</string>
-    <string name="profile_email_not_equal_than_previous_error" translatable="false">El correo electrónico ingresado debe ser distinto al actual </string>
+    <string name="profile_email_not_equal_than_previous_error" translatable="false">El correo electrónico ingresado debe ser distinto al actual</string>
+    <string name="profile_email_already_registered_error" translatable="false">Correo electrónico ya registrado</string>
     <string name="profile_emails_does_not_match_error" translatable="false">Los correos electrónicos no coinciden</string>
     <string name="profile_sure_to_deactivate_biometrics_sv" translatable="false">¿Estás seguro que quieres desactivar tus biométricos?</string>
     <string name="profile_sure_to_deactivate_biometrics" translatable="false">¿Estás seguro que querés desactivar tus biométricos?</string>
@@ -589,18 +599,18 @@
     <string name="sign_out_dialog_description" translatable="false">Para volver a ingresar al app deberás escribir tu usuario y contraseña de nuevo</string>
 
     <!-- Home Product Header -->
-    <string name="home_product_header_title" translatable="false">Mis Productos</string>
+    <string name="home_product_header_title" translatable="false">Mis productos</string>
     <string name="home_product_available_products_title" translatable="false">Productos disponibles</string>
 
     <!-- Home Credit Header Expanded-->
-    <string name="home_product_credit_header_expanded_title" translatable="false">Mi Crédito</string>
+    <string name="home_product_credit_header_expanded_title" translatable="false">Mi crédito</string>
 
     <!-- Home Smart Header Expanded-->
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Smart</string>
 
     <!--Crypto-->
     <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
-    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu Smart</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu Smart.</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
 
@@ -614,8 +624,10 @@
     <!-- Home Credit Footer Expanded-->
     <string name="crypto_footer_expanded_btn_wallet" translatable="false">Mi portafolio</string>
     <string name="crypto_footer_expanded_btn_market" translatable="false">Mercado</string>
-    <string name="crypto_footer_expanded_notice_title" translatable="false">Empezá a invertir en Cripto</string>
-    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en Portafolio y comprá desde el Mercado</string>
+    <string name="crypto_footer_expanded_notice_title_cr" translatable="false">Empezá a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_title" translatable="false">Empieza a invertir en Cripto</string>
+    <string name="crypto_footer_expanded_notice_description_cr" translatable="false">Consultá la información de tu inversión en \"Portafolio\" y comprá desde el \"Mercado\".</string>
+    <string name="crypto_footer_expanded_notice_description" translatable="false">Consulta la información de tu inversión en \"Portafolio\" y compra desde el \"Mercado\".</string>
     <string name="crypto_footer_expanded_buy_crypto_label" translatable="false">Comprar</string>
     <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
@@ -629,7 +641,7 @@
 
     <!-- Home Maintenance State-->
     <string name="home_maintenance_state_title" translatable="false">Servicio en mantenimiento</string>
-    <string name="home_maintenance_state_description" translatable="false">Pronto podrás consultar a detalle la información de tus criptomonedas</string>
+    <string name="home_maintenance_state_description" translatable="false">Pronto podrás consultar a detalle la información de tus criptomonedas.</string>
     <string name="home_maintenance_btn_text" translatable="false">Entendido</string>
 
     <!-- Home Smart - Account Details -->
@@ -684,7 +696,7 @@
     <string name="credit_amount_term_value" translatable="false">%1$s meses</string>
     <string name="credit_amount_commission_for_disbursement" translatable="false">Comisión por desembolso:\u00A0</string>
     <string name="credit_amount_term_and_conditions_first" translatable="false">Acepto los</string>
-    <string name="credit_amount_term_and_conditions_second" translatable="false">Términos y Condiciones</string>
+    <string name="credit_amount_term_and_conditions_second" translatable="false">Términos y condiciones</string>
     <string name="credit_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_amount_terms_and_condition_title" translatable="false">Términos y\nCondiciones</string>
     <string name="credit_terms_and_condition_description" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur, But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure??</string>
@@ -708,7 +720,7 @@
 
     <!-- Location   -->
     <string name="payment_location_maps_address_button" translatable="false">Ver dirección en Maps</string>
-    <string name="payment_location_maps_info" translatable="false">Puedes mostrar el código de barras de tu Estado de Cuenta.</string>
+    <string name="payment_location_maps_info" translatable="false">Puedes pagar utilizando el código de barras.</string>
     <string name="payment_location_maps_info_cr" translatable="false">Podés pagar utilizando el código de barras.</string>
     <string name="payment_location_maps_address" translatable="false">Dirección</string>
     <string name="payment_location_maps_opening_time" translatable="false">Horario</string>
@@ -724,7 +736,8 @@
     <string name="credit_monthly_income_required_income" translatable="false">Ingresos requerido</string>
     <string name="credit_monthly_income_income_hint" translatable="false">%s 0.00</string>
     <string name="credit_monthly_income_greater_than_zero_error" translatable="false">Ingresa una cantidad mayor a cero</string>
-    <string name="credit_monthly_income_profession_label" translatable="false">Seleccioná tu profesión</string>
+    <string name="credit_monthly_income_profession_label_cr" translatable="false">Seleccioná tu profesión</string>
+    <string name="credit_monthly_income_profession_label" translatable="false">Selecciona tu profesión</string>
     <string name="credit_monthly_income_profession_hint" translatable="false">Seleccionar</string>
     <string name="credit_monthly_income_occupation_label" translatable="false">Seleccioná tu ocupación</string>
     <string name="credit_monthly_income_occupation_hint" translatable="false">Seleccionar</string>
@@ -732,8 +745,10 @@
     <string name="credit_monthly_income_dui_expiration_date_label" translatable="false">Fecha de vencimiento de DUI</string>
     <string name="credit_monthly_income_dui_emission_place_label" translatable="false">Lugar de emisión de DUI</string>
     <string name="credit_monthly_income_dui_date_placeholder" translatable="false">00 | 00 | 0000</string>
-    <string name="credit_monthly_income_job_workplace_label" translatable="false">Nombre de la empresa</string>
-    <string name="credit_monthly_income_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="credit_monthly_income_job_workplace_label" translatable="false">Nombre de la empresa donde laboras</string>
+    <string name="credit_monthly_income_job_workplace_label_cr" translatable="false">Nombre de la empresa donde laborás</string>
+    <string name="credit_monthly_income_job_workplace_required" translatable="false">Nombre de la empresa donde laboras requerido</string>
+    <string name="credit_monthly_income_job_workplace_required_cr" translatable="false">Nombre de la empresa donde laborás requerido</string>
     <string name="credit_monthly_income_job_joined_date" translatable="false">Fecha en que ingresaste</string>
     <string name="credit_monthly_income_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="credit_monthly_income_job_phone_placeholder_sv" translatable="false">0000 0000</string>
@@ -743,8 +758,10 @@
 
     <!-- Credit Job-->
     <string name="credit_job_title" translatable="false">Hablemos de tu trabajo</string>
-    <string name="credit_job_workplace_label" translatable="false">Nombre de la empresa</string>
-    <string name="credit_job_workplace_required" translatable="false">Nombre de la empresa requerido</string>
+    <string name="credit_job_workplace_label" translatable="false">Nombre de la empresa donde laboras</string>
+    <string name="credit_job_workplace_label_cr" translatable="false">Nombre de la empresa donde laborás</string>
+    <string name="credit_job_workplace_required" translatable="false">Nombre de la empresa donde laboras requerido</string>
+    <string name="credit_job_workplace_required_cr" translatable="false">Nombre de la empresa donde laborás requerido</string>
     <string name="credit_job_date_placeholder" translatable="false">00 | 00 | 0000</string>
     <string name="credit_job_date_required" translatable="false">Fecha de ingreso requerida</string>
     <string name="credit_job_joined_date" translatable="false">Fecha en que ingresaste</string>
@@ -803,7 +820,8 @@
     <string name="non_pre_approved_additional_questions_income_placeholder" translatable="false">%s 000</string>
     <string name="non_pre_approved_additional_questions_employment_situation_label" translatable="false">Situación laboral</string>
     <string name="non_pre_approved_additional_questions_success_alert_result_title" translatable="false">¡Tienes %1s pre aprobados!</string>
-    <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en menos de 10 minutos</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_description" translatable="false">Solicita tu dinero y recíbelo en solo unas horas.</string>
+    <string name="non_pre_approved_additional_questions_success_alert_result_description_cr" translatable="false">Solicitá tu dinero y recibilo en solo unas horas.</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_title" translatable="false">Lo sentimos, no hay opciones de crédito</string>
     <string name="non_pre_approved_additional_questions_error_alert_result_description" translatable="false">Comunícate con nosotros si tienes consultas</string>
     <string name="non_pre_approved_additional_questions_processing_alert_result_label" translatable="false">Procesando datos...</string>
@@ -814,19 +832,20 @@
     <string name="credit_origination_id_validation_title" translatable="false">Confirmá tu identidad</string>
     <string name="credit_origination_id_validation_title_sv" translatable="false">Confirma tu identidad</string>
     <string name="credit_origination_id_validation_subtitle" translatable="false">Recomendaciones:</string>
-    <string name="credit_origination_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos</string>
-    <string name="credit_origination_id_validation_one_sv" translatable="false">Busca buena iluminación para tomar las fotos</string>
-    <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación</string>
-    <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación</string>
-    <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI)</string>
-    <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios</string>
+    <string name="credit_origination_id_validation_one" translatable="false">Buscá buena iluminación para tomar las fotos.</string>
+    <string name="credit_origination_id_validation_one_sv" translatable="false">Busca buena iluminación para tomar las fotos.</string>
+    <string name="credit_origination_id_validation_two" translatable="false">Tené a mano tu documento de identificación.</string>
+    <string name="credit_origination_id_validation_two_sv" translatable="false">Ten a mano tu documento de identificación.</string>
+    <string name="credit_origination_id_validation_two_gt" translatable="false">Ten a mano tu documento de identificación (DPI).</string>
+    <string name="credit_origination_id_validation_three" translatable="false">Tómate una selfie sin lentes o accesorios.</string>
+    <string name="credit_origination_id_validation_three_cr" translatable="false">Tomate una selfie sin lentes o accesorios.</string>
 
     <!-- Generate Document -->
     <string name="document_generation_title" translatable="false">Estamos creando tus documentos</string>
     <string name="document_generation_subtitle_cr" translatable="false">Firmá el contrato y recibe tu crédito</string>
     <string name="document_generation_subtitle" translatable="false">Firma el contrato y recibe tu crédito</string>
     <string name="document_generation_info" translatable="false">Generando documentos…</string>
-    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta</string>
+    <string name="document_generation_error_description" translatable="false">Contactanos para ayudarte a abrir tu cuenta.</string>
     <string name="origination_processing_transaction" translatable="false">Procesando transacción…</string>
 
     <!-- Onfido errors -->
@@ -846,8 +865,8 @@
     <!-- Sign Credit Web View -->
     <string name="sign_credit_dialog_title_cr" translatable="false">Firmá en la siguiente pantalla</string>
     <string name="sign_credit_dialog_title" translatable="false">Firma en la siguiente pantalla</string>
-    <string name="sign_credit_dialog_description_cr" translatable="false">Seguí las indicaciones a continuación</string>
-    <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación</string>
+    <string name="sign_credit_dialog_description_cr" translatable="false">Seguí las indicaciones a continuación.</string>
+    <string name="sign_credit_dialog_description" translatable="false">Sigue las indicaciones a continuación.</string>
     <string name="sign_credit_dialog_continue" translatable="false">Continuar</string>
 
     <string name="continue_validating_identity_title" translatable="false">Tu solicitud fue enviada\nexitosamente</string>
@@ -997,6 +1016,7 @@
     <string name="iban_account_hint" translatable="false">0000 0000 0000 0000 0000</string>
     <string name="iban_account_cr" translatable="false">CR</string>
     <string name="iban_account_loading" translatable="false">Verificando cuenta...</string>
+    <string name="iban_account_error_cr" translatable="false"><![CDATA[<b>Revisá formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_account_error" translatable="false"><![CDATA[<b>Revisa formato.</b> Debe tener 20 dígitos]]></string>
     <string name="iban_dialog_message" translatable="false">¿Estás seguro que querés editar tu cuenta IBAN?</string>
     <string name="iban_masked_account_number" translatable="false">CR••••%s</string>
@@ -1106,6 +1126,8 @@
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
     <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_other_generating_document_subtitle_cr" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
+    <string name="smart_other_generating_document_subtitle_sv" translatable="false">Después de firmar tu contrato puedes empezar a utilizar tu cuenta.</string>
     <string name="smart_loading_label" translatable="false">Generando documentos...</string>
     <string name="smart_other_income_cr_placeholder" translatable="false">₡000,000</string>
     <string name="smart_other_income_sv_placeholder" translatable="false">$000</string>
@@ -1132,6 +1154,7 @@
     <string name="smart_salaried_average_salary_required" translatable="false">Ingresos requeridos</string>
     <string name="smart_salaried_salary_placeholder" translatable="false">%s 0.00</string>
     <string name="smart_salaried_profession" translatable="false">Cargo que desempeñas</string>
+    <string name="smart_salaried_profession_cr" translatable="false">Cargo que desempeñás</string>
     <string name="smart_salaried_profession_required" translatable="false">Cargo requerido</string>
     <string name="smart_salaried_company_name" translatable="false">Nombre de la empresa</string>
     <string name="smart_salaried_company_name_required" translatable="false">Nombre requerido</string>
@@ -1170,10 +1193,10 @@
     <string name="payment_options_transfer_step_4_disclaimer" translatable="false">Tu pago se verá reflejado entre 24 y 48 horas.</string>
 
     <!-- Smart Saving Method - Transfer -->
-    <string name="saving_method_transfer_title_sv" translatable="false"> Transferí desde tu banco con estos datos</string>
+    <string name="saving_method_transfer_title_sv" translatable="false"> Transfiere desde tu banco con estos datos</string>
     <string name="saving_method_transfer_disclaimer" translatable="false">La transferencia se verá reflejada en 48 horas hábiles</string>
     <string name="saving_method_transfer_bank" translatable="false">Banco</string>
-    <string name="saving_method_transfer_bank_name" translatable="false">SAC Gente</string>
+    <string name="saving_method_transfer_bank_name" translatable="false">SAC MultiMoney</string>
     <string name="saving_method_transfer_account_type_label" translatable="false">Tipo de cuenta</string>
     <string name="saving_method_transfer_saving_account" translatable="false">Cuenta de ahorro</string>
     <string name="saving_method_transfer_account" translatable="false">Número de cuenta</string>
@@ -1219,13 +1242,13 @@
 
     <!-- Payment Schedule -->
     <string name="payment_schedule_title" translatable="false">Configurá tu pago \nautomático</string>
-    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
+    <string name="payment_schedule_info_dialog_description" translatable="false">Tu pago se determina de acuerdo a la cuota mínima de cada mes. Si tenés saldo en dólares y colones se aplicará el tipo de cambio del día de pago.</string>
     <string name="payment_schedule_label_origin" translatable="false">Desde tu cuenta</string>
     <string name="payment_schedule_label_date" translatable="false">Día del mes que se hará el pago</string>
     <string name="payment_schedule_label_date_description" translatable="false">%s de cada mes</string>
     <string name="payment_schedule_button" translatable="false">Programar</string>
     <string name="payment_schedule_success_alert_title" translatable="false">Tu pago ha sido \nprogramado</string>
-    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago</string>
+    <string name="payment_schedule_success_alert_subtitle" translatable="false">Te notificaremos el %s de cada mes al efectuar tu pago.</string>
     <string name="payment_schedule_success_alert_button" translatable="false">Ver mi crédito</string>
     <string name="payment_schedule_error_alert_title" translatable="false">¡Oh no! Error de conexión</string>
     <string name="payment_schedule_error_alert_subtitle_one" translatable="false">Tu pago no pudo ser programado por un problema de conexión, intentalo de nuevo.</string>
@@ -1302,11 +1325,11 @@
     <string name="smart_facta_article_15_info_title" translatable="false">Art 15 o 15 bis de la ley 8204</string>
     <string name="smart_facta_learn_more" translatable="false">¿De qué se trata?</string>
     <string-array name="smart_facta_is_pep_options">
-        <item>Si, si califican</item>
+        <item>Sí, si califican</item>
         <item>No, no califican</item>
     </string-array>
     <string-array name="smart_facta_is_us_citizen_options">
-        <item>Si, lo soy</item>
+        <item>Sí, lo soy</item>
         <item>No, no lo soy</item>
     </string-array>
 
@@ -1359,7 +1382,8 @@
     <string name="crypto_purchase_flow_error_minimum_amount" translatable="false">"El monto mínimo de compra es de $5"</string>
     <string name="crypto_purchase_flow_error_available_amount" translatable="false">"El monto disponible es de %1s"</string>
     <string name="crypto_purchase_flow_error_available_amount_commission" translatable="false">"El monto más la comisión supera el\nmonto disponible"</string>
-    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el limite de compra\nsemanal de $10,000</string>
+    <string name="crypto_purchase_flow_error_weekly_amount_exceeded" translatable="false">El monto supera el límite de compra\nsemanal de $10,000</string>
+    <string name="crypto_purchase_flow_error_daily_amount_exceeded" translatable="false">El monto supera el límite de compra\ndiario de $10,000</string>
     <string name="crypto_purchase_flow_error_no_funds" translatable="false">Fondos Insuficientes para aplicar la compra</string>
     <string name="crypto_purchase_flow_error_price_expired" translatable="false">Cotización caducada</string>
     <string name="crypto_purchase_flow_error_processing_purchase" translatable="false">¡Oh no! Hubo un error al completar la compra</string>
@@ -1375,7 +1399,7 @@
 
     <!-- Validate identity -->
     <string name="validate_identity_title" translatable="false">Estamos verificando tu identidad</string>
-    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos</string>
+    <string name="validate_identity_subtitle" translatable="false">Esto solo toma unos minutos.</string>
     <string name="validate_document_generation_title" translatable="false">Estamos generando tus documentos</string>
     <string name="validate_document_generation_subtitle" translatable="false">Al firmar tu contrato podrás utilizar tu Multinoney Smart</string>
     <string name="approved_by_onfido_title" translatable="false">¡Tu MultiMoney Smart ya está activa!</string>
@@ -1416,6 +1440,7 @@
     <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="payment_cards_resume_bottom_sheet" translatable="false">Retomar verificación</string>
     <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
+    <string name="smart_payment_cards_list_card_title_sv" translatable="false">Selecciona la tarjeta con la que quieres ahorrar</string>
 
     <!-- Payment Amount Card -->
     <string name="payment_amount_card_title_sv" translatable="false">¿Cuánto quieres abonar?</string>
@@ -1516,6 +1541,8 @@
 
     <!-- Smart Saving Amount -->
     <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_amount_title_cr" translatable="false">¿Cuánto querés ahorrar?</string>
+    <string name="smart_saving_amount_title_sv" translatable="false">¿Cuánto quieres ahorrar?</string>
     <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>
     <string name="smart_saving_try_later_notification_body" translatable="false">Abrí la app y hacé tu primer ahorro para ganar más</string>
     <string name="smart_saving_total_to_deposit" translatable="false">Total a depositar</string>
@@ -1565,7 +1592,8 @@
     <string name="smart_iban_register_favorite_checkbox" translatable="false">Agregar a favoritos</string>
     <string name="smart_iban_register_account_placeholder" translatable="false">CR 00000 00000 00000 00000</string>
     <string name="smart_iban_register_account_error" translatable="false">Número inválido</string>
-    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
+    <string name="smart_iban_register_account_length_error_cr" translatable="false"><![CDATA[<b>Revisá el formato.</b> Es un número de 20 dígitos]]></string>
+    <string name="smart_iban_register_account_length_error" translatable="false"><![CDATA[<b>Revisa el formato.</b> Es un número de 20 dígitos]]></string>
     <string name="smart_iban_register_email_error" translatable="false">Formato incorrecto. Debe contener “@” y “.”</string>
     <string name="smart_iban_register_favorite_label" translatable="false">Apodo</string>
     <string name="smart_iban_register_full_name_label" translatable="false">Nombre completo</string>
@@ -1711,6 +1739,9 @@
     <string name="crypto_send_abandon_dialog_title" translatable="false">Cancelar envío</string>
     <string name="crypto_send_abandon_dialog_message" translatable="false">¿Estás seguro que querés cancelar el envío?</string>
     <string name="crypto_send_amount_error_available_amount_commission" translatable="false">"Monto mayor al disponible"</string>
+    <string name="crypto_send_address_error_invalid_qr" translatable="false">Código QR inválido</string>
+    <string name="crypto_send_address_error_invalid_qr_description" translatable="false">Inténtalo nuevamente</string>
+    <string name="crypto_send_address_btn_go_back" translatable="false">Regresar</string>
 
     <!-- Crypto list currencies for send -->
     <string name="crypt_list_send_title" translatable="false">¿Cuál moneda querés enviar?</string>
@@ -1770,8 +1801,8 @@
     <string name="registered_user_otp_title_email" translatable="false">Te enviamos un correo \nal %s</string>
     <string name="registered_user_otp_subtitle" translatable="false">Ingresa el código que te enviamos para verificar tu identidad.</string>
     <string name="registered_user_otp_subtitle_cr" translatable="false">Ingresá el código que te enviamos para verificar tu identidad.</string>
-    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda, nunca compartir este código.</string>
-    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá, nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer" translatable="false">Recuerda nunca compartir este código.</string>
+    <string name="registered_user_otp_disclaimer_cr" translatable="false">Recordá nunca compartir este código.</string>
     <string name="registered_user_otp_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
     <string name="registered_user_otp_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente</string>
     <string name="registered_user_otp_other_phone_number" translatable="false">Tengo otro número</string>
@@ -1809,7 +1840,8 @@
     <string name="product_visa_card_expired_dialog_hide_label" translatable="false">Ocultar</string>
 
     <!-- Security -->
-    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartas tu\ncontraseña</string>
+    <string name="password_security_bottom_sheet_general_title_cr" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
     <string name="password_security_bottom_sheet_general_description" translatable="false">Nunca te solicitaremos tu contraseña\nfuera de la aplicación.\n</string>
     <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, con\nella autorizarás todas tus transferencias.</string>
 

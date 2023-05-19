@@ -22,13 +22,14 @@ import com.multimoney.multimoney.presentation.navigation.DEVICE_ID
 import com.multimoney.multimoney.presentation.navigation.DEVICE_MODEL
 import com.multimoney.multimoney.presentation.navigation.DEVICE_NAME
 import com.multimoney.multimoney.presentation.navigation.DEVICE_TYPE
+import com.multimoney.multimoney.presentation.navigation.FORCE_CHANGE_DEVICE
 import com.multimoney.multimoney.presentation.navigation.IP_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.IS_EMULATOR
 import com.multimoney.multimoney.presentation.navigation.PASSWORD
+import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
-import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.BaseEvent.ShowSignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnCallMutationRequestChangeDevice
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnGetOtpFromMessage
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnGetWhatsAppLink
@@ -39,7 +40,6 @@ import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewM
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnSetupResources
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnShowBlockedDialog
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnValidateOTP
-import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnSetArguments
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
@@ -49,17 +49,12 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getUserCountry
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -68,6 +63,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @HiltViewModel
 class SignInOTPViewModel @Inject constructor(
@@ -106,32 +107,6 @@ class SignInOTPViewModel @Inject constructor(
         deviceBrand = savedStateHandle[DEVICE_BRAND] ?: ""
         deviceModel = savedStateHandle[DEVICE_MODEL] ?: ""
         isEmulator = savedStateHandle[IS_EMULATOR] ?: ""
-    }
-
-    private fun onSetArguments(
-        email: String?,
-        password: String?,
-        deviceId: String?,
-        uniqueId: String?,
-        ipAddress: String?,
-        deviceType: String?,
-        deviceName: String?,
-        appVersion: String?,
-        deviceBrand: String?,
-        deviceModel: String?,
-        isEmulator: String?
-    ) {
-        this.email = email ?: ""
-        this.password = password ?: ""
-        this.deviceId = deviceId ?: ""
-        this.uniqueId = uniqueId ?: ""
-        this.ipAddress = ipAddress ?: ""
-        this.deviceType = deviceType ?: ""
-        this.deviceName = deviceName ?: ""
-        this.appVersion = appVersion ?: ""
-        this.deviceBrand = deviceBrand ?: ""
-        this.deviceModel = deviceModel ?: ""
-        this.isEmulator = isEmulator ?: ""
     }
 
     private fun initializeTimer(
@@ -286,7 +261,7 @@ class SignInOTPViewModel @Inject constructor(
         }
     }
 
-    private fun onCallMutationChangeDevice(onSuccess: () -> Unit) = executeUseCase {
+    private fun onCallMutationChangeDevice() = executeUseCase {
         mutationChangeDeviceUseCase.invoke(email, uiState.otp).collectLatest { result ->
             result.onSuccess {
                 when (it.status) {
@@ -297,7 +272,7 @@ class SignInOTPViewModel @Inject constructor(
                             applyAdjust = false,
                             data = EmailDto(email).toJson()
                         )
-                        onSuccess.invoke()
+                        onNavigateToLogin()
                     }
                     WRONG_CODE -> {
                         uiState =
@@ -325,8 +300,16 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() {
-        emitBaseEvent(ShowSignInScreen)
+        popAndNavigateTo(
+            route = Screen.SignInScreen.route,
+            popTo = Screen.SignInOTPScreen.route
+        )
     }
+
+    private fun onNavigateToLogin() = popAndNavigateTo(
+        route = Screen.SignInScreen.baseRoute.plus(getNavParam(FORCE_CHANGE_DEVICE, true)),
+        popTo = Screen.SignInOTPScreen.route
+    )
 
     private fun onResendOTP() {
         onCallMutationRequestChangeDevice()
@@ -386,22 +369,9 @@ class SignInOTPViewModel @Inject constructor(
 
     fun onUIEvent(uiEvent: UIEvent) {
         when (uiEvent) {
-            is OnSetArguments -> onSetArguments(
-                uiEvent.email,
-                uiEvent.password,
-                uiEvent.deviceId,
-                uiEvent.uniqueId,
-                uiEvent.ipAddress,
-                uiEvent.deviceType,
-                uiEvent.deviceName,
-                uiEvent.appVersion,
-                uiEvent.deviceBrand,
-                uiEvent.deviceModel,
-                uiEvent.isEmulator
-            )
             is OnCallMutationRequestChangeDevice -> onCallMutationRequestChangeDevice()
             is OnNavigateBack -> onNavigateBack()
-            is OnValidateOTP -> onCallMutationChangeDevice(uiEvent.onSuccess)
+            is OnValidateOTP -> onCallMutationChangeDevice()
             is OnOTPValueChange -> onOtpValueChange(uiEvent.otp)
             is OnResendOTP -> onResendOTP()
             is OnGetOtpFromMessage -> getOtpFromMessage(uiEvent.message)
@@ -415,23 +385,9 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class OnSetArguments(
-            val email: String?,
-            val password: String?,
-            val deviceId: String?,
-            val uniqueId: String?,
-            val ipAddress: String?,
-            val deviceType: String?,
-            val deviceName: String?,
-            val appVersion: String?,
-            val deviceBrand: String?,
-            val deviceModel: String?,
-            val isEmulator: String?
-        ) : UIEvent()
-
         object OnCallMutationRequestChangeDevice : UIEvent()
         object OnNavigateBack : UIEvent()
-        data class OnValidateOTP(val onSuccess: () -> Unit) : UIEvent()
+        object OnValidateOTP : UIEvent()
         object OnShowBlockedDialog : UIEvent()
         data class OnOTPValueChange(val otp: String) : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
@@ -445,10 +401,6 @@ class SignInOTPViewModel @Inject constructor(
         ) : UIEvent()
 
         object OnGetWhatsAppLink : UIEvent()
-    }
-
-    sealed class BaseEvent {
-        object ShowSignInScreen : BaseEvent()
     }
 
     companion object {

@@ -25,13 +25,16 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
-import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
-import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 
 @Preview
@@ -43,11 +46,26 @@ fun ChangeEmailScreen(
 ) {
     LaunchedEffect(true) {
         viewModel.executeNavigation(onPopBackStack = onPopBackStack, onNavigate = onNavigate)
+        viewModel.onUIEvent(ChangeEmailViewModel.UIEvent.OnStart)
     }
     BackHandler {
         viewModel.onUIEvent(ChangeEmailViewModel.UIEvent.OnNavigateBack)
     }
     ChangePhoneScreenContent(viewModel)
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = R.string.profile_error_changing_email_title),
+            descriptionString = if (viewModel.uiState.idBrand == Brand.ElSalvador.id)
+                stringResource(id = R.string.profile_error_changing_phone_sv) else stringResource(id = R.string.profile_error_changing_phone),
+            buttonTextResource = R.string.profile_error_changing_phone_button,
+            isLeftButtonVisible = false,
+            isRightButtonVisible = false,
+            onButtonClick = {
+                viewModel.onUIEvent(ChangeEmailViewModel.UIEvent.OnNavigateBack)
+            }
+        )
+    }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable
@@ -109,7 +127,8 @@ private fun ChangePhoneScreenContent(viewModel: ChangeEmailViewModel) {
                 modifier = Modifier.padding(top = 24.dp),
                 isRequired = true,
                 isError = viewModel.uiState.userEmailError.first,
-                isRequiredMessage = stringResource(id = R.string.sign_up_email_required)
+                isRequiredMessage = stringResource(id = R.string.sign_up_email_required),
+                errorMessage = stringResource(id = viewModel.uiState.duplicatedEmailErrorMessage)
             )
             // Fields
             CustomOutlinedTextField(

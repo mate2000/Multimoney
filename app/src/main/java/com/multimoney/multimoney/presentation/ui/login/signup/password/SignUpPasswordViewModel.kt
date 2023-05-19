@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
+import com.amplifyframework.auth.AuthException.UsernameExistsException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
@@ -17,6 +18,8 @@ import com.multimoney.domain.model.security.ValidateSecurity
 import com.multimoney.domain.model.util.MultimoneyResult
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.Screen.SignInScreen
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnCallPasswordSave
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
@@ -247,10 +250,30 @@ class SignUpPasswordViewModel @Inject constructor(
             emitBaseEvent(BaseEvent.OnOpenBiometricDialog)
         }, {
             onFailureWithDialog(
-                DialogParameters(
-                    description = it.localizedMessage ?: "",
-                    isActive = mutableStateOf(true)
-                )
+                when (it) {
+                    is UsernameExistsException -> DialogParameters(
+                        titleResource = when (idBrand) {
+                            Brand.CostaRica.id -> string.sign_up_email_user_completed_dialog_title_cr
+                            else -> string.sign_up_email_user_completed_dialog_title
+                        },
+                        descriptionResource = when (idBrand) {
+                            Brand.CostaRica.id -> string.sign_up_email_user_completed_dialog_description_cr
+                            else -> string.sign_up_email_user_completed_dialog_description
+                        },
+                        positiveResource = string.sign_up_email_user_completed_dialog_positive,
+                        positiveAction = {
+                            popAndNavigateTo(
+                                route = SignInScreen.route,
+                                popTo = Screen.RegisteredUserPassword.route
+                            )
+                        },
+                        isActive = mutableStateOf(true)
+                    )
+                    else -> DialogParameters(
+                        description = it.localizedMessage ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                }
             )
         })
     }

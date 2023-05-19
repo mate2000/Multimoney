@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.uielement
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 fun VoucherAccountInfo(
     modifier: Modifier = Modifier,
     icon: Int? = null,
+    tintIcon: Boolean = true, // this property is used to tint the icon if not, the icon will be displayed with the original color
     title: String = "",
     subTitle: String = ""
 ) {
@@ -56,15 +58,24 @@ fun VoucherAccountInfo(
         }
 
         icon?.let {
-            Icon(
-                painter = painterResource(id = it),
-                contentDescription = "",
-                tint = tintIconColor,
-                modifier = Modifier
-                    .height(24.dp)
-                    .width(24.dp)
-                    .alpha(0.4f)
-            )
+            if (tintIcon) {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    tint = tintIconColor,
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            }
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
@@ -85,6 +96,7 @@ fun VoucherAccountInfo(
 fun VoucherCryptoAddressInfo(
     modifier: Modifier = Modifier,
     icon: Int? = null,
+    tintIcon: Boolean = true,
     title: String = "",
     subTitle: String = ""
 ) {
@@ -107,15 +119,25 @@ fun VoucherCryptoAddressInfo(
         }
 
         icon?.let {
-            Icon(
-                painter = painterResource(id = it),
-                contentDescription = "",
-                tint = tintIconColor,
-                modifier = Modifier
-                    .height(24.dp)
-                    .width(24.dp)
-                    .alpha(0.4f)
-            )
+            if (tintIcon) {
+                Icon(
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    tint = tintIconColor,
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                        .alpha(0.4f)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            }
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
@@ -136,6 +158,7 @@ fun VoucherCryptoAddressInfo(
 fun VoucherNumberInfo(
     modifier: Modifier = Modifier,
     icon: Int? = null,
+    tintIcon: Boolean = true,
     title: String,
     subTitle: String
 ) {
@@ -155,7 +178,17 @@ fun VoucherNumberInfo(
 
     Row(modifier = modifier) {
         icon?.let {
-            Icon(modifier = Modifier.size(24.dp), painter = painterResource(id = it), contentDescription = "", tint = tintIconColor)
+            if (tintIcon) {
+                Icon(modifier = Modifier.size(24.dp), painter = painterResource(id = it), contentDescription = "", tint = tintIconColor)
+            } else {
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            }
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
@@ -177,6 +210,7 @@ fun VoucherNumberInfo(
 fun VoucherTotalAmountInfo(
     modifier: Modifier = Modifier,
     icon: Int? = null,
+    tintIcon: Boolean = true,
     title: String,
     subTitle: String
 ) {
@@ -196,7 +230,17 @@ fun VoucherTotalAmountInfo(
 
     Row(modifier = modifier) {
         icon?.let {
-            Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIconColor)
+            if (tintIcon) {
+                Icon(painter = painterResource(id = it), contentDescription = "", tint = tintIconColor)
+            } else {
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            }
         }
         Column(modifier = Modifier.padding(start = 13.5.dp)) {
             Text(
@@ -220,6 +264,7 @@ fun VoucherCurrencyExchangeInfo(
     exchangeRateText: String = "",
     convertedAmountText: String = "",
     displayIcon: Boolean = true,
+    tintIcon: Boolean = true,
     textColumnAlign: Alignment.Horizontal = Alignment.Start,
     mainRowAlignment: Arrangement.Horizontal = Arrangement.Start
 ) {
@@ -243,16 +288,28 @@ fun VoucherCurrencyExchangeInfo(
             .padding(start = 27.dp),
         horizontalArrangement = mainRowAlignment
     ) {
-        if (displayIcon) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_money_gray),
-                tint = tintIconColor,
-                contentDescription = "",
-                modifier = Modifier
-                    .padding(end = 13.5.dp)
-                    .height(24.dp)
-                    .width(24.dp)
-            )
+        when {
+            displayIcon and tintIcon -> {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_money_gray),
+                    tint = tintIconColor,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .padding(end = 13.5.dp)
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            }
+            displayIcon and tintIcon.not() -> {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_money_gray),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .padding(end = 13.5.dp)
+                        .height(24.dp)
+                        .width(24.dp)
+                )
+            }
         }
         Column(
             horizontalAlignment = textColumnAlign

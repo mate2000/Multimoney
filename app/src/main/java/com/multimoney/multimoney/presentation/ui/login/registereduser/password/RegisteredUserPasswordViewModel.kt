@@ -8,6 +8,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.amplifyframework.auth.AuthException.UsernameExistsException
 import com.amplifyframework.auth.AuthUserAttribute
 import com.amplifyframework.auth.AuthUserAttributeKey
 import com.amplifyframework.auth.cognito.options.AWSCognitoAuthSignUpOptions
@@ -81,7 +82,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     private var biometricDialogSuccessDescription = ""
     private var biometricDialogFailureDescription = ""
     private var isBiometricAvailable = false
-    private var idBrand: Int = 0
+    var idBrand: Int = 0
     var userData: UserData? = null
     private var deviceId = ""
     private var uniqueId = ""
@@ -296,10 +297,30 @@ class RegisteredUserPasswordViewModel @Inject constructor(
             emitBaseEvent(BaseEvent.OnOpenBiometricDialog)
         }, {
             onFailureWithDialog(
-                DialogParameters(
-                    description = it.localizedMessage ?: "",
-                    isActive = mutableStateOf(true)
-                )
+                when (it) {
+                    is UsernameExistsException -> DialogParameters(
+                        titleResource = when (idBrand) {
+                            Brand.CostaRica.id -> string.sign_up_email_user_completed_dialog_title_cr
+                            else -> string.sign_up_email_user_completed_dialog_title
+                        },
+                        descriptionResource = when (idBrand) {
+                            Brand.CostaRica.id -> string.sign_up_email_user_completed_dialog_description_cr
+                            else -> string.sign_up_email_user_completed_dialog_description
+                        },
+                        positiveResource = string.sign_up_email_user_completed_dialog_positive,
+                        positiveAction = {
+                            popAndNavigateTo(
+                                route = SignInScreen.route,
+                                popTo = Screen.RegisteredUserPassword.route
+                            )
+                        },
+                        isActive = mutableStateOf(true)
+                    )
+                    else -> DialogParameters(
+                        description = it.localizedMessage ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                }
             )
         })
     }

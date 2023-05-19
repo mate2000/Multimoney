@@ -66,7 +66,7 @@ sealed class CurrencyType(
         "Quetzales",
         "GTQ",
         R.string.quetzales,
-        R.drawable.ic_bank_account_dollar,
+        R.drawable.ic_bank_account,
         R.string.payment_account_title_dollar,
         R.drawable.ic_payment_fee_icon,
         R.drawable.ic_payment_fee_icon,

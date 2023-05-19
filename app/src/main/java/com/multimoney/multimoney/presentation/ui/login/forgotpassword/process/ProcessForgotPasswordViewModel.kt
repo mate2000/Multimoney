@@ -5,7 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusManager
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.amplifyframework.core.Amplify
+import com.multimoney.data.util.DataStorePreferences
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.interaction.security.QueryValidationSecurityUseCase
 import com.multimoney.domain.model.metrics.EmailDto
@@ -41,13 +43,15 @@ import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterVa
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProcessForgotPasswordViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val queryValidationSecurityUseCase: QueryValidationSecurityUseCase,
-    private val passwordValidationHelper: PasswordValidationHelper
+    private val passwordValidationHelper: PasswordValidationHelper,
+    private val dataStorePreferences: DataStorePreferences
 ) : BaseViewModel(false) {
 
     var uiState by mutableStateOf(UIState())
@@ -70,10 +74,16 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     private fun onStart() {
         uiState = when (idBrand) {
             Brand.CostaRica.id -> {
-                uiState.copy(titleResource = string.process_forgot_password_title)
+                uiState.copy(
+                    titleResource = string.process_forgot_password_title,
+                    idBrand = idBrand
+                )
             }
             else -> {
-                uiState.copy(titleResource = string.process_forgot_password_title_sv)
+                uiState.copy(
+                    titleResource = string.process_forgot_password_title_sv,
+                    idBrand = idBrand
+                )
             }
         }
     }
@@ -209,6 +219,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             applyAdjust = false,
             data = EmailDto(email).toJson()
         )
+        onUpdateLocallyStoredPassword()
         onAlertSuccess()
     }
 
@@ -221,6 +232,12 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             alertResultButtonTextResource = string.common_go_home,
             isLoading = false
         )
+    }
+
+    private fun onUpdateLocallyStoredPassword() {
+        viewModelScope.launch {
+            dataStorePreferences.isBiometricsEnabled(false)
+        }
     }
 
     private fun onAlertFailure(isOtpFailure: Boolean = false) {
@@ -331,6 +348,8 @@ class ProcessForgotPasswordViewModel @Inject constructor(
     fun getForbiddenWords(value: String): String = passwordValidationHelper.getForbiddenWords(value)
 
     data class UIState(
+        // idBrand for resource validation in the screen
+        val idBrand: Int = Brand.Default.id,
         // Interactions
         val titleResource: Int = string.empty,
         val otp: String = "",

@@ -10,6 +10,7 @@ import com.multimoney.data.paging.CreditMovementsPagingSource
 import com.multimoney.domain.model.credit.AccountStatement
 import com.multimoney.domain.model.credit.AutomaticDebit
 import com.multimoney.domain.model.credit.BankList365TypeAndAccountType
+import com.multimoney.domain.model.credit.BanksAmpliationList
 import com.multimoney.domain.model.credit.BanksAndRegularExpression
 import com.multimoney.domain.model.credit.ClientBankAccount
 import com.multimoney.domain.model.credit.CreditApplication
@@ -30,6 +31,8 @@ import com.multimoney.domain.model.credit.PaymentPoint
 import com.multimoney.domain.model.credit.ProcessCreditExtensionDetail
 import com.multimoney.domain.model.credit.ProcessPaymentList
 import com.multimoney.domain.model.credit.PromissoryNoteDetail
+import com.multimoney.domain.model.credit.RegularExpression
+import com.multimoney.domain.model.credit.RegularExpressionList
 import com.multimoney.domain.model.credit.SaveClientBankAccount
 import com.multimoney.domain.model.credit.SaveCreditFlowStep
 import com.multimoney.domain.model.credit.SaveCreditOffer
@@ -40,8 +43,8 @@ import com.multimoney.domain.model.util.MultimoneyResult.Message
 import com.multimoney.domain.model.util.MultimoneyResult.Success
 import com.multimoney.domain.model.virtualcard.CardVisaDirect
 import com.multimoney.domain.repository.CreditRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 class CreditRepositoryImpl @Inject constructor(
     private val graphqlApi: GraphqlApi
@@ -816,7 +819,11 @@ class CreditRepositoryImpl @Inject constructor(
         user: String,
         idBrand: Int
     ): Flow<MultimoneyResult<AccountStatement?>> = fetchData(
-        apolloCall = graphqlApi.queryAccountStatement(creditNumber = creditNumber, user = user, idBrand = idBrand),
+        apolloCall = graphqlApi.queryAccountStatement(
+            creditNumber = creditNumber,
+            user = user,
+            idBrand = idBrand
+        ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())
         }
@@ -834,4 +841,32 @@ class CreditRepositoryImpl @Inject constructor(
             Success(data.mapToDomainModel())
         }
     )
+
+    override suspend fun queryBanksAmpliation(
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<BanksAmpliationList?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryBankAmpliation(
+                user,
+                idBrand
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
+
+    override suspend fun queryBankAccountType(
+        user: String,
+        idBrand: Int
+    ): Flow<MultimoneyResult<RegularExpressionList?>> =
+        fetchData(
+            apolloCall = graphqlApi.queryBankAccountTypes(
+                user,
+                idBrand
+            ),
+            apolloCallMapper = { data ->
+                Success(data.mapToDomainModel())
+            }
+        )
 }

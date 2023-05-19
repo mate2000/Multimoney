@@ -262,8 +262,9 @@ class ProductViewModel @Inject constructor(
             balanceCredit = it
             val isCreditAvailable =
                 (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
+            val canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false
             uiState = uiState.copy(
-                canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false,
+                canExpandCredit = canExpandCredit,
                 paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
                 scheduleChipIconResource = if ((balanceCredit?.getExpiredDays() ?: 0) > 0) {
                     R.drawable.ic_alert_expired_payment
@@ -273,7 +274,7 @@ class ProductViewModel @Inject constructor(
                     null
                 },
                 isCreditAvailable = isCreditAvailable,
-                onGoingCreditCardTitle = if (isCreditAvailable) {
+                onGoingCreditCardTitle = if (isCreditAvailable && canExpandCredit) {
                     R.string.home_product_title
                 } else {
                     R.string.detail

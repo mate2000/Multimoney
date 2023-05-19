@@ -48,7 +48,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    //share properties
+    // share properties
     var pkUser = 0
     var asset = ""
     private var cryptoNetWork = ""
@@ -198,12 +198,14 @@ class SellCurrencyScreenViewModel @Inject constructor(
             abbreviation = CurrencyType.Colon.disbursementValue,
             idOriginCurrency = CurrencyType.Colon.id.toString(),
             idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-            amount = 0.0
+            amount = 0.0,
+            isTransfer = true
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
                 uiState = uiState.copy(
-                    isLoading = false, exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                    isLoading = false,
+                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0
                 )
             }
             result.onFailure {
@@ -425,13 +427,13 @@ class SellCurrencyScreenViewModel @Inject constructor(
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
-        //* timer
+        // * timer
         val remainingTime: Duration = Duration.ZERO,
         val remainingTimeText: String = remainingTime.format(),
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        //** validations
+        // ** validations
         val isError: Boolean = false,
         val genericError: Boolean = false,
         val focusError: Boolean = false,

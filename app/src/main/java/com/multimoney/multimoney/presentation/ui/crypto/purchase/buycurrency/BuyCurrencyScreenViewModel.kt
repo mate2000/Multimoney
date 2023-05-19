@@ -48,7 +48,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    //share properties
+    // share properties
     var pkUser = 0
     var asset = ""
     private var cryptoNetWork = ""
@@ -122,7 +122,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val currentQuote = calculateQuote(
             quoteAmount = uiState.quoteAmount.value,
             baseAmount = uiState.baseAmount.value,
-            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
         )
         if (currentQuote > MAX_AMOUNT_ALLOWED) {
             timer.startTimer(uiState.isConfirmationBottomSheetOpen)
@@ -183,7 +183,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 abbreviation = CurrencyType.Dollar.disbursementValue,
                 idOriginCurrency = CurrencyType.Colon.id.toString(),
                 idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-                amount = smartAccountAvailableBalance
+                amount = smartAccountAvailableBalance,
+                isTransfer = true
             ).collectLatest { result ->
                 result.onLoading {
                     this.smartAccountAvailableBalance = 0.0
@@ -215,12 +216,14 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             abbreviation = CurrencyType.Colon.disbursementValue,
             idOriginCurrency = CurrencyType.Colon.id.toString(),
             idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-            amount = 0.0
+            amount = 0.0,
+            isTransfer = true
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
                 uiState = uiState.copy(
-                    isLoading = false, exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                    isLoading = false,
+                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0
                 )
             }
             result.onFailure {
@@ -341,7 +344,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 quoteAmount = calculateQuote(
                     quoteAmount = uiState.quoteAmount.value,
                     baseAmount = uiState.baseAmount.value,
-                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
                 ),
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
@@ -360,21 +363,22 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     Pair("market", market),
                     Pair("user", user),
                     Pair("accountToken", accountToken.toString()),
-                    Pair("commissionAmount",
-                        uiState.pricesQuoteAndCommissions?.internal_fee.toString()
-                    ),
-                    Pair("taxAmount",
-                        uiState.pricesQuoteAndCommissions?.taxAmount.toString()
-                    ),
-                    Pair("exchangeRate", if (idCurrencyAccount == CurrencyType.Dollar.id)
-                        1.0.toString() else uiState.exchangeRate.toString()
+                    Pair("commissionAmount", uiState.pricesQuoteAndCommissions?.internal_fee.toString()),
+                    Pair("taxAmount", uiState.pricesQuoteAndCommissions?.taxAmount.toString()),
+                    Pair(
+                        "exchangeRate",
+                        if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0.toString()
+                        else uiState.exchangeRate.toString()
                     ),
                     Pair("quoteId", uiState.pricesQuoteAndCommissions?.quote_id ?: ""),
-                    Pair("quoteAmount", calculateQuote(
-                        quoteAmount = uiState.quoteAmount.value,
-                        baseAmount = uiState.baseAmount.value,
-                        price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
-                    ).toString()),
+                    Pair(
+                        "quoteAmount",
+                        calculateQuote(
+                            quoteAmount = uiState.quoteAmount.value,
+                            baseAmount = uiState.baseAmount.value,
+                            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+                        ).toString()
+                    ),
                     Pair("fee", uiState.pricesQuoteAndCommissions?.fee ?: "0.0"),
                     Pair("internalFee", uiState.pricesQuoteAndCommissions?.internal_fee.toString()),
                     Pair("totalFee", uiState.pricesQuoteAndCommissions?.totalFee.toString())
@@ -400,7 +404,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 quoteAmount = calculateQuote(
                     quoteAmount = uiState.quoteAmount.value,
                     baseAmount = uiState.baseAmount.value,
-                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
                 ),
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
@@ -496,13 +500,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
-        //* timer
+        // * timer
         val remainingTime: Duration = Duration.ZERO,
         val remainingTimeText: String = remainingTime.format(),
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        //** validations
+        // ** validations
         val focusError: Boolean = false,
         val isError: Boolean = false,
         val genericError: Boolean = false,
@@ -510,7 +514,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val errorString: String = "",
         val errorMessageArg: Any = Any(),
         val isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
-        //voucher information
+        // voucher information
         val referenceNumber: String? = null,
         val amountInUSD: Double? = null,
         val amountPlusFee: Double? = null,

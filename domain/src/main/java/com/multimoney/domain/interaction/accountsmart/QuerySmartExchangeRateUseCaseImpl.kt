@@ -14,7 +14,8 @@ class QuerySmartExchangeRateUseCaseImpl(val repository: SmartAccountRepository) 
         abbreviation: String,
         idOriginCurrency: String,
         idDestinationCurrency: String,
-        amount: Double
+        amount: Double,
+        isTransfer: Boolean
     ): Flow<MultimoneyResult<ExchangeRateResult?>> {
         return repository.querySmartExchangeRate(
             user = user,
@@ -23,7 +24,8 @@ class QuerySmartExchangeRateUseCaseImpl(val repository: SmartAccountRepository) 
             abbreviation = abbreviation,
             idOriginCurrency = idOriginCurrency,
             idDestinationCurrency = idDestinationCurrency,
-            amount = amount
+            amount = amount,
+            isTransfer = isTransfer
         )
     }
 }

@@ -466,7 +466,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
         abbreviation: String,
         idOriginCurrency: String,
         idDestinationCurrency: String,
-        amount: Double
+        amount: Double,
+        isTransfer: Boolean
     ): Flow<MultimoneyResult<ExchangeRateResult?>> {
         return fetchData(
             apolloCall = graphqlApi.querySmartExchangeRate(
@@ -476,7 +477,8 @@ class SmartAccountRepositoryImpl @Inject constructor(
                 abbreviation = abbreviation,
                 idOriginCurrency = idOriginCurrency,
                 idDestinationCurrency = idDestinationCurrency,
-                amount = amount
+                amount = amount,
+                isTransfer = isTransfer
             ),
             apolloCallMapper = { data ->
                 Success(data.mapToDomainModel())

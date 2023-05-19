@@ -2205,7 +2205,8 @@ class GraphqlApi @Inject constructor(
         abbreviation: String,
         idOriginCurrency: String,
         idDestinationCurrency: String,
-        amount: Double
+        amount: Double,
+        isTransfer: Boolean
     ): ApolloCall<ExchangeRateQuery.Data> =
         apolloAuthorizedClient.query(
             ExchangeRateQuery(
@@ -2215,7 +2216,8 @@ class GraphqlApi @Inject constructor(
                 idDestinationCurrency = idDestinationCurrency,
                 idBrand = idBrand,
                 abbreviation = abbreviation,
-                amount = amount
+                amount = amount,
+                isTransfer = isTransfer
             )
         ).fetchPolicy(FetchPolicy.NetworkOnly)
 

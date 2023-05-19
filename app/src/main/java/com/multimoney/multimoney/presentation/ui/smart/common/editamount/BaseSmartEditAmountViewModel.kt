@@ -169,8 +169,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         isStart: Boolean = false,
         isPayment: Boolean = false,
         abbreviation: String? = destinyCurrency?.disbursementValue,
-        idOriginCurrency: String = destinyCurrency?.id.toString(),
-        idDestinationCurrency: String = originCurrency?.id.toString(),
+        idOriginCurrency: String = originCurrency?.id.toString(),
+        idDestinationCurrency: String = destinyCurrency?.id.toString(),
         currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0

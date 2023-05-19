@@ -213,8 +213,8 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Dollar.id.toString(),
-            idDestinationCurrency = CurrencyType.Colon.id.toString(),
+            idOriginCurrency = CurrencyType.Colon.id.toString(),
+            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
             amount = 0.0
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }

@@ -100,8 +100,8 @@ class MyContactsTransferAmountViewModel @Inject constructor(
             getExchangeOnCompleted(
                 true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
-                idOriginCurrency = destinyCurrency?.id.toString(),
-                idDestinationCurrency = originCurrency?.id.toString()
+                idOriginCurrency = originCurrency?.id.toString(),
+                idDestinationCurrency = destinyCurrency?.id.toString()
             )
         }
     }
@@ -181,8 +181,8 @@ class MyContactsTransferAmountViewModel @Inject constructor(
         if (shouldDisplayExchange) {
             getExchangeOnCompleted(
                 abbreviation = originCurrency?.disbursementValue ?: "",
-                idOriginCurrency = destinyCurrency?.id.toString(),
-                idDestinationCurrency = originCurrency?.id.toString()
+                idOriginCurrency = originCurrency?.id.toString(),
+                idDestinationCurrency = destinyCurrency?.id.toString()
             )
         } else {
             validateAmount()

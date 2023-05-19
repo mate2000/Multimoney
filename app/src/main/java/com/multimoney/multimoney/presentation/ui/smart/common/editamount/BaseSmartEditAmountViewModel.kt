@@ -169,9 +169,10 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
         isStart: Boolean = false,
         isPayment: Boolean = false,
         abbreviation: String? = destinyCurrency?.disbursementValue,
-        idOriginCurrency: String = originCurrency?.id.toString(),
-        idDestinationCurrency: String = destinyCurrency?.id.toString(),
-        currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
+        idOriginCurrency: String = destinyCurrency?.id.toString(),
+        idDestinationCurrency: String = originCurrency?.id.toString(),
+        currentAmount: Double = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0,
+        isTransfer: Boolean = true
     ) {
         val amount = amountUIState.currentAmountValueString?.toDoubleOrNull() ?: 0.0
         if (shouldDisplayExchange && (amount > 0.0 || isStart)) {
@@ -181,8 +182,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     idBrand = idBrand,
                     abbreviation = abbreviation ?: "",
                     identification = identification,
-                    idOriginCurrency = idOriginCurrency,
-                    idDestinationCurrency = idDestinationCurrency,
+                    idOriginCurrency = if (isTransfer) idDestinationCurrency else idOriginCurrency,
+                    idDestinationCurrency = if (isTransfer) idOriginCurrency else idDestinationCurrency,
                     amount = currentAmount
                 ).collectLatest { result ->
                     result.onFailure {

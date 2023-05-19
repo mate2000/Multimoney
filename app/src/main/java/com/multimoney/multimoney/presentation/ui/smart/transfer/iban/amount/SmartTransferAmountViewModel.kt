@@ -65,8 +65,8 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
             getExchangeOnCompleted(
                 isStart = true,
                 abbreviation = originCurrency?.disbursementValue ?: "",
-                idOriginCurrency = originCurrency?.id.toString(),
-                idDestinationCurrency = destinyCurrency?.id.toString()
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
             )
         }
     }
@@ -75,8 +75,8 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
         if (shouldDisplayExchange) {
             getExchangeOnCompleted(
                 abbreviation = originCurrency?.disbursementValue ?: "",
-                idOriginCurrency = originCurrency?.id.toString(),
-                idDestinationCurrency = destinyCurrency?.id.toString()
+                idOriginCurrency = destinyCurrency?.id.toString(),
+                idDestinationCurrency = originCurrency?.id.toString()
             )
         } else {
             validateAmount()

@@ -223,7 +223,7 @@ fun PaymentVoucherVDScreen(
             }
         }
 
-        if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
+        if (viewModel.isAutomaticProgrammedPaymentChecked != true && viewModel.isAutopayEnabled == true) {
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
                 text = stringResource(string.payment_voucher_schedule_payment),

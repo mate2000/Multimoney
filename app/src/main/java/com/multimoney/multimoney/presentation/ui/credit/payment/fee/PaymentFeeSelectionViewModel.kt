@@ -11,6 +11,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -38,6 +39,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
+    private var isAutopayEnabled: Boolean? = null
 
     init {
         user = savedStateHandle[USER]
@@ -47,6 +49,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
         identification = savedStateHandle[IDENTIFICATION]
         userName = savedStateHandle[NAME_CLIENT]
         paymentDate = savedStateHandle[PAYMENT_DATE]
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
         uiState = uiState.copy(summaryList = savedStateHandle.get<Array<Summary>>(SUMMARY_LIST)?.toList())
     }
 
@@ -61,7 +64,7 @@ class PaymentFeeSelectionViewModel @Inject constructor(savedStateHandle: SavedSt
             encodeData(
                 summaryList
             )
-            }/$identification/$userName/$paymentDate/${Screen.PaymentFeeScreen.baseRoute}"
+            }/$identification/$userName/$paymentDate/${Screen.PaymentFeeScreen.baseRoute}/$isAutopayEnabled"
         )
     }
 

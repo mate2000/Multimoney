@@ -14,6 +14,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.REFERENCE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -46,6 +47,7 @@ class PaymentCardVoucherViewModel @Inject constructor(
     private var identification: String? = null
     private var paymentDate: String? = ""
     private var infoUser: InfoUser? = null
+    var isAutopayEnabled: Boolean? = null
 
     init {
         infoUser = savedStateHandle[INFO_USER]
@@ -59,6 +61,7 @@ class PaymentCardVoucherViewModel @Inject constructor(
         currentDate = getCurrentDate(Calendar.getInstance().time)
         currentTime = getCurrentTime(Calendar.getInstance().time)
         paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
     }
 
     private fun onShareVoucherImage(
@@ -73,13 +76,13 @@ class PaymentCardVoucherViewModel @Inject constructor(
 
     private fun onScheduleAutomaticPayment() = navigateTo(
         route = "${Screen.PaymentScheduleCardScreen.baseRoute}/$idClient/$idLoanClient/${
-            encodeData(
-                card
-            )
+        encodeData(
+            card
+        )
         }/$paymentDate/${false}/${Screen.PaymentCardVoucherScreen.baseRoute}/${false}/$identification/${
-            encodeData(
-                infoUser
-            )
+        encodeData(
+            infoUser
+        )
         }"
     )
 

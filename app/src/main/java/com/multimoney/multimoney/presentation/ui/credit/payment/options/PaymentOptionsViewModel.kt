@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.security.InfoUser
 import com.multimoney.domain.model.security.PaymentMethod
 import com.multimoney.domain.model.security.TransferAccount
@@ -17,6 +16,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
@@ -54,6 +54,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
     private var idLoanClient: Int? = null
     private var idCurrency: Int? = null
     private var paymentDate: String? = ""
+    private var isAutopayEnabled: Boolean? = null
 
     init {
         infoUser = savedStateHandle[INFO_USER]
@@ -68,6 +69,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
         idCurrency = savedStateHandle[ID_CURRENCY]
         paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
         uiState = uiState.copy(paymentMethodList = savedStateHandle.get<Array<PaymentMethod>>(PAYMENT_METHOD)?.toList())
     }
 
@@ -82,17 +84,17 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
                     "${infoUser?.firstName} ${infoUser?.secondName} ${infoUser?.lastName} ${infoUser?.secondLastName}"
 
                 "${Screen.PaymentOptionsTransferScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/${
-                    encodeData(
-                        transferAccount
-                    )
+                encodeData(
+                    transferAccount
+                )
                 }/${beneficiaryName.capitalizedAllWords()}"
             }
             PaymentMethodType.VisaDirect.value -> {
                 "${Screen.PaymentCardsListScreen.baseRoute}/$identification/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate/${
-                    encodeData(
-                        infoUser
-                    )
-                }"
+                encodeData(
+                    infoUser
+                )
+                }/$isAutopayEnabled"
             }
             else -> {
                 "${Screen.PaymentPointsScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/$minimumPaymentLabel"

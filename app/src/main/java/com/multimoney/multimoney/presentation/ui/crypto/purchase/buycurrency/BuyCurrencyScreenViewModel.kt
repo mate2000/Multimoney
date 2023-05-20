@@ -113,18 +113,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         onFinished = {
             updateUiWithNewPricesAndCommissions()
             if (idCurrencyAccount == CurrencyType.Colon.id) {
-                getExchangeRate()
+                getInitialExchangeRate()
             }
         }
     )
 
     private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
-        val currentQuote = calculateQuote(
-            quoteAmount = uiState.quoteAmount.value,
-            baseAmount = uiState.baseAmount.value,
-            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-        )
-        if (currentQuote > MAX_AMOUNT_ALLOWED) {
+        if ((uiState.amountInUSD ?: 0.0) > MAX_AMOUNT_ALLOWED) {
             timer.startTimer(uiState.isConfirmationBottomSheetOpen)
             isError(
                 errorMessage = if (idBrand == Brand.CostaRica.id) {
@@ -208,7 +203,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             }
         }
 
-    private fun getExchangeRate(): Unit = executeUseCase {
+    private fun getInitialExchangeRate(): Unit = executeUseCase {
         getExchangeRate.invoke(
             user = user,
             identification = identification,
@@ -369,11 +364,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-                quoteAmount = calculateQuote(
-                    quoteAmount = uiState.quoteAmount.value,
-                    baseAmount = uiState.baseAmount.value,
-                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-                ),
+                quoteAmount = uiState.amountInUSD ?: 0.0,
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -399,14 +390,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         else uiState.exchangeRate.toString()
                     ),
                     Pair("quoteId", uiState.pricesQuoteAndCommissions?.quote_id ?: ""),
-                    Pair(
-                        "quoteAmount",
-                        calculateQuote(
-                            quoteAmount = uiState.quoteAmount.value,
-                            baseAmount = uiState.baseAmount.value,
-                            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-                        ).toString()
-                    ),
+                    Pair("quoteAmount", uiState.amountInUSD.toString()),
                     Pair("fee", uiState.pricesQuoteAndCommissions?.fee ?: "0.0"),
                     Pair("internalFee", uiState.pricesQuoteAndCommissions?.internal_fee.toString()),
                     Pair("totalFee", uiState.pricesQuoteAndCommissions?.totalFee.toString())
@@ -427,7 +411,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 accountToken = accountToken,
                 commissionAmount = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
-                exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
+                exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) DEFAULT_AMOUNT_NUMBER else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
                 quoteAmount = uiState.amountInUSD ?: 0.0,
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
@@ -524,6 +508,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
         val buyCryptoRequest: BuyCryptoRequest? = null,
         val convertedCurrentAmountPlusConvertedFee: String = "₡0.0",
+        val filledAmount: Double = 0.0, // value at the moment of the sell without the fee
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
@@ -569,7 +554,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 openMaintenanceAction = event.openMaintenanceAction
             )
             UIEvent.OnGetExchangeRate -> if (uiState.exchangeRate == 1.0) {
-                getExchangeRate()
+                getInitialExchangeRate()
             }
             is UIEvent.ValidateAmountInput -> validateAmountInput(event.amount)
             UIEvent.OnOpenPurchaseConfirmationBottomSheet -> {

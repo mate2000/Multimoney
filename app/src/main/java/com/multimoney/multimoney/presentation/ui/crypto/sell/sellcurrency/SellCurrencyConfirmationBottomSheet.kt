@@ -29,7 +29,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.ConfirmationBottomSheetContent
 import com.multimoney.multimoney.presentation.util.calculateAmountToReceive
 import com.multimoney.multimoney.presentation.util.calculateConvertedAmount
-import com.multimoney.multimoney.presentation.util.calculateConvertedAmountToReceive
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
@@ -105,11 +104,7 @@ fun SellConfirmationBottomSheet(
                 amountInUsd = viewModel.uiState.amountInUsd,
                 totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
             ),
-            convertedAmountToRecieve = calculateConvertedAmountToReceive(
-                amountInUsd = viewModel.uiState.amountInUsd,
-                exchangeRate = viewModel.uiState.exchangeRate,
-                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
-            ),
+            convertedAmountToRecieve = viewModel.uiState.convertedCurrentAmountMinusConvertedFee,
             showAssetImage = false,
             buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
             asset = viewModel.asset,

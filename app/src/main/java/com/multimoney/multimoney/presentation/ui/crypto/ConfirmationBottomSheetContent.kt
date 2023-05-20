@@ -240,17 +240,22 @@ private fun InfoSection(
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
                 )
             }
-            Text(
-                modifier = Modifier.padding(vertical = 4.dp),
-                text = buildAnnotatedString {
-                    append(stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive))
-                    append(WHITE_SPACE)
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(amountToReceive)
-                    }
-                },
-                style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
-            )
+            WhileLoadingSection(
+                isLoading = isLoading,
+                contentLoading = { CurrencyTitleConfirmationSectionSkeleton() },
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    text = buildAnnotatedString {
+                        append(stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive))
+                        append(WHITE_SPACE)
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(amountToReceive)
+                        }
+                    },
+                    style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
+                )
+            }
         }
     }
 }

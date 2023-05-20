@@ -43,8 +43,8 @@ import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
-import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
 
@@ -109,11 +109,7 @@ fun BuyCurrencyScreen(
             sharedViewModel.onUIEvent(
                 PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
                     quoteAmount = viewModel.uiState.amountInUSD?.toCurrencyFormat().orEmpty(),
-                    baseAmount = calculateConfirmationBaseAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                    ),
+                    baseAmount = viewModel.uiState.filledAmount.roundToEightDecimalPlaces(),
                     totalDebitedAmount = calculateAmountPlusFee(
                         amount = (viewModel.uiState.amountInUSD ?: 0.0).toString(),
                         fee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee

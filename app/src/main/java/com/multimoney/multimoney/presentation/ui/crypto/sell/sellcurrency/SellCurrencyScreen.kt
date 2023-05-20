@@ -40,7 +40,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.calculateAmountToReceive
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
+import com.multimoney.multimoney.presentation.util.calculateSellApproximate
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
@@ -110,16 +110,10 @@ fun SellCurrencyScreen(
                 SellCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
                     assetAmount = viewModel.uiState.amountInCurrency
                         .roundToEightDecimalPlaces().plus(" ${viewModel.asset}"),
-                    approximateValue = calculateConfirmationQuoteAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                    approximateValue = calculateSellApproximate(
+                        amount = viewModel.uiState.filledAmount,
                         exchangeRate = viewModel.uiState.exchangeRate,
-                        symbol = if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
-                            CurrencyType.Dollar.symbol
-                        } else {
-                            CurrencyType.Colon.symbol
-                        }
+                        idCurrency = viewModel.idCurrencyAccount
                     ),
                     totalCreditedAmount = calculateAmountToReceive(
                         amountInUsd = viewModel.uiState.amountInUsd,
@@ -128,7 +122,7 @@ fun SellCurrencyScreen(
                     exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                         symbol = CurrencyType.Colon.symbol
                     ),
-                    totalCreditedAmountExchange  = viewModel.uiState.convertedCurrentAmountMinusConvertedFee,
+                    totalCreditedAmountExchange = viewModel.uiState.convertedCurrentAmountMinusConvertedFee,
                     referenceNumber = viewModel.uiState.referenceNumber ?: ""
                 )
             )

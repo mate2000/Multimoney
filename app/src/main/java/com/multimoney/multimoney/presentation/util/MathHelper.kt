@@ -73,28 +73,14 @@ fun calculateConvertedAmount(
     exchangeRate: Double
 ) = amountInUsd.times(exchangeRate).toCurrencyFormat(CurrencyType.Colon.symbol)
 
-fun calculateConvertedAmountToReceive(
-    amountInUsd: Double,
+fun calculateSellApproximate(
+    amount: Double,
     exchangeRate: Double,
-    totalFee: Double?
-) = amountInUsd.times(exchangeRate).minus(
-    (totalFee ?: 0.0).times(exchangeRate)
-).toCurrencyFormat(CurrencyType.Colon.symbol)
-
-fun calculateConfirmationQuoteAmount(
-    quoteAmount: String,
-    baseAmount: String,
-    currencyPrice: Double?,
-    exchangeRate: Double,
-    symbol: String
-): String {
-    return quoteAmount.ifEmpty {
-        baseAmount.ifEmpty {
-            DEFAULT_AMOUNT
-        }.toDouble().times(currencyPrice ?: 0.0)
-    }.toString().toDouble().times(exchangeRate).toCurrencyFormat(
-        symbol = symbol
-    )
+    idCurrency: Int
+) = if (idCurrency == CurrencyType.Colon.id) {
+    amount.times(exchangeRate).toCurrencyFormat(CurrencyType.Colon.symbol)
+} else {
+    amount.toCurrencyFormat()
 }
 
 fun calculateConfirmationBaseAmount(
@@ -113,40 +99,24 @@ fun calculateQuote(
     isTransformationCurrency: Boolean,
     amount: String,
     price: Double
-): Double {
-    return if (isTransformationCurrency.not()) {
-        amount.ifEmpty { BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING }.toDouble()
-    } else {
-        amount.ifEmpty {
-            BuyCurrencyScreenViewModel.DEFAULT_AMOUNT
-        }.toDouble().times(price)
-    }
+)= if (isTransformationCurrency.not()) {
+    amount.ifEmpty { BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING }.toDouble()
+} else {
+    amount.ifEmpty {
+        BuyCurrencyScreenViewModel.DEFAULT_AMOUNT
+    }.toDouble().times(price)
 }
 
 fun calculateBase(
     isTransformationCurrency: Boolean,
     amount: String,
     price: Double
-): Double {
-    return if (isTransformationCurrency.not()) {
-        amount.ifEmpty {
-            BuyCurrencyScreenViewModel.DEFAULT_AMOUNT
-        }.toDouble().div(price)
-    } else {
-        amount.ifEmpty { BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING }.toDouble()
-    }
-}
-
-fun calculateQuote(
-    quoteAmount: String,
-    baseAmount: String,
-    price: Double
-): Double {
-    return quoteAmount.ifEmpty {
-        baseAmount.ifEmpty {
-            BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING
-        }.toDouble().times(price)
-    }.toString().toDouble().roundToTwoDecimalPlaces().toDouble()
+) = if (isTransformationCurrency.not()) {
+    amount.ifEmpty {
+        BuyCurrencyScreenViewModel.DEFAULT_AMOUNT
+    }.toDouble().div(price)
+} else {
+    amount.ifEmpty { BuyCurrencyScreenViewModel.DEFAULT_BASE_AMOUNT_STRING }.toDouble()
 }
 
 fun calculateAmountPlusFee(

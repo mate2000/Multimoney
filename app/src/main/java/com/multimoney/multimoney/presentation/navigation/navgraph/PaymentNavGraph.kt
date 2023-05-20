@@ -212,9 +212,6 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(IS_EDIT_PAYMENT_SCHEDULE) {
                     type = NavType.BoolType
-                },
-                navArgument(IS_AUTOPAY_ENABLED) {
-                    type = NavType.BoolType
                 }
             )
         ) {

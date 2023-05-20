@@ -239,7 +239,7 @@ class PaymentAmountViewModel @Inject constructor(
             encodeData(
                 uiState.clientBankAccount
             )
-            }/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber/$isAutopayEnabled"
+            }/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber/$isAutopayEnabled/$identification"
         )
     }
 

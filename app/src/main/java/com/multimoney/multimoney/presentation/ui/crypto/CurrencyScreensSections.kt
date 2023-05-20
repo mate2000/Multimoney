@@ -162,7 +162,8 @@ fun AmountInputSection(
     isTransformationCurrency: MutableState<Boolean>,
     keyboardController: SoftwareKeyboardController?,
     focusRequester: FocusRequester,
-    onAmountChanged: (String) -> Unit
+    onAmountChanged: (String) -> Unit,
+    onDebounceValidation: (newText: String) -> Unit = {}
 ) {
     val quoteAmountText = remember { quoteAmount }
     val baseAmountText = remember { baseAmount }
@@ -189,6 +190,7 @@ fun AmountInputSection(
             },
             isTransformationCurrency = isTransformationCurrencyValue,
             onValueChanged = onAmountChanged,
+            onDebounceValidation = onDebounceValidation,
             onImeClick = { keyboardController?.hide() },
             onSwitchClick = {
                 isTransformationCurrency.value = !isTransformationCurrency.value

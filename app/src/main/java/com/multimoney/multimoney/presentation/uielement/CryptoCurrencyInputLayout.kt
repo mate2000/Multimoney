@@ -23,7 +23,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -44,6 +47,14 @@ import com.multimoney.multimoney.presentation.util.transformation.CryptoAssetMas
 import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
 import com.multimoney.multimoney.presentation.util.validateDecimalIncome
 import com.multimoney.multimoney.presentation.util.validateEightDecimalIncome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * CryptoCurrencyInputLayout: Custom layout to display a currency input with button to change
@@ -59,6 +70,7 @@ import com.multimoney.multimoney.presentation.util.validateEightDecimalIncome
  * @param errorText String to be displayed in case of error
  * @param onValueChanged Function to be called when the value is changed
  * @param onImeClick Function to be called when the IME is clicked
+ * @param onDebounceValidation Function to be called when the value is changed and the debounce is finished
  *
  * **/
 
@@ -73,6 +85,7 @@ fun CryptoCurrencyInputLayout(
     isError: Boolean = false,
     errorText: String? = null,
     onValueChanged: (String) -> Unit,
+    onDebounceValidation: (newText: String) -> Unit = {},
     onSwitchClick: () -> Unit,
     onImeClick: () -> Unit
 ) {
@@ -95,7 +108,8 @@ fun CryptoCurrencyInputLayout(
                 onSearchClick = onImeClick,
                 onSwitchClick = onSwitchClick,
                 isError = isError,
-                onValueChanged = onValueChanged
+                onValueChanged = onValueChanged,
+                onDebounceValidation = onDebounceValidation
             )
             AnimatedVisibility(visible = isError && errorText?.isNotEmpty() == true) {
                 Row(
@@ -124,6 +138,7 @@ fun CryptoCurrencyInputLayout(
     }
 }
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 @Preview
 fun CustomTextField(
@@ -134,9 +149,22 @@ fun CustomTextField(
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
     onValueChanged: (String) -> Unit = {},
+    onDebounceValidation: (newText: String) -> Unit = {},
     onSwitchClick: () -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
+    val textDebounce = remember { MutableStateFlow("") }
+    val textDebounceFlow: Flow<String> = remember {
+        textDebounce.debounce(500)
+            .distinctUntilChanged()
+            .flatMapLatest {
+                if (it.isNotEmpty()) {
+                    onDebounceValidation(it)
+                }
+                flowOf(it)
+            }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -167,6 +195,10 @@ fun CustomTextField(
                     value.value = validateTextFormat(
                         newValue = newValue,
                         onValueChanged = onValueChanged,
+                    )
+                    textDebounce.value = validateTextFormat(
+                        newValue = newValue,
+                        onValueChanged = onDebounceValidation,
                     )
                 }
             },
@@ -238,6 +270,9 @@ fun CustomTextField(
             }
         }
     }
+
+    // This is required to execute the debounce
+    val textDebounceFlowValue by textDebounceFlow.collectAsState("")
 }
 
 fun validateTextFormat(

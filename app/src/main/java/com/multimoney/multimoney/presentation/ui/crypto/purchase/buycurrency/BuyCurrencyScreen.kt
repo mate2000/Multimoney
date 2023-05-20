@@ -43,11 +43,8 @@ import com.multimoney.multimoney.presentation.uielement.CurrencyExchangeInfo
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
-import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmountForVoucher
-import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.launch
 
@@ -95,13 +92,6 @@ fun BuyCurrencyScreen(
             viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnGetExchangeRate)
         }
         viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(""))
-        viewModel.onUIEvent(
-            BuyCurrencyScreenViewModel.UIEvent.OnSetFailureAction(
-                failureAction = {
-                    sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
-                }
-            )
-        )
     }
     when (viewModel.uiState.purchaseStatus) {
         PurchaseStatus.IDLE -> {
@@ -118,34 +108,16 @@ fun BuyCurrencyScreen(
         PurchaseStatus.SUCCESS -> {
             sharedViewModel.onUIEvent(
                 PurchaseCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
-                    quoteAmount = calculateConfirmationQuoteAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                    ),
-                    baseAmount = calculateConfirmationBaseAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                    ),
+                    quoteAmount = viewModel.uiState.amountInUSD?.toCurrencyFormat().orEmpty(),
+                    baseAmount = viewModel.uiState.filledAmount.roundToEightDecimalPlaces(),
                     totalDebitedAmount = calculateAmountPlusFee(
-                        amount = calculateConfirmationQuoteAmountForVoucher(
-                            quoteAmount = viewModel.uiState.quoteAmount.value,
-                            baseAmount = viewModel.uiState.baseAmount.value,
-                            currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                        ),
+                        amount = (viewModel.uiState.amountInUSD ?: 0.0).toString(),
                         fee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
                     ).toCurrencyFormat(),
                     exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                         symbol = CurrencyType.Colon.symbol
                     ),
-                    totalDebitedExchange = calculateConvertedCurrencyBalance(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        exchangeRate = viewModel.uiState.exchangeRate,
-                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
-                            ?: 0.0
-                    ),
+                    totalDebitedExchange = viewModel.uiState.convertedCurrentAmountPlusConvertedFee,
                     referenceNumber = viewModel.uiState.referenceNumber ?: ""
                 )
             )
@@ -189,7 +161,7 @@ fun BuyCurrencyScreen(
         }
     }
     BackHandler {
-        sharedViewModel.uiState.previousAction()
+        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnClearInputData)
         sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep)
     }
 
@@ -284,6 +256,9 @@ fun BuyCurrencyScreenContent(
                         viewModel.onUIEvent(
                             BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(it)
                         )
+                    },
+                    onDebounceValidation = {
+                        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnValidateAmountExchangeRate(it))
                     }
                 )
                 if (viewModel.idCurrencyAccount == CurrencyType.Colon.id) {
@@ -308,13 +283,7 @@ fun BuyCurrencyScreenContent(
                                     exchangeRateText = viewModel.uiState.exchangeRate.toCurrencyFormat(
                                         symbol = CurrencyType.Colon.symbol
                                     ),
-                                    convertedAmountText = calculateConvertedCurrencyBalance(
-                                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                                        baseAmount = viewModel.uiState.baseAmount.value,
-                                        exchangeRate = viewModel.uiState.exchangeRate,
-                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
-                                            ?: 0.0
-                                    )
+                                    convertedAmountText = viewModel.uiState.convertedCurrentAmountPlusConvertedFee
                                 )
                             }
                         )

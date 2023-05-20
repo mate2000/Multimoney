@@ -189,6 +189,7 @@ class ProductViewModel @Inject constructor(
     var creditMovements: List<CreditMovementsResult> = emptyList()
     var smartAccount: SmartAccountID? = null
     var whatsAppLink: String = ""
+    var isAutopayEnabled: Boolean = false
 
     private fun onSetUserData(
         idBrand: String,
@@ -262,7 +263,8 @@ class ProductViewModel @Inject constructor(
             balanceCredit = it
             val isCreditAvailable =
                 (balanceCredit?.getFirstSummary()?.availableBalance ?: 0.0) > 0.0
-            val canExpandCredit = it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false
+            val canExpandCredit =
+                it.getFirstSummary()?.canExpandState ?: false && it.getFirstSummary()?.isProductActive ?: false
             uiState = uiState.copy(
                 canExpandCredit = canExpandCredit,
                 paymentAvailable = checkPaymentAvailability(it.balanceCredit?.firstOrNull()?.summary),
@@ -497,11 +499,11 @@ class ProductViewModel @Inject constructor(
         ) {
             "${Screen.PaymentFeeScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
             encodeData(creditSummary)
-            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}"
+            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/$isAutopayEnabled"
         } else if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.CostaRica.id) {
             "${Screen.PaymentAccountScreen.baseRoute}/$email/${uiState.idBrand}/${infoCredit?.idClient}/${infoCredit?.idLoanClient}/${
-            encodeData(listOf(creditSummary?.firstOrNull { (it.currentBalance ?: ZERO) > ZERO }))
-            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}"
+            encodeData(creditSummary)
+            }/$identification/$userName/${balanceCredit?.getFirstSummary()?.paymentDate}/${Screen.HomeScreen.route}/$isAutopayEnabled"
         } else if ((uiState.idBrand.toIntOrNull() ?: 0) == Brand.Mexico.id) {
             "${Screen.PaymentOptionsTransferScreen.baseRoute}/${uiState.idBrand}/${balanceCredit?.getFirstSummary()?.ibanAccount}/${
             encodeData(
@@ -515,7 +517,7 @@ class ProductViewModel @Inject constructor(
                 "${balanceCredit?.getFirstSummary()?.minPayment}/${balanceCredit?.getFirstSummary()?.minPaymentLabel}/" +
                 "${balanceCredit?.getFirstSummary()?.currentBalance}/${balanceCredit?.getFirstSummary()?.currentBalanceLabel}/" +
                 "$identification/$idClient/${infoCredit?.idLoanClient}/${balanceCredit?.getFirstSummary()?.idCurrency}/" +
-                "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}"
+                "${balanceCredit?.getFirstSummary()?.paymentDate}/${encodeData(uiState.userStatus?.infoUser)}/$isAutopayEnabled"
         }
         navigateTo(route)
     }

@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.util.getCardDateFormat
 @Composable
 fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeViewModel) {
     viewModel.balanceCredit?.balanceCredit?.firstOrNull()?.let { balance ->
+        viewModel.isAutopayEnabled = balance.automaticDebitEnabled?.not() == true && balance.applyAutomaticDebit == true
         if (balance.automaticDebitEnabled == true) {
             Spacer(modifier = Modifier.height(8.dp))
             ScheduleAutomaticPaymentTextInfo(

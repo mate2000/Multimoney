@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
@@ -60,13 +61,13 @@ import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class PaymentCardListViewModel @Inject constructor(
@@ -95,6 +96,7 @@ class PaymentCardListViewModel @Inject constructor(
     private var maximumPaymentLabel: String = ""
     private var paymentDate: String? = ""
     private var infoUser: InfoUser? = null
+    private var isAutopayEnabled: Boolean? = null
     var reactApplicationName: String = ""
     var reactUserName: String = ""
     var reactUserPass: String = ""
@@ -112,6 +114,7 @@ class PaymentCardListViewModel @Inject constructor(
         maximumPayment = savedStateHandle[MAXIMUM_PAYMENT]
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
         paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
     }
 
     private fun onCallQueryGetClientCardsUseCase() {
@@ -236,12 +239,12 @@ class PaymentCardListViewModel @Inject constructor(
     private fun onCardSelected(cardSelected: CardVisaDirect?) =
         navigateTo(
             route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$identification/${
-                encodeData(cardSelected)
+            encodeData(cardSelected)
             }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate/${
-                encodeData(
-                    infoUser
-                )
-            }"
+            encodeData(
+                infoUser
+            )
+            }/$isAutopayEnabled"
         )
 
     private fun onNavigateBack() =
@@ -424,5 +427,4 @@ class PaymentCardListViewModel @Inject constructor(
         object OnResumeTimer : UIEvent()
         data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
     }
-
 }

@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.navigation.navgraph
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.NavType.Companion
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
@@ -69,6 +70,7 @@ const val CURRENCY_SYMBOL = "currency_symbol"
 const val ACCOUNT_DETAIL = "account_detail"
 const val ADD_CARD_RESPONSE = "add_card_response"
 const val INFO_USER = "info_user"
+const val IS_AUTOPAY_ENABLED = "is_autopay_enabled"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"
@@ -95,6 +97,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -127,6 +132,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(SUMMARY_LIST) {
                     type = SummaryListNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = Companion.BoolType
                 }
             )
         ) {
@@ -163,6 +171,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(CLIENT_BANK_ACCOUNT) {
                     type = ClientBankAccountNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -200,6 +211,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                     type = NavType.BoolType
                 },
                 navArgument(IS_EDIT_PAYMENT_SCHEDULE) {
+                    type = NavType.BoolType
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
                     type = NavType.BoolType
                 }
             )
@@ -348,6 +362,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(IS_AUTOMATIC_PAYMENT_CHECKED) {
                     type = NavType.BoolType
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -392,6 +409,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(INFO_USER) {
                     type = InfoUserNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -495,6 +515,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(INFO_USER) {
                     type = InfoUserNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -537,6 +560,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(INFO_USER) {
                     type = InfoUserNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {
@@ -578,6 +604,9 @@ fun NavGraphBuilder.paymentNavGraph(navController: NavHostController) {
                 },
                 navArgument(INFO_USER) {
                     type = InfoUserNavType()
+                },
+                navArgument(IS_AUTOPAY_ENABLED) {
+                    type = NavType.BoolType
                 }
             )
         ) {

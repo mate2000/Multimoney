@@ -104,11 +104,13 @@ fun PaymentAmountBottomSheetScreen(
                 CurrencyExchangeRow(viewModel)
             }
             Spacer(modifier = Modifier.height(32.dp))
-            CustomCheckBox(
-                checked = viewModel.uiState.isAutomaticProgrammedPaymentChecked,
-                onCheckedChange = { viewModel.onUIEvent(UIEvent.OnAutomaticProgrammedPaymentCheckedChanged(it)) },
-                text = stringResource(id = R.string.payment_amount_bottom_sheet_enable_automatic_payment)
-            )
+            if (viewModel.isAutopayEnabled == true) {
+                CustomCheckBox(
+                    checked = viewModel.uiState.isAutomaticProgrammedPaymentChecked,
+                    onCheckedChange = { viewModel.onUIEvent(UIEvent.OnAutomaticProgrammedPaymentCheckedChanged(it)) },
+                    text = stringResource(id = R.string.payment_amount_bottom_sheet_enable_automatic_payment)
+                )
+            }
 
             Spacer(modifier = Modifier.height(40.dp))
             CustomButton(

@@ -73,23 +73,17 @@ fun PaymentVoucherScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MultimoneyTheme.colors.background),
+        modifier = Modifier.fillMaxSize().background(MultimoneyTheme.colors.background),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
+            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
         ) {
             TopNavBar(isLeftButtonVisible = false, isCenterContentVisible = true, onRightButtonClick = {
                 viewModel.onUIEvent(OnCloseClick)
             })
             ConstraintLayout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 16.dp)
             ) {
                 val (backgroundId, contentId, shareButtonId) = createRefs()
                 CustomImage(
@@ -105,21 +99,17 @@ fun PaymentVoucherScreen(
                     contentScale = ContentScale.FillBounds
                 )
                 Column(
-                    modifier = Modifier
-                        .constrainAs(contentId) {
-                            top.linkTo(parent.top)
-                            bottom.linkTo(shareButtonId.top)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                        .onGloballyPositioned {
-                            capturingViewBounds = it.boundsInRoot()
-                        }
+                    modifier = Modifier.constrainAs(contentId) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(shareButtonId.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }.onGloballyPositioned {
+                        capturingViewBounds = it.boundsInRoot()
+                    }
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -140,13 +130,11 @@ fun PaymentVoucherScreen(
                                 }
                             },
                             text = stringResource(string.payment_voucher_shared_button),
-                            modifier = Modifier
-                                .padding(
-                                    start = 24.dp,
-                                    end = 24.dp,
-                                    top = 12.dp
-                                )
-                                .fillMaxWidth(),
+                            modifier = Modifier.padding(
+                                start = 24.dp,
+                                end = 24.dp,
+                                top = 12.dp
+                            ).fillMaxWidth(),
                             elevation = ButtonDefaults.elevation(
                                 defaultElevation = 0.dp,
                                 pressedElevation = 0.dp,
@@ -188,9 +176,7 @@ fun PaymentVoucherScreen(
                         }
                     }
                     Box(
-                        Modifier
-                            .height(1.dp)
-                            .fillMaxWidth()
+                        Modifier.height(1.dp).fillMaxWidth()
                             .background(MultimoneyTheme.colors.dividerWhite16, shape = DottedShape(step = 10.dp))
                     )
                     Text(
@@ -227,8 +213,7 @@ fun PaymentVoucherScreen(
                         )
                     }
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                             .padding(start = 24.dp, top = 32.dp, end = 24.dp, bottom = 24.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
@@ -257,19 +242,16 @@ fun PaymentVoucherScreen(
                 }
             }
         }
-        if (viewModel.isAutomaticProgrammedPaymentChecked != true) {
+        if (viewModel.isAutomaticProgrammedPaymentChecked != true && viewModel.isAutopayEnabled == true) {
             CustomButton(
                 onClick = { viewModel.onUIEvent(OnScheduleAutomaticPayment) },
                 text = stringResource(string.payment_voucher_schedule_payment),
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 32.dp,
-                        top = 16.dp
-                    )
-                    .fillMaxWidth()
-                    .height(48.dp),
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 32.dp,
+                    top = 16.dp
+                ).fillMaxWidth().height(48.dp),
                 buttonType = PrimaryPrimary
             )
         }

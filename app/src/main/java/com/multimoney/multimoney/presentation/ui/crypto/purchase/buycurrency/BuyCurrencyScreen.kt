@@ -284,6 +284,9 @@ fun BuyCurrencyScreenContent(
                         viewModel.onUIEvent(
                             BuyCurrencyScreenViewModel.UIEvent.ValidateAmountInput(it)
                         )
+                    },
+                    onDebounceValidation = {
+                        viewModel.onUIEvent(BuyCurrencyScreenViewModel.UIEvent.OnValidateAmountExchangeRate)
                     }
                 )
                 if (viewModel.idCurrencyAccount == CurrencyType.Colon.id) {
@@ -308,13 +311,7 @@ fun BuyCurrencyScreenContent(
                                     exchangeRateText = viewModel.uiState.exchangeRate.toCurrencyFormat(
                                         symbol = CurrencyType.Colon.symbol
                                     ),
-                                    convertedAmountText = calculateConvertedCurrencyBalance(
-                                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                                        baseAmount = viewModel.uiState.baseAmount.value,
-                                        exchangeRate = viewModel.uiState.exchangeRate,
-                                        price = viewModel.uiState.pricesQuoteAndCommissions?.price
-                                            ?: 0.0
-                                    )
+                                    convertedAmountText = viewModel.uiState.convertedCurrentAmountPlusConvertedFee
                                 )
                             }
                         )

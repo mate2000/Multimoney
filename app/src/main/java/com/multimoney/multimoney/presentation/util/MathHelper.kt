@@ -214,3 +214,12 @@ fun calculateAvailableInDollars(
     baseAmount: Double,
     currencyPrice: Double
 ): Double = baseAmount.times(currencyPrice)
+
+fun calculateCurrentConvertedAmountPlusFee(
+    amount: Double,
+    totalFee: Double?,
+    exchangeRate: Double
+): String {
+    val convertedFee = totalFee?.times(exchangeRate) ?: 0.0
+    return convertedFee.plus(amount).toCurrencyFormat(CurrencyType.Colon.symbol)
+}

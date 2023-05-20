@@ -21,6 +21,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
+import com.multimoney.multimoney.presentation.util.calculateCurrentConvertedAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -221,6 +222,36 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onSuccess { exchangeRate ->
                 uiState = uiState.copy(
                     isLoading = false, exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                )
+            }
+            result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    timer.stopTimer()
+                    openMaintenanceAction()
+                    return@onFailure
+                }
+                onFailure()
+            }
+        }
+    }
+
+    private fun getAmountExchangeRate(amount: Double): Unit = executeUseCase {
+        getExchangeRate.invoke(
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            abbreviation = CurrencyType.Colon.disbursementValue,
+            idOriginCurrency = CurrencyType.Colon.id.toString(),
+            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            amount = amount.plus((uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0) * uiState.exchangeRate)
+        ).collectLatest { result ->
+            result.onLoading { uiState = uiState.copy(isLoading = true) }
+            result.onSuccess { exchangeRate ->
+                updateFees()
+                uiState = uiState.copy(
+                    isLoading = false,
+                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0,
+                    convertedCurrentAmountPlusConvertedFee = exchangeRate?.convertedAmountLabel ?: DEFAULT_AMOUNT
                 )
             }
             result.onFailure {
@@ -493,6 +524,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val baseAmount: MutableState<String> = mutableStateOf(""),
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
         val buyCryptoRequest: BuyCryptoRequest? = null,
+        val convertedCurrentAmountPlusConvertedFee: String = "₡0.0",
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
@@ -557,6 +589,13 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             UIEvent.OnClearInputData -> clearInputData()
             UIEvent.OnRegisterAdjustPurchase -> registerAdjustPurchaseCrypto()
             UIEvent.OnUpdateFees -> updateFees()
+            UIEvent.OnValidateAmountExchangeRate -> getAmountExchangeRate(
+                calculateQuote(
+                    quoteAmount = uiState.quoteAmount.value,
+                    baseAmount = uiState.baseAmount.value,
+                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
+                )
+            )
         }
     }
 
@@ -588,6 +627,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         object OnClearInputData : UIEvent()
         object OnRegisterAdjustPurchase : UIEvent()
         object OnUpdateFees : UIEvent()
+        object OnValidateAmountExchangeRate : UIEvent()
     }
 
     companion object {

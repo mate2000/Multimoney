@@ -57,14 +57,14 @@ fun VoucherCurrencyExchangeInfoSkeleton() {
     ShimmerBoxView {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             ShimmerItemView(
                 modifier = Modifier
-                    .width(320.dp)
-                    .height(48.dp),
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
                 radius = 8.dp
             )
         }

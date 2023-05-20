@@ -111,12 +111,7 @@ fun PurchaseConfirmationBottomSheet(
             exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                 symbol = CurrencyType.Colon.symbol
             ),
-            convertedAmount = calculateConvertedCurrencyBalance(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                price = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                exchangeRate = viewModel.uiState.exchangeRate
-            ),
+            convertedAmount = viewModel.uiState.convertedCurrentAmountPlusConvertedFee,
             idBrand = viewModel.idBrand,
             onConfirm = {
                 coroutineScope.launch {

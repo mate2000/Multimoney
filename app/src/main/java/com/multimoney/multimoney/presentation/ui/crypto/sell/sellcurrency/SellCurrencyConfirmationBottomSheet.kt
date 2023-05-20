@@ -27,10 +27,11 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.ConfirmationBottomSheetContent
-import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
-import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
+import com.multimoney.multimoney.presentation.util.calculateAmountToReceive
+import com.multimoney.multimoney.presentation.util.calculateConvertedAmount
+import com.multimoney.multimoney.presentation.util.calculateConvertedAmountToReceive
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -75,11 +76,8 @@ fun SellConfirmationBottomSheet(
             )
         }
         ConfirmationBottomSheetContent(
-            amount = calculateConfirmationBaseAmount(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-            ).plus(" ${viewModel.asset}"),
+            amount = viewModel.uiState.amountInCurrency
+                .roundToEightDecimalPlaces().plus(" ${viewModel.asset}"),
             evaluatedAmount = buildAnnotatedString {
                 append(stringResource(
                     id = R.string.crypto_sell_flow_confirmation_sell_screen_evaluate_amount,
@@ -92,31 +90,25 @@ fun SellConfirmationBottomSheet(
                 append(WHITE_SPACE)
                 withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                     if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
-                        append(calculateConfirmationQuoteAmount(
-                            quoteAmount = viewModel.uiState.quoteAmount.value,
-                            baseAmount = viewModel.uiState.baseAmount.value,
-                            currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                            symbol = CurrencyType.Dollar.symbol
-                        ))
+                        append(viewModel.uiState.amountInUsd.toCurrencyFormat())
                     } else {
-                        append(calculateConfirmationQuoteAmount(
-                            quoteAmount = viewModel.uiState.quoteAmount.value,
-                            baseAmount = viewModel.uiState.baseAmount.value,
-                            currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                            exchangeRate = viewModel.uiState.exchangeRate,
-                            symbol = CurrencyType.Colon.symbol
+                        append(calculateConvertedAmount(
+                            amountInUsd = viewModel.uiState.amountInUsd,
+                            exchangeRate = viewModel.uiState.exchangeRate
                         ))
                     }
                 }
             },
             showTotalToReceive = true,
             showBottomExchangeInfo = false,
-            amountToReceive = calculateConfirmationQuoteAmount(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                symbol = CurrencyType.Dollar.symbol,
-                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+            amountToReceive = calculateAmountToReceive(
+                amountInUsd = viewModel.uiState.amountInUsd,
+                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
+            ),
+            convertedAmountToRecieve = calculateConvertedAmountToReceive(
+                amountInUsd = viewModel.uiState.amountInUsd,
+                exchangeRate = viewModel.uiState.exchangeRate,
+                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
             ),
             showAssetImage = false,
             buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
@@ -127,13 +119,6 @@ fun SellConfirmationBottomSheet(
             isLoading = viewModel.uiState.isLoading,
             exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                 symbol = CurrencyType.Colon.symbol
-            ),
-            convertedAmount = calculateConvertedCurrencyBalance(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                price = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                exchangeRate = viewModel.uiState.exchangeRate,
-                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ),
             accountInfoLabel = R.string.crypto_sell_flow_confirmation_sell_screen_acc_info_text,
             isPurchase = false,

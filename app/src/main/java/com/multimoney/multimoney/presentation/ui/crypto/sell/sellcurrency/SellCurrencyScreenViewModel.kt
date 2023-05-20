@@ -20,6 +20,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
+import com.multimoney.multimoney.presentation.util.calculateBase
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -174,6 +175,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = true)
             }
             result.onSuccess { pricesQuotesAndCommission ->
+                getExchangeRate(true)
                 uiState = uiState.copy(
                     isLoading = false,
                     pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
@@ -190,7 +192,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getExchangeRate(): Unit = executeUseCase {
+    private fun getExchangeRate(getConvertedValue: Boolean = false): Unit = executeUseCase {
         getExchangeRate.invoke(
             user = user,
             identification = identification,
@@ -198,14 +200,21 @@ class SellCurrencyScreenViewModel @Inject constructor(
             abbreviation = CurrencyType.Colon.disbursementValue,
             idOriginCurrency = CurrencyType.Colon.id.toString(),
             idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-            amount = 0.0,
+            amount = if (getConvertedValue) uiState.amountInUsd.minus(
+                uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+            ) else 0.0,
             isTransfer = true
         ).collectLatest { result ->
-            result.onLoading { uiState = uiState.copy(isLoading = true) }
+            result.onLoading {
+                if (!getConvertedValue) {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
             result.onSuccess { exchangeRate ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0,
+                    convertedCurrentAmountMinusConvertedFee = exchangeRate?.convertedAmountLabel ?: "₡0.0"
                 )
             }
             result.onFailure {
@@ -225,6 +234,13 @@ class SellCurrencyScreenViewModel @Inject constructor(
             amount = amount,
             price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
         )
+
+        val baseAmount = calculateBase(
+            isTransformationCurrency = uiState.isTransformationCurrency.value,
+            amount = amount,
+            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+        )
+        uiState = uiState.copy(amountInCurrency = baseAmount, amountInUsd = quoteAmount)
 
         when {
             amount.isEmpty() -> isError(isError = true, focusError = false)
@@ -339,11 +355,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             idBrand = idBrand,
             user = user,
             quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-            baseAmount = calculateConfirmationBaseAmount(
-                quoteAmount = uiState.quoteAmount.value,
-                baseAmount = uiState.baseAmount.value,
-                currencyPrice = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-            ).toDouble(),
+            baseAmount = uiState.amountInCurrency,
             fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
             internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
             totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -416,7 +428,10 @@ class SellCurrencyScreenViewModel @Inject constructor(
 
     data class UIState(
         // ** mutable data
+        val amountInCurrency: Double = 0.0,
+        val amountInUsd: Double = 0.0,
         val exchangeRate: Double = 1.0,
+        val convertedCurrentAmountMinusConvertedFee: String = "₡0.0",
         val asset: String = "",
         val availableCryptoAmount: Double = 0.0,
         val quoteAmount: MutableState<String> = mutableStateOf(""),

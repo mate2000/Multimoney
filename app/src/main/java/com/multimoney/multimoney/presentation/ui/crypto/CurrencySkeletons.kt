@@ -53,7 +53,7 @@ fun CurrencyTitleConfirmationSectionSkeleton() {
 }
 
 @Composable
-fun VoucherCurrencyExchangeInfoSkeleton() {
+fun VoucherCurrencyExchangeInfoSkeleton(applyPadding: Boolean = true) {
     ShimmerBoxView {
         Row(
             modifier = Modifier
@@ -62,7 +62,7 @@ fun VoucherCurrencyExchangeInfoSkeleton() {
         ) {
             ShimmerItemView(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = if (applyPadding) 16.dp else 0.dp)
                     .fillMaxWidth()
                     .height(56.dp),
                 radius = 8.dp

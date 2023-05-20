@@ -23,6 +23,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.PurchaseCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsSkeleton
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
@@ -51,10 +52,25 @@ fun SelectSmartAccountScreen(
     }
 
     BackHandler { sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnPreviousStep) }
-
-    SelectSmartAccountContent(viewModel, sharedViewModel) {
-        if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
-            sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+    // if smart accounts are empty, show error
+    if (sharedViewModel.uiState.accounts.isEmpty()) {
+        AlertResult(
+            titleString = stringResource(id = R.string.error_occurred_title),
+            buttonTextResource = R.string.profile_error_changing_phone_button,
+            isRightButtonVisible = false,
+            isLeftButtonVisible = false,
+            onButtonClick = {
+                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+            },
+            onRightButtonClick = {
+                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNavigateHome)
+            }
+        )
+    } else {
+        SelectSmartAccountContent(viewModel, sharedViewModel) {
+            if (!sharedViewModel.uiState.shouldDisplayDisclaimer) {
+                sharedViewModel.onUIEvent(PurchaseCryptoSharedViewModel.UIEvent.OnNextStep)
+            }
         }
     }
 }

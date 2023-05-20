@@ -21,7 +21,6 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
-import com.multimoney.multimoney.presentation.util.calculateCurrentConvertedAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -185,7 +184,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 idOriginCurrency = CurrencyType.Colon.id.toString(),
                 idDestinationCurrency = CurrencyType.Dollar.id.toString(),
                 amount = smartAccountAvailableBalance,
-                isTransfer = true
+                isTransfer = false
             ).collectLatest { result ->
                 result.onLoading {
                     this.smartAccountAvailableBalance = 0.0
@@ -238,7 +237,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getAmountExchangeRate(amount: Double): Unit = executeUseCase {
+    private fun getAmountExchangeRate(): Unit = executeUseCase {
         getExchangeRate.invoke(
             user = user,
             identification = identification,
@@ -246,11 +245,11 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             abbreviation = CurrencyType.Colon.disbursementValue,
             idOriginCurrency = CurrencyType.Colon.id.toString(),
             idDestinationCurrency = CurrencyType.Dollar.id.toString(),
-            amount = amount.plus((uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0) * uiState.exchangeRate)
+            amount = uiState.amountInUSD?.plus(uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0) ?: 0.0,
+            isTransfer = true
         ).collectLatest { result ->
-            result.onLoading { uiState = uiState.copy(isLoading = true) }
+            result.onLoading {}
             result.onSuccess { exchangeRate ->
-                updateFees()
                 uiState = uiState.copy(
                     isLoading = false,
                     exchangeRate = exchangeRate?.exchangeRate ?: 1.0,
@@ -282,9 +281,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
             }.toDouble()
         ).collectLatest { result ->
-            result.onLoading {
-                uiState = uiState.copy(isLoading = true)
-            }
+            result.onLoading {}
             result.onSuccess { pricesQuotesAndCommission ->
                 uiState = uiState.copy(
                     isLoading = false,
@@ -432,11 +429,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 taxAmount = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
                 exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) 1.0 else uiState.exchangeRate,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-                quoteAmount = calculateQuote(
-                    quoteAmount = uiState.quoteAmount.value,
-                    baseAmount = uiState.baseAmount.value,
-                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-                ),
+                quoteAmount = uiState.amountInUSD ?: 0.0,
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -515,7 +508,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         uiState = uiState.copy(
             baseAmount = mutableStateOf(""),
             quoteAmount = mutableStateOf(""),
-            remainingTime = Duration.ZERO
+            remainingTime = Duration.ZERO,
+            convertedCurrentAmountPlusConvertedFee = "₡0.0",
+            isTransformationCurrency = mutableStateOf(true),
         )
     }
 
@@ -577,9 +572,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 getExchangeRate()
             }
             is UIEvent.ValidateAmountInput -> validateAmountInput(event.amount)
-            is UIEvent.OnSetFailureAction -> uiState = uiState.copy(
-                failureAction = event.failureAction
-            )
             UIEvent.OnOpenPurchaseConfirmationBottomSheet -> {
                 uiState = uiState.copy(
                     isConfirmationBottomSheetOpen = true
@@ -593,13 +585,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             UIEvent.OnClearInputData -> clearInputData()
             UIEvent.OnRegisterAdjustPurchase -> registerAdjustPurchaseCrypto()
             UIEvent.OnUpdateFees -> updateFees()
-            UIEvent.OnValidateAmountExchangeRate -> getAmountExchangeRate(
-                calculateQuote(
-                    quoteAmount = uiState.quoteAmount.value,
-                    baseAmount = uiState.baseAmount.value,
-                    price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER,
-                )
-            )
+            is UIEvent.OnValidateAmountExchangeRate -> if (idCurrencyAccount == CurrencyType.Colon.id) {
+                getAmountExchangeRate()
+            }
         }
     }
 
@@ -622,7 +610,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         ) : UIEvent()
 
         data class ValidateAmountInput(val amount: String) : UIEvent()
-        data class OnSetFailureAction(val failureAction: () -> Unit) : UIEvent()
+        data class OnValidateAmountExchangeRate(val value: String) : UIEvent()
         object OnGetQuoteAndCommissions : UIEvent()
         object OnPurchaseCryptoCurrency : UIEvent()
         object OnGetExchangeRate : UIEvent()
@@ -631,7 +619,6 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         object OnClearInputData : UIEvent()
         object OnRegisterAdjustPurchase : UIEvent()
         object OnUpdateFees : UIEvent()
-        object OnValidateAmountExchangeRate : UIEvent()
     }
 
     companion object {

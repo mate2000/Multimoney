@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.model.SignUpOtpState
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -62,19 +63,14 @@ class SignUpOtpViewModel @Inject constructor(
 
     // Stateless
     var linkWhatsapp = ""
-    var userBlockedForMaxAttend = R.string.empty
-    private var numberOfPinForwards = 0
+    var userBlockedForMaxAttemptsText: String = ""
 
     // Events
     val onCallMutationSendPinProcessEvent = MutableSharedFlow<MultimoneyResult<SendPinProcess?>>()
 
-    private fun onStart(linkWhatsapp: String, idBrand: Int?) {
+    private fun onStart(linkWhatsapp: String, idBrand: Int?, userBlockedForMaxAttendText: String) {
         this.linkWhatsapp = linkWhatsapp
-        this.userBlockedForMaxAttend = if (idBrand == Brand.CostaRica.id) {
-            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
-        } else {
-            R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
-        }
+        this.userBlockedForMaxAttemptsText = userBlockedForMaxAttendText
         uiState = uiState.copy(idBrand = idBrand)
         uiState = if (idBrand == Brand.CostaRica.id) {
             uiState.copy(
@@ -111,12 +107,12 @@ class SignUpOtpViewModel @Inject constructor(
     }
 
     private fun initializeTimer(
-        phaseCount: Int = uiState.phaseCount,
+        otpState: SignUpOtpState = uiState.otpState,
         totalTime: Long = TIMER_DURATION
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
-            phaseCount = phaseCount,
+            otpState = otpState,
             isTimerRunning = true,
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
@@ -130,37 +126,23 @@ class SignUpOtpViewModel @Inject constructor(
             isTimerRunning = false,
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
-            phaseCount = uiState.phaseCount.plus(1)
+            otpState = SignUpOtpState.REQUEST_OTP
         )
-
-        if (this.numberOfPinForwards == PHASE_THREE) {
-            uiState = uiState.copy(
-                openUserBlockedDialog = DialogParameters(
-                    titleResource = R.string.sign_up_email_blocked_dialog_title,
-                    descriptionResource = userBlockedForMaxAttend,
-                    isActive = mutableStateOf(true),
-                    positiveResource = R.string.contact,
-                    negativeResource = R.string.cancel
-                )
-            )
-        }
     }
 
-    fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> {
+    fun getPhaseResourceString() = when (uiState.otpState) {
+        SignUpOtpState.OTP_SENT_FIRST_TIME -> {
             if (uiState.idBrand == Brand.CostaRica.id) R.string.sign_up_otp_expiration_time_phase_one_cr
             else R.string.sign_up_otp_expiration_time_phase_one
         }
-        PHASE_THREE -> {
-            if (uiState.idBrand == Brand.CostaRica.id) R.string.sign_up_otp_expiration_time_phase_three_cr
-            else R.string.sign_up_otp_expiration_time_phase_three
-        }
-        PHASE_TWO, PHASE_FOUR -> {
+        SignUpOtpState.REQUEST_OTP -> {
             if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms
             else R.string.sign_up_otp_call
         }
-        PHASE_FIVE -> R.string.sign_up_otp_expiration_time_phase_five
-        else -> R.string.sign_up_otp_expiration_time_phase_six
+        SignUpOtpState.OTP_REQUESTED -> {
+            if (uiState.idBrand == Brand.CostaRica.id) R.string.sign_up_otp_expiration_time_phase_three_cr
+            else R.string.sign_up_otp_expiration_time_phase_three
+        }
     }
 
     fun getNextStep(isOnFidoVerified: Boolean) = if (isOnFidoVerified.not()) {
@@ -169,39 +151,30 @@ class SignUpOtpViewModel @Inject constructor(
         SignUpStep.Six
     }
 
-    private fun getPhaseAction(userData: UserData?) {
-        when (uiState.phaseCount) {
-            PHASE_TWO, PHASE_FOUR -> resend(userData)
+    private fun registerAdjustEvents(userData: UserData?) {
+        if (uiState.otpState == SignUpOtpState.OTP_REQUESTED) {
+            if (uiState.otpResend == ResendOtp.SMS.option) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_RESEND_OTP_2005,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            } else {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_OTP_BY_CALL_2006,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            }
         }
-    }
-
-    private fun resend(userData: UserData?) {
-        if (uiState.otpResend == ResendOtp.SMS.option) {
-            registerAdjustEvent(
-                adjustEventType = AdjustEventType.SIGNUP_RESEND_OTP_2005,
-                isLoggedIn = false,
-                data = userData?.toJson() ?: "",
-                applyAdjust = false
-            )
-        } else {
-            registerAdjustEvent(
-                adjustEventType = AdjustEventType.SIGNUP_OTP_BY_CALL_2006,
-                isLoggedIn = false,
-                data = userData?.toJson() ?: "",
-                applyAdjust = false
-            )
-        }
-        uiState = uiState.copy(
-            isTimerRunning = true,
-            phaseCount = uiState.phaseCount.plus(1)
-        )
     }
 
     private fun isFormValid() = emitBaseEvent(
         OnFormValidateCompleted(
             uiState.otp.trim().isNotEmpty() &&
-                uiState.otp.trim().length == TOTAL_DIGITS &&
-                uiState.phaseCount < PHASE_SIX
+                uiState.otp.trim().length == TOTAL_DIGITS
         )
     )
 
@@ -271,8 +244,7 @@ class SignUpOtpViewModel @Inject constructor(
                         if (it?.messageError?.status == SIGN_UP_FAILED_CODE) {
                             uiState = uiState.copy(
                                 openUserBlockedDialog = DialogParameters(
-                                    titleResource = R.string.sign_up_email_blocked_dialog_title,
-                                    descriptionResource = userBlockedForMaxAttend,
+                                    description = it.messageError.message ?: userBlockedForMaxAttemptsText,
                                     isActive = mutableStateOf(true),
                                     positiveResource = R.string.contact,
                                     negativeResource = R.string.cancel
@@ -305,10 +277,17 @@ class SignUpOtpViewModel @Inject constructor(
     ) {
         uiState = uiState.copy(otpResend = pinProcess?.nextType)
         initializeTimer(totalTime = pinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION)
-        getPhaseAction(userData)
+        registerAdjustEvents(userData)
+        setOtpRequestedState()
         onExecuteTimer()
         onLoadingValueChange.invoke()
-        this.numberOfPinForwards = pinProcess?.numberOfPinForwards?.toInt() ?: 1
+    }
+
+    private fun setOtpRequestedState() {
+        uiState = uiState.copy(
+            isTimerRunning = true,
+            otpState = SignUpOtpState.OTP_REQUESTED
+        )
     }
 
     private fun onOtpValueChange(value: String) {
@@ -353,7 +332,7 @@ class SignUpOtpViewModel @Inject constructor(
         val disclaimerResource: Int = R.string.empty,
 
         // Interactions
-        val phaseCount: Int = PHASE_ONE,
+        val otpState: SignUpOtpState = SignUpOtpState.OTP_SENT_FIRST_TIME,
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val isTimerRunning: Boolean = false,
         val remainingTimeText: String = remainingTime.format(),
@@ -363,7 +342,7 @@ class SignUpOtpViewModel @Inject constructor(
 
     fun onUIEvent(event: UIEvent) {
         when (event) {
-            is OnStart -> onStart(event.linkWhatsapp, event.idBrand)
+            is OnStart -> onStart(event.linkWhatsapp, event.idBrand, event.userBlockedForMaxAttendText)
             is OnNextActionClick -> onNextActionClick(
                 event.pkUser,
                 event.idBrand,
@@ -395,14 +374,15 @@ class SignUpOtpViewModel @Inject constructor(
                 event.userData
             )
             is OnOtpValueChange -> onOtpValueChange(event.value)
-            is OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
+            is OnInitializeTimer -> initializeTimer(event.otpState, event.time)
         }
     }
 
     sealed class UIEvent {
         data class OnStart(
             val linkWhatsapp: String,
-            val idBrand: Int?
+            val idBrand: Int?,
+            val userBlockedForMaxAttendText: String
         ) : UIEvent()
 
         data class OnNextActionClick(
@@ -437,7 +417,7 @@ class SignUpOtpViewModel @Inject constructor(
             val userData: UserData?
         ) : UIEvent()
 
-        data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
+        data class OnInitializeTimer(val otpState: SignUpOtpState, val time: Long) : UIEvent()
 
         data class OnOtpValueChange(val value: String) : UIEvent()
 

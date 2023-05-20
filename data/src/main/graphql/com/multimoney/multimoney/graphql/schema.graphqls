@@ -300,6 +300,16 @@ type Query {
   payMethod(getPayMethodInput: GetPayMethodDtoInput!): [GetPayMethod!]!
 
   """
+  Credit
+  """
+  amountConfigurationByCountry(amountConfigurationByCountryDto: AmountConfigurationByCountryDtoInput!): AmountConfigurationByCountry!
+
+  """
+  Credit
+  """
+  amountCalculateByCountry(amountCalculateByCountryDto: AmountCalculateByCountryDtoInput!): AmountCalculateByCountry!
+
+  """
   Crypto
   """
   cryptoCurrencyMovement(cryptoMovementInput: CryptoMovementDtoInput!): CryptoCurrencyMovement!
@@ -1395,6 +1405,8 @@ input GetExchangeRateDtoInput {
 
   abreviatura_Moneda: String
 
+  isTransfer: Boolean
+
   idBrand: Int
 
   user: String
@@ -2389,6 +2401,8 @@ input LinkCreditContractDtoInput {
 
   idPrint: Long!
 
+  origin: String
+
   idBrand: Int
 
   user: String
@@ -2410,6 +2424,52 @@ input GetPayMethodDtoInput {
   currency: String!
 
   selectedAmount: Decimal!
+
+  idBrand: Int
+
+  user: String
+}
+
+type AmountConfigurationByCountry {
+  minAmount: Decimal!
+
+  maxAmount: Decimal!
+
+  track: Int!
+
+  currency: String!
+
+  symbol: String!
+
+  terms: [Term!]!
+
+  labelminAmountCurrency: String!
+
+  labelmaxAmountCurrency: String!
+}
+
+input AmountConfigurationByCountryDtoInput {
+  idBrand: Int
+
+  user: String
+}
+
+type AmountCalculateByCountry {
+  amount: Decimal!
+
+  term: Int!
+
+  currency: String!
+
+  symbol: String!
+
+  labelAmountCurrency: String!
+}
+
+input AmountCalculateByCountryDtoInput {
+  amount: Decimal!
+
+  term: Int!
 
   idBrand: Int
 
@@ -3260,6 +3320,8 @@ type QuickActions {
   nombre: String!
 
   flujo: String!
+
+  link: String
 }
 
 input QuickActionsDtoInput {
@@ -3760,6 +3822,8 @@ input SaveAutomatedSmartAccountDtoInput {
   idRequest: Long!
 
   identificationNumber: String!
+
+  origin: String
 
   idBrand: Int
 
@@ -4274,6 +4338,8 @@ input CreditOperationDtoInput {
   pkUser: Long!
 
   idUserRequest: Long!
+
+  origin: String
 
   idBrand: Int
 
@@ -5853,13 +5919,17 @@ input CardUnblockingDtoInput {
 }
 
 type enrollCardNV {
-  code: String!
+  code: String
 
-  message: String!
+  message: String
 
-  data: basicCardInfo!
+  data: basicCardInfo
 
-  datetime: String!
+  datetime: String
+
+  status: Int
+
+  detail: String
 }
 
 input EnrollCardDtoInput {
@@ -5965,13 +6035,13 @@ input AccountSmartContractEventDtoInput {
 }
 
 type basicCardInfo {
-  vCardId: String!
+  vCardId: String
 
-  paymentAccountReference: String!
+  paymentAccountReference: String
 
-  last4: String!
+  last4: String
 
-  expirationDate: expirationDate!
+  expirationDate: expirationDate
 }
 
 type cardDataApplePayItemNV {
@@ -6475,6 +6545,10 @@ type CryptoCurrencyMovementItem {
   held: Boolean
 
   month_limit_exceeded: Boolean
+}
+
+type Term {
+  term: Int!
 }
 
 """
@@ -7262,6 +7336,8 @@ type CryptoConfigurationType {
 type CreditConfigurationType {
   activo: Boolean!
 
+  permiteClientesNuevo: Boolean
+
   metodoPago: [PaymentMethodConfigurationType!]!
 
   cuentaTransferencia: TransferAccountConfigurationType!
@@ -7370,9 +7446,9 @@ input PRODUCTOInput {
 }
 
 type expirationDate {
-  month: String!
+  month: String
 
-  year: String!
+  year: String
 }
 
 type TransferDetailObj {

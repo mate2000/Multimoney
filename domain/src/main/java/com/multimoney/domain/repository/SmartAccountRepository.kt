@@ -219,7 +219,8 @@ interface SmartAccountRepository {
         abbreviation: String,
         idOriginCurrency: String,
         idDestinationCurrency: String,
-        amount: Double
+        amount: Double,
+        isTransfer: Boolean
     ): Flow<MultimoneyResult<ExchangeRateResult?>>
 
     suspend fun mutationManageSinpeAccountSave(

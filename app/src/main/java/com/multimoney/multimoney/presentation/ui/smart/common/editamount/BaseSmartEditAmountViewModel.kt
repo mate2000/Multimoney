@@ -184,7 +184,8 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     identification = identification,
                     idOriginCurrency = if (isTransfer) idDestinationCurrency else idOriginCurrency,
                     idDestinationCurrency = if (isTransfer) idOriginCurrency else idDestinationCurrency,
-                    amount = currentAmount
+                    amount = currentAmount,
+                    isTransfer = isTransfer
                 ).collectLatest { result ->
                     result.onFailure {
                         onFailureWithDialog(

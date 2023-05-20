@@ -459,6 +459,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     uiState = uiState.copy(
                         isLoading = false,
                         referenceNumber = it.buyHQR.result?.sysdeTransactionNumber,
+                        filledAmount = it.buyHQR.result?.filledAmount ?: 0.0,
                         purchaseStatus = PurchaseStatus.SUCCESS
                     )
                 }

@@ -387,7 +387,7 @@
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
     <string name="home_smart_in_process_crypto_card" translatable="false">Cripto</string>
-    <string name="home_crypto_card_with_balance_title" translatable="false">Balance</string>
+    <string name="home_crypto_card_with_balance_title" translatable="false">Mi balance Cripto</string>
     <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
@@ -424,7 +424,7 @@
     <string name="home_product_movement_pending" translatable="false">Pendiente</string>
     <string name="home_product_movement_release_button" translatable="false">Liberar transferencia</string>
     <string name="home_product_check_all" translatable="false">Ver todos</string>
-    <string name="home_product_title" translatable="false">Disponible</string>
+    <string name="home_product_title" translatable="false">Mi crédito disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_fee_mx" translatable="false">Mensualidad</string>
     <string name="home_product_expiration" translatable="false">Vence</string>
@@ -1050,7 +1050,7 @@
     <string name="smart_payment_you_sent" translatable="false">Has enviado</string>
 
     <!-- Smart Card -->
-    <string name="smart_card_balance" translatable="false">Saldo</string>
+    <string name="smart_card_balance" translatable="false">Mi saldo Smart</string>
     <string name="smart_card_smart_title" translatable="false">Smart</string>
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s ganancia %2$s</string>

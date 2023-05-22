@@ -73,7 +73,6 @@ fun SmartScreen(
             .fillMaxSize()
             .background(MultimoneyTheme.colors.background)
     ) {
-
         // avoid showing smart origination steps if onfido / evicertia status are received
         if (viewModel.workflow != SmartWorkflow.SMART_ONFIDO_PROCESS.workflow &&
             viewModel.workflow != SmartWorkflow.SMART_CONTRACT_PROCESS.workflow
@@ -123,8 +122,6 @@ fun SmartScreen(
             )
         }
     }
-
-    LoadingIndicator(viewModel.uiState.isLoading)
     BackHandler {
         viewModel.onUIEvent(OnBackClick(focusManager))
     }
@@ -158,6 +155,7 @@ fun SmartScreen(
     if (viewModel.uiState.bottomSheetState.isVisible) {
         viewModel.uiState.bottomSheet()
     }
+    LoadingIndicator(viewModel.uiState.isLoading)
 }
 
 @Composable

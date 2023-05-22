@@ -293,11 +293,12 @@ class SmartViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.onSuccess {
                     trackAdjustEvents()
-
                     idSysRequest = it?.idSysRequest?.toLong() ?: 0L
                     idGlobalRequest = it?.idGlobalRequest ?: 0
-                    onUIEvent(OnLoadingValueChange(false))
-                    if (isLastStep) callMutationSaveSmartAccount() else onUIEvent(OnNextStep)
+                    if (isLastStep) callMutationSaveSmartAccount() else {
+                        onUIEvent(OnNextStep)
+                        onUIEvent(OnLoadingValueChange(false))
+                    }
                 }
                 result.onFailure {
                     onUIEvent(OnLoadingValueChange(false))
@@ -489,7 +490,6 @@ class SmartViewModel @Inject constructor(
                 idRequest = idGlobalRequest
             ).collectLatest { result ->
                 result.onSuccess {
-                    onUIEvent(OnLoadingValueChange(false))
                     idSysRequest = it?.idAccount ?: 0L
                     navigateToOnfidoOrEvicertia()
                 }

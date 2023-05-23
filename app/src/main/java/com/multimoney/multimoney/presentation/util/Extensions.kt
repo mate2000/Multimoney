@@ -43,6 +43,7 @@ import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.util.Locale
 import kotlin.time.Duration
 import kotlinx.coroutines.delay
@@ -148,10 +149,12 @@ fun Context.checkPermission(
             launchFromRationale(true)
             launcher.launch(permission)
         }
+
         comesFromRationale.not() && showRationale == true -> showRationaleAction(false)
         comesFromRationale.not() && showRationale == false && isFirstRequest.not() -> showRationaleAction(
             true
         )
+
         isFirstRequest && showRationale == false -> launcher.launch(permission)
         else -> launcher.launch(permission)
     }
@@ -201,10 +204,13 @@ fun tickerFlow(
 fun Int.getSourceIncomeIconDrawable() = when (this) {
     SourceIncomeType.Salaried.iconId,
     SourceIncomeType.FormalSalaried.iconId -> R.drawable.ic_salaried
+
     SourceIncomeType.FreeLancer.iconId,
     SourceIncomeType.OwnBusinessOnPersonalBasis.iconId -> R.drawable.ic_freelancer
+
     SourceIncomeType.OwnBusiness.iconId,
     SourceIncomeType.OwnBusinessInPartnership.iconId -> R.drawable.ic_own_business
+
     SourceIncomeType.Retired.iconId -> R.drawable.ic_retired
     SourceIncomeType.Other.iconId -> R.drawable.ic_other
     else -> R.drawable.ic_other
@@ -409,12 +415,15 @@ fun String?.toTwoChar(): String {
         isNullOrEmpty() -> {
             QUESTION_MARK
         }
+
         contains(WHITE_SPACE_SEPARATOR) -> {
             trim().replace(TWO_CHARACTER_REGEX.toRegex(), "$1$2").uppercase()
         }
+
         length > 1 -> {
             substring(0, 2)
         }
+
         else -> {
             substring(0, 1)
         }
@@ -504,6 +513,16 @@ fun separatePhoneNumber(phone: String): String {
     }
 }
 
+fun String.encryptPassword(): String {
+    return MessageDigest.getInstance(ALGORITHM_TO_ENCRYPT)
+        .digest(this.toByteArray())
+        .joinToString(separator = "") {
+            ((it.toInt() and NEGATIVE_ONE_IN_BYTE) + TWO_HUNDRED_FIFTY_SIX_IN_BYTES)
+                .toString(RADIX)
+                .substring(START_INDEX)
+        }
+}
+
 /**
  * Convert any data class in json String using Gson library
  */
@@ -526,3 +545,9 @@ private const val NEW_VALUE = ""
 private const val PHONE_WITHOUT_FORMAT_REGEX = "[^0-9]+"
 private const val JSON_START_SYMBOL = "{"
 private const val JSON_END_SYMBOL = "}"
+private const val ALGORITHM_TO_ENCRYPT = "SHA-256"
+private const val RADIX = 16
+private const val START_INDEX = 1
+private const val NEGATIVE_ONE_IN_BYTE = 0xff
+private const val TWO_HUNDRED_FIFTY_SIX_IN_BYTES = 0x100
+

@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.ui.login.forgotpassword.process.Pr
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.None
 import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlyValidate
+import com.multimoney.multimoney.presentation.util.encryptPassword
 import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
 import com.multimoney.multimoney.presentation.util.passwordHasANumberValidation
@@ -166,7 +167,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             idBrand = idBrand,
             pkUser = pkUser,
             user = email,
-            password = uiState.newPassword,
+            password = uiState.newPassword.encryptPassword(),
             actionSecurity = OnlyValidate.actionSecurity
         ).collectLatest { result ->
             result.onSuccess {
@@ -186,7 +187,7 @@ class ProcessForgotPasswordViewModel @Inject constructor(
             idBrand = idBrand,
             pkUser = pkUser,
             user = email,
-            password = uiState.newPassword,
+            password = uiState.newPassword.encryptPassword(),
             actionSecurity = None.actionSecurity
         ).collectLatest { result ->
             result.onSuccess {

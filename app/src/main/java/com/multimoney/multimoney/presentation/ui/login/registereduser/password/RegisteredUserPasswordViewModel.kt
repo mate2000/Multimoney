@@ -42,6 +42,7 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlySave
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
+import com.multimoney.multimoney.presentation.util.encryptPassword
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getCountryCodeByIdBrand
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
@@ -199,7 +200,7 @@ class RegisteredUserPasswordViewModel @Inject constructor(
     private fun callQuerySavePassword() = executeUseCase {
         queryValidationSecurityUseCase.invoke(
             pkUser = userData?.pkUser ?: "",
-            password = uiState.password,
+            password = uiState.password.encryptPassword(),
             user = userData?.email ?: "",
             idBrand = idBrand,
             actionSecurity = OnlySave.actionSecurity

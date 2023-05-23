@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.util.MMCountDownTimer
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.None
 import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword.OnlyValidate
+import com.multimoney.multimoney.presentation.util.encryptPassword
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.password.PasswordValidationHelper
 import com.multimoney.multimoney.presentation.util.passwordHasALowercaseLetterValidation
@@ -38,11 +39,11 @@ import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterVa
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
@@ -106,10 +107,10 @@ class ChangePasswordViewModel @Inject constructor(
 
     private fun isFormValid(): Boolean {
         return (uiState.oneLowercaseState ?: false) && (uiState.oneUppercaseState ?: false) &&
-            (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
-            passwordHasMinimumCharacters(uiState.newPassword) && uiState.newPasswordConfirmation == uiState.newPassword &&
-            !uiState.newPasswordConfirmationError.first && uiState.currentPassword.isNotEmpty() &&
-            uiState.currentPasswordError.first.not()
+                (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
+                passwordHasMinimumCharacters(uiState.newPassword) && uiState.newPasswordConfirmation == uiState.newPassword &&
+                !uiState.newPasswordConfirmationError.first && uiState.currentPassword.isNotEmpty() &&
+                uiState.currentPasswordError.first.not()
     }
 
     private fun onNewPasswordValueChange(password: String?) {
@@ -147,7 +148,7 @@ class ChangePasswordViewModel @Inject constructor(
             idBrand = uiState.idBrand,
             pkUser = uiState.pkUser,
             user = uiState.userName,
-            password = uiState.newPassword,
+            password = uiState.newPassword.encryptPassword(),
             actionSecurity = OnlyValidate.actionSecurity
         ).collectLatest { result ->
             onPasswordSaveEvents.emit(result)
@@ -159,7 +160,7 @@ class ChangePasswordViewModel @Inject constructor(
             idBrand = uiState.idBrand,
             pkUser = uiState.pkUser,
             user = uiState.userName,
-            password = uiState.newPassword,
+            password = uiState.newPassword.encryptPassword(),
             actionSecurity = None.actionSecurity
         ).collectLatest { result ->
             result.onSuccess {
@@ -202,6 +203,7 @@ class ChangePasswordViewModel @Inject constructor(
                             )
                         )
                     }
+
                     is InvalidPasswordException -> {
                         uiState.copy(
                             isLoading = false,
@@ -213,6 +215,7 @@ class ChangePasswordViewModel @Inject constructor(
                             newPasswordConfirmationError = Pair(true, string.empty)
                         )
                     }
+
                     else -> {
                         uiState.copy(
                             isLoading = false,
@@ -262,6 +265,7 @@ class ChangePasswordViewModel @Inject constructor(
             Screen.HomeScreen.route,
             isRestart = true
         )
+
         else -> signOut()
     }
 
@@ -270,6 +274,7 @@ class ChangePasswordViewModel @Inject constructor(
             Screen.ProfileSettingsScreen.route,
             false
         )
+
         else -> signOut()
     }
 
@@ -333,6 +338,7 @@ class ChangePasswordViewModel @Inject constructor(
             is UIEvent.OnNewPasswordConfirmationValueChange -> onNewPasswordConfirmationValueChange(
                 event.password
             )
+
             is UIEvent.OnCurrentPasswordValueChange -> onCurrentPasswordValueChange(event.password)
             is UIEvent.OnValidatePassword -> onValidatePassword()
             is UIEvent.OnCallCognitoUpdatePassword -> onCallCognitoUpdatePassword()

@@ -43,12 +43,6 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit.SECONDS
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -57,6 +51,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
 
 @HiltViewModel
 class RegisteredUserOtpViewModel @Inject constructor(
@@ -240,7 +240,19 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 onExecuteTimer()
             }.onMessage {
                 when (it?.messageError?.status) {
-                    STATUS_NO_PHONE, STATUS_NO_EMAIL -> uiState = uiState.copy(
+                    STATUS_NO_PHONE -> uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            title = it.messageError.message.orEmpty(),
+                            description = it.messageError.detail.orEmpty(),
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.common_go_back,
+                            positiveAction = {
+                                onBackClick()
+                            }
+                        )
+                    )
+                    STATUS_NO_EMAIL -> uiState = uiState.copy(
                         isLoading = false,
                         dialogParameters = DialogParameters(
                             title = it.messageError.message.orEmpty(),

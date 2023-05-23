@@ -5,7 +5,8 @@ query ExchangeRate(
     $idOriginCurrency: String!
     $idDestinationCurrency: String!
     $amount: Decimal!
-    $abbreviation: String!
+    $abbreviation: String!,
+    $isTransfer: Boolean!
 ) {
     getExchangeRate(
         getExchangeRateInput: {
@@ -16,7 +17,8 @@ query ExchangeRate(
             amount: $amount
             idOriginCurrency: $idOriginCurrency
             idDestinationCurrency: $idDestinationCurrency,
-            abreviatura_Moneda: $abbreviation
+            abreviatura_Moneda: $abbreviation,
+            isTransfer: $isTransfer
         }
     ) {
         result {

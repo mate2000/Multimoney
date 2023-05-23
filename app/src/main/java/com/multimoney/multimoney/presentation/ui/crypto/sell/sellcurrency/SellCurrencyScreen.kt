@@ -38,10 +38,9 @@ import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedVie
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.util.calculateAmountToReceive
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
-import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
-import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
+import com.multimoney.multimoney.presentation.util.calculateSellApproximate
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
@@ -109,39 +108,21 @@ fun SellCurrencyScreen(
         SellStatus.SUCCESS -> {
             sharedViewModel.onUIEvent(
                 SellCryptoSharedViewModel.UIEvent.OnSetupVoucherDetails(
-                    assetAmount = calculateConfirmationBaseAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price
-                    ).plus(" ${viewModel.asset}"),
-                    approximateValue = calculateConfirmationQuoteAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
+                    assetAmount = viewModel.uiState.amountInCurrency
+                        .roundToEightDecimalPlaces().plus(" ${viewModel.asset}"),
+                    approximateValue = calculateSellApproximate(
+                        amount = viewModel.uiState.filledAmount,
                         exchangeRate = viewModel.uiState.exchangeRate,
-                        symbol = if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
-                            CurrencyType.Dollar.symbol
-                        } else {
-                            CurrencyType.Colon.symbol
-                        }
+                        idCurrency = viewModel.idCurrencyAccount
                     ),
-                    totalCreditedAmount = calculateConfirmationQuoteAmount(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                        symbol = CurrencyType.Dollar.symbol,
-                        totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+                    totalCreditedAmount = calculateAmountToReceive(
+                        amountInUsd = viewModel.uiState.amountInUsd,
+                        totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
                     ),
                     exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                         symbol = CurrencyType.Colon.symbol
                     ),
-                    totalCreditedAmountExchange  = calculateConvertedCurrencyBalance(
-                        quoteAmount = viewModel.uiState.quoteAmount.value,
-                        baseAmount = viewModel.uiState.baseAmount.value,
-                        price = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                        exchangeRate = viewModel.uiState.exchangeRate,
-                        totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
-                    ),
+                    totalCreditedAmountExchange = viewModel.uiState.convertedCurrentAmountMinusConvertedFee,
                     referenceNumber = viewModel.uiState.referenceNumber ?: ""
                 )
             )

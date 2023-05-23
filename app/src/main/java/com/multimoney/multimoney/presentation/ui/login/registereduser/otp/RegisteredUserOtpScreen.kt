@@ -22,11 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
@@ -35,14 +33,8 @@ import com.google.android.gms.common.api.Status
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.BaseEvent.OnOpenWhatsApp
-import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FIVE
-import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_FOUR
-import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_ONE
-import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_THREE
-import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.PHASE_TWO
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TIMER_DURATION
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
@@ -55,6 +47,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIState
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.model.RegisteredUserOtpState
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
@@ -96,7 +89,7 @@ fun RegisteredUserOtpScreen(
     LaunchedEffect(true) {
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
-            onUIEvent(OnInitializeTimer(PHASE_ONE, TIMER_DURATION))
+            onUIEvent(OnInitializeTimer(RegisteredUserOtpState.OTP_SENT_FIRST_TIME, TIMER_DURATION))
             onUIEvent(OnCallMutationSendPinProcess)
             baseEvent.collect { event ->
                 when (event) {
@@ -223,8 +216,8 @@ fun RegisteredUserOtpContent(
                     errorMessage = stringResource(id = uiState.otpError.second)
                 )
 
-                when (uiState.phaseCount) {
-                    PHASE_ONE, PHASE_THREE, PHASE_FIVE -> {
+                when (uiState.otpState) {
+                    RegisteredUserOtpState.OTP_SENT_FIRST_TIME, RegisteredUserOtpState.OTP_REQUESTED -> {
                         Row {
                             Text(
                                 text = stringResource(id = getPhaseResourceString()),
@@ -251,7 +244,7 @@ fun RegisteredUserOtpContent(
                             )
                         }
                     }
-                    PHASE_TWO, PHASE_FOUR -> ClickableText(
+                    RegisteredUserOtpState.REQUEST_OTP -> ClickableText(
                         text = AnnotatedString(stringResource(id = getPhaseResourceString())),
                         modifier = Modifier.padding(top = 32.dp),
                         style = Typography.body2.copy(
@@ -259,18 +252,6 @@ fun RegisteredUserOtpContent(
                             color = MultimoneyTheme.colors.textLink
                         ),
                         onClick = { onCallMutationSendPinProcess() }
-                    )
-                    else -> Text(
-                        text = buildAnnotatedString {
-                            withStyle(
-                                style = Typography.body2.toSpanStyle()
-                                    .copy(color = SemanticNegative500)
-                            ) {
-                                append(stringResource(id = getPhaseResourceString()))
-                            }
-                        },
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 32.dp)
                     )
                 }
             }

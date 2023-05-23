@@ -23,13 +23,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.data.util.catalog.SignUpStep
 import com.multimoney.domain.model.util.onFailure
@@ -39,21 +39,16 @@ import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.string
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
-import com.multimoney.multimoney.presentation.theme.SemanticNegative500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnGetWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.BaseEvent.OnFormValidateCompleted
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FIVE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_FOUR
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_ONE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_THREE
-import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.PHASE_TWO
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.SEND_METHOD_PHONE
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TIMER_DURATION
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.Companion.TOTAL_DIGITS
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnNavigateToSignIn
+import com.multimoney.multimoney.presentation.ui.login.signup.otp.model.SignUpOtpState
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
@@ -75,6 +70,12 @@ fun SignUpOtpScreen(
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
 
+    val userBlockedForMaxAttemptsText = stringResource(id = if (sharedViewModel.idBrand == Brand.CostaRica.id) {
+        R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
+    } else {
+        R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
+    })
+
     // Create start activity result for SMS Retrieve
     val launchSmsActivityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -95,11 +96,17 @@ fun SignUpOtpScreen(
         sharedViewModel.onUIEvent(OnGetWhatsAppLink)
         viewModel.apply {
             executeNavigation(onPopAndNavigate = onPopAndNavigate)
-            onUIEvent(SignUpOtpViewModel.UIEvent.OnInitializeTimer(PHASE_ONE, TIMER_DURATION))
+            onUIEvent(
+                SignUpOtpViewModel.UIEvent.OnInitializeTimer(
+                    SignUpOtpState.OTP_SENT_FIRST_TIME,
+                    TIMER_DURATION
+                )
+            )
             onUIEvent(
                 SignUpOtpViewModel.UIEvent.OnStart(
                     sharedViewModel.whatsAppLink ?: "",
-                    sharedViewModel.idBrand
+                    sharedViewModel.idBrand,
+                    userBlockedForMaxAttemptsText
                 )
             )
             baseEvent.collect { event ->
@@ -196,8 +203,7 @@ fun SignUpOtpScreen(
                     SignUpViewModel.UIEvent.OnFailureWithDialog(
                         isLoading = false,
                         openDialog = DialogParameters(
-                            titleResource = string.sign_up_email_blocked_dialog_title,
-                            descriptionResource = viewModel.userBlockedForMaxAttend,
+                            description = it?.messageError?.message ?: viewModel.userBlockedForMaxAttemptsText,
                             isActive = mutableStateOf(true),
                             positiveResource = string.contact,
                             positiveAction = {
@@ -303,8 +309,8 @@ fun SignUpOtpScreen(
             errorMessage = stringResource(id = viewModel.uiState.otpError.second)
         )
 
-        when (viewModel.uiState.phaseCount) {
-            PHASE_ONE, PHASE_THREE, PHASE_FIVE -> {
+        when (viewModel.uiState.otpState) {
+            SignUpOtpState.OTP_SENT_FIRST_TIME, SignUpOtpState.OTP_REQUESTED -> {
                 Row {
                     val text = stringResource(id = viewModel.getPhaseResourceString(), viewModel.uiState.remainingTimeText)
                     val timerStart = text.indexOf(viewModel.uiState.remainingTimeText)
@@ -337,7 +343,7 @@ fun SignUpOtpScreen(
                     )
                 }
             }
-            PHASE_TWO, PHASE_FOUR -> ClickableText(
+            SignUpOtpState.REQUEST_OTP-> ClickableText(
                 text = AnnotatedString(stringResource(id = viewModel.getPhaseResourceString())),
                 modifier = Modifier.padding(top = 32.dp),
                 style = Typography.body2.copy(
@@ -361,18 +367,6 @@ fun SignUpOtpScreen(
                         )
                     }
                 }
-            )
-            else -> Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        style = Typography.body2.toSpanStyle()
-                            .copy(color = SemanticNegative500)
-                    ) {
-                        append(stringResource(id = viewModel.getPhaseResourceString()))
-                    }
-                },
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 32.dp)
             )
         }
     }

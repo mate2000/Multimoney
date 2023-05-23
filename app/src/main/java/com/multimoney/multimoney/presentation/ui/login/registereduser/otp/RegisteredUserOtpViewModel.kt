@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.Regist
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtherPhoneNumberClick
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtpValueChange
 import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.model.RegisteredUserOtpState
 import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
@@ -152,12 +153,12 @@ class RegisteredUserOtpViewModel @Inject constructor(
     }
 
     private fun initializeTimer(
-        phaseCount: Int = uiState.phaseCount,
+        otpState: RegisteredUserOtpState = uiState.otpState,
         totalTime: Long = TIMER_DURATION
     ) {
         val newRemainingTime = totalTime.seconds
         uiState = uiState.copy(
-            phaseCount = phaseCount,
+            otpState = otpState,
             isTimerRunning = true,
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
@@ -171,48 +172,38 @@ class RegisteredUserOtpViewModel @Inject constructor(
             isTimerRunning = false,
             remainingTime = newRemainingTime,
             remainingTimeText = newRemainingTime.format(),
-            phaseCount = uiState.phaseCount.plus(1)
+            otpState = RegisteredUserOtpState.REQUEST_OTP
         )
     }
 
-    fun getPhaseResourceString() = when (uiState.phaseCount) {
-        PHASE_ONE -> R.string.sign_in_otp_expiration_time_phase_one
-        PHASE_THREE -> R.string.sign_in_otp_expiration_time_phase_three
-        PHASE_TWO, PHASE_FOUR -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
-        PHASE_FIVE -> R.string.sign_in_otp_expiration_time_phase_five
-        else -> R.string.sign_up_otp_expiration_time_phase_six
+    fun getPhaseResourceString() = when (uiState.otpState) {
+        RegisteredUserOtpState.OTP_SENT_FIRST_TIME -> R.string.sign_in_otp_expiration_time_phase_one
+        RegisteredUserOtpState.REQUEST_OTP -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
+        RegisteredUserOtpState.OTP_REQUESTED -> R.string.sign_in_otp_expiration_time_phase_three
     }
 
-    private fun getPhaseAction() {
-        when (uiState.phaseCount) {
-            PHASE_TWO, PHASE_FOUR -> resend()
+    private fun registerAdjustEvents() {
+        if (uiState.otpState == RegisteredUserOtpState.OTP_REQUESTED) {
+            if (uiState.otpResend == ResendOtp.SMS.option) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            } else {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            }
         }
-    }
-
-    private fun resend() {
-        if (uiState.otpResend == ResendOtp.SMS.option) {
-            registerAdjustEvent(
-                adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013,
-                isLoggedIn = false,
-                data = userData?.toJson() ?: "",
-                applyAdjust = false
-            )
-        } else {
-            registerAdjustEvent(
-                adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014,
-                isLoggedIn = false,
-                data = userData?.toJson() ?: "",
-                applyAdjust = false
-            )
-        }
-        uiState = uiState.copy(
-            isTimerRunning = true,
-            phaseCount = uiState.phaseCount.plus(1)
-        )
     }
 
     private fun isFormValid() = uiState.otp.trim()
-        .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS && uiState.phaseCount < PHASE_SIX
+        .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS
 
     private fun callMutationSendPinProcess() = executeUseCase {
         uiState = uiState.copy(isTimerRunning = false)
@@ -236,7 +227,8 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 initializeTimer(
                     totalTime = sendPinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION
                 )
-                getPhaseAction()
+                registerAdjustEvents()
+                setOtpRequestedState()
                 onExecuteTimer()
             }.onMessage {
                 when (it?.messageError?.status) {
@@ -267,20 +259,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
                     else -> uiState = uiState.copy(
                         isLoading = false,
                         dialogParameters = DialogParameters(
-                            titleResource = R.string.sign_up_email_blocked_dialog_title,
-                            descriptionResource = if (idBrand == Brand.CostaRica.id) {
-                                if (otpMethod == SendOtpMethod.Email.value) {
-                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_email_cr
-                                } else {
-                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_cr
-                                }
-                            } else {
-                                if (otpMethod == SendOtpMethod.Email.value) {
-                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_email_sv
-                                } else {
-                                    R.string.sign_up_otp_code_user_blocked_for_exceed_the_max_of_attempts_sv
-                                }
-                            },
+                            description = it?.messageError?.message.orEmpty(),
                             isActive = mutableStateOf(true),
                             positiveResource = R.string.contact,
                             positiveAction = {
@@ -305,6 +284,13 @@ class RegisteredUserOtpViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = true)
             }
         }
+    }
+
+    private fun setOtpRequestedState() {
+        uiState = uiState.copy(
+            isTimerRunning = true,
+            otpState = RegisteredUserOtpState.OTP_REQUESTED
+        )
     }
 
     private fun onUserBlocked() {
@@ -386,11 +372,29 @@ class RegisteredUserOtpViewModel @Inject constructor(
                         popTo = Screen.SignUpScreen.route
                     )
                 }.onMessage {
-                    uiState =
-                        uiState.copy(
-                            otpError = Pair(true, R.string.sign_up_otp_code_not_valid),
-                            isLoading = false
+                    if (it?.messageError?.status == STATUS_REGISTERED_FAILED_CODE) {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            dialogParameters = DialogParameters(
+                                description = it.messageError.message.orEmpty(),
+                                isActive = mutableStateOf(true),
+                                positiveResource = R.string.contact,
+                                positiveAction = {
+                                    onUserBlocked()
+                                },
+                                negativeResource = R.string.cancel,
+                                negativeAction = {
+                                    navigateToSignIn()
+                                }
+                            )
                         )
+                    } else {
+                        uiState =
+                            uiState.copy(
+                                otpError = Pair(true, R.string.sign_up_otp_code_not_valid),
+                                isLoading = false
+                            )
+                    }
                 }.onFailure {
                     uiState = uiState.copy(
                         isLoading = false,
@@ -433,7 +437,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
         val disclaimerResource: Int = R.string.empty,
         val titleOtpMethod: String = "",
         val isOtherPhoneNumberVisible: Boolean = false,
-        val phaseCount: Int = PHASE_ONE,
+        val otpState: RegisteredUserOtpState = RegisteredUserOtpState.OTP_SENT_FIRST_TIME,
         val remainingTime: Duration = TIMER_DURATION.seconds,
         val isTimerRunning: Boolean = false,
         val remainingTimeText: String = remainingTime.format(),
@@ -451,7 +455,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
             is OnContinueClick -> onContinueClick()
             is OnGetOtpFromMessage -> getOtpFromMessage(event.message)
             is OnCallMutationSendPinProcess -> callMutationSendPinProcess()
-            is OnInitializeTimer -> initializeTimer(event.phaseCount, event.time)
+            is OnInitializeTimer -> initializeTimer(event.otpState, event.time)
             is OnOtherPhoneNumberClick -> onOtherPhoneNumberClick()
             is OnCallCountryContact -> getContactInfo()
         }
@@ -461,7 +465,7 @@ class RegisteredUserOtpViewModel @Inject constructor(
         object OnStart : UIEvent()
         data class OnOtpValueChange(val value: String) : UIEvent()
         data class OnGetOtpFromMessage(val message: String) : UIEvent()
-        data class OnInitializeTimer(val phaseCount: Int, val time: Long) : UIEvent()
+        data class OnInitializeTimer(val otpState: RegisteredUserOtpState, val time: Long) : UIEvent()
         object OnCallMutationSendPinProcess : UIEvent()
         object OnBackClick : UIEvent()
         object OnContinueClick : UIEvent()
@@ -474,17 +478,12 @@ class RegisteredUserOtpViewModel @Inject constructor(
     }
 
     companion object {
-        const val PHASE_ONE = 1
-        const val PHASE_TWO = 2
-        const val PHASE_THREE = 3
-        const val PHASE_FOUR = 4
-        const val PHASE_FIVE = 5
-        const val PHASE_SIX = 6
         const val TOTAL_DIGITS = 4
         const val TIMER_DURATION = 0L
         const val TIMER_DELAY = 1L
         const val APP_SOURCE = 2
         const val STATUS_NO_PHONE = 3108
         const val STATUS_NO_EMAIL = 3109
+        const val STATUS_REGISTERED_FAILED_CODE = 2104
     }
 }

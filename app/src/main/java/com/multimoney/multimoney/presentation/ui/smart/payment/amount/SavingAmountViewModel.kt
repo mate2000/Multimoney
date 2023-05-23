@@ -57,7 +57,8 @@ class SavingAmountViewModel @Inject constructor(
                 isStart = true,
                 abbreviation = destinyCurrency?.disbursementValue ?: "",
                 idOriginCurrency = originCurrency?.id.toString(),
-                idDestinationCurrency = destinyCurrency?.id.toString()
+                idDestinationCurrency = destinyCurrency?.id.toString(),
+                isTransfer = false
             )
         }
     }
@@ -144,7 +145,8 @@ class SavingAmountViewModel @Inject constructor(
             isPayment = true,
             abbreviation = destinyCurrency?.disbursementValue ?: "",
             idOriginCurrency = originCurrency?.id.toString(),
-            idDestinationCurrency = destinyCurrency?.id.toString()
+            idDestinationCurrency = destinyCurrency?.id.toString(),
+            isTransfer = false
         )
     }
 

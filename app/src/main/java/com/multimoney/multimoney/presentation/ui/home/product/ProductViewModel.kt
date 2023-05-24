@@ -1157,8 +1157,16 @@ class ProductViewModel @Inject constructor(
     private fun onCartButtonClickWithoutSmartBalance(onSavingCLick: () -> Unit) {
         uiState = uiState.copy(
             openDialog = DialogParameters(
-                titleResource = R.string.crypto_footer_expanded_dialog_title,
-                descriptionResource = R.string.crypto_footer_expanded_dialog_description,
+                titleResource = if (uiState.idBrand.toIntOrNull() == Brand.CostaRica.id) {
+                    R.string.crypto_footer_expanded_dialog_title_cr
+                } else {
+                    R.string.crypto_footer_expanded_dialog_title_sv
+                },
+                descriptionResource = if (uiState.idBrand.toIntOrNull() == Brand.CostaRica.id) {
+                    R.string.crypto_footer_expanded_dialog_description_cr
+                } else {
+                    R.string.crypto_footer_expanded_dialog_description_sv
+                },
                 positiveResource = R.string.crypto_footer_expanded_dialog_btn_saving,
                 negativeResource = R.string.crypto_footer_expanded_dialog_btn_cancel,
                 positiveAction = { onSavingCLick() },

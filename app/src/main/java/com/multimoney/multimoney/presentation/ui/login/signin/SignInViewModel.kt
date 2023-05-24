@@ -568,8 +568,8 @@ class SignInViewModel @Inject constructor(
                 uiState = uiState.copy(
                     openDialog = DialogParameters(
                         isActive = mutableStateOf(true),
-                        titleResource = string.error,
-                        descriptionResource = string.sign_in_reconfigure_biometric_error,
+                        titleResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_reconfigure_biometric_title_cr else string.sign_in_reconfigure_biometric_title,
+                        descriptionResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_reconfigure_biometric_description_cr else string.sign_in_reconfigure_biometric_description,
                         positiveAction = {
                             biometricHelper.deleteKeyFromKeyStore()
                             viewModelScope.launch {

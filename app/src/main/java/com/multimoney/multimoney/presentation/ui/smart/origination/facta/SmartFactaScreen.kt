@@ -142,7 +142,7 @@ fun ContentSV(
             },
             optionSelected = when (viewModel.uiState.isUSCitizen) {
                 true -> optionsCitizen[0]
-                else -> optionsCitizen[1]
+                false -> optionsCitizen[1]
             }
         )
 
@@ -161,7 +161,7 @@ fun ContentSV(
             },
             optionSelected = when (viewModel.uiState.isPEP) {
                 true -> optionsPep[0]
-                else -> optionsPep[1]
+                false -> optionsPep[1]
             }
         )
     }
@@ -219,7 +219,7 @@ fun ContentOneCR(
                 },
                 optionSelected = when (viewModel.uiState.isActivityOfArt15) {
                     true -> optionsYesNo[0]
-                    else -> optionsYesNo[1]
+                    false -> optionsYesNo[1]
                 }
             )
 
@@ -238,7 +238,7 @@ fun ContentOneCR(
                 },
                 optionSelected = when (viewModel.uiState.isPEP) {
                     true -> optionsPep[0]
-                    else -> optionsPep[1]
+                    false -> optionsPep[1]
                 }
             )
         }
@@ -250,7 +250,7 @@ fun ContentOneCR(
                 .fillMaxWidth()
                 .height(48.dp),
             buttonType = PrimaryPrimary,
-            enable = viewModel.uiState.isActivityOfArt15 != null && viewModel.uiState.isPEP != null
+            enable = true
         )
     }
     sharedViewModel.onUIEvent(
@@ -283,7 +283,7 @@ fun ContentTwoCR(
             },
             optionSelected = when (viewModel.uiState.isUSTaxPayer) {
                 true -> options[0]
-                else -> options[1]
+                false -> options[1]
             }
         )
 
@@ -303,7 +303,7 @@ fun ContentTwoCR(
             optionSelected =
             when (viewModel.uiState.isTaxPayer) {
                 true -> options[0]
-                else -> options[1]
+                false -> options[1]
             }
         )
     }

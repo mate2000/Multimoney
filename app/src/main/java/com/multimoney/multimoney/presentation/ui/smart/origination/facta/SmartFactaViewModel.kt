@@ -65,14 +65,8 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
 
     fun isFormValid(): Boolean {
         return when (uiState.idBrand) {
-            Brand.CostaRica.id -> {
-                uiState.isPEP != null &&
-                    uiState.isUSTaxPayer != null &&
-                    uiState.isActivityOfArt15 != null &&
-                    uiState.isTaxPayer != null
-            }
-            Brand.ElSalvador.id -> {
-                uiState.isPEP != null && uiState.isUSCitizen != null
+            Brand.CostaRica.id, Brand.ElSalvador.id -> {
+                true
             }
             else -> {
                 false
@@ -88,11 +82,11 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
         accountSmartData?.let {
             uiState = uiState.copy(
                 idBrand = it.idBrand,
-                isPEP = it.isPEP,
-                isUSCitizen = it.isUSCitizen,
-                isActivityOfArt15 = it.isActivityOfArt15,
-                isUSTaxPayer = it.isUSTaxPayer,
-                isTaxPayer = it.isTaxPayer
+                isPEP = it.isPEP ?: false,
+                isUSCitizen = it.isUSCitizen ?: false,
+                isActivityOfArt15 = it.isActivityOfArt15 ?: false,
+                isUSTaxPayer = it.isUSTaxPayer ?: false,
+                isTaxPayer = it.isTaxPayer ?: false
             )
             onValidateForm()
         }
@@ -103,11 +97,11 @@ class SmartFactaViewModel @Inject constructor() : BaseViewModel(true) {
 
     data class UIState(
         val idBrand: Int = 0,
-        val isPEP: Boolean? = null,
-        val isUSCitizen: Boolean? = null,
-        val isActivityOfArt15: Boolean? = null,
-        val isUSTaxPayer: Boolean? = null,
-        val isTaxPayer: Boolean? = null,
+        val isPEP: Boolean = false,
+        val isUSCitizen: Boolean = false,
+        val isActivityOfArt15: Boolean = false,
+        val isUSTaxPayer: Boolean = false,
+        val isTaxPayer: Boolean = false,
         val crPage: Int = CR_PAGE_ONE
     )
 

@@ -411,7 +411,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             quoteAmount = mutableStateOf(""),
             remainingTime = Duration.ZERO,
             convertedCurrentAmountMinusConvertedFee = "₡0.0",
-            isTransformationCurrency = mutableStateOf(true),
+            isTransformationCurrency = mutableStateOf(false),
         )
     }
 

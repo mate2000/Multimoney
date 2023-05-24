@@ -183,6 +183,10 @@
     <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablecé tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
     <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablece tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
     <string name="sign_in_restore_password" translatable="false">Restablecer</string>
+    <string name="sign_in_reconfigure_biometric_title_cr" translatable="false">Activá de nuevo tus biométricos</string>
+    <string name="sign_in_reconfigure_biometric_title" translatable="false">Activa de nuevo tus biométricos </string>
+    <string name="sign_in_reconfigure_biometric_description_cr" translatable="false">Indentificamos que se realizaron cambios en la configuracion de tus biométricos, activá de nuevo tus biométricos desde la pantalla de inicio de sesión</string>
+    <string name="sign_in_reconfigure_biometric_description" translatable="false">Indentificamos que se realizaron cambios en la configuracion de tus biométricos, activa de nuevo tus biométricos desde la pantalla de inicio de sesión</string>
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>
@@ -219,6 +223,7 @@
     <string name="sign_up_email_user_completed_dialog_description_cr" translatable="false">Si olvidaste tu contraseña, seguí el proceso para recuperarla.</string>
     <string name="sign_up_email_user_completed_dialog_positive" translatable="false">Iniciar sesión</string>
     <string name="sign_up_email_blocked_dialog_title" translatable="false">Usuario bloqueado.</string>
+    <string name="sign_up_email_blocked_dialog_description" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
     <string name="sign_up_email_blocked_dialog_description_cr" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContactá a servicio al cliente.</string>
     <string name="sign_up_email_blocked_dialog_description_sv" translatable="false">Tu usuario ha sido bloqueado porque no hemos podido verificar tu número de teléfono. \nContacta a servicio al cliente.</string>
     <string name="sign_up_email_another_device_registered_dialog_title" translatable="false">Registro en proceso en otro dispositivo</string>
@@ -386,7 +391,7 @@
     <string name="home_disburse_button_text" translatable="false">Desembolsar</string>
     <string name="home_disburse_request_button_text" translatable="false">Solicitar disponible</string>
     <string name="home_smart_in_process_crypto_card" translatable="false">Cripto</string>
-    <string name="home_crypto_card_with_balance_title" translatable="false">Balance</string>
+    <string name="home_crypto_card_with_balance_title" translatable="false">Mi balance Cripto</string>
     <string name="home_crypto_card_with_balance_zero_text" translatable="false">0.00</string>
     <string name="home_send_money_button_text" translatable="false">Enviar dinero</string>
     <string name="home_pay_button_text" translatable="false">Abonar</string>
@@ -395,8 +400,8 @@
     <string name="home_my_products_title_credit" translatable="false">Crédito</string>
     <string name="home_my_products_label_credit" translatable="false">Mi crédito</string>
     <string name="home_my_products_title_smart" translatable="false">Smart</string>
-    <string name="home_my_products_label_smart" translatable="false">Mi cuenta Smart | $</string>
-    <string name="home_my_products_label_smart_colones" translatable="false">Mi Cuenta Smart | ₡</string>
+    <string name="home_my_products_label_smart" translatable="false">Mi Smart | $</string>
+    <string name="home_my_products_label_smart_colones" translatable="false">Mi Smart | ₡</string>
     <string name="home_my_products_title_crypto" translatable="false">Cripto</string>
     <string name="home_my_products_label_crypto" translatable="false">Cripto</string>
 
@@ -423,7 +428,7 @@
     <string name="home_product_movement_pending" translatable="false">Pendiente</string>
     <string name="home_product_movement_release_button" translatable="false">Liberar transferencia</string>
     <string name="home_product_check_all" translatable="false">Ver todos</string>
-    <string name="home_product_title" translatable="false">Disponible</string>
+    <string name="home_product_title" translatable="false">Mi crédito disponible</string>
     <string name="home_product_fee" translatable="false">Cuota</string>
     <string name="home_product_fee_mx" translatable="false">Mensualidad</string>
     <string name="home_product_expiration" translatable="false">Vence</string>
@@ -432,7 +437,7 @@
 
     <!-- Buy Crypto -->
     <string name="buy_crypto_voucher_you_have_paid" translatable="false">Has comprado</string>
-    <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi cuenta Smart | %1$s</string>
+    <string name="buy_crypto_multimoney_smart_account_template" translatable="false">Mi Smart | %1$s</string>
     <string name="buy_crypto_voucher_from_account" translatable="false">Desde la cuenta</string>
     <string name="buy_crypto_voucher_exchange_rate" translatable="false">Tipo de cambio</string>
     <string name="buy_crypto_voucher_mount_to_charge" translatable="false">Total debitado</string>
@@ -516,8 +521,10 @@
     <string name="automatic_logout_biometric_title" translatable="false">Reanudar mi sesión</string>
     <string name="automatic_logout_biometric_description" translatable="false">Utilice su biometría para autenticarse en la aplicación</string>
     <string name="profile_identity_verification" translatable="false">Verificación de identidad</string>
-    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Verifica tu nuevo teléfono</string>
-    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Verifica tu nuevo email</string>
+    <string name="profile_identity_verification_verify_your_new_phone" translatable="false">Confirma tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email" translatable="false">Confirma tu nuevo correo electrónico</string>
+    <string name="profile_identity_verification_verify_your_new_phone_cr" translatable="false">Confirmá tu nuevo teléfono</string>
+    <string name="profile_identity_verification_verify_your_new_email_cr" translatable="false">Confirmá tu nuevo correo electrónico</string>
     <string name="profile_identity_verification_phone" translatable="false">teléfono</string>
     <string name="profile_identity_verification_email" translatable="false">email</string>
     <string name="profile_where_do_you_want_to_receive_the_code_sv" translatable="false">¿Dónde quieres recibir el código?</string>
@@ -530,13 +537,14 @@
     <string name="profile_to_email" translatable="false">Correo electrónico</string>
     <string name="profile_send_code" translatable="false">Enviar código</string>
     <string name="profile_verify" translatable="false">Verificar</string>
-    <string name="profile_enter_the_code_sent_to_template_sv" translatable="false">Ingresa el código de verificación enviado a\n%1$s</string>
-    <string name="profile_enter_the_code_sent_to_template" translatable="false">Ingresá el código de verificación enviado a\n%1$s</string>
+    <string name="profile_enter_the_code_sent_to_template_sv" translatable="false"><![CDATA[Ingresa el código de verificación enviado a <b>%1$s</b>]]></string>
+    <string name="profile_enter_the_code_sent_to_template" translatable="false"><![CDATA[Ingresá el código de verificación enviado a <b>%1$s</b>]]></string>
     <string name="profile_otp_user_blocked_max_attempt_phone" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no podés realizar el cambio ahora. Intentálo más tarde o contactá a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_phone_sv" translatable="false">No hemos podido verificar tu teléfono. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
     <string name="profile_otp_user_blocked_max_attempt_email_sv" translatable="false">No hemos podido verificar tu correo electrónico. Por tu seguridad no puedes realizar el cambio ahora. Inténtalo más tarde o contacta a soporte.</string>
-    <string name="profile_code_expires_in_template" translatable="false">Código expira en %1$s segundos</string>
+    <string name="profile_code_expires_in_template_cr" translatable="false">Esperá %1$s segundos para reenviar</string>
+    <string name="profile_code_expires_in_template" translatable="false">Espera %1$s segundos para reenviar</string>
     <string name="profile_code_resend_expires_in_template" translatable="false">Código reenviado expira en %1$s segundos</string>
     <string name="profile_error_changing_phone_title" translatable="false">No pudimos cambiar tu teléfono</string>
     <string name="profile_error_changing_email_title" translatable="false">No pudimos cambiar tu correo</string>
@@ -602,11 +610,11 @@
     <string name="home_product_credit_header_expanded_title" translatable="false">Mi crédito</string>
 
     <!-- Home Smart Header Expanded-->
-    <string name="home_product_smart_header_expanded_title" translatable="false">Mi Cuenta Smart</string>
+    <string name="home_product_smart_header_expanded_title" translatable="false">Mi Smart</string>
 
     <!--Crypto-->
     <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
-    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu cuenta Smart.</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu Smart.</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
 
@@ -628,8 +636,10 @@
     <string name="crypto_footer_expanded_sell_crypto_label" translatable="false">Vender</string>
     <string name="crypto_footer_expanded_get_crypto_label" translatable="false">Recibir</string>
     <string name="crypto_footer_expanded_send_crypto_label" translatable="false">Enviar</string>
-    <string name="crypto_footer_expanded_dialog_title" translatable="false">Compra con Smart</string>
-    <string name="crypto_footer_expanded_dialog_description" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu cuenta Smart</string>
+    <string name="crypto_footer_expanded_dialog_title_sv" translatable="false">Compra con Smart</string>
+    <string name="crypto_footer_expanded_dialog_title_cr" translatable="false">Comprá con Smart</string>
+    <string name="crypto_footer_expanded_dialog_description_sv" translatable="false">Para poder comprar criptomonedas debes hacerlo con los fondos de tu Smart</string>
+    <string name="crypto_footer_expanded_dialog_description_cr" translatable="false">Para poder comprar criptomonedas debés hacerlo con los fondos de tu Smart</string>
     <string name="crypto_footer_expanded_dialog_btn_cancel" translatable="false">Cancelar</string>
     <string name="crypto_footer_expanded_dialog_btn_saving" translatable="false">Ahorrar</string>
     <string name="buy_crypto_warning_bs_content" translatable="false">Las criptomonedas son activos altamente volátiles que pueden generar pérdidas de capital. \nEsta inversión es por voluntad y riesgo propio del inversionista ya que MultiMoney no se hace responsable ante eventuales perjuicios. Te recomendamos tomar decisiones de inversión informadas.</string>
@@ -641,7 +651,7 @@
     <string name="home_maintenance_btn_text" translatable="false">Entendido</string>
 
     <!-- Home Smart - Account Details -->
-    <string name="smart_account_detail_title" translatable="false">Detalles de cuenta</string>
+    <string name="smart_account_detail_title" translatable="false">Detalles de mi Smart</string>
     <string name="smart_account_detail_cr_account_label" translatable="false">IBAN | %s</string>
     <string name="smart_account_detail_gained_interest_label" translatable="false">Interés anual</string>
     <string name="smart_account_detail_total_balance_label" translatable="false">Ganancia total a la fecha</string>
@@ -1031,7 +1041,7 @@
 
     <!-- Smart payment success -->
     <string name="smart_payment_success" translatable="false">¡Transacción exitosa!</string>
-    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Monto ahorrado a tu cuenta Smart | %s</string>
+    <string name="smart_payment_you_saved_on_your_smart_account" translatable="false">Monto ahorrado a tu Smart | %s</string>
     <string name="smart_payment_from_label" translatable="false">Desde</string>
     <string name="smart_payment_origin_account_label" translatable="false">Cuenta de origen</string>
     <string name="smart_payment_destiny_account_label" translatable="false">Cuenta de destino</string>
@@ -1046,7 +1056,7 @@
     <string name="smart_payment_you_sent" translatable="false">Has enviado</string>
 
     <!-- Smart Card -->
-    <string name="smart_card_balance" translatable="false">Saldo</string>
+    <string name="smart_card_balance" translatable="false">Mi saldo Smart</string>
     <string name="smart_card_smart_title" translatable="false">Smart</string>
     <string name="smart_card_monthly_profit" translatable="false">Ganancia mensual</string>
     <string name="smart_card_monthly_profit_label" translatable="false">%1$s ganancia %2$s</string>
@@ -1121,6 +1131,7 @@
     <string name="smart_other_source_of_income_label_cr" translatable="false">Especificá tu fuente de ingresos</string>
     <string name="smart_other_source_of_income_required" translatable="false">Fuente de ingresos requerido</string>
     <string name="smart_other_generating_document_title" translatable="false">Estamos generando tus documentos</string>
+    <string name="smart_other_generating_document_subtitle" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
     <string name="smart_other_generating_document_subtitle_cr" translatable="false">Después de firmar tu contrato podés empezar a utilizar tu cuenta.</string>
     <string name="smart_other_generating_document_subtitle_sv" translatable="false">Después de firmar tu contrato puedes empezar a utilizar tu cuenta.</string>
     <string name="smart_loading_label" translatable="false">Generando documentos...</string>
@@ -1212,11 +1223,13 @@
     <string name="payment_amount_bottom_sheet_debited_amount" translatable="false">Monto debitado</string>
     <string name="payment_amount_bottom_sheet_pay_button" translatable="false">Realizar pago</string>
     <string name="payment_amount_bottom_sheet_send_button" translatable="false">Realizar envío</string>
-    <string name="payment_amount_bottom_sheet_process_payment_description_label" translatable="false">Pago unica moneda desde App</string>
+    <string name="payment_amount_bottom_sheet_process_payment_same_currency_description_label" translatable="false">Pago unica moneda desde App</string>
+    <string name="payment_amount_bottom_sheet_process_payment_crossed_currency_description_label" translatable="false">Pago entre monedas desde App</string>
+    <string name="payment_amount_bottom_sheet_process_payment_both_currency_description_label" translatable="false">Pago doble moneda desde App</string>
     <string name="payment_amount_bottom_sheet_enable_automatic_payment" translatable="false">Programar pago automático</string>
 
     <!-- Smart Payment Amount Bottom Sheet -->
-    <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi cuenta Smart | %s</string>
+    <string name="smart_payment_amount_bottom_sheet_my_smart_account" translatable="false">Mi Smart | %s</string>
     <string name="smart_payment_amount_bottom_sheet_save_title" translatable="false">Monto a ahorrar</string>
     <string name="smart_payment_amount_bottom_sheet_from_account" translatable="false">Desde la cuenta</string>
     <string name="smart_payment_amount_bottom_sheet_from" translatable="false">Desde</string>
@@ -1369,7 +1382,7 @@
     <!--Crypto Purchase Flow - Confirmation-->
     <string name="crypto_purchase_flow_confirmation_title" translatable="false">Monto a comprar</string>
     <string name="crypto_purchase_flow_confirmation_from_account_title" translatable="false">Desde la cuenta</string>
-    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi cuenta Smart | %1s</string>
+    <string name="crypto_purchase_flow_confirmation_from_account" translatable="false">Mi Smart | %1s</string>
     <string name="crypto_purchase_flow_confirmation_estimated_amount" translatable="false">Valor aproximado en</string>
     <string name="crypto_purchase_flow_confirmation_btn_buy" translatable="false">Comprar</string>
 
@@ -1438,6 +1451,7 @@
     <string name="payment_cards_verified_list_title" translatable="false">Tarjetas registradas</string>
     <string name="payment_cards_not_verified_list_title" translatable="false">Tarjetas con verificación pendiente</string>
     <string name="payment_cards_resume_bottom_sheet" translatable="false">Retomar verificación</string>
+    <string name="smart_payment_cards_list_card_title" translatable="false">Seleccioná la tarjeta con la que querés ahorrar</string>
     <string name="smart_payment_cards_list_card_title_sv" translatable="false">Selecciona la tarjeta con la que quieres ahorrar</string>
 
     <!-- Payment Amount Card -->
@@ -1474,13 +1488,13 @@
     <string name="payment_select_sending_type_transfer_365_mobile" translatable="false">Transfer 365 móvil</string>
     <string name="payment_select_sending_type_my_contacts" translatable="false">Mis contactos</string>
     <string name="payment_select_sending_type_iban_accounts" translatable="false">Cuentas IBAN</string>
-    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi cuenta Smart Dólares</string>
-    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi cuenta Smart Colones</string>
+    <string name="payment_select_sending_type_smart_account_dollars" translatable="false">Mi Smart Dólares</string>
+    <string name="payment_select_sending_type_smart_account_colones" translatable="false">Mi Smart Colones</string>
 
     <!-- Payment Account -->
     <string name="payment_account_title" translatable="false">Seleccioná la cuenta con la que querés ahorrar</string>
-    <string name="payment_account_colon" translatable="false">Mi Cuenta Smart | Colones</string>
-    <string name="payment_account_dollar" translatable="false">Mi Cuenta Smart | Dólares</string>
+    <string name="payment_account_colon" translatable="false">Mi Smart | Colones</string>
+    <string name="payment_account_dollar" translatable="false">Mi Smart | Dólares</string>
 
     <!-- IBAN Account -->
     <string name="payment_account_iban_title" translatable="false">¿En qué cuenta IBAN querés recibir tu dinero?</string>
@@ -1523,7 +1537,7 @@
 
     <!-- Smart Movements -->
     <string name="smart_movements_empty_state_title" translatable="false">Sin registros de movimientos</string>
-    <string name="smart_movements_empty_state_description" translatable="false">Empezá a ahorrar en tu cuenta para ver registros.</string>
+    <string name="smart_movements_empty_state_description" translatable="false">Empezá a ahorrar en tu Smart para ver registros.</string>
 
     <!-- Download Account Statement Worker -->
     <string name="download_credit_movements_worker_channel_name" translatable="false">Descargar estado de cuenta</string>
@@ -1538,6 +1552,7 @@
     <string name="download_credit_movements_worker_file_name" translatable="false">Estado_de_cuenta_MM_%s.pdf</string>
 
     <!-- Smart Saving Amount -->
+    <string name="smart_saving_amount_title" translatable="false">¿Cuánto querés ahorrar?</string>
     <string name="smart_saving_amount_title_cr" translatable="false">¿Cuánto querés ahorrar?</string>
     <string name="smart_saving_amount_title_sv" translatable="false">¿Cuánto quieres ahorrar?</string>
     <string name="smart_saving_try_later_notification_title" translatable="false">¡Tu cuenta Smart está lista!</string>

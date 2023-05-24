@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import com.ireward.htmlcompose.HtmlText
 import com.multimoney.data.util.catalog.FieldToChange
 import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
 import com.multimoney.domain.model.util.onFailure
@@ -38,6 +40,7 @@ import com.multimoney.domain.model.util.onLoading
 import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
@@ -49,6 +52,7 @@ import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.OtpTextField
 import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
@@ -229,7 +233,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
             .background(MultimoneyTheme.colors.background)
             .fillMaxSize()
     ) {
-        val (topNavBar, otpField, timerText, titleText, headerText, continueButton, statusText) = createRefs()
+        val (topNavBar, otpField, timerText, titleText, headerText, continueButton, statusText, disclaimer) = createRefs()
 
         TopNavBar(
             modifier = Modifier.constrainAs(topNavBar) {
@@ -246,14 +250,12 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 .constrainAs(titleText) {
                     top.linkTo(topNavBar.bottom)
                 },
-            text = stringResource(
-                id = if (viewModel.uiState.changingField == FieldToChange.PHONE.value) R.string.profile_identity_verification_verify_your_new_phone else R.string.profile_identity_verification_verify_your_new_email
-            ),
+            text = stringResource(viewModel.uiState.titleResource),
             style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
             color = MultimoneyTheme.colors.labelText,
             textAlign = TextAlign.Left
         )
-        Text(
+        HtmlText(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -271,8 +273,18 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                     viewModel.uiState.newValue ?: ""
                 }
             ),
-            style = Typography.body2,
-            color = MultimoneyTheme.colors.labelText
+            style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+        )
+
+        CustomInformativeText(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                .constrainAs(disclaimer) {
+                    top.linkTo(headerText.bottom)
+                },
+            leadingIcon = drawable.ic_informative_400,
+            text = stringResource(id = viewModel.uiState.disclaimerResource),
+            textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
         )
 
         when (viewModel.uiState.messageStatus) {
@@ -282,7 +294,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                     modifier = Modifier
                         .padding(top = 16.dp, start = 16.dp)
                         .constrainAs(statusText) {
-                            top.linkTo(headerText.bottom, margin = 12.dp)
+                            top.linkTo(disclaimer.bottom, margin = 12.dp)
                         }
                         .fillMaxWidth(),
                     style = Typography.body2.copy(
@@ -300,7 +312,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                     modifier = Modifier
                         .padding(top = 16.dp, start = 16.dp)
                         .constrainAs(statusText) {
-                            top.linkTo(headerText.bottom, margin = 12.dp)
+                            top.linkTo(disclaimer.bottom, margin = 12.dp)
                         }
                         .fillMaxWidth(),
                     style = Typography.body2.copy(
@@ -357,7 +369,7 @@ fun VerifyNewValueOTPContent(viewModel: ValidateOTPViewModel) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 32.dp)
-                    .fillMaxWidth(),
+                    .wrapContentWidth(),
                 style = Typography.body2.copy(
                     color = MultimoneyTheme.colors.timerColor,
                     fontWeight = FontWeight.SemiBold

@@ -176,8 +176,11 @@ class HomeViewModel @Inject constructor(
                 result.onSuccess {
                     it?.let { movements ->
                         movements.accountToken = tokenNumber
+                        // Delete outdated lists after a refresh
+                        val otherCurrenciesMovements =
+                            uiState.smartMovementsList.dropWhile { sublist -> sublist.accountToken == tokenNumber }
                         uiState = uiState.copy(
-                            smartMovementsList = uiState.smartMovementsList + movements,
+                            smartMovementsList = otherCurrenciesMovements + movements,
                             isLoading = false
                         )
                     }

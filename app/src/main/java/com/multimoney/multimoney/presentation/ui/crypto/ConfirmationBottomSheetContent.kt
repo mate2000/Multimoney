@@ -57,7 +57,7 @@ import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
  * @param idCurrency - id of the currency to determine if dollars or colones are being used
  * @param isLoading - boolean to determine if the loading skeleton should be displayed
  * @param exchangeRate - number to display the exchange rate of the currency
- * @param convertedAmount - number to display the converted currency amount
+ * @param convertedAmountToRecieve - number to display the converted currency amount
  * @param onConfirm - function to execute when the button is clicked
  *
  * **/
@@ -79,7 +79,7 @@ fun ConfirmationBottomSheetContent(
     idCurrency: Int = CurrencyType.Dollar.id,
     isLoading: Boolean = false,
     exchangeRate: String = DEFAULT_AMOUNT,
-    convertedAmount: String = DEFAULT_AMOUNT,
+    convertedAmountToRecieve: String = DEFAULT_AMOUNT,
     @StringRes accountInfoLabel: Int = R.string.crypto_purchase_flow_confirmation_from_account_title,
     isPurchase: Boolean = true,
     idBrand: Int = Brand.Default.id,
@@ -98,7 +98,7 @@ fun ConfirmationBottomSheetContent(
             assetImageUrl = assetImageUrl,
             showTotalToReceive = showTotalToReceive,
             amountToReceive = if (idCurrency == CurrencyType.Colon.id) {
-                convertedAmount
+                convertedAmountToRecieve
             } else {
                 amountToReceive
             },
@@ -117,13 +117,13 @@ fun ConfirmationBottomSheetContent(
         if (showBottomExchangeInfo) {
             WhileLoadingSection(
                 isLoading = isLoading,
-                contentLoading = { VoucherCurrencyExchangeInfoSkeleton() },
+                contentLoading = { VoucherCurrencyExchangeInfoSkeleton(false) },
                 content = {
                     CurrencyExchangeInfo(
                         leftTitleResource = R.string.crypto_purchase_flow_exchange_type_title,
                         rightTitleResource = R.string.crypto_purchase_flow_exchange_total_title,
                         exchangeRateText = exchangeRate,
-                        convertedAmountText = convertedAmount,
+                        convertedAmountText = convertedAmountToRecieve,
                         contentColumnAlignment = Alignment.Start,
                         rightColumnWithSpacing = false
                     )
@@ -240,17 +240,22 @@ private fun InfoSection(
                     style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
                 )
             }
-            Text(
-                modifier = Modifier.padding(vertical = 4.dp),
-                text = buildAnnotatedString {
-                    append(stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive))
-                    append(WHITE_SPACE)
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(amountToReceive)
-                    }
-                },
-                style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
-            )
+            WhileLoadingSection(
+                isLoading = isLoading,
+                contentLoading = { CurrencyTitleConfirmationSectionSkeleton() },
+            ) {
+                Text(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    text = buildAnnotatedString {
+                        append(stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_amount_to_receive))
+                        append(WHITE_SPACE)
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(amountToReceive)
+                        }
+                    },
+                    style = Typography.body2.copy(color = MultimoneyTheme.colors.bodyTextColor),
+                )
+            }
         }
     }
 }

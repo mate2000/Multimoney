@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.navigation.Screen.PaymentAmountScr
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
@@ -69,6 +70,7 @@ class PaymentAccountViewModel @Inject constructor(
     private var userName: String? = null
     private var paymentDate: String? = null
     private var previousScreen = ""
+    private var isAutopayEnabled: Boolean? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -80,6 +82,7 @@ class PaymentAccountViewModel @Inject constructor(
         userName = savedStateHandle[NAME_CLIENT] ?: ""
         paymentDate = savedStateHandle[PAYMENT_DATE]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
         idCurrency = if ((summaryList?.count() ?: 0) > 1) {
             CurrencyType.All.id
         } else {
@@ -137,7 +140,7 @@ class PaymentAccountViewModel @Inject constructor(
                             encodeData(
                                 summaryList
                             )
-                            }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate"
+                            }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate/$isAutopayEnabled"
                         )
                     }
                 )
@@ -148,7 +151,7 @@ class PaymentAccountViewModel @Inject constructor(
                 encodeData(
                     summaryList
                 )
-                }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate"
+                }/${encodeData(clientBankAccount)}/$identification/$userName/$paymentDate/$isAutopayEnabled"
             )
         }
     }

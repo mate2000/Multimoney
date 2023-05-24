@@ -22,6 +22,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.sell.SellCryptoSharedViewModel
 import com.multimoney.multimoney.presentation.ui.home.profile.accounts.MyAccountsSkeleton
+import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalized
@@ -50,9 +51,24 @@ fun SelectSmartAccountScreen(
     }
 
     BackHandler { sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnPreviousStep) }
-
-    SelectSmartAccountContent(sharedViewModel) {
-        sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
+    // if smart accounts are empty, show error
+    if (sharedViewModel.uiState.accounts.isEmpty()) {
+        AlertResult(
+            titleString = stringResource(id = R.string.error_occurred_title),
+            buttonTextResource = R.string.profile_error_changing_phone_button,
+            isRightButtonVisible = false,
+            isLeftButtonVisible = false,
+            onButtonClick = {
+                sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+            },
+            onRightButtonClick = {
+                sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNavigateHome)
+            }
+        )
+    } else {
+        SelectSmartAccountContent(sharedViewModel) {
+            sharedViewModel.onUIEvent(SellCryptoSharedViewModel.UIEvent.OnNextStep)
+        }
     }
 }
 

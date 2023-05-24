@@ -39,7 +39,7 @@ fun NoticeSection(
             verticalArrangement = Arrangement.Center,
         ) {
             Image(
-                modifier = Modifier.padding(6.dp),
+                modifier = Modifier.padding(4.dp),
                 painter = painterResource(id = R.drawable.ic_crypto_empty_state_notice),
                 contentDescription = null
             )

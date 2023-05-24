@@ -20,7 +20,7 @@ import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
 import com.multimoney.multimoney.presentation.util.calculateAvailableInDollars
-import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
+import com.multimoney.multimoney.presentation.util.calculateBase
 import com.multimoney.multimoney.presentation.util.calculateQuote
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
@@ -48,7 +48,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
     var uiState by mutableStateOf(UIState())
         private set
 
-    //share properties
+    // share properties
     var pkUser = 0
     var asset = ""
     private var cryptoNetWork = ""
@@ -178,6 +178,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                     isLoading = false,
                     pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
                 )
+                getExchangeRate(true)
             }
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
@@ -190,21 +191,30 @@ class SellCurrencyScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getExchangeRate(): Unit = executeUseCase {
+    private fun getExchangeRate(getConvertedValue: Boolean = false): Unit = executeUseCase {
         getExchangeRate.invoke(
             user = user,
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Dollar.id.toString(),
-            idDestinationCurrency = CurrencyType.Colon.id.toString(),
-            amount = 0.0
+            idOriginCurrency = CurrencyType.Colon.id.toString(),
+            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            amount = if (getConvertedValue) uiState.amountInUsd.minus(
+                uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
+            ) else 0.0,
+            isTransfer = true
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
                 uiState = uiState.copy(
-                    isLoading = false, exchangeRate = exchangeRate?.exchangeRate ?: 1.0
+                    isLoading = false,
+                    exchangeRate = exchangeRate?.exchangeRate ?: 1.0,
                 )
+                if (getConvertedValue) {
+                    uiState = uiState.copy(
+                        convertedCurrentAmountMinusConvertedFee = exchangeRate?.convertedAmountLabel ?: "₡0.0"
+                    )
+                }
             }
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
@@ -223,6 +233,13 @@ class SellCurrencyScreenViewModel @Inject constructor(
             amount = amount,
             price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
         )
+
+        val baseAmount = calculateBase(
+            isTransformationCurrency = uiState.isTransformationCurrency.value,
+            amount = amount,
+            price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
+        )
+        uiState = uiState.copy(amountInCurrency = baseAmount, amountInUsd = quoteAmount)
 
         when {
             amount.isEmpty() -> isError(isError = true, focusError = false)
@@ -271,12 +288,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 idBrand = idBrand,
                 user = user,
                 quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-                baseAmount = calculateConfirmationBaseAmount(
-                    quoteAmount = uiState.quoteAmount.value,
-                    baseAmount = uiState.baseAmount.value,
-                    currencyPrice = uiState.pricesQuoteAndCommissions?.price
-                        ?: DEFAULT_AMOUNT_NUMBER
-                ).toDouble(),
+                baseAmount = uiState.amountInCurrency,
                 fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -304,15 +316,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                     ),
                     Pair("exchangeRate", uiState.exchangeRate.toString()),
                     Pair("quoteId", uiState.pricesQuoteAndCommissions?.quote_id ?: ""),
-                    Pair(
-                        "baseAmount",
-                        calculateConfirmationBaseAmount(
-                            quoteAmount = uiState.quoteAmount.value,
-                            baseAmount = uiState.baseAmount.value,
-                            currencyPrice = uiState.pricesQuoteAndCommissions?.price
-                                ?: DEFAULT_AMOUNT_NUMBER
-                        )
-                    ),
+                    Pair("baseAmount", uiState.amountInCurrency.toString()),
                     Pair("fee", uiState.pricesQuoteAndCommissions?.fee ?: "0.0"),
                     Pair(
                         "internalFee",
@@ -333,15 +337,11 @@ class SellCurrencyScreenViewModel @Inject constructor(
             commissionPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
             taxPercentage = uiState.pricesQuoteAndCommissions?.taxAmount ?: 0.0,
             accountToken = accountToken,
-            exchangeRate = uiState.exchangeRate,
+            exchangeRate = if (idCurrencyAccount == CurrencyType.Dollar.id) DEFAULT_AMOUNT_NUMBER else uiState.exchangeRate,
             idBrand = idBrand,
             user = user,
             quoteId = uiState.pricesQuoteAndCommissions?.quote_id ?: "",
-            baseAmount = calculateConfirmationBaseAmount(
-                quoteAmount = uiState.quoteAmount.value,
-                baseAmount = uiState.baseAmount.value,
-                currencyPrice = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-            ).toDouble(),
+            baseAmount = uiState.amountInCurrency,
             fee = uiState.pricesQuoteAndCommissions?.fee?.toDouble() ?: 0.0,
             internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
             totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
@@ -376,6 +376,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                 uiState = uiState.copy(
                     isLoading = false,
                     referenceNumber = it.sellHQRResponse.result?.sysdeTransactionNumber,
+                    filledAmount = it.sellHQRResponse.result?.filledAmount ?: 0.0,
                     sellStatus = SellStatus.SUCCESS
                 )
             }
@@ -408,13 +409,18 @@ class SellCurrencyScreenViewModel @Inject constructor(
         uiState = uiState.copy(
             baseAmount = mutableStateOf(""),
             quoteAmount = mutableStateOf(""),
-            remainingTime = Duration.ZERO
+            remainingTime = Duration.ZERO,
+            convertedCurrentAmountMinusConvertedFee = "₡0.0",
+            isTransformationCurrency = mutableStateOf(false),
         )
     }
 
     data class UIState(
         // ** mutable data
+        val amountInCurrency: Double = 0.0,
+        val amountInUsd: Double = 0.0,
         val exchangeRate: Double = 1.0,
+        val convertedCurrentAmountMinusConvertedFee: String = "₡0.0",
         val asset: String = "",
         val availableCryptoAmount: Double = 0.0,
         val quoteAmount: MutableState<String> = mutableStateOf(""),
@@ -422,16 +428,17 @@ class SellCurrencyScreenViewModel @Inject constructor(
         val pricesQuoteAndCommissions: PricesQuoteAndCommissions? = null,
         val referenceNumber: String? = null,
         val sellCryptoRequest: SellCryptoRequest? = null,
+        val filledAmount: Double = 0.0, // value at the moment of the sell without the fee
         // ** interactions
         val isConfirmationBottomSheetOpen: Boolean = false,
         val isLoading: Boolean = false,
-        //* timer
+        // * timer
         val remainingTime: Duration = Duration.ZERO,
         val remainingTimeText: String = remainingTime.format(),
         // timer *
         val openDialog: DialogParameters = DialogParameters(),
         val failureAction: () -> Unit = {},
-        //** validations
+        // ** validations
         val isError: Boolean = false,
         val genericError: Boolean = false,
         val focusError: Boolean = false,

@@ -27,6 +27,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
@@ -224,7 +225,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object ProfileTermsAndConditionsDetailScreen : Screen(
-        "profile_terms_and_conditions_detail_screen/{$TITLE}/{$HTML}/{$VERSION}/{$DATE_SIGNED}",
+        "profile_terms_and_conditions_detail_screen?$TITLE={$TITLE}?$HTML={$HTML}?$VERSION={$VERSION}?$DATE_SIGNED={$DATE_SIGNED}",
         "profile_terms_and_conditions_detail_screen"
     )
 
@@ -410,22 +411,22 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
 
     // Payment Credit
     object PaymentFeeScreen : Screen(
-        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
+        "payment_fee_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$IS_AUTOPAY_ENABLED}",
         "payment_fee_screen"
     )
 
     object PaymentAccountScreen : Screen(
-        "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}",
+        "payment_account_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$PREVIOUS_SCREEN}/{$IS_AUTOPAY_ENABLED}",
         "payment_account_screen"
     )
 
     object PaymentAmountScreen : Screen(
-        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}",
+        "payment_amount_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$SUMMARY_LIST}/{$CLIENT_BANK_ACCOUNT}/{$IDENTIFICATION}/{$NAME_CLIENT}/{$PAYMENT_DATE}/{$IS_AUTOPAY_ENABLED}",
         "payment_amount_screen"
     )
 
     object PaymentVoucherScreen : Screen(
-        route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}",
+        route = "payment_voucher_screen/{$USER}/{$ID_BRAND}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$CLIENT_BANK_ACCOUNT}/{$PAYMENT_DATE}/{$CURRENT_AMOUNT_VALUE}/{$PAYMENT_LABEL}/{$EXCHANGE_RATE_LABEL}/{$SHOULD_DISPLAY_EXCHANGE_RATE}/{$IS_MULTI_CURRENCY}/{$IS_AUTOMATIC_PAYMENT_CHECKED}/{$REFERENCE_NUMBER}/{$IS_AUTOPAY_ENABLED}/{$IDENTIFICATION}",
         "payment_voucher_screen"
     )
 
@@ -450,7 +451,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentOptionsScreen : Screen(
-        "payment_options_screen/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$PAYMENT_DATE}/{$INFO_USER}",
+        "payment_options_screen/{$CREDIT_NUMBER}/{$PAYMENT_METHOD}/{$TRANSFER_ACCOUNT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$IDENTIFICATION}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$ID_CURRENCY}/{$PAYMENT_DATE}/{$INFO_USER}/{$IS_AUTOPAY_ENABLED}",
         "payment_options_screen"
     )
 
@@ -465,12 +466,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentCardsListScreen : Screen(
-        "payment_cards_list_screen/{$IDENTIFICATION}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}/{$PAYMENT_DATE}/{$INFO_USER}",
+        "payment_cards_list_screen/{$IDENTIFICATION}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}/{$PAYMENT_DATE}/{$INFO_USER}/{$IS_AUTOPAY_ENABLED}",
         "payment_cards_list_screen"
     )
 
     object PaymentAmountCardsScreen : Screen(
-        "payment_amount_card_screen/{$IDENTIFICATION}/{$CARD_SELECTED}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}/{$PAYMENT_DATE}/{$INFO_USER}",
+        "payment_amount_card_screen/{$IDENTIFICATION}/{$CARD_SELECTED}/{$CREDIT_NUMBER}/{$ID_CLIENT}/{$ID_LOAN_CLIENT}/{$MINIMUM_PAYMENT}/{$MINIMUM_PAYMENT_LABEL}/{$MAXIMUM_PAYMENT}/{$MAXIMUM_PAYMENT_LABEL}/{$ID_CURRENCY}/{$PAYMENT_DATE}/{$INFO_USER}/{$IS_AUTOPAY_ENABLED}",
         "payment_amount_card_screen"
     )
 
@@ -480,7 +481,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object PaymentCardVoucherScreen : Screen(
-        "payment_voucher_vd_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CLIENT={$ID_CLIENT}?$ID_LOAN_CLIENT={$ID_LOAN_CLIENT}?$CARD_SELECTED={$CARD_SELECTED}?$CURRENT_AMOUNT_VALUE={$CURRENT_AMOUNT_VALUE}?$IS_AUTOMATIC_PAYMENT_CHECKED={$IS_AUTOMATIC_PAYMENT_CHECKED}?$REFERENCE_NUMBER={$REFERENCE_NUMBER}?$PAYMENT_DATE={$PAYMENT_DATE}?$INFO_USER={$INFO_USER}",
+        "payment_voucher_vd_screen?$IDENTIFICATION={$IDENTIFICATION}?$ID_CLIENT={$ID_CLIENT}?$ID_LOAN_CLIENT={$ID_LOAN_CLIENT}?$CARD_SELECTED={$CARD_SELECTED}?$CURRENT_AMOUNT_VALUE={$CURRENT_AMOUNT_VALUE}?$IS_AUTOMATIC_PAYMENT_CHECKED={$IS_AUTOMATIC_PAYMENT_CHECKED}?$REFERENCE_NUMBER={$REFERENCE_NUMBER}?$PAYMENT_DATE={$PAYMENT_DATE}?$INFO_USER={$INFO_USER}?$IS_AUTOPAY_ENABLED={$IS_AUTOPAY_ENABLED}",
         "payment_voucher_vd_screen"
     )
 

@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
@@ -90,6 +91,7 @@ class PaymentAmountCardViewModel @Inject constructor(
     private var payCreditVisa: PayCreditVisaDirect? = null
     private var idCurrency: Int? = null
     private var paymentDate: String? = ""
+    private var isAutopayEnabled: Boolean? = null
 
     init {
         infoUser = savedStateHandle[INFO_USER]
@@ -103,6 +105,7 @@ class PaymentAmountCardViewModel @Inject constructor(
         maximumPayment = savedStateHandle[MAXIMUM_PAYMENT] ?: 0.00F
         maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
         paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
     }
 
     private fun onInitializeInteractionValues() {
@@ -179,7 +182,8 @@ class PaymentAmountCardViewModel @Inject constructor(
                 .plus(getNavParam(IS_AUTOMATIC_PAYMENT_CHECKED, uiState.isAutomaticProgrammedPaymentChecked))
                 .plus(getNavParam(REFERENCE_NUMBER, payCreditVisa?.referenceAuthorization))
                 .plus(getNavParam(PAYMENT_DATE, paymentDate))
-                .plus(getNavParam(INFO_USER, encodeData(infoUser))),
+                .plus(getNavParam(INFO_USER, encodeData(infoUser)))
+                .plus(getNavParam(IS_AUTOPAY_ENABLED, isAutopayEnabled)),
             popTo = Screen.PaymentAmountCardsScreen.route
         )
     }

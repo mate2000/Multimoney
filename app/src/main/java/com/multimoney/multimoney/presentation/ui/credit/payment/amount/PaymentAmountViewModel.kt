@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.CLIENT_BANK_AC
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.SUMMARY_LIST
@@ -47,6 +48,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAm
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnNavigateToVoucher
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnPaymentButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.amount.PaymentAmountViewModel.UIEvent.OnProcessPayment
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
@@ -79,12 +81,15 @@ class PaymentAmountViewModel @Inject constructor(
     private var idClient: Int? = null
     private var idLoanClient: Int? = null
     var summaryList: List<Summary>? = null
+    var summaryListFiltered: List<Summary>? = null
     private var minimumPayment: Int = 0
     private var maximumPayment: Int = 0
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
     private var referenceNumber: String? = null
+    private var clientBankAccount: ClientBankAccount? = null
+    var isAutopayEnabled: Boolean? = null
 
     init {
         user = savedStateHandle[USER] ?: ""
@@ -95,7 +100,10 @@ class PaymentAmountViewModel @Inject constructor(
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         userName = savedStateHandle[NAME_CLIENT] ?: ""
         paymentDate = savedStateHandle[PAYMENT_DATE]
-
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
+        clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
+        summaryListFiltered =
+            summaryList?.filter { (it.currentBalance ?: ProductViewModel.ZERO) > ProductViewModel.ZERO }
         onInitializeInteractionValues()
     }
 
@@ -104,8 +112,8 @@ class PaymentAmountViewModel @Inject constructor(
         var maximumPaymentLabel = ""
         var isAmountVisible = false
         if (isMultiCurrency()) {
-            summaryList?.forEachIndexed { index, summary ->
-                if (index < (summaryList?.lastIndex ?: 0)) {
+            summaryListFiltered?.forEachIndexed { index, summary ->
+                if (index < (summaryListFiltered?.lastIndex ?: 0)) {
                     minimumPaymentLabel = minimumPaymentLabel.plus(summary.minPaymentLabel).plus(PAYMENT_PLUS)
                     maximumPaymentLabel = maximumPaymentLabel.plus(summary.currentBalanceLabel).plus(PAYMENT_PLUS)
                 } else {
@@ -113,8 +121,8 @@ class PaymentAmountViewModel @Inject constructor(
                     maximumPaymentLabel = maximumPaymentLabel.plus(summary.currentBalanceLabel)
                 }
             }
-        } else if (summaryList?.isNotEmpty() == true && summaryList?.firstOrNull() != null) {
-            val summary = summaryList?.first()
+        } else if (summaryListFiltered?.isNotEmpty() == true && summaryListFiltered?.firstOrNull() != null) {
+            val summary = summaryListFiltered?.first()
             minimumPaymentLabel = summary?.minPaymentLabel.orEmpty()
             maximumPaymentLabel = summary?.currentBalanceLabel.orEmpty()
             minimumPayment = summary?.minPayment?.toInt() ?: 0
@@ -130,7 +138,7 @@ class PaymentAmountViewModel @Inject constructor(
             } else {
                 uiState.currency
             },
-            clientBankAccount = savedStateHandle[CLIENT_BANK_ACCOUNT]
+            clientBankAccount = clientBankAccount
         )
         uiState = uiState.copy(
             accountCurrency = if (isMultiCurrency() || shouldDisplayExchangeRate()) {
@@ -146,9 +154,15 @@ class PaymentAmountViewModel @Inject constructor(
 
     fun shouldDisplayExchangeRate() =
         isMultiCurrency() ||
-            uiState.clientBankAccount?.idCurrency?.toString() != summaryList?.first()?.idCurrency?.toString()
+            uiState.clientBankAccount?.idCurrency?.toString() != summaryListFiltered?.first()?.idCurrency?.toString()
 
-    fun isMultiCurrency() = (summaryList?.count() ?: 1) > 1
+    fun isMultiCurrency() = (summaryListFiltered?.count() ?: 1) > 1
+
+    fun getDescriptionResource() = when {
+        isMultiCurrency() -> R.string.payment_amount_bottom_sheet_process_payment_both_currency_description_label
+        shouldDisplayExchangeRate() -> R.string.payment_amount_bottom_sheet_process_payment_crossed_currency_description_label
+        else -> R.string.payment_amount_bottom_sheet_process_payment_same_currency_description_label
+    }
 
     private fun onShowPaymentBottomSheet() {
         uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
@@ -200,9 +214,9 @@ class PaymentAmountViewModel @Inject constructor(
                 isMinimumSelected = value.isNotEmpty() && value.toIntOrNull() == minimumPayment,
                 isMaximumSelected = value.isNotEmpty() && value.toIntOrNull() == maximumPayment,
                 enableButton = (
-                        convertedValue != null && convertedValue <= maximumPayment &&
-                                convertedValue > PAYMENT_MUST_HIGHER_THAN_VALUE
-                        ),
+                    convertedValue != null && convertedValue <= maximumPayment &&
+                        convertedValue > PAYMENT_MUST_HIGHER_THAN_VALUE
+                    ),
                 currentAmountError = if (convertedValue != null && convertedValue > maximumPayment) {
                     Pair(true, R.string.payment_amount_amount_max_error)
                 } else if (convertedValue != null && convertedValue <= PAYMENT_MUST_HIGHER_THAN_VALUE) {
@@ -221,7 +235,11 @@ class PaymentAmountViewModel @Inject constructor(
     private fun onNavigateToVoucher() {
         logAdjustEvent()
         navigateTo(
-            route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${encodeData(uiState.clientBankAccount)}/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber"
+            route = "${Screen.PaymentVoucherScreen.baseRoute}/$user/$idBrand/$idClient/$idLoanClient/${
+            encodeData(
+                uiState.clientBankAccount
+            )
+            }/$paymentDate/${if (isMultiCurrency()) getMultiCurrencyAmountIncludingExchangeFormatted() else getCurrentAmountFormatted()}/${if (uiState.isMinimumSelected) uiState.minimumPaymentLabel else uiState.maximumPaymentLabel}/${formattedExchangeRateLabel()}/${shouldDisplayExchangeRate()}/${isMultiCurrency()}/${uiState.isAutomaticProgrammedPaymentChecked}/$referenceNumber/$isAutopayEnabled/$identification"
         )
     }
 
@@ -252,7 +270,7 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun formattedExchangeRateLabel() = uiState.exchangeRateLabel.formattedTwoDecimalsNumber().toString()
 
-    fun getFormattedCurrency() : Any {
+    fun getFormattedCurrency(): Any {
         val convertedValue = uiState.currentAmountValueString.toDoubleOrNull()?.roundToInt()
         return if (convertedValue != null && convertedValue > maximumPayment) {
             uiState.maximumPaymentLabel
@@ -266,10 +284,11 @@ class PaymentAmountViewModel @Inject constructor(
             idBrand ?: NO_SELECT,
             user ?: "",
             identification ?: "",
-            summaryList?.find { it.idCurrency != uiState.clientBankAccount?.idCurrency }?.idCurrency?.toString() ?: "",
+            summaryListFiltered?.find { it.idCurrency != uiState.clientBankAccount?.idCurrency }?.idCurrency?.toString()
+                ?: "",
             uiState.clientBankAccount?.idCurrency?.toString() ?: "",
             if (isMultiCurrency()) {
-                summaryList?.find { it.idCurrency != uiState.clientBankAccount?.idCurrency }?.let {
+                summaryListFiltered?.find { it.idCurrency != uiState.clientBankAccount?.idCurrency }?.let {
                     if (uiState.isMinimumSelected) {
                         it.minPayment?.formattedTwoDecimalsNumber()
                     } else {
@@ -305,7 +324,7 @@ class PaymentAmountViewModel @Inject constructor(
                 currencyId = uiState.clientBankAccount?.idCurrency?.toString() ?: "",
                 customerName = userName ?: "",
                 description = paymentDescription,
-                destinyAccount = summaryList?.map {
+                destinyAccount = summaryListFiltered?.map {
                     DestinyAccount(
                         destinyAccountNumber = it.ibanAccount ?: "",
                         destinyCurrencyId = it.idCurrency?.toString() ?: NO_SELECT.toString(),
@@ -411,8 +430,8 @@ class PaymentAmountViewModel @Inject constructor(
 
     fun getCurrentAmountFormatted() =
         "${uiState.currency}${
-            uiState.currentAmountValueString
-                .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        uiState.currentAmountValueString
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
         }"
 
     fun getExchangeRateFormatted() =
@@ -423,9 +442,9 @@ class PaymentAmountViewModel @Inject constructor(
 
     private fun getMultiCurrencyAmountIncludingExchangeValue(): Double {
         val balance = if (uiState.isMinimumSelected) {
-            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.minPayment ?: 0.0
+            summaryListFiltered?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.minPayment ?: 0.0
         } else {
-            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
+            summaryListFiltered?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
         }
         val exchangedAmount = uiState.exchangeConvertedAmount
         val total = balance + exchangedAmount
@@ -434,9 +453,9 @@ class PaymentAmountViewModel @Inject constructor(
 
     fun getMultiCurrencyAmountIncludingExchangeFormatted(): String {
         val balance = if (uiState.isMinimumSelected) {
-            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.minPayment ?: 0.0
+            summaryListFiltered?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.minPayment ?: 0.0
         } else {
-            summaryList?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
+            summaryListFiltered?.find { it.idCurrency == uiState.clientBankAccount?.idCurrency }?.currentBalance ?: 0.0
         }
         val exchangedAmount = uiState.exchangeConvertedAmount
         val total = balance + exchangedAmount

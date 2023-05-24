@@ -28,8 +28,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.ConfirmationBottomSheetContent
 import com.multimoney.multimoney.presentation.util.calculateConfirmationBaseAmount
-import com.multimoney.multimoney.presentation.util.calculateConfirmationQuoteAmount
-import com.multimoney.multimoney.presentation.util.calculateConvertedCurrencyBalance
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import kotlinx.coroutines.CoroutineScope
@@ -79,12 +77,7 @@ fun PurchaseConfirmationBottomSheet(
             )
         }
         ConfirmationBottomSheetContent(
-            amount = calculateConfirmationQuoteAmount(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                currencyPrice = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                symbol = CurrencyType.Dollar.symbol
-            ),
+            amount = viewModel.uiState.amountInUSD?.toCurrencyFormat().orEmpty(),
             evaluatedAmount = buildAnnotatedString {
                 append(stringResource(id = R.string.crypto_purchase_flow_confirmation_estimated_amount))
                 append(WHITE_SPACE)
@@ -111,12 +104,7 @@ fun PurchaseConfirmationBottomSheet(
             exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
                 symbol = CurrencyType.Colon.symbol
             ),
-            convertedAmount = calculateConvertedCurrencyBalance(
-                quoteAmount = viewModel.uiState.quoteAmount.value,
-                baseAmount = viewModel.uiState.baseAmount.value,
-                price = viewModel.uiState.pricesQuoteAndCommissions?.price,
-                exchangeRate = viewModel.uiState.exchangeRate
-            ),
+            convertedAmountToRecieve = viewModel.uiState.convertedCurrentAmountPlusConvertedFee,
             idBrand = viewModel.idBrand,
             onConfirm = {
                 coroutineScope.launch {

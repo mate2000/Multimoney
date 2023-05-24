@@ -1,5 +1,6 @@
 package com.multimoney.multimoney.presentation.ui.crypto.purchase.voucher
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -229,6 +229,7 @@ fun BuyCryptoVoucherContent(
                     VoucherAccountInfo(
                         modifier = Modifier.padding(start = 27.dp, top = 24.dp),
                         icon = R.drawable.ic_multimoney_voucher_gray,
+                        tintIcon = false,
                         title = stringResource(
                             id = R.string.buy_crypto_multimoney_smart_account_template,
                             if (idCurrency == CurrencyType.Colon.id) {
@@ -243,6 +244,7 @@ fun BuyCryptoVoucherContent(
                     VoucherNumberInfo(
                         modifier = Modifier.padding(start = 24.dp, top = 32.dp),
                         icon = R.drawable.ic_receipt,
+                        tintIcon = false,
                         title = stringResource(R.string.payment_voucher_reference_number_label),
                         subTitle = referenceNumber
                     )
@@ -252,6 +254,7 @@ fun BuyCryptoVoucherContent(
                         VoucherCurrencyExchangeInfo(
                             leftTitleResource = R.string.buy_crypto_voucher_mount_to_charge,
                             rightTitleResource = R.string.buy_crypto_voucher_exchange_rate,
+                            tintIcon = false,
                             exchangeRateText = totalDebitedExchange,
                             convertedAmountText = exchangeRate
                         )
@@ -259,6 +262,7 @@ fun BuyCryptoVoucherContent(
                         VoucherTotalAmountInfo(
                             modifier = Modifier.padding(start = 27.dp, top = 32.dp),
                             icon = R.drawable.ic_money_voucher,
+                            tintIcon = false,
                             title = stringResource(R.string.buy_crypto_voucher_mount_to_charge),
                             subTitle = totalDebitedAmount
                         )
@@ -270,9 +274,8 @@ fun BuyCryptoVoucherContent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row {
-                            Icon(
+                            Image(
                                 painter = painterResource(id = R.drawable.ic_calendar_voucher),
-                                tint = MultimoneyTheme.colors.iconTintVoucher,
                                 contentDescription = ""
                             )
                             Text(

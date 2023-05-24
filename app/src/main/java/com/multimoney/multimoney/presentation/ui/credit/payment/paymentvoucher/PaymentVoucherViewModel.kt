@@ -18,6 +18,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOMATIC_PAYMENT_CHECKED
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
 import com.multimoney.multimoney.presentation.navigation.navgraph.NAME_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_LABEL
@@ -64,6 +65,7 @@ class PaymentVoucherViewModel @Inject constructor(
     private var identification: String? = null
     private var userName: String? = null
     private var paymentDate: String? = null
+    var isAutopayEnabled: Boolean? = null
 
     init {
         referenceNumber = savedStateHandle[REFERENCE_NUMBER] ?: ""
@@ -82,6 +84,7 @@ class PaymentVoucherViewModel @Inject constructor(
         shouldDisplayExchangeRate = savedStateHandle[SHOULD_DISPLAY_EXCHANGE_RATE]
         isMultiCurrency = savedStateHandle[SHOULD_DISPLAY_EXCHANGE_RATE]
         isAutomaticProgrammedPaymentChecked = savedStateHandle[IS_AUTOMATIC_PAYMENT_CHECKED]
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
         currentDate = getCurrentDate(Calendar.getInstance().time)
         currentTime = getCurrentTime(Calendar.getInstance().time)
     }

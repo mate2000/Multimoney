@@ -200,7 +200,7 @@ fun PaymentAmountContent(
         viewModel,
         coroutineScope,
         viewModel.uiState.bottomSheetVisibleState,
-        stringResource(id = R.string.payment_amount_bottom_sheet_process_payment_description_label)
+        stringResource(id = viewModel.getDescriptionResource())
     )
     LoadingIndicator(viewModel.uiState.isLoading)
 }

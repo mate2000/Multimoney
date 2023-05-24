@@ -32,6 +32,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPas
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.ValidationSecurityPassword
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
+import com.multimoney.multimoney.presentation.util.encryptPassword
 import com.multimoney.multimoney.presentation.util.getAppVersion
 import com.multimoney.multimoney.presentation.util.getDeviceBrand
 import com.multimoney.multimoney.presentation.util.getDeviceModel
@@ -44,12 +45,12 @@ import com.multimoney.multimoney.presentation.util.passwordHasMinimumCharacters
 import com.multimoney.multimoney.presentation.util.passwordHasSpecialCharacterValidation
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignUpPasswordViewModel @Inject constructor(
@@ -107,9 +108,9 @@ class SignUpPasswordViewModel @Inject constructor(
 
     private fun isFormValid(): Boolean {
         return (uiState.oneLowercaseState ?: false) && (uiState.oneUppercaseState ?: false) &&
-            (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
-            passwordHasMinimumCharacters(uiState.password) && uiState.confirmPassword == uiState.password &&
-            !uiState.confirmPasswordError.first && uiState.passwordError.first.not()
+                (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
+                passwordHasMinimumCharacters(uiState.password) && uiState.confirmPassword == uiState.password &&
+                !uiState.confirmPasswordError.first && uiState.passwordError.first.not()
     }
 
     private fun onSetupDeviceInfo(
@@ -198,7 +199,7 @@ class SignUpPasswordViewModel @Inject constructor(
     private fun callQuerySavePassword(pkUser: String, user: String, idBrant: Int) = executeUseCase {
         queryValidationSecurityUseCase.invoke(
             pkUser = pkUser,
-            password = uiState.password,
+            password = uiState.password.encryptPassword(),
             user = user,
             idBrand = idBrant,
             actionSecurity = ValidationSecurityPassword.OnlySave.actionSecurity
@@ -269,6 +270,7 @@ class SignUpPasswordViewModel @Inject constructor(
                         },
                         isActive = mutableStateOf(true)
                     )
+
                     else -> DialogParameters(
                         description = it.localizedMessage ?: "",
                         isActive = mutableStateOf(true)
@@ -417,15 +419,18 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.biometricDialogFailureDescription,
                 uiEvent.idBrand
             )
+
             is OnNextActionClick -> uiEvent.nextStepAction.invoke()
             is OnPasswordValueChange -> onPasswordValueChange(
                 uiEvent.password,
                 uiEvent.onContinueEnable
             )
+
             is OnConfirmPasswordValueChange -> onConfirmPasswordValueChange(
                 uiEvent.confirmPassword,
                 uiEvent.onContinueEnable
             )
+
             is OnCallCognitoSignUp -> signUp(
                 uiEvent.email,
                 uiEvent.firstName,
@@ -439,28 +444,33 @@ class SignUpPasswordViewModel @Inject constructor(
                 uiEvent.onSuccess,
                 uiEvent.onFailureWithDialog
             )
+
             is OnValidForm -> uiEvent.onContinueEnable(isFormValid())
             is OnCallPasswordSave -> callQuerySavePassword(
                 uiEvent.pkUser,
                 uiEvent.user,
                 uiEvent.idBrant
             )
+
             is OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 uiEvent.value,
                 uiEvent.showDialog,
                 uiEvent.idBrand
             )
+
             is OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 uiEvent.fragmentActivity,
                 uiEvent.userEmail,
                 uiEvent.userName,
                 uiEvent.onNextStep
             )
+
             is OnIsBiometricAvailable -> isBiometricAvailable = uiEvent.value
             is UIEvent.OnSetupDeviceInfo -> onSetupDeviceInfo(
                 uiEvent.deviceName,
                 uiEvent.deviceType
             )
+
             is UIEvent.OnValidatePasswordStructure -> onValidatePasswordStructure(
                 uiEvent.idBrand,
                 uiEvent.pkUser,

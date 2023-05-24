@@ -209,10 +209,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
             amount = 0.0,
-            isTransfer = true
+            isTransfer = false
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
@@ -238,10 +238,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
             amount = uiState.amountInUSD?.plus(uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0) ?: 0.0,
-            isTransfer = true
+            isTransfer = false
         ).collectLatest { result ->
             result.onLoading {}
             result.onSuccess { exchangeRate ->
@@ -495,7 +495,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             quoteAmount = mutableStateOf(""),
             remainingTime = Duration.ZERO,
             convertedCurrentAmountPlusConvertedFee = "₡0.0",
-            isTransformationCurrency = mutableStateOf(true),
+            isTransformationCurrency = mutableStateOf(false),
         )
     }
 

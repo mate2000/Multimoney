@@ -81,6 +81,10 @@ class BiometricHelper @Inject constructor(
         }
     )
 
+    fun deleteKeyFromKeyStore() {
+        cryptographyHelper.deleteKeyFromKeyStore()
+    }
+
     fun isBiometricAvailable(context: Context) = BiometricManager.from(context)
         .canAuthenticate(BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS
 }

@@ -5,6 +5,7 @@ import android.security.keystore.KeyProperties
 import android.security.keystore.KeyProperties.BLOCK_MODE_GCM
 import android.security.keystore.KeyProperties.ENCRYPTION_PADDING_NONE
 import android.security.keystore.KeyProperties.KEY_ALGORITHM_AES
+import com.multimoney.data.BuildConfig
 import java.nio.charset.Charset
 import java.security.KeyStore
 import javax.crypto.Cipher
@@ -99,6 +100,12 @@ class CryptographyHelper @Inject constructor() {
         )
         keyGenerator.init(keyGenParams)
         return keyGenerator.generateKey()
+    }
+
+    fun deleteKeyFromKeyStore() {
+        val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+        keyStore.load(null)
+        keyStore.deleteEntry(BuildConfig.DATA_STORE_BIOMETRIC_KEY)
     }
 
     companion object {

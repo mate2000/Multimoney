@@ -183,6 +183,10 @@
     <string name="sign_in_account_blocked_message_cr" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablecé tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
     <string name="sign_in_account_blocked_message" translatable="false">Por tu seguridad hemos bloqueado tu cuenta, para poder ingresar al app restablece tu contraseña desde la opción de \“Olvidé mi contraseña\”</string>
     <string name="sign_in_restore_password" translatable="false">Restablecer</string>
+    <string name="sign_in_reconfigure_biometric_title_cr" translatable="false">Activá de nuevo tus biométricos</string>
+    <string name="sign_in_reconfigure_biometric_title" translatable="false">Activa de nuevo tus biométricos </string>
+    <string name="sign_in_reconfigure_biometric_description_cr" translatable="false">Indentificamos que se realizaron cambios en la configuracion de tus biométricos, activá de nuevo tus biométricos desde la pantalla de inicio de sesión</string>
+    <string name="sign_in_reconfigure_biometric_description" translatable="false">Indentificamos que se realizaron cambios en la configuracion de tus biométricos, activa de nuevo tus biométricos desde la pantalla de inicio de sesión</string>
 
     <!-- Sign Up General-->
     <string name="sign_up_splash_come_back" translatable="false">¡Nos alegra\nverte de nuevo!</string>

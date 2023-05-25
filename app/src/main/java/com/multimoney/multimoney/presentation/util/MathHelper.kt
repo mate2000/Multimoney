@@ -5,6 +5,8 @@ import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.Buy
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.DEFAULT_AMOUNT
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.buycurrency.EMPTY_CURRENCY
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 fun calculateGainLosesMarketDetails(
     currentBalance: Double,
@@ -132,3 +134,9 @@ fun calculateAvailableInDollars(
     baseAmount: Double,
     currencyPrice: Double
 ): Double = baseAmount.times(currencyPrice)
+
+fun Double.roundToEightDecimals(): Double {
+    val df = DecimalFormat("#.########")
+    df.roundingMode = RoundingMode.UP
+    return df.format(this).toDouble()
+}

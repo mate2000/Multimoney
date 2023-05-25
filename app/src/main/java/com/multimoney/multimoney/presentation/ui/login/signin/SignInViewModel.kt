@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.login.signin
 
 import android.content.Context
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -32,8 +33,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREE
 import com.multimoney.multimoney.presentation.ui.login.signup.password.SignUpPasswordViewModel
 import com.multimoney.multimoney.presentation.util.SIM_CODE_COSTA_RICA
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
-import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CognitoErrorCode
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.checkIfEmulator
@@ -49,12 +50,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.BiometricHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -195,6 +196,7 @@ class SignInViewModel @Inject constructor(
                                             callQueryValidationUserExistsUseCase()
                                         })
                                     }
+
                                     AuthSessionResult.Type.FAILURE -> callQueryValidationUserExistsUseCase()
                                 }
                             }, {
@@ -241,6 +243,7 @@ class SignInViewModel @Inject constructor(
                 ),
                 isLoading = false
             )
+
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.SessionBlocked.code) == true -> {
             callQueryValidationUserExistsUseCase()
             viewModelScope.launch {
@@ -257,8 +260,9 @@ class SignInViewModel @Inject constructor(
                 isLoading = false
             )
         }
+
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDevice.code) == true ||
-            authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
+                authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.BlacklistedDeviceTooManyAccounts.code) == true -> {
             callQueryValidationUserExistsUseCase()
             viewModelScope.launch {
                 dataStorePreferences.clearData()
@@ -276,6 +280,7 @@ class SignInViewModel @Inject constructor(
                 isLoading = false
             )
         }
+
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
             val error = authException.cause?.message?.getCognitoError()
             val detailResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
@@ -309,6 +314,7 @@ class SignInViewModel @Inject constructor(
                 )
             }
         }
+
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedChangePasswordNeeded.code) == true -> {
             viewModelScope.launch {
                 dataStorePreferences.clearData()
@@ -346,12 +352,14 @@ class SignInViewModel @Inject constructor(
                 )
             }
         }
+
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.DeviceChangeRequiredDueToInactivity.code) == true -> {
             uiState = uiState.copy(
                 isLoading = false
             )
             onNavigateToOTPScreen()
         }
+
         else -> callQueryValidationUserExistsUseCase()
     }
 
@@ -403,7 +411,11 @@ class SignInViewModel @Inject constructor(
         if (uiState.userEmail != biometricUserEmail) {
             dataStorePreferences.isBiometricsEnabled(false)
         }
-        dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value?.trim().orEmpty()}")
+        dataStorePreferences.setUserName(
+            "${
+                authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()
+            } ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.familyName() }?.value?.trim().orEmpty()}"
+        )
         dataStorePreferences.setAuthToken(idToken)
         dataStorePreferences.setIdBrand(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_ID_BRAND))
         dataStorePreferences.setPkUser(payload.getString(SignUpPasswordViewModel.COGNITO_CUSTOM_PK_USER))
@@ -519,7 +531,14 @@ class SignInViewModel @Inject constructor(
                 viewModelScope.launch {
                     dataStorePreferences.setUserEmail(uiState.userEmail)
                     dataStorePreferences.setUserPassword(uiState.userPassword, this@apply)
-                    dataStorePreferences.setUserName("${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()} ${authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value?.trim().orEmpty()}")
+                    dataStorePreferences.setUserName(
+                        "${
+                            authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.name() }?.value?.trim().orEmpty()
+                        } ${
+                            authUserAttribute.firstOrNull { it.key == AuthUserAttributeKey.middleName() }?.value?.trim()
+                                .orEmpty()
+                        }"
+                    )
                     dataStorePreferences.isBiometricsEnabled(true)
                     navigateToHome()
                 }
@@ -531,19 +550,36 @@ class SignInViewModel @Inject constructor(
 
     private fun onShowBiometricPromptForDecryption(fragmentActivity: FragmentActivity) {
         viewModelScope.launch {
-            biometricHelper.showBiometricPrompt(
-                title = biometricPromptTitle,
-                description = biometricPromptDescription,
-                negative = biometricPromptNegative,
-                activity = fragmentActivity,
-                processSuccess = { result ->
-                    biometricPromptForDecryptionSuccess(fragmentActivity, result)
-                },
-                processError = { errorCode, errString ->
-                    biometricPromptError(errorCode, errString)
-                },
-                initializationVector = dataStorePreferences.getUserPasswordVector().first()
-            )
+            try {
+                biometricHelper.showBiometricPrompt(
+                    title = biometricPromptTitle,
+                    description = biometricPromptDescription,
+                    negative = biometricPromptNegative,
+                    activity = fragmentActivity,
+                    processSuccess = { result ->
+                        biometricPromptForDecryptionSuccess(fragmentActivity, result)
+                    },
+                    processError = { errorCode, errString ->
+                        biometricPromptError(errorCode, errString)
+                    },
+                    initializationVector = dataStorePreferences.getUserPasswordVector().first()
+                )
+            } catch (e: KeyPermanentlyInvalidatedException) {
+                uiState = uiState.copy(
+                    openDialog = DialogParameters(
+                        isActive = mutableStateOf(true),
+                        titleResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_reconfigure_biometric_title_cr else string.sign_in_reconfigure_biometric_title,
+                        descriptionResource = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_reconfigure_biometric_description_cr else string.sign_in_reconfigure_biometric_description,
+                        positiveAction = {
+                            biometricHelper.deleteKeyFromKeyStore()
+                            viewModelScope.launch {
+                                dataStorePreferences.isBiometricsEnabled(false)
+                                uiState = uiState.copy(isBiometricActive = false, showBiometricSignIn = false)
+                            }
+                        },
+                    )
+                )
+            }
         }
     }
 
@@ -666,6 +702,7 @@ class SignInViewModel @Inject constructor(
                     isActive = mutableStateOf(showDialog)
                 )
             }
+
             else -> {
                 DialogParameters(
                     titleResource = string.active_biometric_title_cr,
@@ -814,12 +851,15 @@ class SignInViewModel @Inject constructor(
                 event.biometricPromptNegative,
                 event.fragmentActivity
             )
+
             is UIEvent.OnShowBiometricPromptForEncryption -> onShowBiometricPromptForEncryption(
                 event.fragmentActivity
             )
+
             is UIEvent.OnShowBiometricPromptForDecryption -> onShowBiometricPromptForDecryption(
                 event.fragmentActivity
             )
+
             is UIEvent.OnShowBiometricSignInChanged -> onShowBiometricSignInChanged(event.value)
             is UIEvent.OnFingerprintCheckedChanged -> onFingerprintCheckedChanged(
                 event.value,
@@ -831,6 +871,7 @@ class SignInViewModel @Inject constructor(
                 event.deviceType,
                 event.forceDeviceChange
             )
+
             is UIEvent.OnValidateUserEmail -> isUserEmailValid()
             is UIEvent.OnCallCognitoSignIn -> callCognitoSignIn()
             is UIEvent.OnNavigateToForgotPassword -> onNavigateToForgotPassword()

@@ -30,6 +30,7 @@ import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.SmartTransferTypes
 import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getCurrencyFromValue
 import com.multimoney.multimoney.presentation.util.isEmailValid
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -215,7 +216,7 @@ class SmartTransferRegisterIbanViewModel @Inject constructor(
             identificationNumber = identification ?: "",
             destinationBankId = validateAccount?.bankId ?: 0,
             identificationTypeAccount = validateAccount?.identification?.toIntOrNull() ?: 0,
-            destinationCurrencyId = validateAccount?.currency?.toIntOrNull() ?: 0,
+            destinationCurrencyId = validateAccount?.currency?.getCurrencyFromId()?.id ?: 0,
             document = uiState.documentNumber,
             description = uiState.favoriteName.ifBlank { validateAccount?.name ?: "" }
         ).collectLatest {

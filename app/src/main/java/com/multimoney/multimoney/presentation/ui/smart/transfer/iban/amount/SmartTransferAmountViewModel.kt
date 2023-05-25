@@ -32,7 +32,9 @@ class SmartTransferAmountViewModel @Inject constructor() : BaseSmartEditAmountVi
             smartAccount = savedStateHandle[ORIGIN_ACCOUNT]
             ibanAccount = savedStateHandle[DESTINY_ACCOUNT]
             originCurrency = smartAccount?.currencyID?.getCurrencyFromId()
+            if (originCurrency == CurrencyType.All) originCurrency = Dollar
             destinyCurrency = ibanAccount?.currencyId?.getCurrencyFromId()
+            if (destinyCurrency == CurrencyType.All) destinyCurrency = Dollar
             shouldDisplayExchange = originCurrency != destinyCurrency
             limits = preferences.getSmartTransferLimit().firstOrNull()
 

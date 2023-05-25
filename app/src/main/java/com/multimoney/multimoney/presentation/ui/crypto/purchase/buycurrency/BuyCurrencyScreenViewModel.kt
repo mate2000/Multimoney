@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.roundToEightDecimals
 import com.multimoney.multimoney.presentation.util.toCurrencyFormat
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CryptoTimerHelper
@@ -142,7 +143,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 side = side,
                 base_amount = uiState.baseAmount.value.ifEmpty {
                     DEFAULT_BASE_AMOUNT_STRING
-                }.toDouble(),
+                }.toDouble().roundToEightDecimals(),
                 quote_amount = uiState.quoteAmount.value.ifEmpty {
                     if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
                 }.toDouble()
@@ -209,10 +210,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
             amount = 0.0,
-            isTransfer = true
+            isTransfer = false
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->
@@ -238,10 +239,10 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
             amount = uiState.amountInUSD?.plus(uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0) ?: 0.0,
-            isTransfer = true
+            isTransfer = false
         ).collectLatest { result ->
             result.onLoading {}
             result.onSuccess { exchangeRate ->
@@ -271,7 +272,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             market = market,
             identification = identification,
             side = side,
-            base_amount = uiState.baseAmount.value.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble(),
+            base_amount = uiState.baseAmount.value.ifEmpty {
+                DEFAULT_BASE_AMOUNT_STRING
+            }.toDouble().roundToEightDecimals(),
             quote_amount = uiState.quoteAmount.value.ifEmpty {
                 if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
             }.toDouble()
@@ -495,7 +498,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             quoteAmount = mutableStateOf(""),
             remainingTime = Duration.ZERO,
             convertedCurrentAmountPlusConvertedFee = "₡0.0",
-            isTransformationCurrency = mutableStateOf(true),
+            isTransformationCurrency = mutableStateOf(false),
         )
     }
 

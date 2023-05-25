@@ -24,6 +24,7 @@ import com.multimoney.multimoney.presentation.util.calculateAmountPlusFee
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
 import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.roundToEightDecimals
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -86,7 +87,9 @@ class CryptoSendAmountViewModel @Inject constructor(
     private fun onAmountChange(amount: String) {
         uiState = if (uiState.isTransformationCurrency.value) {
             uiState.copy(
-                sendCryptoAmount = amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }.toDouble(),
+                sendCryptoAmount = amount.ifEmpty {
+                    DEFAULT_BASE_AMOUNT_STRING
+                }.toDouble().roundToEightDecimals(),
                 sendDollarAmount = calculateDollarEstimated(
                     amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING },
                     currencyPrice
@@ -98,7 +101,7 @@ class CryptoSendAmountViewModel @Inject constructor(
                 sendCryptoAmount = calculateAssetEstimated(
                     amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING },
                     currencyPrice
-                ).toDouble(),
+                ).toDouble().roundToEightDecimals(),
                 sendDollarAmount = "$${amount.ifEmpty { DEFAULT_BASE_AMOUNT_STRING }}",
                 feeCalculated = false
             )

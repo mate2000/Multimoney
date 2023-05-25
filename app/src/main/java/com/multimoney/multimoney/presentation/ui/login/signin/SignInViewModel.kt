@@ -278,13 +278,13 @@ class SignInViewModel @Inject constructor(
         }
         authException.cause?.message?.isCognitoErrorCode(CognitoErrorCode.UserBlockedForTooManyAttends.code) == true -> {
             val error = authException.cause?.message?.getCognitoError()
-            val messageResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
+            val detailResId = if (uiState.country == SIM_CODE_COSTA_RICA) string.sign_in_too_many_attempts_cr
             else string.sign_in_too_many_attempts
 
             uiState = if (error == null) {
                 uiState.copy(
                     openDialog = DialogParameters(
-                        descriptionResource = messageResId,
+                        descriptionResource = detailResId,
                         positiveResource = string.accept,
                         isActive = mutableStateOf(true)
                     ),
@@ -296,9 +296,9 @@ class SignInViewModel @Inject constructor(
             } else {
                 uiState.copy(
                     openDialog = DialogParameters(
-                        title = error.detail,
-                        description = error.message,
-                        descriptionResource = if (error.message.isEmpty()) messageResId else string.empty,
+                        title = error.message,
+                        description = error.detail,
+                        descriptionResource = if (error.detail.isEmpty()) detailResId else string.empty,
                         positiveResource = string.accept,
                         isActive = mutableStateOf(true)
                     ),

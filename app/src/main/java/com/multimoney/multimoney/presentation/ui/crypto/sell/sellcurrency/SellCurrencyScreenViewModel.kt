@@ -26,6 +26,7 @@ import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.roundToEightDecimals
 import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.CryptoTimerHelper
@@ -128,7 +129,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             side = side,
             base_amount = uiState.baseAmount.value.ifEmpty {
                 DEFAULT_BASE_AMOUNT_STRING
-            }.toDouble(),
+            }.toDouble().roundToEightDecimals(),
             quote_amount = uiState.quoteAmount.value.ifEmpty {
                 if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
             }.toDouble()
@@ -165,7 +166,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             side = side,
             base_amount = uiState.baseAmount.value.ifEmpty {
                 DEFAULT_BASE_AMOUNT_STRING
-            }.toDouble(),
+            }.toDouble().roundToEightDecimals(),
             quote_amount = uiState.quoteAmount.value.ifEmpty {
                 if (uiState.baseAmount.value.isNotEmpty()) DEFAULT_BASE_AMOUNT_STRING else DEFAULT_AMOUNT
             }.toDouble()
@@ -238,7 +239,8 @@ class SellCurrencyScreenViewModel @Inject constructor(
             isTransformationCurrency = uiState.isTransformationCurrency.value,
             amount = amount,
             price = uiState.pricesQuoteAndCommissions?.price ?: DEFAULT_AMOUNT_NUMBER
-        )
+        ).roundToEightDecimals()
+
         uiState = uiState.copy(amountInCurrency = baseAmount, amountInUsd = quoteAmount)
 
         when {

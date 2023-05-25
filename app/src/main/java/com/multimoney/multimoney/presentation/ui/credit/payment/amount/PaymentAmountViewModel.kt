@@ -149,7 +149,6 @@ class PaymentAmountViewModel @Inject constructor(
                 uiState.accountCurrency
             }
         )
-        onAmountValueChange(minimumPayment.toString())
     }
 
     fun shouldDisplayExchangeRate() =
@@ -473,7 +472,7 @@ class PaymentAmountViewModel @Inject constructor(
         val isMaximumSelected: Boolean = false,
         val currency: String = "$",
         val accountCurrency: String = "$",
-        val currentAmountValueString: String = "0",
+        val currentAmountValueString: String = "",
         val currentAmountError: Pair<Boolean, Int> = Pair(false, R.string.error_empty),
         val enableButton: Boolean = false,
         val isAmountVisible: Boolean = true,

@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.home.product
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -418,6 +419,10 @@ fun ProductScreen(
         },
         checked = viewModel.uiState.dontShowAgainChecked
     )
+
+    BackHandler(viewModel.uiState.isExpanded) {
+        viewModel.onUIEvent(OnUpdateIsBackPressed(true))
+    }
 }
 
 @Composable

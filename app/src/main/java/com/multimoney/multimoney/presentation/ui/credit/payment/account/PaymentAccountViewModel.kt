@@ -36,6 +36,7 @@ import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentA
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnClientBankAccountSelected
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.credit.payment.account.PaymentAccountViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -65,6 +66,7 @@ class PaymentAccountViewModel @Inject constructor(
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
     private var summaryList: List<Summary>? = null
+    var summaryListFiltered: List<Summary>? = null
     private var idCurrency: Int? = 0
     private var identification: String? = null
     private var userName: String? = null
@@ -83,10 +85,12 @@ class PaymentAccountViewModel @Inject constructor(
         paymentDate = savedStateHandle[PAYMENT_DATE]
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
         isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
-        idCurrency = if ((summaryList?.count() ?: 0) > 1) {
+        summaryListFiltered =
+            summaryList?.filter { (it.currentBalance ?: ProductViewModel.ZERO) > ProductViewModel.ZERO }
+        idCurrency = if ((summaryListFiltered?.count() ?: 0) > 1) {
             CurrencyType.All.id
         } else {
-            summaryList?.firstOrNull()?.idCurrency
+            summaryListFiltered?.firstOrNull()?.idCurrency
         }
     }
 

@@ -29,7 +29,7 @@ fun isPhoneNumberValid(
                 Phonenumber.PhoneNumber.CountryCodeSource.UNSPECIFIED.name
             )
             if (phoneNumberType == PhoneNumberUtil.PhoneNumberType.MOBILE && PhoneNumberUtil.getInstance()
-                .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
+                    .getNumberType(number) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE_OR_MOBILE || PhoneNumberUtil.getInstance()
                     .getNumberType(number) == phoneNumberType
             ) {
                 PhoneNumberUtil.getInstance()
@@ -120,6 +120,19 @@ fun validateDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX, value) || value.isEmpty()) && value != "00")
 }
 
+fun String.validateDecimalAmount(): Boolean {
+    return (validateCorrectNumber(this) && this.startsWith(".").not() && (DECIMAL_FORMAT_REGEX.toRegex()
+        .matches(this) || this.isEmpty()))
+}
+
+private fun validateCorrectNumber(number: String): Boolean {
+    return if (number.length > 1 && number.startsWith("0")) {
+        (number.getOrNull(1) ?: "") == '.'
+    } else {
+        true
+    }
+}
+
 fun validateDecimalIncomeWithZeros(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX_WITH_ZEROS, value) || value.isEmpty()) && value != "00")
 }
@@ -132,24 +145,27 @@ fun validatePhoneNumber(phoneNumber: String, idBrand: Int): Boolean {
     return when (idBrand) {
         Brand.CostaRica.id -> {
             phoneNumber.startsWith(PHONE_START_NUMBER_TWO) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
+                    phoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
         }
+
         Brand.ElSalvador.id -> {
             phoneNumber.startsWith(PHONE_START_NUMBER_TWO) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+                    phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
         }
+
         Brand.Guatemala.id -> {
             phoneNumber.startsWith(PHONE_START_NUMBER_TWO) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_THREE) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_FIVE) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
-                phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+                    phoneNumber.startsWith(PHONE_START_NUMBER_THREE) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_FIVE) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                    phoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
         }
+
         else -> false
     }
 }
@@ -159,19 +175,22 @@ fun validateMobilePhoneNumber(mobilePhoneNumber: String, idBrand: Int): Boolean 
         when (idBrand) {
             Brand.CostaRica.id -> {
                 mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
-                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
-                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN) ||
-                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
+                        mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
+                        mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN) ||
+                        mobilePhoneNumber.startsWith(PHONE_START_NUMBER_EIGHT)
             }
+
             Brand.ElSalvador.id -> {
                 mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SIX) ||
-                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
+                        mobilePhoneNumber.startsWith(PHONE_START_NUMBER_SEVEN)
             }
+
             Brand.Guatemala.id -> {
                 mobilePhoneNumber.startsWith(PHONE_START_NUMBER_THREE) ||
-                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
-                    mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
+                        mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FOUR) ||
+                        mobilePhoneNumber.startsWith(PHONE_START_NUMBER_FIVE)
             }
+
             else -> false
         }
     } else {

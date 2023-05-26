@@ -97,7 +97,7 @@ class PaymentOptionsViewModel @Inject constructor(savedStateHandle: SavedStateHa
                 }/$isAutopayEnabled"
             }
             else -> {
-                "${Screen.PaymentPointsScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/$minimumPaymentLabel"
+                "${Screen.PaymentPointsScreen.baseRoute}/${infoUser?.idBrand ?: 0}/$creditNumber/$minimumPaymentLabel/${Screen.PaymentOptionsScreen.baseRoute}"
             }
         }
         navigateTo(route = route)

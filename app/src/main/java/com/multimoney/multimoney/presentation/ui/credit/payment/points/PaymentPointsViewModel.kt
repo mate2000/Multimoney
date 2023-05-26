@@ -21,6 +21,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
 import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
@@ -32,8 +33,8 @@ import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.encodeURLToUTF
 import com.multimoney.multimoney.presentation.util.getNavParam
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class PaymentPointsViewModel @Inject constructor(
@@ -48,11 +49,13 @@ class PaymentPointsViewModel @Inject constructor(
     var idBrand: Int? = null
     private var paymentAmountLabel: String? = ""
     private var creditNumber: String? = ""
+    private var previousScreen: String = ""
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
         paymentAmountLabel = savedStateHandle[PAYMENT_AMOUNT_LABEL] ?: ""
         creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
     private fun onItemPointClick(
@@ -93,9 +96,15 @@ class PaymentPointsViewModel @Inject constructor(
     }
 
     private fun onNavigateBack() =
-        navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+        navigateBack(
+            popTo = if (previousScreen == Screen.PaymentOptionsScreen.baseRoute) {
+                Screen.PaymentOptionsScreen.route
+            } else {
+                Screen.HomeScreen.route
+            }, isRestart = false
+        )
 
-    private fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+    fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
 
     private fun onCloseScreen() {
         uiState = uiState.copy(

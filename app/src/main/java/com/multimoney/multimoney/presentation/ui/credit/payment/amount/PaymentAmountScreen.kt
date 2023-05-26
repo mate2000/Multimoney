@@ -48,6 +48,7 @@ import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.RoundedPaymentButton
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
 import com.multimoney.multimoney.presentation.util.transformation.CurrencyDoubleTransformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -154,7 +155,10 @@ fun PaymentAmountContent(
                         CurrencyAmountInput(
                             modifier = Modifier.padding(top = 24.dp),
                             value = viewModel.uiState.currentAmountValueString,
-                            placeHolder = viewModel.uiState.currentAmountValueString,
+                            placeHolder = stringResource(
+                                id = R.string.smart_own_business_monthly_income_placeholder,
+                                viewModel.uiState.accountCurrency
+                            ),
                             onValueChange = {
                                 viewModel.onUIEvent(UIEvent.OnAmountValueChange(it))
                             },

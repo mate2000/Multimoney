@@ -14,7 +14,6 @@ private const val INTEGER_FORMAT =
 private const val DOUBLE_FORMAT_SEPARATOR = ","
 private const val DOUBLE_FORMAT =
     "###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###.##"
-private val DECIMAL_FORMAT_REGEX = "[0-9]{0,20}[.]*[0-9]{0,2}".toRegex()
 
 // Convert time to milli seconds
 fun Duration.format(): String {
@@ -63,7 +62,7 @@ fun String.stringToDoubleFormat(separator: String? = null): String =
 fun Double.formattedTwoDecimalsNumber(): Double =
     String.format(Locale.US, TWO_DECIMALS_FORMAT, this).toDouble()
 
-fun String.isValidAmount() = DECIMAL_FORMAT_REGEX.matches(this)
+fun String.isValidAmount() = DECIMAL_FORMAT_REGEX.toRegex().matches(this)
 
 fun String.capitalized(): String {
     return this.lowercase().replaceFirstChar {

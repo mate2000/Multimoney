@@ -120,6 +120,10 @@ fun validateDecimalIncome(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX, value) || value.isEmpty()) && value != "00")
 }
 
+fun String.validateDecimalAmount(): Boolean{
+    return (this != "00" && (DECIMAL_FORMAT_REGEX.toRegex().matches(this) || this.isEmpty() || this == "."))
+}
+
 fun validateDecimalIncomeWithZeros(value: String): Boolean {
     return ((Pattern.matches(DECIMAL_REGEX_WITH_ZEROS, value) || value.isEmpty()) && value != "00")
 }

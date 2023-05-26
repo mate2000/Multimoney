@@ -2802,6 +2802,8 @@ type PricesQuoteResult {
   quote_amount: Decimal!
 
   base_amount: Decimal!
+
+  isHQR: Boolean!
 }
 
 input PricesQuoteDtoInput {

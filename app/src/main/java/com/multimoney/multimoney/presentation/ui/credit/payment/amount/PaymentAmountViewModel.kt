@@ -149,6 +149,10 @@ class PaymentAmountViewModel @Inject constructor(
                 uiState.accountCurrency
             }
         )
+
+        if(minimumPayment > 0) {
+            onAmountValueChange(minimumPayment.toString())
+        }
     }
 
     fun shouldDisplayExchangeRate() =

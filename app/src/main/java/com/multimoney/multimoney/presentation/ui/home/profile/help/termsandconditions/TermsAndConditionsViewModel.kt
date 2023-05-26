@@ -87,15 +87,6 @@ class TermsAndConditionsViewModel @Inject constructor(
         }
     }
 
-    fun getStringResource(type: String): Int {
-        return when (type) {
-            TermsAndConditionsType.SMART.type -> R.string.profile_terms_and_conditions_smart_title
-            TermsAndConditionsType.VENTAS.type -> R.string.profile_terms_and_conditions_sales_title
-            TermsAndConditionsType.CRYPTO.type -> R.string.profile_terms_and_conditions_crypto_title
-            else -> R.string.empty
-        }
-    }
-
     private fun onTermsAndConditionsClicked(
         title: String,
         html: String,

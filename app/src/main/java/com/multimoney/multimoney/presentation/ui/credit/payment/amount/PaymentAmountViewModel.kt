@@ -55,6 +55,7 @@ import com.multimoney.multimoney.presentation.util.getCurrencyFromId
 import com.multimoney.multimoney.presentation.util.isValidAmount
 import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
 import com.multimoney.multimoney.presentation.util.toJson
+import com.multimoney.multimoney.presentation.util.validateDecimalAmount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -207,7 +208,7 @@ class PaymentAmountViewModel @Inject constructor(
     }
 
     private fun onAmountValueChange(value: String) {
-        if (value.isValidAmount()) {
+        if (value.validateDecimalAmount()) {
             val convertedValue = value.toDoubleOrNull()?.roundToInt()
             uiState = uiState.copy(
                 currentAmountValueString = value,

@@ -187,12 +187,12 @@ class ApprovedByOnfidoViewModel @Inject constructor(
         if (idBrand == Brand.CostaRica.id) {
             navigateTo(
                 "${Screen.SmartPaymentOptionsScreenCR.baseRoute}/${encodeData(userSmartAccounts)}/" +
-                    "$pkUser/$idBrand/$identification/$idClient/$idLoanClient"
+                        "$pkUser/$idBrand/$identification/$idClient/$idLoanClient"
             )
         } else {
             navigateTo(
                 "${Screen.SmartPaymentMethodScreenSV.baseRoute}/${encodeData(userSmartAccounts?.firstOrNull())}/" +
-                    encodeData(uiState.userStatus?.infoUser)
+                        encodeData(uiState.userStatus?.infoUser)
             )
         }
     }
@@ -200,7 +200,7 @@ class ApprovedByOnfidoViewModel @Inject constructor(
     private fun onSetUpDialog() {
         uiState = uiState.copy(
             alertTitleResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_title
-            else R.string.approved_sign_by_onfido_title,
+            else (if (idBrand == Brand.CostaRica.id) R.string.approved_sign_by_onfido_title_cr else R.string.approved_sign_by_onfido_title),
             alertButtonTextResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_btn_discover_crypto
             else R.string.approved_by_onfido_buttton_text,
             alertMessageResource = if (comingFromCrypto) R.string.crypto_finish_smart_alert_description

@@ -19,5 +19,6 @@ fun GetPricesQuoteAndCommissionQuery.PricesQuote.mapToDomainModel() = PricesQuot
     created_at = created_at,
     expires_at = expires_at,
     quote_amount = quote_amount.toString().toDouble(),
-    base_amount = base_amount.toString().toDouble()
+    base_amount = base_amount.toString().toDouble(),
+    isHQR = isHQR
 )

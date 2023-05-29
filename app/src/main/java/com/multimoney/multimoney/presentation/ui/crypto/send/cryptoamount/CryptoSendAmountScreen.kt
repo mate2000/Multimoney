@@ -45,7 +45,6 @@ import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.AmountInputSection
 import com.multimoney.multimoney.presentation.ui.crypto.NativeLoaderScreen
 import com.multimoney.multimoney.presentation.ui.crypto.send.CryptoSendSharedViewModel
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.uielement.AlertResult
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomInformativeText

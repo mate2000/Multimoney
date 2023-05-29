@@ -12,4 +12,5 @@ data class PricesQuoteAndCommissions(
     val expires_at: String,
     val quote_amount: Double,
     val base_amount: Double,
+    val isHQR: Boolean
 )

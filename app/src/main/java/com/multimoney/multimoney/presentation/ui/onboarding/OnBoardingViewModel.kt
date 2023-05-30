@@ -112,9 +112,9 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_one
                 )
                 SIM_CODE_GUATEMALA -> listOf(
-                    R.string.onboarding_guatemala_step_one_title,
-                    R.string.onboarding_guatemala_step_one_sub_title,
-                    R.drawable.ic_onboarding_step_one
+                    R.string.onboarding_guatemala_step_two_title,
+                    R.string.onboarding_guatemala_step_two_sub_title,
+                    R.drawable.ic_onboarding_step_two
                 )
                 SIM_CODE_MEXICO -> listOf(
                     R.string.onboarding_mexico_step_one_title,
@@ -138,9 +138,9 @@ class OnBoardingViewModel @Inject constructor(
                     R.drawable.ic_onboarding_step_two
                 )
                 SIM_CODE_GUATEMALA -> listOf(
-                    R.string.onboarding_guatemala_step_two_title,
-                    R.string.onboarding_guatemala_step_two_sub_title,
-                    R.drawable.ic_onboarding_step_two
+                    R.string.onboarding_guatemala_step_three_title,
+                    R.string.onboarding_guatemala_step_three_sub_title,
+                    R.drawable.ic_onboarding_step_three
                 )
                 SIM_CODE_MEXICO -> listOf(
                     R.string.onboarding_mexico_step_two_title,
@@ -159,9 +159,9 @@ class OnBoardingViewModel @Inject constructor(
             registerAdjustEvent(AdjustEventType.ON_BOARDING_3_1004, isLoggedIn = false)
             when (getCountryCode(context)) {
                 SIM_CODE_GUATEMALA -> listOf(
-                    R.string.onboarding_guatemala_step_three_title,
-                    R.string.onboarding_guatemala_step_three_sub_title,
-                    R.drawable.ic_onboarding_step_three
+                    R.string.onboarding_guatemala_step_one_title,
+                    R.string.onboarding_guatemala_step_one_sub_title,
+                    R.drawable.ic_onboarding_step_one
                 )
                 SIM_CODE_EL_SALVADOR -> listOf(
                     R.string.onboarding_el_salvador_step_three_title,
@@ -178,7 +178,6 @@ class OnBoardingViewModel @Inject constructor(
                     R.string.onboarding_costa_rica_step_three_sub_title,
                     R.drawable.ic_onboarding_step_three
                 )
-
             }
         }
     }

@@ -154,7 +154,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 result.onSuccess { pricesQuotesAndCommission ->
                     uiState = uiState.copy(
                         isLoading = false,
-                        pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                        pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote,
+                        amountInUSD = pricesQuotesAndCommission.pricesQuote.quote_amount,
+                        amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount
                     )
                     timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                 }
@@ -283,7 +285,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
             result.onSuccess { pricesQuotesAndCommission ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote,
+                    amountInUSD = pricesQuotesAndCommission.pricesQuote.quote_amount,
+                    amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount
                 )
             }
             result.onFailure {
@@ -534,6 +538,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
         val referenceNumber: String? = null,
         val amountInUSD: Double? = null,
         val amountPlusFee: Double? = null,
+        val amountInCurrency: Double? = null,
         val purchaseStatus: PurchaseStatus = PurchaseStatus.IDLE
     )
 

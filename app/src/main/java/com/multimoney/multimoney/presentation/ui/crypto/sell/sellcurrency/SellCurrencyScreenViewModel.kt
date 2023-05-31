@@ -140,7 +140,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onSuccess { pricesQuotesAndCommission ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote,
+                    amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount,
+                    amountInUsd = pricesQuotesAndCommission.pricesQuote.quote_amount
                 )
                 timer.startTimer(uiState.isConfirmationBottomSheetOpen)
             }
@@ -177,7 +179,9 @@ class SellCurrencyScreenViewModel @Inject constructor(
             result.onSuccess { pricesQuotesAndCommission ->
                 uiState = uiState.copy(
                     isLoading = false,
-                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote
+                    pricesQuoteAndCommissions = pricesQuotesAndCommission.pricesQuote,
+                    amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount,
+                    amountInUsd = pricesQuotesAndCommission.pricesQuote.quote_amount
                 )
                 getExchangeRate(true)
             }

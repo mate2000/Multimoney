@@ -201,7 +201,8 @@ class SignUpViewModel @Inject constructor(
             identification = userData?.identification,
             countryCode = userData?.countryCode,
             currentStep = userData?.currentStep ?: "",
-            idBrand = idBrand ?: 0
+            idBrand = idBrand ?: 0,
+            deviceId = dataStorePreferences.getDeviceId().first()
         ).collectLatest { result ->
             result.onSuccess {
                 nextStep = Search.getIdByName(it?.currentStep)
@@ -445,7 +446,11 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun getOnUserDataValidationMessageDialog(userData: UserData?, context: Context) =
+    fun getOnUserDataValidationMessageDialog(
+        userData: UserData?,
+        context: Context,
+        positiveAction: () -> Unit = {}
+    ) =
         when (userData?.status) {
             CognitoErrorCode.BlacklistedDevice.code.toIntOrNull() -> {
                 val country = context.getUserCountry()
@@ -476,6 +481,16 @@ class SignUpViewModel @Inject constructor(
                     positiveAction = {
                         onExit()
                     }
+                )
+            }
+            DEVICE_ID_REGISTERED -> {
+                DialogParameters(
+                    title = userData.message.orEmpty(),
+                    description = userData.detail.orEmpty(),
+                    positiveResource = string.button_continue,
+                    negativeResource = string.cancel,
+                    isActive = mutableStateOf(true),
+                    positiveAction = positiveAction
                 )
             }
             else -> {
@@ -571,7 +586,10 @@ class SignUpViewModel @Inject constructor(
             is UIEvent.OnCheckIfEmailExists -> navigateToRegisteredUser(event.userData)
             is UIEvent.OnChangeRestartEvent -> onChangeRestartEvent(event.shouldBeOnRestart)
             is UIEvent.OnGetWhatsAppLink -> onGetWhatsAppLink()
-            is UIEvent.OnSelectMexicoEvent -> onSelectMexicoAsOption(event.focusManager, event.context)
+            is UIEvent.OnSelectMexicoEvent -> onSelectMexicoAsOption(
+                event.focusManager,
+                event.context
+            )
         }
     }
 
@@ -633,7 +651,8 @@ class SignUpViewModel @Inject constructor(
         data class OnCheckIfEmailExists(val userData: UserData?) : UIEvent()
         data class OnChangeRestartEvent(val shouldBeOnRestart: Boolean) : UIEvent()
         object OnGetWhatsAppLink : UIEvent()
-        data class OnSelectMexicoEvent(val focusManager: FocusManager, val context: Context) : UIEvent()
+        data class OnSelectMexicoEvent(val focusManager: FocusManager, val context: Context) :
+            UIEvent()
     }
 
     companion object {
@@ -643,5 +662,6 @@ class SignUpViewModel @Inject constructor(
         const val STATUS_PHONE_EMPTY = 3108
         const val STATUS_EMAIL_EMPTY = 3109
         const val STATUS_IDENTIFICATION_REGISTERED = 3101
+        const val DEVICE_ID_REGISTERED = 3102
     }
 }

@@ -18,7 +18,6 @@ import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailV
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnHandleUserStatus
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnNextActionClick
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnSetPreviousEmail
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnUserEmailValueChange
 import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnValidateForm
@@ -196,19 +195,6 @@ class SignUpEmailViewModel @Inject constructor(
         )
     }
 
-    private fun onShowAnotherDeviceAlreadyRegisteredDialog(onPositiveClick: () -> Unit) {
-        uiState = uiState.copy(
-            openDialog = DialogParameters(
-                titleResource = string.sign_up_email_another_device_registered_dialog_title,
-                descriptionResource = string.sign_up_email_another_device_registered_dialog_description,
-                positiveResource = string.button_continue,
-                negativeResource = string.cancel,
-                isActive = mutableStateOf(true),
-                positiveAction = onPositiveClick
-            )
-        )
-    }
-
     data class UIState(
         // Fields
         val userEmail: String = "",
@@ -233,9 +219,6 @@ class SignUpEmailViewModel @Inject constructor(
             )
             is OnValidateUserEmail -> isUserEmailValid()
             is OnUserEmailValueChange -> onUserEmailValueChange(event.value)
-            is OnShowAnotherDeviceAlreadyRegisteredDialog -> onShowAnotherDeviceAlreadyRegisteredDialog(
-                event.onPositiveClick
-            )
             is OnSetPreviousEmail -> setPreviousEmail()
         }
     }
@@ -261,9 +244,6 @@ class SignUpEmailViewModel @Inject constructor(
         data class OnUserEmailValueChange(val value: String) : UIEvent()
         object OnValidateForm : UIEvent()
         object OnValidateUserEmail : UIEvent()
-        data class OnShowAnotherDeviceAlreadyRegisteredDialog(val onPositiveClick: () -> Unit) :
-            UIEvent()
-
         object OnSetPreviousEmail : UIEvent()
     }
 

@@ -129,7 +129,7 @@ class SignDocumentProcessViewModel @Inject constructor(
         if (evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.FIRMED.status.lowercase() &&
             evisertiaStatus.lowercase() != CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase()
         ) {
-            if (shouldGetEvicertiaLink || (creditSubscriptionManager.hasEvisertiaLink().not() && isCrosseling.not())) {
+            if (shouldGetEvicertiaLink) {
                 callQueryGetLinkCreditContractUseCase()
             }
         }
@@ -181,9 +181,11 @@ class SignDocumentProcessViewModel @Inject constructor(
                                 signDocumentUrl = linkCreditContract.link ?: ""
                             )
                         }
+
                         isEvicertiaOverCounted(linkCreditContract?.statusEvicertia) -> {
                             onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
                         }
+
                         else -> {
                             if (isSecondTime) {
                                 onUIEvent(OnNavigateToHome)
@@ -212,6 +214,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                     signDocumentUrl = creditContractEvent.link ?: ""
                 )
             }
+
             CreditSubscriptionStep.DocumentsFirmed.step -> {
                 if (isCrosseling) {
                     logEvents(AdjustEventType.CROSSELLING_FIRST_FINNISH_EVICERTIA_5030)
@@ -223,6 +226,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                     handleOnfidoStatus(creditContractEvent)
                 }
             }
+
             CreditSubscriptionStep.DocumentsRejected.step -> {
                 if (isEvicertiaOverCounted(creditContractEvent.statusEvicertia)) {
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_SECOND_TIME.value)
@@ -231,6 +235,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                     onNavigateToOnfidoAndEvicertiaError(EVICERTIA_REJECTED_FIRST_TIME.value)
                 }
             }
+
             CreditSubscriptionStep.AccountActivated.step -> {
                 logEvents(
                     if (isCrosseling) {
@@ -245,6 +250,7 @@ class SignDocumentProcessViewModel @Inject constructor(
                     setSuccessAlertResult()
                 }
             }
+
             CreditSubscriptionStep.ErrorActivatingAccount.step, CreditSubscriptionStep.DocumentsFailed.step -> {
                 showSubscriptionError()
             }
@@ -324,9 +330,11 @@ class SignDocumentProcessViewModel @Inject constructor(
                     signDocumentProcessStep = VALIDATE_IDENTITY.value
                 )
             }
+
             CreditOnFidoOrFirmStatus.REJECTED.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_FIRST_TIME.value)
             }
+
             CreditOnFidoOrFirmStatus.OVER_COUNTER.status.lowercase() -> {
                 onNavigateToOnfidoAndEvicertiaError(ONFIDO_REJECTED_SECOND_TIME.value)
             }
@@ -382,19 +390,24 @@ class SignDocumentProcessViewModel @Inject constructor(
             AdjustEventType.CROSSELLING_FIRST_FINNISH_EVICERTIA_5030 -> {
                 getSignDocumentOriginationEvent(originationDto)
             }
+
             AdjustEventType.ORIGINATION_FIRST_CUSTOMER_REJECTED_5017 -> {
                 getRejectedCustomerOriginationEvent(originationDto)
             }
+
             AdjustEventType.ORIGINATION_FIRST_SUCCESS_EVICERTIA_5018,
             AdjustEventType.CROSSELLING_FIRST_CUSTOMER_COMPLETE_REQUEST_5031 -> {
                 getSuccessOriginationEvent(originationDto)
             }
+
             AdjustEventType.ORIGINATION_WAIT_SCREEN_EVICERTIA_5015 -> {
                 getWaitingScreenOriginationEvent(originationDto)
             }
+
             AdjustEventType.ORIGINATION_RETRY_SCREEN_EVICERTIA_5016 -> {
                 getRetryScreenOriginationEvent(originationDto)
             }
+
             else -> suspend {}
         }
     }

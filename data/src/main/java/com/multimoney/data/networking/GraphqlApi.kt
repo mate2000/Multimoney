@@ -830,7 +830,8 @@ class GraphqlApi @Inject constructor(
         identification: String?,
         countryCode: String?,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        deviceId: String?
     ): ApolloCall<UpdateUserRegisterMutation.Data> = apolloAuthorizedClient.mutation(
         UpdateUserRegisterMutation(
             pkUser,
@@ -846,7 +847,8 @@ class GraphqlApi @Inject constructor(
             Optional.Present(identification),
             Optional.Present(countryCode),
             currentStep,
-            idBrand
+            idBrand,
+            Optional.Present(deviceId)
         )
     ).fetchPolicy(
         FetchPolicy.NetworkOnly

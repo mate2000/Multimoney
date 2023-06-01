@@ -34,8 +34,6 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
 import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
-import com.multimoney.multimoney.presentation.ui.login.signup.email.SignUpEmailViewModel.UIEvent.OnShowAnotherDeviceAlreadyRegisteredDialog
-import com.multimoney.multimoney.presentation.uielement.CustomDialog
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
@@ -93,10 +91,24 @@ fun SignUpEmailScreen(
                 } else {
                     viewModel.onUIEvent(SignUpEmailViewModel.UIEvent.OnSetPreviousEmail)
                     if (userData?.status == SignUpEmailViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
-                        viewModel.onUIEvent(
-                            OnShowAnotherDeviceAlreadyRegisteredDialog {
-                                viewModel.onSuccessValidation(context, sharedViewModel, userData)
-                            }
+                        sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                isLoading = false,
+                                openDialog = DialogParameters(
+                                    title = userData.message.orEmpty(),
+                                    description = userData.detail.orEmpty(),
+                                    positiveResource = string.button_continue,
+                                    negativeResource = string.cancel,
+                                    isActive = mutableStateOf(true),
+                                    positiveAction = {
+                                        viewModel.onSuccessValidation(
+                                            context,
+                                            sharedViewModel,
+                                            userData
+                                        )
+                                    }
+                                )
+                            )
                         )
                         sharedViewModel.logEvents(
                             null,
@@ -203,16 +215,6 @@ fun SignUpEmailScreen(
             isRequiredMessage = stringResource(id = string.sign_up_email_required),
             isError = viewModel.uiState.userEmailError.first,
             errorMessage = stringResource(id = viewModel.uiState.userEmailError.second)
-        )
-    }
-    if (viewModel.uiState.openDialog.isActive.value) {
-        CustomDialog(
-            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
-            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource),
-            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
-            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
-            openDialogCustom = viewModel.uiState.openDialog.isActive,
-            onPositiveAction = viewModel.uiState.openDialog.positiveAction
         )
     }
 }

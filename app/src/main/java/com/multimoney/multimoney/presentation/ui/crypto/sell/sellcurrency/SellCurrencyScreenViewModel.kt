@@ -202,12 +202,12 @@ class SellCurrencyScreenViewModel @Inject constructor(
             identification = identification,
             idBrand = idBrand,
             abbreviation = CurrencyType.Colon.disbursementValue,
-            idOriginCurrency = CurrencyType.Colon.id.toString(),
-            idDestinationCurrency = CurrencyType.Dollar.id.toString(),
+            idOriginCurrency = CurrencyType.Dollar.id.toString(),
+            idDestinationCurrency = CurrencyType.Colon.id.toString(),
             amount = if (getConvertedValue) uiState.amountInUsd.minus(
                 uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ) else 0.0,
-            isTransfer = true
+            isTransfer = false
         ).collectLatest { result ->
             result.onLoading { uiState = uiState.copy(isLoading = true) }
             result.onSuccess { exchangeRate ->

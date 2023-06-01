@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.multimoney.data.util.catalog.AccountStatus
 import com.multimoney.data.util.catalog.Brand
 import com.multimoney.domain.model.util.error.CognitoError
 import com.multimoney.multimoney.R
@@ -527,6 +528,8 @@ fun String.encryptPassword(): String {
  * Convert any data class in json String using Gson library
  */
 fun Any.toJson(): String = Gson().toJson(this)
+
+fun Int?.isCTABlocked() = enumValues<AccountStatus>().any { it.status == this }
 
 private const val HEX_FORMAT = "#%02x%02x%02x"
 private const val NUMBER_FORMAT_REGEX = "[^0-9,.\\s]"

@@ -52,6 +52,7 @@ private fun BalanceQuery.Account.mapToDomainModel() =
         currencyCode = currencyCode,
         gainedInterest = gainedInterest.toString().toDouble(),
         accountNumber = accountNumber,
+        accountStatus = accountStatus,
         ibanAccountNumber = ibanAccountNumber,
         totalInterest = totalInterest.toString(),
         tokenNumber = tokenNumber,

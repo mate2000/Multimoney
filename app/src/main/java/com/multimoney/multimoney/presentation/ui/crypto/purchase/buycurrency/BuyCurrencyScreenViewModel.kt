@@ -289,6 +289,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     amountInUSD = pricesQuotesAndCommission.pricesQuote.quote_amount,
                     amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount
                 )
+                getAmountExchangeRate()
             }
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {

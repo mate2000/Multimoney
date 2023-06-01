@@ -145,7 +145,21 @@ fun SignUpPersonalDataScreen(
         viewModel.onUserDataValidationEvent.collect { result ->
             result.onSuccess { userData ->
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
-                viewModel.onSuccessValidation(sharedViewModel, userData)
+                if (userData?.status == SignUpPersonalDataViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
+                    sharedViewModel.onUIEvent(
+                        SignUpViewModel.UIEvent.OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(
+                                userData,
+                                context
+                            ) {
+                                viewModel.onSuccessValidation(sharedViewModel, userData)
+                            }
+                        )
+                    )
+                } else {
+                    viewModel.onSuccessValidation(sharedViewModel, userData)
+                }
             }.onLoading {
                 sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
             }.onMessage {

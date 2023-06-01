@@ -12,7 +12,9 @@ mutation UpdateUserRegister(
     $identification: String,
     $countryCode : String,
     $currentStep : String!,
-    $idBrand : Int!){
+    $idBrand : Int!,
+    $deviceId: String
+){
     updateUserRegister(
         updateUserRegisterInput: {
             pkUser: $pkUser
@@ -29,6 +31,7 @@ mutation UpdateUserRegister(
             countryCode : $countryCode
             currentStep : $currentStep
             idBrand : $idBrand
+            deviceId: $deviceId
         }
     ) {
         pkUser

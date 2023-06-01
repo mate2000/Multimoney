@@ -18,7 +18,8 @@ class MutationUpdateUserRegisterUseCaseImpl(private val securityRepository: Secu
         identification: String?,
         countryCode: String?,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        deviceId: String?
     ) = securityRepository.mutationUpdateUserRegister(
         pkUser,
         user,
@@ -33,6 +34,7 @@ class MutationUpdateUserRegisterUseCaseImpl(private val securityRepository: Secu
         identification,
         countryCode,
         currentStep,
-        idBrand
+        idBrand,
+        deviceId
     )
 }

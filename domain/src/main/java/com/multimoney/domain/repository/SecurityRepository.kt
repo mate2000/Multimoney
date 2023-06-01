@@ -71,7 +71,8 @@ interface SecurityRepository {
         identification: String?,
         countryCode: String?,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        deviceId: String?
     ): Flow<MultimoneyResult<UserData?>>
 
     suspend fun queryValidationSecurity(

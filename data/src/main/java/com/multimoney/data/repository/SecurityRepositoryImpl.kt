@@ -133,7 +133,8 @@ class SecurityRepositoryImpl @Inject constructor(
         identification: String?,
         countryCode: String?,
         currentStep: String,
-        idBrand: Int
+        idBrand: Int,
+        deviceId: String?
     ): Flow<MultimoneyResult<UserData?>> = fetchData(
         apolloCall = graphqlApi.mutationUpdateUserRegister(
             pkUser,
@@ -149,7 +150,8 @@ class SecurityRepositoryImpl @Inject constructor(
             identification,
             countryCode,
             currentStep,
-            idBrand
+            idBrand,
+            deviceId
         ),
         apolloCallMapper = { data ->
             Success(data.mapToDomainModel())

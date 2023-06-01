@@ -7,6 +7,7 @@ data class Account(
     val currencyCode: String?,
     val gainedInterest: Double?,
     val accountNumber: String?,
+    val accountStatus: Int?,
     val ibanAccountNumber: String?,
     val totalInterest: String?,
     val tokenNumber: String?,

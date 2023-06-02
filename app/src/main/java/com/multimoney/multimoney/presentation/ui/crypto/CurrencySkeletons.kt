@@ -34,6 +34,26 @@ fun CurrencyTitleSectionSkeleton() {
 }
 
 @Composable
+fun AmountReferenceSectionSkeleton() {
+    ShimmerBoxView {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ShimmerItemView(
+                modifier = Modifier
+                    .width(196.dp)
+                    .height(24.dp),
+                radius = 8.dp
+            )
+        }
+    }
+}
+
+@Composable
 fun CurrencyTitleConfirmationSectionSkeleton() {
     ShimmerBoxView {
         Row(

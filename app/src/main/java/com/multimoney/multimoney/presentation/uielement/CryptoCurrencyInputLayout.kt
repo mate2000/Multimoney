@@ -84,6 +84,7 @@ fun CryptoCurrencyInputLayout(
     focusRequester: FocusRequester,
     isError: Boolean = false,
     errorText: String? = null,
+    isReadOnly: Boolean = false,
     onValueChanged: (String) -> Unit,
     onDebounceValidation: (newText: String) -> Unit = {},
     onSwitchClick: () -> Unit,
@@ -108,6 +109,7 @@ fun CryptoCurrencyInputLayout(
                 onSearchClick = onImeClick,
                 onSwitchClick = onSwitchClick,
                 isError = isError,
+                isReadOnly = isReadOnly,
                 onValueChanged = onValueChanged,
                 onDebounceValidation = onDebounceValidation
             )
@@ -148,6 +150,7 @@ fun CustomTextField(
     isTransformationCurrency: MutableState<Boolean> = mutableStateOf(false),
     focusRequester: FocusRequester = FocusRequester(),
     isError: Boolean = false,
+    isReadOnly: Boolean = false,
     onValueChanged: (String) -> Unit = {},
     onDebounceValidation: (newText: String) -> Unit = {},
     onSwitchClick: () -> Unit = {},
@@ -191,7 +194,8 @@ fun CustomTextField(
                 } else {
                     validateEightDecimalIncome(newValue)
                 }
-                if (newValue.length <= LOT_OF_CHARACTERS && validateDecimalInput) {
+                // isReadOnly is to avoid the user to change the value when the required functions are in loading state
+                if (newValue.length <= LOT_OF_CHARACTERS && validateDecimalInput && isReadOnly.not()) {
                     value.value = validateTextFormat(
                         newValue = newValue,
                         onValueChanged = onValueChanged,

@@ -251,6 +251,7 @@ fun BuyCurrencyScreenContent(
                     idBrand = viewModel.idBrand,
                     isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
                     isError = viewModel.uiState.focusError,
+                    isLoading = viewModel.uiState.isLoading,
                     errorText = viewModel.uiState.error,
                     errorTextString = viewModel.uiState.errorString,
                     textArg = viewModel.uiState.errorMessageArg,

@@ -156,6 +156,7 @@ fun AmountInputSection(
     asset: String,
     currencyPrice: Double,
     isError: Boolean = false,
+    isLoading: Boolean,
     @StringRes errorText: Int,
     errorTextString: String = "",
     textArg: Any? = null,
@@ -189,6 +190,7 @@ fun AmountInputSection(
             iconCurrency = asset,
             focusRequester = focusRequester,
             isError = isError,
+            isReadOnly = isLoading,
             errorText = errorTextString.ifEmpty {
                 getTextFromStringRes(textRes = errorText, arg = textArg)
             },
@@ -215,29 +217,36 @@ fun AmountInputSection(
                 }
             }
         )
-        Text(
-            text = if (isTransformationCurrencyValue.value.not()) {
-                stringResource(
-                    id = getCryptoStringResource(idBrand, isHQR, asset),
-                    calculateAssetEstimated(
-                        quoteAmount = quoteAmountText.value,
-                        currencyPrice = currencyPrice
-                    ),
-                    asset
-                )
-            } else {
-                stringResource(
-                    id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
-                    calculateDollarEstimated(
-                        baseAmount = baseAmountText.value,
-                        currencyPrice = currencyPrice
+        WhileLoadingSection(
+            isLoading = isLoading,
+            contentLoading = {
+                AmountReferenceSectionSkeleton()
+            }
+        ) {
+            Text(
+                text = if (isTransformationCurrencyValue.value.not()) {
+                    stringResource(
+                        id = getCryptoStringResource(idBrand, isHQR, asset),
+                        calculateAssetEstimated(
+                            quoteAmount = quoteAmountText.value,
+                            currencyPrice = currencyPrice
+                        ),
+                        asset
                     )
+                } else {
+                    stringResource(
+                        id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
+                        calculateDollarEstimated(
+                            baseAmount = baseAmountText.value,
+                            currencyPrice = currencyPrice
+                        )
+                    )
+                },
+                style = Typography.body2.copy(
+                    color = MultimoneyTheme.colors.bodyTextColor
                 )
-            },
-            style = Typography.body2.copy(
-                color = MultimoneyTheme.colors.bodyTextColor
             )
-        )
+        }
     }
 }
 

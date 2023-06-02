@@ -278,6 +278,7 @@ fun CryptoSendAmountScreenContent(
                 baseAmount = viewModel.uiState.baseAmount,
                 isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
                 keyboardController = keyboardController,
+                isLoading = viewModel.uiState.isLoading,
                 focusRequester = focusRequester,
                 onAmountChanged = {
                     viewModel.onUIEvent(CryptoSendAmountViewModel.UIEvent.OnAmountChanged(it))

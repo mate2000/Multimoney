@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsSmartCtaBlocked
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToPaymentSmartFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow
 import com.multimoney.multimoney.presentation.ui.home.product.smart.uisections.SmartCtaButtons
@@ -21,28 +22,34 @@ fun SmartCtaFooterExpanded(
     currentPage: Int,
     onLoadingValueChange: (isLoading: Boolean) -> Unit
 ) {
-    val decrement =
-        if (viewModel.uiState.expandedProductPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
-    val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
-    SmartCtaButtons(
-        modifier = Modifier.padding(16.dp).fillMaxWidth().wrapContentHeight(),
-        onClickPay = {
-            viewModel.onUIEvent(
-                OnNavigateToPaymentSmartFlow(
-                    viewModel.balanceCredit?.balanceAccountSmart?.get(index),
-                    onLoadingValueChange
+    viewModel.onUIEvent(IsSmartCtaBlocked)
+    if (viewModel.uiState.isCtaBlocked) {
+        val decrement =
+            if (viewModel.uiState.expandedProductPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
+        val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)
+        SmartCtaButtons(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            onClickPay = {
+                viewModel.onUIEvent(
+                    OnNavigateToPaymentSmartFlow(
+                        viewModel.balanceCredit?.balanceAccountSmart?.get(index),
+                        onLoadingValueChange
+                    )
                 )
-            )
-        },
-        onClickSendMoney = {
-            viewModel.onUIEvent(
-                OnNavigateToSendMoneyFlow(
-                    viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+            },
+            onClickSendMoney = {
+                viewModel.onUIEvent(
+                    OnNavigateToSendMoneyFlow(
+                        viewModel.balanceCredit?.balanceAccountSmart?.get(index)
+                    )
                 )
+            },
+            canSendMoney = viewModel.canSendMoney(
+                viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
             )
-        },
-        canSendMoney = viewModel.canSendMoney(
-            viewModel.uiState.productPageList?.get(currentPage)?.productSmartIndex
         )
-    )
+    }
 }

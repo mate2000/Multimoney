@@ -139,6 +139,7 @@ import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
+import com.multimoney.multimoney.presentation.util.isCTABlocked
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
@@ -1441,6 +1442,10 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(originationLaunchedFromCrypto = isFlagActive)
     }
 
+    private fun isSmartCtaBlocked() {
+        uiState = uiState.copy(isCtaBlocked = !balanceCredit?.balanceAccountSmart?.get(uiState.expandedPage)?.accountStatus.isCTABlocked())
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1464,7 +1469,8 @@ class ProductViewModel @Inject constructor(
         val dontShowAgainChecked: Boolean = false,
         val isCryptoTransferEnabled: Boolean = false,
         val wasSmartActive: Boolean = false,
-        val originationLaunchedFromCrypto: Boolean = false
+        val originationLaunchedFromCrypto: Boolean = false,
+        val isCtaBlocked: Boolean = true
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1600,6 +1606,7 @@ class ProductViewModel @Inject constructor(
 
             is UIEvent.OnSaveFirebaseToke -> onSaveFirebaseToken()
             is UIEvent.UpdateCryptoFlag -> updateCryptoOriginationFlag(uiEvent.isActive)
+            is UIEvent.IsSmartCtaBlocked -> isSmartCtaBlocked()
         }
     }
 
@@ -1714,6 +1721,7 @@ class ProductViewModel @Inject constructor(
 
         object OnSaveFirebaseToke : UIEvent()
         data class UpdateCryptoFlag(val isActive: Boolean) : UIEvent()
+        object IsSmartCtaBlocked: UIEvent()
     }
 
     sealed class BaseEvent {

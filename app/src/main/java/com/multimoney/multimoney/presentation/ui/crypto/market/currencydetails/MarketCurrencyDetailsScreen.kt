@@ -53,7 +53,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.M
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnOpenCryptoNew
 import com.multimoney.multimoney.presentation.ui.crypto.market.currencydetails.MarketCurrencyDetailsViewModel.UIEvent.OnSetPreviousInfo
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
-import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoCtaFooterExpanded
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomButton
 import com.multimoney.multimoney.presentation.uielement.CustomButtonType
@@ -72,6 +72,9 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegati
 @Composable
 fun MarketCurrencyDetailsScreen(
     viewModel: MarketCurrencyDetailsViewModel = hiltViewModel(),
+    isAccountStatusBlocked: Boolean = false,
+    isNotEmptyState: Boolean = false,
+    outOfService: Boolean = false,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -94,6 +97,9 @@ fun MarketCurrencyDetailsScreen(
         viewModel.onUIEvent(OnNavigateBack)
     }
     MarketCurrencyDetailsScreenContent(
+        isAccountStatusBlocked = isAccountStatusBlocked,
+        isNotEmptyState = isNotEmptyState,
+        outOfService = outOfService,
         currencyHistoricalPrices = viewModel.uiState.getHistoricalCurrencyPrices,
         currencyNews = viewModel.uiState.currencyNews,
         description = viewModel.uiState.selectedCryptoCoin?.description ?: "",
@@ -188,6 +194,9 @@ fun MarketCurrencyDetailsScreen(
 
 @Composable
 fun MarketCurrencyDetailsScreenContent(
+    isAccountStatusBlocked: Boolean = false,
+    isNotEmptyState: Boolean = false,
+    outOfService: Boolean = false,
     currencyHistoricalPrices: List<CurrencyHistoricPrice>,
     currencyNews: CryptoNewsFeed?,
     description: String,
@@ -215,24 +224,25 @@ fun MarketCurrencyDetailsScreenContent(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            CryptoActionsSection(
+            CryptoCtaFooterExpanded(
                 modifier = Modifier.background(color = MultimoneyTheme.colors.background),
-                hasSmartBalance = true,
-                enableCryptoActions = true,
-                enableSendAndGive = isCryptoTransferEnabled,
-                hasBalanceAction = {
+                isNotEmptyState = isNotEmptyState,
+                isOutOfService = outOfService,
+                isAccountStatusBlocked = isAccountStatusBlocked,
+                isSendAndGiveEnable = isCryptoTransferEnabled,
+                onBuyActionClicked = {
                     onNavigateToBuyCrypto()
                     onRegisterAdjustEventPurchase()
                 },
-                sellAction = {
+                onSellActionClicked = {
                     onNavigateToSellCrypto()
                     onRegisterAdjustEventSell()
                 },
-                giveAction = {
+                onGiveActionClicked = {
                     onNavigateToReceiveCrypto()
                     onRegisterAdjustEventReceive()
                 },
-                sendAction = {
+                onSendActionClicked = {
                     onNavigateToSendCrypto()
                     onRegisterAdjustEventSend()
                 }

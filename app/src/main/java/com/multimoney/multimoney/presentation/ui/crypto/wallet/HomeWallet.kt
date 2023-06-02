@@ -55,7 +55,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewMod
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnGetUserInfo
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnNavigateBack
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.HomeWalletViewModel.UIEvent.OnSetDateRange
-import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoCtaFooterExpanded
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.uielement.ShimmerBoxView
@@ -71,7 +71,10 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegati
 @Composable
 fun HomeWallet(
     walletViewModel: HomeWalletViewModel = hiltViewModel(),
-    onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
+    isAccountStatusBlocked: Boolean = false,
+    isNotEmptyState: Boolean = false,
+    outOfService: Boolean = false,
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
 ) {
@@ -153,23 +156,24 @@ fun HomeWallet(
         },
         bottomBar = {
             AnimatedVisibility(visible = isFocused.value.not()) {
-                CryptoActionsSection(
-                    hasSmartBalance = true,
-                    enableCryptoActions = true,
-                    enableSendAndGive = walletViewModel.uiState.isCryptoTransferEnabled,
-                    hasBalanceAction = {
+                CryptoCtaFooterExpanded(
+                    isNotEmptyState = isNotEmptyState,
+                    isAccountStatusBlocked = isAccountStatusBlocked,
+                    isOutOfService = outOfService,
+                    isSendAndGiveEnable = walletViewModel.uiState.isCryptoTransferEnabled,
+                    onBuyActionClicked = {
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToBuyCrypto)
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
                     },
-                    sellAction = {
+                    onSellActionClicked = {
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSellCrypto)
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime)
                     },
-                    sendAction = {
+                    onSendActionClicked = {
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToSendCrypto)
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
                                  },
-                    giveAction = {
+                    onGiveActionClicked = {
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnNavigateToReceiveCrypto)
                         walletViewModel.onUIEvent(HomeWalletViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                     }

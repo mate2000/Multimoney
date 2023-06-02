@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
@@ -29,33 +30,21 @@ import com.multimoney.multimoney.presentation.theme.Typography
 
 /**
  * CryptoActionsSection: This section is used to show the actions that the user can do on crypto home
- *
- * paremeters:
- * @param modifier
- * @param hasSmartBalance verify if the user has a smart balance
- * @param enableCryptoActions enable the crypto actions or not
- * @param enableSendAndGive enable the send and give actions or not
- * @param noBalanceAction action to be executed when the user has no balance in buy crypto action
- * @param hasBalanceAction default action to be executed in buy crypto action
- * @param sellAction action to be executed in sell crypto action
- * @param giveAction action to be executed in receive crypto action
- * @param sendAction action to be executed in send crypto action
  **/
-
 @Composable
-fun CryptoActionsSection(
+@Preview
+fun CryptoActionsSectionContent(
     modifier: Modifier = Modifier,
-    hasSmartBalance: Boolean,
-    enableCryptoActions: Boolean = false,
-    disableBuyActionIfMaintenance: Boolean = false,
     enableSendAndGive: Boolean = true,
-    noBalanceAction: () -> Unit = {},
-    hasBalanceAction: () -> Unit = {},
+    buyButtonEnableCondition: Boolean = false,
+    sellButtonEnableCondition: Boolean = false,
+    sendButtonEnableCondition: Boolean = false,
+    giveButtonEnableCondition: Boolean = false,
+    buyAction: () -> Unit = {},
     sellAction: () -> Unit = {},
     giveAction: () -> Unit = {},
-    sendAction: () -> Unit = {},
+    sendAction: () -> Unit = {}
 ) {
-
     Column(modifier = modifier) {
         Divider(
             modifier = Modifier.fillMaxWidth(),
@@ -69,15 +58,15 @@ fun CryptoActionsSection(
         ) {
             item {
                 CryptoAction(
-                    enable = disableBuyActionIfMaintenance.not(),
+                    enable = buyButtonEnableCondition,
                     title = stringResource(id = R.string.crypto_footer_expanded_buy_crypto_label),
                     icon = R.drawable.ic_shopping_cart_add,
-                    action = if (hasSmartBalance) hasBalanceAction else noBalanceAction
+                    action = buyAction
                 )
             }
             item {
                 CryptoAction(
-                    enable = enableCryptoActions,
+                    enable = sellButtonEnableCondition,
                     title = stringResource(id = R.string.crypto_footer_expanded_sell_crypto_label),
                     icon = R.drawable.ic_tag_sell,
                     action = sellAction
@@ -86,7 +75,7 @@ fun CryptoActionsSection(
             if (enableSendAndGive) {
                 item {
                     CryptoAction(
-                        enable = disableBuyActionIfMaintenance.not(),
+                        enable = giveButtonEnableCondition,
                         title = stringResource(id = R.string.crypto_footer_expanded_get_crypto_label),
                         icon = R.drawable.ic_arrow_get,
                         action = giveAction
@@ -94,7 +83,7 @@ fun CryptoActionsSection(
                 }
                 item {
                     CryptoAction(
-                        enable = enableCryptoActions,
+                        enable = sendButtonEnableCondition,
                         title = stringResource(id = R.string.crypto_footer_expanded_send_crypto_label),
                         icon = R.drawable.ic_arrow_send,
                         action = sendAction
@@ -112,7 +101,6 @@ fun CryptoAction(
     enable: Boolean = false,
     action: () -> Unit = {}
 ) {
-
     val colorAction = if (enable)
         MultimoneyTheme.colors.cryptoActionButtonEnable else MultimoneyTheme.colors.cryptoActionButtonDisable
     val colorActionIcon = if (enable)

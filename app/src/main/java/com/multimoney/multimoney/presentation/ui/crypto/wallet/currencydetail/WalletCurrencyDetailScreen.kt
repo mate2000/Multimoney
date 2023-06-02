@@ -46,7 +46,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.graphics.MarketCurrencyD
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel.Companion.TODAY_TEXT
 import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateToReleaseTransaction
-import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoActionsSection
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoCtaFooterExpanded
 import com.multimoney.multimoney.presentation.uielement.BalanceTextView
 import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
@@ -60,6 +60,9 @@ import com.multimoney.multimoney.presentation.util.toCurrencyFormatWithoutNegati
 @Composable
 fun WalletCurrencyDetailsScreen(
     viewModel: WalletCryptoCurrencyDetailsViewModel = hiltViewModel(),
+    isAccountStatusBlocked: Boolean = false,
+    isNotEmptyState: Boolean = false,
+    outOfService: Boolean = false,
     onPopBackStack: ((NavEvent.PopBackStack)) -> Unit = {},
     onNavigate: (NavEvent.Navigate) -> Unit = {},
     onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
@@ -86,6 +89,9 @@ fun WalletCurrencyDetailsScreen(
 
     CurrencyDetailContent(
         uiState = viewModel.uiState,
+        outOfService = outOfService,
+        isNotEmptyState = isNotEmptyState,
+        isAccountStatusBlocked = isAccountStatusBlocked,
         backPressed = { viewModel.onUIEvent(WalletCryptoCurrencyDetailsViewModel.UIEvent.OnNavigateBack) },
         onDateChanged = { dateSelected ->
             viewModel.onUIEvent(
@@ -159,6 +165,9 @@ fun WalletCurrencyDetailsScreen(
 @Composable
 fun CurrencyDetailContent(
     uiState: WalletCryptoCurrencyDetailsViewModel.UiState,
+    isAccountStatusBlocked: Boolean = false,
+    isNotEmptyState: Boolean = false,
+    outOfService: Boolean = false,
     backPressed: () -> Unit,
     onDateChanged: (Long) -> Unit,
     viewAllClick: () -> Unit,
@@ -186,14 +195,15 @@ fun CurrencyDetailContent(
             )
         },
         bottomBar = {
-            CryptoActionsSection(
-                hasSmartBalance = true,
-                enableCryptoActions = true,
-                enableSendAndGive = uiState.isCryptoTransferEnabled,
-                hasBalanceAction = { buyCryptoClick() },
-                sellAction = { sellCryptoClick() },
-                sendAction = sendCryptoClick,
-                giveAction = { giveCryptoClick() }
+            CryptoCtaFooterExpanded(
+                isNotEmptyState = isNotEmptyState,
+                isOutOfService = outOfService,
+                isAccountStatusBlocked = isAccountStatusBlocked,
+                isSendAndGiveEnable = uiState.isCryptoTransferEnabled,
+                onBuyActionClicked = { buyCryptoClick() },
+                onSellActionClicked = { sellCryptoClick() },
+                onSendActionClicked = sendCryptoClick,
+                onGiveActionClicked = { giveCryptoClick() }
             )
         },
         modifier = Modifier.fillMaxSize(),

@@ -943,7 +943,8 @@ class HomeViewModel @Inject constructor(
         val toastIsVisible: Boolean = false,
         val releaseToastIsVisible: Boolean = false,
         var isExpandedByClick: Boolean = false,
-        var notificationRoute: String = ""
+        var notificationRoute: String = "",
+        val cryptoIsNotEmptyState: Boolean = false
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1007,6 +1008,9 @@ class HomeViewModel @Inject constructor(
             is UIEvent.OnShowReleaseToast -> {
                 uiState = uiState.copy(releaseToastIsVisible = true)
             }
+            is UIEvent.OnSetCryptoEmptyState -> {
+                uiState = uiState.copy(cryptoIsNotEmptyState = uiEvent.cryptoEmptyState)
+            }
             UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
             UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
             UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
@@ -1066,6 +1070,7 @@ class HomeViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String
         ) : UIEvent()
+        data class OnSetCryptoEmptyState(val cryptoEmptyState: Boolean) : UIEvent()
 
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()

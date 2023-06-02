@@ -83,7 +83,6 @@ import com.multimoney.multimoney.presentation.navigation.util.encodeData
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnBalanceSuccess
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnChipQuotaClick
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
@@ -103,8 +102,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSendMoneyFlow
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnQuickActionClicked
@@ -1446,6 +1443,25 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(isCtaBlocked = !balanceCredit?.balanceAccountSmart?.get(uiState.expandedPage)?.accountStatus.isCTABlocked())
     }
 
+    fun onPurchaseButtonClick() {
+        val balances = balanceCredit?.balanceAccountSmart?.map { it?.totalBalance ?: 0.0 }
+        if (balanceCredit?.balanceAccountSmart?.isNotEmpty() == true && (balances?.sum() ?: 0.0) > 0.0) {
+            registerAdjustFirstPressPurchaseEvent()
+            onNavigateToPurchaseCryptoFlow()
+        } else {
+            registerAdjustCryptoHomeFirstTimeEvent()
+            when (uiState.idBrand) {
+                Brand.CostaRica.id.toString() -> {
+                    onCartButtonClickWithoutSmartBalance { onNavigateToSmartPaymentAccountScreen() }
+
+                }
+                Brand.ElSalvador.id.toString() -> {
+                    onCartButtonClickWithoutSmartBalance { onNavigateToSmartPaymentMethodScreen() }
+                }
+            }
+        }
+    }
+
     data class UIState(
         // Fields
         var idBrand: String = "0",
@@ -1562,12 +1578,6 @@ class ProductViewModel @Inject constructor(
 
             is OnDeleteAutomaticPayment -> onDeleteAutomaticPayment(uiEvent.onAcceptClick)
             is OnNavigateToSmartMovements -> onNavigateToSmartMovements(uiEvent.accountToken)
-            is OnCartButtonClickWithoutSmartBalance -> onCartButtonClickWithoutSmartBalance(
-                uiEvent.onSavingCLick
-            )
-
-            is OnNavigateToSmartPaymentAccountScreen -> onNavigateToSmartPaymentAccountScreen()
-            is OnNavigateToSmartPaymentMethodScreen -> onNavigateToSmartPaymentMethodScreen()
             is OnNavigateToCreditMovementsScreen -> onNavigateToCreditMovements()
             is OnCreateMultimoneyVisa -> onCreateMultimoneyVisa(uiEvent.onLoadingValueChange)
             is OnNoVoConfig -> onConfigNovoSdk()
@@ -1576,6 +1586,7 @@ class ProductViewModel @Inject constructor(
             is UIEvent.OnNavigateToSellCryptoFlow -> onNavigateToSellCryptoFlow()
             is UIEvent.OnNavigateToSendCryptoFlow -> onNavigateToSendCryptoFlow()
             is UIEvent.OnNavigateToGiveCryptoFlow -> onNavigateToGiveCryptoFlow()
+            is UIEvent.OnPurchaseButtonClicked -> onPurchaseButtonClick()
             is OnVisaCardExpiredDialog -> onVisaCardExpiredDialog(
                 idBrand = uiEvent.idBrand,
                 balance = uiEvent.balance
@@ -1649,11 +1660,10 @@ class ProductViewModel @Inject constructor(
         data class OnNavigateToScheduleAutomaticPaymentScreen(val isEditSchedule: Boolean) :
             UIEvent()
 
-        object OnNavigateToSmartPaymentAccountScreen : UIEvent()
-        object OnNavigateToSmartPaymentMethodScreen : UIEvent()
         object OnNavigateToCryptoWallet : UIEvent()
         object OnNavigateToCryptoMarket : UIEvent()
         object OnNavigateToCryptoMovements : UIEvent()
+        object OnPurchaseButtonClicked : UIEvent()
         object OnNavigateToPurchaseCryptoFlow : UIEvent()
         object OnNavigateToSellCryptoFlow : UIEvent()
         object OnNavigateToSendCryptoFlow : UIEvent()
@@ -1696,7 +1706,6 @@ class ProductViewModel @Inject constructor(
             UIEvent()
 
         object OnNoVoConfig : UIEvent()
-        data class OnCartButtonClickWithoutSmartBalance(val onSavingCLick: () -> Unit) : UIEvent()
         data class OnVisaCardExpiredDialog(
             val idBrand: String,
             val balance: Balance?

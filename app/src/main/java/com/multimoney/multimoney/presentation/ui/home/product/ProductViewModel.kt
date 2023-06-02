@@ -1443,7 +1443,9 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun isSmartCtaBlocked() {
-        uiState = uiState.copy(isCtaBlocked = !balanceCredit?.balanceAccountSmart?.get(uiState.expandedPage)?.accountStatus.isCTABlocked())
+        uiState = uiState.copy(isCtaBlocked = !balanceCredit?.balanceAccountSmart?.get(
+            uiState.expandedProductPageList?.getOrNull(uiState.expandedPage)?.productSmartIndex ?: 0
+        )?.accountStatus.isCTABlocked())
     }
 
     fun onPurchaseButtonClick() {

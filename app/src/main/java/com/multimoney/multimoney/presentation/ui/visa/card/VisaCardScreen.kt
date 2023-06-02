@@ -28,6 +28,7 @@ import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenNfcConfig
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.BaseEvent.OnOpenTapAndPayConfig
+import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.Companion.BLOCKED_AMOUNT
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnBlockUnblockCardClick
 import com.multimoney.multimoney.presentation.ui.visa.card.VisaCardViewModel.UIEvent.OnCallNovoGetFavoriteCard
@@ -149,7 +150,7 @@ fun VisaCardContent(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, top = 42.dp, bottom = 16.dp)
                 .fillMaxWidth(),
-            isBlocked = viewModel.uiState.isCardBlocked,
+            isBlocked = viewModel.uiState.isCardBlocked || viewModel.applyCommerce.not(),
             isTextVisible = viewModel.uiState.isCardTextVisible,
             cardNumberOne = viewModel.balanceCardInformation?.cardInformation?.cardNumber?.getCardNumberOne() ?: "",
             cardNumberTwo = viewModel.balanceCardInformation?.cardInformation?.cardNumber?.getCardNumberTwo() ?: "",
@@ -166,10 +167,17 @@ fun VisaCardContent(
             horizontalArrangement = Arrangement.Center
         ) {
             CustomInformativeChip(
-                text = stringResource(
-                    id = string.visa_card_available_amount,
-                    viewModel.availableBalanceLabel.orEmpty()
-                ),
+                text = if (viewModel.uiState.isCardBlocked || viewModel.applyCommerce.not()) {
+                    stringResource(
+                        id = string.visa_card_available_amount,
+                        BLOCKED_AMOUNT
+                    )
+                } else {
+                    stringResource(
+                        id = string.visa_card_available_amount,
+                        viewModel.availableBalanceLabel.orEmpty()
+                    )
+                },
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
                 onClick = {
                     viewModel.onUIEvent(UIEvent.OnAvailableAmountClick)
@@ -195,7 +203,7 @@ fun VisaCardContent(
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_link,
                     text = stringResource(id = string.link),
-                    enabled = viewModel.uiState.isCardBlocked.not(),
+                    enabled = viewModel.uiState.isCardBlocked.not() && viewModel.applyCommerce,
                     onClick = {
                         viewModel.onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
                     }
@@ -208,7 +216,7 @@ fun VisaCardContent(
                         .padding(end = 8.dp),
                     icon = R.drawable.ic_pay,
                     text = stringResource(id = string.pay),
-                    enabled = viewModel.uiState.isCardBlocked.not(),
+                    enabled = viewModel.uiState.isCardBlocked.not() && viewModel.applyCommerce,
                     onClick = {
                         viewModel.onUIEvent(OnStartPaymentProcess)
                     }
@@ -237,7 +245,7 @@ fun VisaCardContent(
                 }
             )
         }
-        if (viewModel.uiState.isCardBlocked) {
+        if (viewModel.uiState.isCardBlocked || viewModel.applyCommerce.not()) {
             CustomInformativeChip(
                 text = stringResource(id = viewModel.uiState.visaCardBlockDisclaimer),
                 textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.textInformation),

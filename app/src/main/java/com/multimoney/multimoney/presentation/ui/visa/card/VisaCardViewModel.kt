@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.APPLY_COMMERCE
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -82,7 +83,6 @@ import com.novopayment.sdk.vts.model.NovoError
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_CANCEL_DIALOG
 import com.novopayment.sdk.vts.util.error.StatusCode.ERROR_PAYMENT_TIMEOUT_SUBMIT_DIALOG
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -91,6 +91,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalMaterialApi::class)
@@ -130,6 +131,7 @@ class VisaCardViewModel @Inject constructor(
     private var isNavigateBackRefresh = false
     private var isSignOut = false
     private var numAttemptsToStartPayment: Int = 0
+    var applyCommerce: Boolean = false
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
@@ -141,6 +143,7 @@ class VisaCardViewModel @Inject constructor(
         availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
+        applyCommerce = savedStateHandle[APPLY_COMMERCE] ?: false
     }
 
     private fun onStart() {
@@ -154,15 +157,20 @@ class VisaCardViewModel @Inject constructor(
         uiState = uiState.copy(
             isLoading = false,
             isCardBlocked = isCardBlocked,
-            blockUnblockButtonText = if (isCardBlocked) {
+            blockUnblockButtonText = if (isCardBlocked || applyCommerce.not()) {
                 string.unlocked
             } else {
                 string.locked
             },
-            blockUnblockButtonIcon = if (isCardBlocked) {
+            blockUnblockButtonIcon = if (isCardBlocked || applyCommerce.not()) {
                 R.drawable.ic_unlocked
             } else {
                 R.drawable.ic_locked
+            },
+            visaCardBlockDisclaimer = if (idBrand == CostaRica.id) {
+                string.visa_card_block_disclaimer
+            } else {
+                string.visa_card_block_disclaimer_sv
             }
         )
     }
@@ -535,7 +543,7 @@ class VisaCardViewModel @Inject constructor(
 
     private fun onBlockUnblockCardClick() {
         when {
-            uiState.isCardBlocked.not() -> uiState = uiState.copy(
+            uiState.isCardBlocked.not() && applyCommerce -> uiState = uiState.copy(
                 dialogParameters = DialogParameters(
                     titleResource = string.visa_card_block_dialog_title,
                     descriptionResource = if (idBrand == CostaRica.id) {
@@ -547,14 +555,9 @@ class VisaCardViewModel @Inject constructor(
                     negativeResource = string.cancel,
                     positiveAction = { onCallMutationCardBlockingUseCase() },
                     isActive = mutableStateOf(true)
-                ),
-                visaCardBlockDisclaimer = if (idBrand == CostaRica.id) {
-                    string.visa_card_block_disclaimer
-                } else {
-                    string.visa_card_block_disclaimer_sv
-                }
+                )
             )
-            uiState.isCardBlocked && uiState.isNfcAvailable.not() && balanceCardInformation?.allowUnLock == true ->
+            uiState.isCardBlocked && uiState.isNfcAvailable.not() && balanceCardInformation?.allowUnLock == true && applyCommerce ->
                 uiState =
                     uiState.copy(
                         dialogParameters = DialogParameters(
@@ -566,7 +569,7 @@ class VisaCardViewModel @Inject constructor(
                             isActive = mutableStateOf(true)
                         )
                     )
-            uiState.isCardBlocked && uiState.isNfcAvailable && balanceCardInformation?.allowUnLock == true ->
+            uiState.isCardBlocked && uiState.isNfcAvailable && balanceCardInformation?.allowUnLock == true && applyCommerce ->
                 uiState =
                     uiState.copy(
                         dialogParameters = DialogParameters(
@@ -623,15 +626,16 @@ class VisaCardViewModel @Inject constructor(
             is OnNavigateBack -> navigateBack(Screen.HomeScreen.route, isNavigateBackRefresh)
             is OnNavigatePreferences -> navigateTo(
                 Screen.VisaPreferencesScreen.baseRoute
-                        .plus(getNavParam(ID_BRAND, idBrand))
-                        .plus(getNavParam(PK_USER, pkUser))
-                        .plus(getNavParam(IDENTIFICATION, identification))
-                        .plus(getNavParam(USER, email))
-                        .plus(getNavParam(PHONE_NUMBER, phone))
-                        .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
-                        .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
-                        .plus(getNavParam(ID_CLIENT, idClient))
-                        .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                    .plus(getNavParam(ID_BRAND, idBrand))
+                    .plus(getNavParam(PK_USER, pkUser))
+                    .plus(getNavParam(IDENTIFICATION, identification))
+                    .plus(getNavParam(USER, email))
+                    .plus(getNavParam(PHONE_NUMBER, phone))
+                    .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                    .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                    .plus(getNavParam(ID_CLIENT, idClient))
+                    .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                    .plus(getNavParam(APPLY_COMMERCE, applyCommerce))
             )
             is OnAvailableAmountClick -> onAvailableAmountClick()
             is OnNavigateToVisaTokenizationScreen -> {
@@ -653,16 +657,17 @@ class VisaCardViewModel @Inject constructor(
                 }
                 navigateTo(
                     Screen.VisaTokenizationWaitingScreen.baseRoute
-                                .plus(getNavParam(ID_BRAND, idBrand))
-                                .plus(getNavParam(PK_USER, pkUser))
-                                .plus(getNavParam(IDENTIFICATION, identification))
-                                .plus(getNavParam(EMAIL, email))
-                                .plus(getNavParam(PHONE_NUMBER, phone))
-                                .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
-                                .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
-                                .plus(getNavParam(ID_CLIENT, idClient))
-                                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
-                                .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaCardScreen.baseRoute))
+                        .plus(getNavParam(ID_BRAND, idBrand))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(EMAIL, email))
+                        .plus(getNavParam(PHONE_NUMBER, phone))
+                        .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                        .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                        .plus(getNavParam(ID_CLIENT, idClient))
+                        .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                        .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaCardScreen.baseRoute))
+                        .plus(getNavParam(APPLY_COMMERCE, applyCommerce))
                 )
             }
             is OnOpenDialogConfirmToStartTokenizationProcess -> uiState = uiState.copy(
@@ -739,5 +744,6 @@ class VisaCardViewModel @Inject constructor(
         const val MAX_NUMBER_ATTEMPTS_TO_PAY = 2
         const val DELAY_TO_START_PAYMENT = 300L
         const val NOVO_TOKEN = "vProvisionedTokenId"
+        const val BLOCKED_AMOUNT = 0
     }
 }

@@ -23,7 +23,7 @@ fun SmartCtaFooterExpanded(
     onLoadingValueChange: (isLoading: Boolean) -> Unit
 ) {
     viewModel.onUIEvent(IsSmartCtaBlocked)
-    if (viewModel.uiState.ctaVisibility) {
+    if (viewModel.uiState.isCtaBlocked) {
         val decrement =
             if (viewModel.uiState.expandedProductPageList?.any { it.product == ProductType.Credit.value } == true) 1 else 0
         val index = currentPage.minus(viewModel.balanceCredit?.balanceCredit?.size ?: decrement)

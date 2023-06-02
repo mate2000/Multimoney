@@ -1443,7 +1443,7 @@ class ProductViewModel @Inject constructor(
     }
 
     private fun isSmartCtaBlocked() {
-        uiState = uiState.copy(ctaVisibility = !balanceCredit?.balanceAccountSmart?.get(uiState.expandedPage)?.accountStatus.isCTABlocked())
+        uiState = uiState.copy(isCtaBlocked = !balanceCredit?.balanceAccountSmart?.get(uiState.expandedPage)?.accountStatus.isCTABlocked())
     }
 
     data class UIState(
@@ -1470,7 +1470,7 @@ class ProductViewModel @Inject constructor(
         val isCryptoTransferEnabled: Boolean = false,
         val wasSmartActive: Boolean = false,
         val originationLaunchedFromCrypto: Boolean = false,
-        val ctaVisibility: Boolean = true
+        val isCtaBlocked: Boolean = true
     )
 
     fun onUIEvent(uiEvent: UIEvent) {

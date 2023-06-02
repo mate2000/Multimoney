@@ -136,6 +136,7 @@ import com.multimoney.multimoney.presentation.util.getDeviceManufacture
 import com.multimoney.multimoney.presentation.util.getDeviceModel
 import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.getPreviousDate
+import com.multimoney.multimoney.presentation.util.isCTABlocked
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
@@ -1438,6 +1439,10 @@ class ProductViewModel @Inject constructor(
         uiState = uiState.copy(originationLaunchedFromCrypto = isFlagActive)
     }
 
+    private fun isSmartCtaBlocked() {
+        uiState = uiState.copy(isCtaBlocked = !balanceCredit?.balanceAccountSmart?.get(uiState.expandedPage)?.accountStatus.isCTABlocked())
+    }
+
     fun onPurchaseButtonClick() {
         val balances = balanceCredit?.balanceAccountSmart?.map { it?.totalBalance ?: 0.0 }
         if (balanceCredit?.balanceAccountSmart?.isNotEmpty() == true && (balances?.sum() ?: 0.0) > 0.0) {
@@ -1480,7 +1485,8 @@ class ProductViewModel @Inject constructor(
         val dontShowAgainChecked: Boolean = false,
         val isCryptoTransferEnabled: Boolean = false,
         val wasSmartActive: Boolean = false,
-        val originationLaunchedFromCrypto: Boolean = false
+        val originationLaunchedFromCrypto: Boolean = false,
+        val isCtaBlocked: Boolean = true
     )
 
     fun onUIEvent(uiEvent: UIEvent) {
@@ -1595,6 +1601,7 @@ class ProductViewModel @Inject constructor(
             UIEvent.OnNavigateToMaintenanceAlert -> navigateToMaintenanceAlert()
             is UIEvent.OnNavigateToReleaseTransaction -> onNavigateToReleaseTransaction(uiEvent.cryptoItem)
             UIEvent.OnRegisterAdjustCryptoHomeFistTime -> registerAdjustCryptoHomeFirstTimeEvent()
+            UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
             UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
             UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
             UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
@@ -1610,6 +1617,7 @@ class ProductViewModel @Inject constructor(
 
             is UIEvent.OnSaveFirebaseToke -> onSaveFirebaseToken()
             is UIEvent.UpdateCryptoFlag -> updateCryptoOriginationFlag(uiEvent.isActive)
+            is UIEvent.IsSmartCtaBlocked -> isSmartCtaBlocked()
         }
     }
 
@@ -1710,6 +1718,7 @@ class ProductViewModel @Inject constructor(
             UIEvent()
 
         object OnRegisterAdjustCryptoHomeFistTime : UIEvent()
+        object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
         object OnRegisterAdjustPressSellFirstTime : UIEvent()
         object OnRegisterAdjustPressSendFirstTime : UIEvent()
         object OnRegisterAdjustPressReceiveFirstTime : UIEvent()
@@ -1721,6 +1730,7 @@ class ProductViewModel @Inject constructor(
 
         object OnSaveFirebaseToke : UIEvent()
         data class UpdateCryptoFlag(val isActive: Boolean) : UIEvent()
+        object IsSmartCtaBlocked: UIEvent()
     }
 
     sealed class BaseEvent {

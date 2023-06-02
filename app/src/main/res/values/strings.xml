@@ -613,8 +613,8 @@
     <string name="home_product_smart_header_expanded_title" translatable="false">Mi Smart</string>
 
     <!--Crypto-->
-    <string name="crypto_finish_smart_alert_title" translatable="false">¡Tu cuenta Cripto y Smart están activas!</string>
-    <string name="crypto_finish_smart_alert_description" translatable="false">Tu cuenta Cripto se ha activado como un beneficio extra de tu Smart.</string>
+    <string name="crypto_finish_smart_alert_title" translatable="false">¡Ya podés comprar cripto a través de tu Smart!</string>
+    <string name="crypto_finish_smart_alert_description" translatable="false">La compra de criptomonedas es un beneficio extra de tu Smart.</string>
     <string name="crypto_finish_smart_alert_btn_discover_crypto" translatable="false">Explorar Cripto</string>
     <string name="crypto_finish_smart_alert_btn_saving_smart" translatable="false">Ahorrar Smart</string>
 

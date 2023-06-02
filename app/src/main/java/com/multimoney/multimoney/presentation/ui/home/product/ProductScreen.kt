@@ -62,7 +62,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.C
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.INITIAL_PRODUCT_PAGE
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnGetCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMarket
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovements
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
@@ -72,8 +71,6 @@ import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.U
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToReleaseTransaction
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentAccountScreen
-import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartPaymentMethodScreen
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSaveFirebaseToke
 import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
@@ -108,6 +105,7 @@ import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.capitalizeAllWords
 import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.isCTABlocked
 import com.multimoney.multimoney.presentation.util.openIntent
 import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import kotlinx.coroutines.launch
@@ -147,7 +145,6 @@ fun ProductScreen(
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
         viewModel.onUIEvent(OnNoVoConfig)
-        viewModel.onUIEvent(OnGetCryptoMovements)
     }
 
     LaunchedEffect(key1 = sharedViewModel.uiState.balance) {
@@ -217,6 +214,17 @@ fun ProductScreen(
                 }
             }
         }
+    }
+
+    // Set crypto Empty State
+    val cryptoMovements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+    LaunchedEffect(key1 = sharedViewModel.uiState.balance?.balanceCryptoAccount?.items) {
+        val cryptoCurrencies = sharedViewModel.uiState.balance?.balanceCryptoAccount?.items
+        sharedViewModel.onUIEvent(
+            UIEvent.OnSetCryptoEmptyState(
+                cryptoCurrencies.isNullOrEmpty().not() || cryptoMovements.itemCount > 0
+            )
+        )
     }
 
     // execute adjust maintenance event if paxos is in maintenance
@@ -818,30 +826,13 @@ fun ProductCtaFooterExpanded(
                 sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
             }
             ProductType.Crypto.value -> CryptoCtaFooterExpanded(
-                balance = viewModel.balanceCredit,
-                cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
-                noBalanceAction = {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
-                    when (viewModel.uiState.idBrand) {
-                        Brand.CostaRica.id.toString() -> {
-                            viewModel.onUIEvent(
-                                ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {
-                                    viewModel.onUIEvent(OnNavigateToSmartPaymentAccountScreen)
-                                }
-                            )
-                        }
-                        Brand.ElSalvador.id.toString() -> {
-                            viewModel.onUIEvent(
-                                ProductViewModel.UIEvent.OnCartButtonClickWithoutSmartBalance {
-                                    viewModel.onUIEvent(OnNavigateToSmartPaymentMethodScreen)
-                                }
-                            )
-                        }
-                    }
-                },
-                hasBalanceAction = {
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressPurchaseFirstTime)
-                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
+                isNotEmptyState = sharedViewModel.uiState.cryptoIsNotEmptyState,
+                isOutOfService = viewModel.balanceCredit?.balanceCryptoAccount?.outOfService ?: false,
+                isAccountStatusBlocked = viewModel.balanceCredit?.balanceAccountSmart?.all {
+                    it?.accountStatus?.isCTABlocked() ?: false
+                } ?: false,
+                onBuyActionClicked = {
+                      viewModel.onUIEvent(ProductViewModel.UIEvent.OnPurchaseButtonClicked)
                 },
                 onSendActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
@@ -855,7 +846,7 @@ fun ProductCtaFooterExpanded(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                 },
-                isCryptoTransferEnabled = viewModel.uiState.isCryptoTransferEnabled
+                isSendAndGiveEnable = viewModel.uiState.isCryptoTransferEnabled
             )
         }
     }

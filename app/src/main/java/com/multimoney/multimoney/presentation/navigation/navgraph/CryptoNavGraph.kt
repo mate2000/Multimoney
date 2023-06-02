@@ -38,6 +38,7 @@ import com.multimoney.multimoney.presentation.ui.crypto.wallet.currencydetail.Wa
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.CryptoHomeAllMovementsScreen
 import com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections.MaintenanceAlertScreen
+import com.multimoney.multimoney.presentation.util.isCTABlocked
 
 const val ITEM_CRYPTO_CURRENCY = "item_crypto_currency"
 const val ITEM_CRYPTO_MARKET = "item_crypto_MARKET"
@@ -108,8 +109,21 @@ fun NavGraphBuilder.cryptoNavGraph(
                 navArgument(STATUS_CRYPTO) { type = NavType.IntType },
                 navArgument(CARD_STATUS) { type = NavType.IntType },
             )
-        ) {
+        ) { bacStackEntry ->
+            val parent = remember(bacStackEntry) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parent)
+            val isAccountStatusBlocked = viewModel.uiState.balance?.balanceAccountSmart?.all {
+                it?.accountStatus?.isCTABlocked() ?: false
+            } ?: false
+            val isNotEmptyState = viewModel.uiState.cryptoIsNotEmptyState
+            val isOutOfService = viewModel.uiState.balance?.balanceCryptoAccount?.outOfService ?: false
+
             HomeWallet(
+                isNotEmptyState = isNotEmptyState,
+                outOfService = isOutOfService,
+                isAccountStatusBlocked = isAccountStatusBlocked,
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(
                         PREVIOUS_IS_RESTART,
@@ -142,8 +156,22 @@ fun NavGraphBuilder.cryptoNavGraph(
                     type = CryptoBalanceNavType()
                 },
             ),
-        ) {
+        ) { backStackEntry ->
+            val parent = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parent)
+            val isAccountStatusBlocked =
+                viewModel.uiState.balance?.balanceAccountSmart?.all {
+                    it?.accountStatus?.isCTABlocked() ?: false
+                } ?: false
+            val isNotEmptyState = viewModel.uiState.cryptoIsNotEmptyState
+            val isOutOfService = viewModel.uiState.balance?.balanceCryptoAccount?.outOfService ?: false
+
             WalletCurrencyDetailsScreen(
+                isAccountStatusBlocked = isAccountStatusBlocked,
+                isNotEmptyState = isNotEmptyState,
+                outOfService = isOutOfService,
                 onPopBackStack = {
                     navController.getBackStackEntry(it.popTo).savedStateHandle.set(
                         PREVIOUS_IS_RESTART,
@@ -262,8 +290,22 @@ fun NavGraphBuilder.cryptoNavGraph(
                     type = MarketCryptoNavType()
                 },
             )
-        ) {
+        ) { backStackEntry ->
+            val parent = remember(backStackEntry) {
+                navController.getBackStackEntry(Screen.HomeScreen.route)
+            }
+            val viewModel = hiltViewModel<HomeViewModel>(parent)
+            val isAccountStatusBlocked =
+                viewModel.uiState.balance?.balanceAccountSmart?.all {
+                    it?.accountStatus?.isCTABlocked() ?: false
+                } ?: false
+            val isNotEmptyState = viewModel.uiState.cryptoIsNotEmptyState
+            val isOutOfService = viewModel.uiState.balance?.balanceCryptoAccount?.outOfService ?: false
+
             MarketCurrencyDetailsScreen(
+                isNotEmptyState = isNotEmptyState,
+                outOfService = isOutOfService,
+                isAccountStatusBlocked = isAccountStatusBlocked,
                 onPopBackStack = {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         PREVIOUS_IS_RESTART,

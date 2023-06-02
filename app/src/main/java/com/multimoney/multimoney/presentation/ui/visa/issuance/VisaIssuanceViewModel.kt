@@ -15,6 +15,7 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.APPLY_COMMERCE
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -56,6 +57,7 @@ class VisaIssuanceViewModel @Inject constructor(
     var availableBalanceLabel: String? = null
     private var idClient: Int = 0
     private var idLoanClient: Int = 0
+    var applyCommerce: Boolean = false
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND) ?: 0
@@ -67,6 +69,7 @@ class VisaIssuanceViewModel @Inject constructor(
         availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
+        applyCommerce = savedStateHandle[APPLY_COMMERCE] ?: false
         getTextResources()
     }
 
@@ -118,17 +121,18 @@ class VisaIssuanceViewModel @Inject constructor(
                 }
                 popAndNavigateTo(
                     Screen.VisaTokenizationWaitingScreen.baseRoute
-                            .plus(getNavParam(ID_BRAND, idBrand))
-                            .plus(getNavParam(PK_USER, pkUser))
-                            .plus(getNavParam(IDENTIFICATION, identification))
-                            .plus(getNavParam(EMAIL, email))
-                            .plus(getNavParam(PHONE_NUMBER, phone))
-                            .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
-                            .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
-                            .plus(getNavParam(ID_CLIENT, idClient))
-                            .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
-                            .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaIssuanceScreen.baseRoute))
-                    , Screen.VisaIssuanceScreen.route
+                        .plus(getNavParam(ID_BRAND, idBrand))
+                        .plus(getNavParam(PK_USER, pkUser))
+                        .plus(getNavParam(IDENTIFICATION, identification))
+                        .plus(getNavParam(EMAIL, email))
+                        .plus(getNavParam(PHONE_NUMBER, phone))
+                        .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
+                        .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
+                        .plus(getNavParam(ID_CLIENT, idClient))
+                        .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                        .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaIssuanceScreen.baseRoute))
+                        .plus(getNavParam(APPLY_COMMERCE, applyCommerce)),
+                    Screen.VisaIssuanceScreen.route
                 )
             }
         }

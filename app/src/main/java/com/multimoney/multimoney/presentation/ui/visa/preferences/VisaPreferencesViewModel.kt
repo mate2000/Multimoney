@@ -19,6 +19,7 @@ import com.multimoney.multimoney.presentation.navigation.EMAIL
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.APPLY_COMMERCE
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -39,10 +40,10 @@ import com.multimoney.multimoney.presentation.util.getNavParam
 import com.multimoney.multimoney.presentation.util.toJson
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class VisaPreferencesViewModel @Inject constructor(
@@ -65,6 +66,7 @@ class VisaPreferencesViewModel @Inject constructor(
     private var phone: String = ""
     private var cardInformation: BalanceCardInformation? = null
     var availableBalanceLabel: String? = null
+    var applyCommerce: Boolean = false
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
@@ -76,6 +78,7 @@ class VisaPreferencesViewModel @Inject constructor(
         phone = savedStateHandle.get<String>(PHONE_NUMBER) ?: ""
         cardInformation = savedStateHandle.get<BalanceCardInformation>(BALANCE_CARD_INFORMATION)
         availableBalanceLabel = savedStateHandle[AVAILABLE_BALANCE_LABEL]
+        applyCommerce = savedStateHandle[APPLY_COMMERCE] ?: false
         callNovoGetFavoriteCard()
     }
 
@@ -144,6 +147,7 @@ class VisaPreferencesViewModel @Inject constructor(
                 .plus(getNavParam(ID_CLIENT, idClient))
                 .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
                 .plus(getNavParam(PREVIOUS_SCREEN, Screen.VisaPreferencesScreen.baseRoute))
+                .plus(getNavParam(APPLY_COMMERCE, applyCommerce))
         )
     }
 

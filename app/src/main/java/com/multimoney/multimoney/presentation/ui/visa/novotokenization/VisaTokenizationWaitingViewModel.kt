@@ -31,6 +31,7 @@ import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.APPLY_COMMERCE
 import com.multimoney.multimoney.presentation.navigation.navgraph.AVAILABLE_BALANCE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_INFORMATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
@@ -60,8 +61,6 @@ import com.multimoney.multimoney.presentation.util.toJson
 import com.multimoney.multimoney.util.NovoHelper
 import com.novopayment.sdk.vts.NovoVTS
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Date
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -69,6 +68,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Date
+import javax.inject.Inject
 
 @HiltViewModel
 class VisaTokenizationWaitingViewModel @Inject constructor(
@@ -100,6 +101,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
     private var idLoanClient: Int = 0
     var androidId: String = ""
     var previewScreen: String = ""
+    var applyCommerce: Boolean = false
 
     init {
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -112,6 +114,7 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
         idClient = savedStateHandle[com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         previewScreen = savedStateHandle.get<String>(PREVIOUS_SCREEN) ?: ""
+        applyCommerce = savedStateHandle[APPLY_COMMERCE] ?: false
     }
 
     private fun startTokenizationProcess() {
@@ -396,7 +399,8 @@ class VisaTokenizationWaitingViewModel @Inject constructor(
                 .plus(getNavParam(BALANCE_CARD_INFORMATION, encodeData(balanceCardInformation)))
                 .plus(getNavParam(AVAILABLE_BALANCE_LABEL, availableBalanceLabel))
                 .plus(getNavParam(ID_CLIENT, idClient))
-                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient)),
+                .plus(getNavParam(ID_LOAN_CLIENT, idLoanClient))
+                .plus(getNavParam(APPLY_COMMERCE, applyCommerce)),
             Screen.VisaTokenizationWaitingScreen.route
         )
     }

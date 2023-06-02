@@ -28,6 +28,7 @@ const val ID_CARD = "id_card"
 const val CALLER_ID = "caller_id"
 const val ACCOUNT_TOKEN_CREDIT = "account_token_credit"
 const val VISA_DIRECT_USER = "visa_direct_user"
+const val APPLY_COMMERCE = "apply_commerce"
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(
@@ -41,7 +42,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
-                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() },
+                navArgument(APPLY_COMMERCE) { type = NavType.BoolType }
             )
         ) { navBackStackEntry ->
             VisaIssuanceScreen(
@@ -68,7 +70,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
-                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() },
+                navArgument(APPLY_COMMERCE) { type = NavType.BoolType }
             )
         ) { navBackStackEntry ->
             VisaCardScreen(
@@ -99,7 +102,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
-                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() }
+                navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() },
+                navArgument(APPLY_COMMERCE) { type = NavType.BoolType }
             )
         ) {
             VisaTokenizationWaitingScreen(
@@ -125,7 +129,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 navArgument(PK_USER) { type = NavType.LongType },
                 navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
-                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType }
+                navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
+                navArgument(APPLY_COMMERCE) { type = NavType.BoolType }
             )
         ) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {

@@ -145,6 +145,7 @@ fun ProductScreen(
     LaunchedEffect(key1 = true) {
         viewModel.executeNavigation(onNavigate = onNavigate)
         viewModel.onUIEvent(OnNoVoConfig)
+        viewModel.onUIEvent(ProductViewModel.UIEvent.OnGetCryptoMovements)
     }
 
     LaunchedEffect(key1 = sharedViewModel.uiState.balance) {

@@ -426,6 +426,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
                 totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
             ).collectLatest { result ->
+                timer.stopTimer()
                 result.onLoading {
                     uiState = uiState.copy(
                         isLoading = true,
@@ -441,6 +442,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
+                            timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.InsufficientFundsBuy.status -> {
@@ -451,6 +453,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
+                            timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                             return@onSuccess
                         }
                         CryptoProcessErrorCodes.ExpiredPriceBuy.status -> {
@@ -461,6 +464,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                                 isLoading = false,
                                 purchaseStatus = PurchaseStatus.IDLE
                             )
+                            timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                             return@onSuccess
                         }
                     }

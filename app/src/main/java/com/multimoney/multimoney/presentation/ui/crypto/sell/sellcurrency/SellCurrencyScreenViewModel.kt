@@ -352,6 +352,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
             internalFee = uiState.pricesQuoteAndCommissions?.internal_fee ?: 0.0,
             totalFee = uiState.pricesQuoteAndCommissions?.totalFee ?: 0.0
         ).collectLatest { result ->
+            timer.stopTimer()
             result.onLoading {
                 uiState = uiState.copy(
                     isLoading = true,
@@ -367,6 +368,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                             isLoading = false,
                             sellStatus = SellStatus.IDLE
                         )
+                        timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                         return@onSuccess
                     }
                     CryptoProcessErrorCodes.ExpiredPriceSell.status -> {
@@ -376,6 +378,7 @@ class SellCurrencyScreenViewModel @Inject constructor(
                             isLoading = false,
                             sellStatus = SellStatus.IDLE
                         )
+                        timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                         return@onSuccess
                     }
                 }

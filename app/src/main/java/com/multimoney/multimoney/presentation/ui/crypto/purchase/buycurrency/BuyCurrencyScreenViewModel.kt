@@ -111,12 +111,7 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                 remainingTimeText = remainingTime.format()
             )
         },
-        onFinished = {
-            updateUiWithNewPricesAndCommissions()
-            if (idCurrencyAccount == CurrencyType.Colon.id) {
-                getInitialExchangeRate()
-            }
-        }
+        onFinished = { updateUiWithNewPricesAndCommissions() }
     )
 
     private fun updateUiWithNewPricesAndCommissions(): Unit = executeUseCase {
@@ -158,6 +153,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                         amountInUSD = pricesQuotesAndCommission.pricesQuote.quote_amount,
                         amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount
                     )
+                    if (idCurrencyAccount == CurrencyType.Colon.id) {
+                        getInitialExchangeRate()
+                    }
                     timer.startTimer(uiState.isConfirmationBottomSheetOpen)
                 }
                 result.onFailure {
@@ -289,7 +287,9 @@ class BuyCurrencyScreenViewModel @Inject constructor(
                     amountInUSD = pricesQuotesAndCommission.pricesQuote.quote_amount,
                     amountInCurrency = pricesQuotesAndCommission.pricesQuote.base_amount
                 )
-                getAmountExchangeRate()
+                if (idCurrencyAccount == CurrencyType.Colon.id) {
+                    getAmountExchangeRate()
+                }
             }
             result.onFailure {
                 if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {

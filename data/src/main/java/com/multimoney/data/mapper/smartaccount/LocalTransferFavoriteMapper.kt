@@ -16,7 +16,8 @@ private fun LocalTransferFavoriteQuery.Result.mapToDomainModel() = LocalFavorite
     currencyAccount = currencyAccount,
     ibanNumber = ibanNumber,
     isFavorite = isFavorite,
-    areaCode = areaCode
+    areaCode = areaCode,
+    identification = identification
 )
 
 private fun LocalTransferFavoriteQuery.LocalTransferFavorite.mapToDomainModel() =

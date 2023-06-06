@@ -140,7 +140,7 @@ class SmartTransferFavoriteSVViewModel @Inject constructor(
             number = localFavorite?.phoneNumber,
             titular = localFavorite?.accountName.orEmpty(),
             bankName = "",
-            identification = identification,
+            identification = localFavorite?.identification,
             accountNumber = localFavorite?.accountNumber,
             email = localFavorite?.email,
             idCurrency = localFavorite?.idCurrencyAccount.toString(),

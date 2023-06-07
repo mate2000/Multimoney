@@ -222,7 +222,6 @@ class ProductViewModel @Inject constructor(
         this.creditMovements = creditMovements
         if (whatsAppLink.isEmpty()) {
             viewModelScope.launch {
-                whatsAppLink = preferences.getWhatsAppLink().first()
                 uiState = uiState.copy(
                     shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
                     isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()

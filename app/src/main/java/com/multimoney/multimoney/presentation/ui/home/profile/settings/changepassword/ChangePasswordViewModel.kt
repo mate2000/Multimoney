@@ -110,7 +110,7 @@ class ChangePasswordViewModel @Inject constructor(
                 (uiState.oneNumberState ?: false) && (uiState.oneCharacterState ?: false) &&
                 passwordHasMinimumCharacters(uiState.newPassword) && uiState.newPasswordConfirmation == uiState.newPassword &&
                 !uiState.newPasswordConfirmationError.first && uiState.currentPassword.isNotEmpty() &&
-                uiState.currentPasswordError.first.not()
+                uiState.currentPasswordError.first.not() && uiState.newPasswordError.first.not()
     }
 
     private fun onNewPasswordValueChange(password: String?) {

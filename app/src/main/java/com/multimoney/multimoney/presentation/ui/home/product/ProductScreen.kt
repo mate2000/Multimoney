@@ -52,6 +52,7 @@ import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
 import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnUpdateWhatsAppLink
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
@@ -190,6 +191,7 @@ fun ProductScreen(
                         )
                     }
                 }
+
                 is HomeViewModel.BaseEvent.OnMiniCardsClicked -> {
                     viewModel.onUIEvent(
                         ProductViewModel.UIEvent.OnMiniCardsClicked(
@@ -198,9 +200,11 @@ fun ProductScreen(
                         )
                     )
                 }
+
                 is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen(true))
                 }
+
                 is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
                     viewModel.onUIEvent(
                         OnDeleteAutomaticPayment {
@@ -210,8 +214,13 @@ fun ProductScreen(
                         }
                     )
                 }
+
                 is OnDeleteAutomaticPaymentToastEvent -> {
                     Toast.makeText(context, deleteAutomaticPaymentToastText, Toast.LENGTH_LONG).show()
+                }
+
+                is OnUpdateWhatsAppLink -> {
+                    viewModel.whatsAppLink = event.whatsAppLink
                 }
             }
         }
@@ -605,6 +614,7 @@ fun ProductContent(
                         viewModel = viewModel,
                         viewModel.uiState.productPageList?.getOrNull(page)?.productSmartIndex ?: 0
                     )
+
                     ProductType.Crypto.value -> CryptoContent(
                         userStatus = viewModel.uiState.userStatus,
                         cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
@@ -671,6 +681,7 @@ fun ProductContentExpanded(
                     viewModel = viewModel,
                     viewModel.uiState.expandedProductPageList?.getOrNull(page)?.productSmartIndex ?: 0
                 )
+
                 ProductType.Crypto.value -> CryptoContent(
                     userStatus = viewModel.uiState.userStatus,
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
@@ -744,6 +755,7 @@ fun ProductFooter(
                     )
                 }
             )
+
             ProductType.Smart.value -> SmartFooter()
             ProductType.Crypto.value -> CryptoFooter()
         }
@@ -767,10 +779,12 @@ fun ProductFooterExpanded(
                 viewModel = viewModel,
                 sharedViewModel = sharedViewModel
             )
+
             ProductType.Smart.value -> SmartFooterExpanded(
                 viewModel = viewModel,
                 viewModel.uiState.expandedProductPageList?.getOrNull(viewModel.uiState.expandedPage)?.productSmartIndex ?: 0
             )
+
             ProductType.Crypto.value -> CryptoFooterExpanded(
                 userStatus = viewModel.uiState.userStatus,
                 balance = viewModel.balanceCredit,
@@ -820,12 +834,14 @@ fun ProductCtaFooterExpanded(
                 viewModel = viewModel,
                 sharedViewModel = sharedViewModel
             )
+
             ProductType.Smart.value -> SmartCtaFooterExpanded(
                 viewModel = viewModel,
                 viewModel.uiState.expandedPage
             ) {
                 sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
             }
+
             ProductType.Crypto.value -> CryptoCtaFooterExpanded(
                 isNotEmptyState = sharedViewModel.uiState.cryptoIsNotEmptyState,
                 isOutOfService = viewModel.balanceCredit?.balanceCryptoAccount?.outOfService ?: false,
@@ -833,7 +849,7 @@ fun ProductCtaFooterExpanded(
                     it?.accountStatus?.isCTABlocked() ?: false
                 } ?: false,
                 onBuyActionClicked = {
-                      viewModel.onUIEvent(ProductViewModel.UIEvent.OnPurchaseButtonClicked)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnPurchaseButtonClicked)
                 },
                 onSendActionClicked = {
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)

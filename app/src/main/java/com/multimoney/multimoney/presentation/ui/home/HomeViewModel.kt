@@ -45,6 +45,7 @@ import com.multimoney.multimoney.BuildConfig
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnUpdateWhatsAppLink
 import com.multimoney.multimoney.presentation.util.CryptoHelper
 import com.multimoney.multimoney.presentation.util.FilterDateByDays
 import com.multimoney.multimoney.presentation.util.INDEX_ONE
@@ -63,6 +64,7 @@ import com.multimoney.multimoney.presentation.util.getPreviousDate
 import com.multimoney.multimoney.util.BiometricHelper
 import com.multimoney.multimoney.util.CognitoHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
@@ -70,7 +72,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 @OptIn(ExperimentalPagerApi::class)
@@ -150,6 +151,7 @@ class HomeViewModel @Inject constructor(
                 result.onSuccess { contactInfo ->
                     viewModelScope.launch {
                         dataStorePreferences.setWhatsAppLink(contactInfo?.whatsappLink ?: "")
+                        emitBaseEvent(OnUpdateWhatsAppLink(contactInfo?.whatsappLink ?: ""))
                     }
                 }
             }
@@ -477,6 +479,7 @@ class HomeViewModel @Inject constructor(
                     productPageList.clear()
                 }
             }
+
             Brand.ElSalvador.id.toString() -> {
                 if (creditStatus?.status == CreditStatus.NO_EXIST.status || (creditStatus?.status == CreditStatus.CREDIT_REJECTED.status && creditStatus.wording?.display == false)) {
                     productPageList.clear()
@@ -727,9 +730,11 @@ class HomeViewModel @Inject constructor(
             Screen.HomeBNScreen.route -> {
                 innerNavigateTo(innerNavHostController, route)
             }
+
             Screen.QuickActionBNScreen.route -> {
                 emitBaseEvent(BaseEvent.OnOpenQuickActionsBottomSheet)
             }
+
             Screen.ProductsBNScreen.route -> {
                 emitBaseEvent(BaseEvent.OnOpenMyProductsBottomSheet)
             }
@@ -953,6 +958,7 @@ class HomeViewModel @Inject constructor(
                 uiEvent.innerNavHostController,
                 uiEvent.route
             )
+
             is UIEvent.OnSignOut -> signOut(uiEvent.activity)
             is UIEvent.OnShowTimerDialog -> showTimerDialog(uiEvent.time, uiEvent.activity)
             is UIEvent.OnSetUserData -> onsetUserData()
@@ -962,22 +968,27 @@ class HomeViewModel @Inject constructor(
                 miniCard = uiEvent.miniCard,
                 openIntent = uiEvent.openIntent
             )
+
             is UIEvent.OnGetSmartMovements -> onGetSmartMovements(
                 uiEvent.user,
                 uiEvent.idBrand,
                 uiEvent.identificationNumber,
                 uiEvent.tokenNumber
             )
+
             is UIEvent.OnGetCreditMovements -> onGetCreditMovements(
                 uiEvent.idBrand,
                 uiEvent.idLoanClient
             )
+
             is UIEvent.OnShowUnlinkToast -> {
                 uiState = uiState.copy(toastIsVisible = true)
             }
+
             is UIEvent.OnHideUnlinkToast -> {
                 uiState = uiState.copy(toastIsVisible = false)
             }
+
             is UIEvent.OnShowAutomaticPaymentEdit -> emitBaseEvent(BaseEvent.OnShowAutomaticPaymentEditBottomSheet)
             is UIEvent.OnHideAutomaticPaymentEdit -> emitBaseEvent(BaseEvent.OnHideAutomaticPaymentEditBottomSheet)
             is UIEvent.OnEditAutomaticPayment -> emitBaseEvent(BaseEvent.OnEditAutomaticPaymentEvent)
@@ -986,31 +997,40 @@ class HomeViewModel @Inject constructor(
             is UIEvent.OnMyProductClick -> onMyProductClick(uiEvent.expand)
             is UIEvent.OnMyProductPageChange ->
                 uiState = uiState.copy(productScreenPagerState = uiEvent.page)
+
             is UIEvent.OnLoadingValueChanged ->
                 uiState = uiState.copy(isLoading = uiEvent.isLoading)
+
             is UIEvent.OnShowCardIssuanceError ->
                 uiState = uiState.copy(showCardIssuanceError = true)
+
             is UIEvent.OnCloseCardIssuanceError ->
                 uiState = uiState.copy(showCardIssuanceError = false)
+
             is UIEvent.OnStartBiometrics -> onStartBiometrics()
             is UIEvent.OnInitializeBiometricPrompt -> initializeBiometricPrompt(
                 uiEvent.biometricPromptTitle,
                 uiEvent.biometricPromptDescription,
                 uiEvent.biometricPromptNegative
             )
+
             is UIEvent.OnUpdateIsExpandedByClick ->
                 uiState = uiState.copy(isExpandedByClick = uiEvent.isExpandedByClick)
+
             is UIEvent.OnSetupSessionListener -> onSetupSessionListener(uiEvent.activity)
             is UIEvent.OnSessionDuplicated -> onSessionDuplicated()
             is UIEvent.OnHideReleaseToast -> {
                 uiState = uiState.copy(releaseToastIsVisible = false)
             }
+
             is UIEvent.OnShowReleaseToast -> {
                 uiState = uiState.copy(releaseToastIsVisible = true)
             }
+
             is UIEvent.OnSetCryptoEmptyState -> {
                 uiState = uiState.copy(cryptoIsNotEmptyState = uiEvent.cryptoEmptyState)
             }
+
             UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
             UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
             UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
@@ -1070,6 +1090,7 @@ class HomeViewModel @Inject constructor(
             val biometricPromptDescription: String,
             val biometricPromptNegative: String
         ) : UIEvent()
+
         data class OnSetCryptoEmptyState(val cryptoEmptyState: Boolean) : UIEvent()
 
         object OnRegisterAdjustPressPurchaseFirstTime : UIEvent()
@@ -1094,6 +1115,7 @@ class HomeViewModel @Inject constructor(
         object OnDeleteAutomaticPaymentToastEvent : BaseEvent()
         object OnPhoneNumberChangedToastEvent : BaseEvent()
         object OnEmailChangedToastEvent : BaseEvent()
+        data class OnUpdateWhatsAppLink(val whatsAppLink: String) : BaseEvent()
     }
 
     companion object {

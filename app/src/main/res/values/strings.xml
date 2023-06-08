@@ -1435,11 +1435,15 @@
 
     <!-- Credit Schedule Automatic Payment -->
     <string name="automatic_payment_edit_bottom_sheet_title" translatable="false">Pago programado</string>
+    <string name="automatic_payment_edit_bottom_sheet_title_mx" translatable="false">Editar formas de pago</string>
     <string name="automatic_payment_edit_bottom_sheet_edit" translatable="false">Editar pago</string>
     <string name="automatic_payment_edit_bottom_sheet_delete" translatable="false">Eliminar pago</string>
     <string name="automatic_payment_edit_bottom_sheet_delete_dialog_title" translatable="false">Eliminar pago automático</string>
     <string name="automatic_payment_edit_bottom_sheet_delete_dialog_description" translatable="false">¿Estas seguro que quieres eliminar tu pago automático?</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_title_mx" translatable="false">Contáctanos si deseas eliminar la domiciliación</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_description_mx" translatable="false">Si deseas eliminar la domiciliación de tus pagos, por favor contáctanos para efectuar el cambio.</string>
     <string name="automatic_payment_edit_bottom_sheet_delete_dialog_accept" translatable="false">Eliminar</string>
+    <string name="automatic_payment_edit_bottom_sheet_delete_dialog_accept_mx" translatable="false">Contactar</string>
     <string name="automatic_payment_edit_bottom_sheet_delete_toast" translatable="false">Tu pago automático fue eliminado</string>
 
     <!-- Payment Cards List -->

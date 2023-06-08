@@ -40,7 +40,7 @@ fun ScheduleAutomaticPayment(viewModel: ProductViewModel, sharedViewModel: HomeV
                 threePointsOnClick = {
                     sharedViewModel.onUIEvent(OnShowAutomaticPaymentEdit)
                 },
-                shouldShowThreePoints = viewModel.uiState.idBrand.toInt() != Brand.Mexico.id
+                shouldShowThreePoints = true
             )
         } else if (balance.applyAutomaticDebit == true) {
             Spacer(modifier = Modifier.height(24.dp))

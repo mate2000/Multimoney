@@ -219,14 +219,12 @@ class SignUpPersonalDataViewModel @Inject constructor(
         )
         if (status.first.not()) {
             closeKeyboard = true
-            if (uiState.identificationValueType == CrDocuments.IdDocument.document) {
-                callQueryDataInformationClient(
-                    uiState.personalDocumentValue,
-                    onSuccessCountry?.countryList?.get(uiState.countryList.indexOf(uiState.nationalityValue))?.idBrand
-                        ?: 0,
-                    user
-                )
-            }
+            callQueryDataInformationClient(
+                uiState.personalDocumentValue,
+                onSuccessCountry?.countryList?.get(uiState.countryList.indexOf(uiState.nationalityValue))?.idBrand
+                    ?: 0,
+                user
+            )
         } else {
             if (uiState.dataInformationClient?.name.isNullOrBlank().not()) {
                 uiState = uiState.copy(dataInformationClient = null)
@@ -258,7 +256,8 @@ class SignUpPersonalDataViewModel @Inject constructor(
                 result.onFailure {
                     uiState = uiState.copy(
                         personalIdError = Pair(
-                            uiState.nationalityValue == Nationalities.CostaRicaId.country,
+                            uiState.nationalityValue == Nationalities.CostaRicaId.country &&
+                            uiState.identificationValueType != Nationalities.CostaRicaDimex.documentType,
                             string.sign_up_personal_data_id_not_valid
                         ),
                         isLoading = false,

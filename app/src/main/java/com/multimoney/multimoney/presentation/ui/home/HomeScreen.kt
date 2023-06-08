@@ -30,6 +30,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.R.drawable
 import com.multimoney.multimoney.R.string
@@ -200,6 +201,9 @@ fun HomeScreen(
     QuickActionBottomSheetScreen(viewModel, coroutineScope, quickActionsModalBottomSheetState)
     MyProductsBottomSheetScreen(viewModel, coroutineScope, myProductsModalBottomSheetState)
     AutomaticPaymentEditBottomSheet(
+        title = if (viewModel.uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
+            string.automatic_payment_edit_bottom_sheet_title_mx
+        } else string.automatic_payment_edit_bottom_sheet_title,
         coroutineScope = coroutineScope,
         modalBottomSheetState = automaticPaymentEditBottomSheetState,
         onEditClick = { viewModel.onUIEvent(HomeViewModel.UIEvent.OnEditAutomaticPayment) },

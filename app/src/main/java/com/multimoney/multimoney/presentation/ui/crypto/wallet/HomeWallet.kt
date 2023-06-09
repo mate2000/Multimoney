@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,10 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -210,55 +210,60 @@ fun HomeWalletContent(
 
     var selectedDateRange by remember { mutableStateOf(FilterDateByDays.YESTERDAY.time) }
 
-    Column(
+    LazyColumn(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        AnimatedVisibility(isFocused.value.not()) {
-            Column {
-                TopNavBar(
-                    isRightButtonVisible = false,
-                    onLeftButtonClick = { walletViewModel.onUIEvent(OnNavigateBack) },
-                )
-                WalletHeader()
-                BalanceSection(
-                    globalCryptoBalance = globalCryptoBalance,
-                    isInGainOrLoss = isInGainOrLoss,
-                    gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble()
-                        ?: 0.0,
-                    percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble()
-                        ?: 0.0,
-                    graphicColor = graphicColor,
-                    areCoinsLoading = walletViewModel.uiState.areCoinsLoading
-                )
-                WalletCryptoGraphic(
-                    clientCryptoBalanceHistory = walletViewModel.uiState.clientCryptoBalanceHistory,
-                    graphicColor = graphicColor,
-                )
-                DateFilterDWMYSection(
-                    selectedDateFilter = selectedDateRange,
-                    onDateFilterSelected = {
-                        selectedDateRange = it
-                        walletViewModel.onUIEvent(OnSetDateRange(it))
-                    }
-                )
+        item {
+            AnimatedVisibility(isFocused.value.not()) {
+                Column {
+                    TopNavBar(
+                        isRightButtonVisible = false,
+                        onLeftButtonClick = { walletViewModel.onUIEvent(OnNavigateBack) },
+                    )
+                    WalletHeader()
+                    BalanceSection(
+                        globalCryptoBalance = globalCryptoBalance,
+                        isInGainOrLoss = isInGainOrLoss,
+                        gainsOrLosses = walletViewModel.uiState.balanceCryptoAccount?.investedBalance?.toDouble()
+                            ?: 0.0,
+                        percentage = walletViewModel.uiState.balanceCryptoAccount?.percentageInvested?.toDouble()
+                            ?: 0.0,
+                        graphicColor = graphicColor,
+                        areCoinsLoading = walletViewModel.uiState.areCoinsLoading
+                    )
+                    WalletCryptoGraphic(
+                        clientCryptoBalanceHistory = walletViewModel.uiState.clientCryptoBalanceHistory,
+                        graphicColor = graphicColor,
+                    )
+                    DateFilterDWMYSection(
+                        selectedDateFilter = selectedDateRange,
+                        onDateFilterSelected = {
+                            selectedDateRange = it
+                            walletViewModel.onUIEvent(OnSetDateRange(it))
+                        }
+                    )
+                }
             }
         }
         if (walletViewModel.uiState.areCoinsLoading) {
-            WalletSkeleton()
+            item {
+                WalletSkeleton()
+            }
         } else {
-            MyCoinsSection(
-                walletViewModel.uiState.balanceCryptoAccount,
-                isFocused = isFocused,
-                searchQuery = searchQuery,
-                onItemClick = {
-                    walletViewModel.onUIEvent(
-                        HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(
-                            it
+            item {
+                MyCoinsSection(
+                    walletViewModel.uiState.balanceCryptoAccount,
+                    isFocused = isFocused,
+                    searchQuery = searchQuery,
+                    onItemClick = {
+                        walletViewModel.onUIEvent(
+                            HomeWalletViewModel.UIEvent.OnNavigateToCryptoDetailScreen(it)
                         )
-                    )
-                }
-            )
+                    }
+                )
+            }
         }
     }
 }
@@ -297,12 +302,12 @@ fun BalanceSection(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 4.dp),
             text = stringResource(R.string.crypto_wallet_balance_section_label),
             style = Typography.subtitle1.copy(color = MultimoneyTheme.colors.quickActionLabelColor)
         )
         Row(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 4.dp),
         ) {
             BalanceTextView(
                 balanceText = globalCryptoBalance.toCurrencyFormat(),
@@ -320,7 +325,7 @@ fun BalanceSection(
             ProfitSkeleton()
         } else {
             Text(
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+                modifier = Modifier.padding(vertical = 4.dp),
                 text = stringResource(
                     id = R.string.currency_item_gain_or_losses_description,
                     gainsOrLossesSymbol,
@@ -348,7 +353,7 @@ fun MyCoinsSection(
 
     Row(
         modifier = Modifier
-            .padding(end = 16.dp, start = 16.dp, top = 8.dp)
+            .padding(top = 8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -384,9 +389,7 @@ fun MyCoinsSection(
         }
     }
     Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp)
     ) {
         val amountOfItemsToShow = if (isFocused.value) filteredList.size else MINIMUM_AMOUNT_OF_COINS_TO_SHOW_SEARCH
         filteredList.take(amountOfItemsToShow).forEach { item ->

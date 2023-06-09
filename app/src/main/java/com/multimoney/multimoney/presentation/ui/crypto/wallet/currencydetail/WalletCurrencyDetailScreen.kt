@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import com.multimoney.data.util.catalog.Brand
@@ -190,6 +191,7 @@ fun CurrencyDetailContent(
     Scaffold(
         topBar = {
             TopNavBar(
+                modifier = Modifier.padding(bottom = 8.dp),
                 isRightButtonVisible = false,
                 onLeftButtonClick = backPressed
             )
@@ -226,7 +228,7 @@ fun CurrencyDetailContent(
         val percentageInvested = uiState.cryptoItem?.percentageInvestedCurrency?.replace("-", "") ?: ""
         Box(modifier = Modifier.padding(it)) {
             Column(modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 8.dp)
                 .verticalScroll(rememberScrollState())
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -315,12 +317,16 @@ fun CurrencyDetailContent(
                         )
                     }
                 }
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    movements.itemSnapshotList.items.take(3).forEach { movement ->
-                        CryptoCurrencyMovementItem(
-                            cryptoCurrencyMovement = movement,
-                            onReleaseTransactionClick = { onReleaseTransactionClick(movement) }
-                        )
+                    if(movements.loadState.refresh == LoadState.Loading) {
+                        WalletCurrencyDetailsMovementsSkeleton()
+                    } else {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        movements.itemSnapshotList.items.take(3).forEach { movement ->
+                            CryptoCurrencyMovementItem(
+                                cryptoCurrencyMovement = movement,
+                                onReleaseTransactionClick = { onReleaseTransactionClick(movement) }
+                            )
+                        }
                     }
                 }
             }

@@ -892,7 +892,7 @@ fun ProductCtaFooterExpanded(
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
                     viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
                 },
-                isSendAndGiveEnable = viewModel.uiState.isCryptoTransferEnabled
+                isSendAndGiveEnable = sharedViewModel.uiState.isCryptoTransferEnabled
             )
         }
     }

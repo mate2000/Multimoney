@@ -365,7 +365,9 @@ class HomeViewModel @Inject constructor(
                 }
             }
             result.onFailure {
-                onFailure(it)
+                if (it.errorCode != API_MAINTENANCE_ERROR_CODE) {
+                    onFailure(it)
+                }
             }
             result.onLoading {
                 uiState = uiState.copy(isLoading = true)
@@ -500,7 +502,10 @@ class HomeViewModel @Inject constructor(
         ).collectLatest { result ->
             result.onSuccess { configurationVersion ->
                 configurationVersion?.let {
-                    uiState = uiState.copy(configurationVersion = configurationVersion)
+                    uiState = uiState.copy(
+                        configurationVersion = configurationVersion,
+                        isCryptoTransferEnabled = it.configuration?.crypto?.isTransferEnabled ?: false
+                    )
                 }
                 viewModelScope.launch {
                     countDownTimer.startTimer(
@@ -953,6 +958,7 @@ class HomeViewModel @Inject constructor(
         var validateUserStatus: ValidateUserStatus? = null,
         var balance: Balance? = null,
         var cryptoHistoricalBalance: List<HistoricalBalanceClient> = emptyList(),
+        val isCryptoTransferEnabled: Boolean = false,
         var idBrand: String = "",
         var pkUser: String = "",
         var identification: String = "",
@@ -1156,5 +1162,6 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val API_CALLS_TOTAL = 6
+        const val API_MAINTENANCE_ERROR_CODE = 503
     }
 }

@@ -223,8 +223,7 @@ class ProductViewModel @Inject constructor(
         if (whatsAppLink.isEmpty()) {
             viewModelScope.launch {
                 uiState = uiState.copy(
-                    shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first(),
-                    isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled()
+                    shouldDisplayDisclaimer = preferences.isVolatileDialogVisible().first()
                 )
             }
         }
@@ -1502,7 +1501,6 @@ class ProductViewModel @Inject constructor(
         val paymentAvailable: Boolean = false,
         val shouldDisplayDisclaimer: Boolean = true,
         val dontShowAgainChecked: Boolean = false,
-        val isCryptoTransferEnabled: Boolean = false,
         val wasSmartActive: Boolean = false,
         val originationLaunchedFromCrypto: Boolean = false,
         val isCtaBlocked: Boolean = true

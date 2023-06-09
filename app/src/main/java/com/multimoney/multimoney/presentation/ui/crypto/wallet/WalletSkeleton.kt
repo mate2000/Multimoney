@@ -18,7 +18,7 @@ fun WalletSkeleton() {
     ShimmerBoxView {
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
+            .padding(top = 16.dp)
         ) {
             ShimmerItemView(
                 modifier = Modifier
@@ -29,7 +29,7 @@ fun WalletSkeleton() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp)
-                    .padding(horizontal = 8.dp, vertical = 16.dp),
+                    .padding(vertical = 16.dp),
                 radius = 24.dp
             )
             repeat(3) {
@@ -37,7 +37,7 @@ fun WalletSkeleton() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(88.dp)
-                        .padding(horizontal = 8.dp, vertical = 16.dp),
+                        .padding(vertical = 16.dp),
                     radius = 24.dp
                 )
             }

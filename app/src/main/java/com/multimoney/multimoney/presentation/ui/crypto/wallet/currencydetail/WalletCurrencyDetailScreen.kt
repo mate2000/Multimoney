@@ -253,7 +253,7 @@ fun CurrencyDetailContent(
                 }
                 uiState.cryptoItem?.balanceDollars?.let { balance ->
                     BalanceTextView(
-                        modifier = Modifier,
+                        modifier = Modifier.padding(vertical = 8.dp),
                         balanceText = balance.toCurrencyFormat(),
                         currencyStyle = Typography.h4.copy(
                             color = MultimoneyTheme.colors.text,

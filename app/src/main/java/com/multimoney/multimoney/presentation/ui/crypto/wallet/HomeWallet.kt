@@ -153,6 +153,12 @@ fun HomeWallet(
                     )
                 }
             }
+            AnimatedVisibility(visible = isFocused.value.not()) {
+                TopNavBar(
+                    isRightButtonVisible = false,
+                    onLeftButtonClick = { walletViewModel.onUIEvent(OnNavigateBack) },
+                )
+            }
         },
         bottomBar = {
             AnimatedVisibility(visible = isFocused.value.not()) {
@@ -213,15 +219,11 @@ fun HomeWalletContent(
     LazyColumn(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        contentPadding = PaddingValues(horizontal = 8.dp)
     ) {
         item {
             AnimatedVisibility(isFocused.value.not()) {
                 Column {
-                    TopNavBar(
-                        isRightButtonVisible = false,
-                        onLeftButtonClick = { walletViewModel.onUIEvent(OnNavigateBack) },
-                    )
                     WalletHeader()
                     BalanceSection(
                         globalCryptoBalance = globalCryptoBalance,
@@ -271,12 +273,11 @@ fun HomeWalletContent(
 @Composable
 fun WalletHeader() {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
             text = stringResource(R.string.crypto_wallet_header_title),
             style = Typography.h5.copy(color = MultimoneyTheme.colors.text)
         )

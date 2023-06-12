@@ -1,0 +1,23 @@
+query GetExchangeRateCredit(
+  $idBrand:Int!,
+  $user:String!,
+  $identification:String!,
+  $idOriginCurrency:String!,
+  $idDestinationCurrency:String!,
+  $amount:Decimal!
+){
+    getExchangeRateCredit(exchangeRateCreditInput: {
+      user: $user,
+      idBrand: $idBrand,
+      identification: $identification,
+      idOriginCurrency: $idOriginCurrency,
+      idDestinationCurrency: $idDestinationCurrency,
+      amount: $amount
+    }) {
+    result {
+      amount
+      exchangeRate
+      convertedAmount
+    }
+  }
+}

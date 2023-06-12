@@ -1,0 +1,25 @@
+query GetSmartAccounts(
+    $user: String!,
+    $identification: String!,
+    $idBrand: Int!,
+    $accountStatus: Int!
+){
+    balanceAccountSmart(
+        checkAccountInput:{
+            identification : $identification
+            status: $accountStatus
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        accounts {
+            code
+            totalBalance
+            ibanAccountNumber
+            accountNumber
+            currencyCode
+            tokenNumber
+            idCurrencyAccount
+        }
+    }
+}

@@ -1,0 +1,110 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+    id 'dexguard'
+    id("com.apollographql.apollo3").version("3.3.0")
+}
+
+apply from: '../dependencies.gradle'
+
+android {
+    compileSdk compile_sdk_version
+
+    defaultConfig {
+        minSdk min_sdk_version
+        targetSdk target_sdk_version
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField "String", "API_URL", apiUrl
+        buildConfigField "String", "WEBSOCKET_URL", websocketUrl
+        buildConfigField "String", "DATA_STORE_KEY", dataStoreKey
+        buildConfigField "String", "DATA_STORE_BIOMETRIC_KEY", dataStoreBiometricKey
+        buildConfigField "String", "CLIENT_ID", clientId
+        buildConfigField "String", "CLIENT_SECRET", clientSecret
+    }
+
+    buildTypes {
+        production {
+            minifyEnabled false
+            shrinkResources false
+        }
+        staging {
+            testCoverageEnabled true
+        }
+        debug {
+            testCoverageEnabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    }
+}
+
+apollo {
+    service("graphql") {
+        sourceFolder.set("com/multimoney/multimoney/graphql")
+        packageName.set("com.multimoney.data.networking.graphql.apollomodel")
+    }
+}
+
+dependencies {
+
+    implementation project(path: ':domain')
+
+    // Common
+    implementation common.serialization_json
+
+    // Room
+    implementation room.runtime
+
+    kapt room.compiler
+    implementation room.ktx
+    testImplementation room.testing
+
+    // Hilt
+    implementation hilt.android
+    kapt hilt.compiler
+
+    // Preferences
+    implementation preferences.data_store
+
+    // Coroutines
+    implementation coroutines.android
+
+    // Apollo
+    implementation apollo.runtime
+    implementation apollo.cache
+    implementation apollo.cache_sqlite
+
+    // Cognito
+    api cognito.core
+    api cognito.auth
+
+    // OkHttp3
+    implementation okhttp3.interceptor
+
+    // Gson
+    api gson.gson
+
+    // Common Test
+    testImplementation common_test.junit
+    androidTestImplementation common_test.ext_junit
+    androidTestImplementation common_test.espresso
+    testImplementation common_test.robolectric
+    testImplementation common_test.mockito_core
+
+    // Paging
+    implementation paging3.paging3_runtime
+    implementation paging3.common
+
+
+}

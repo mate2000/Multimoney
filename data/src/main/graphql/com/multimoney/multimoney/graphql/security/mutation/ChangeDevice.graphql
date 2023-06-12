@@ -1,0 +1,10 @@
+mutation ChangeDevice($email : String!,$otp : String!) {
+    changeDevice(
+        changeDeviceInputType: {
+            email: $email,
+            otp : $otp
+        }
+    ){
+        status
+    }
+}

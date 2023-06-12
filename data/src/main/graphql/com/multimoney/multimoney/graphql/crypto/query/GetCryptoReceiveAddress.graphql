@@ -1,0 +1,19 @@
+query GetCryptoReceiveAddress(
+    $user: String!
+    $idBrand: Int!
+    $identification: String!
+    $asset: String!
+    $crypto_network: String!
+) {
+    depositAddress(depositAddressInput: {
+        user: $user
+        idBrand: $idBrand,
+        identification: $identification,
+        asset: $asset,
+        crypto_network: $crypto_network
+    }) {
+        id,
+        address,
+        crypto_network
+    }
+}

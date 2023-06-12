@@ -1,0 +1,15 @@
+mutation OnfidoIntialProcess($names: String!, $lastNames:String!, $identification:String!, $applicationId:String!, $idBrand:Int!, $user:String!){
+  onfidoInitialProcess(
+    onfidoInitialProcessInput: {
+      names: $names
+      lastNames: $lastNames
+      identification: $identification
+      applicationId: $applicationId
+      idBrand: $idBrand
+      user: $user
+    }
+  ) {
+    applicantId
+    sdkToken
+  }
+}

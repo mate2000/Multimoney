@@ -1,0 +1,23 @@
+query GetParametersMobileByCategory(
+    $category: String!,
+    $idBrand: Int!
+){
+    getParameterMobileByCategory(
+        parameterMobileInput: {
+            category: $category
+            idBrand: $idBrand
+        }
+  ) {
+        pk_Suv_Par_Parametro
+        llave_Busqueda
+        descripcion
+        valor
+        categoria
+        editable
+        valor_Inicio
+        direccion_IP
+        descripcion_Inicio
+        optionAplication
+        origen
+  }
+}

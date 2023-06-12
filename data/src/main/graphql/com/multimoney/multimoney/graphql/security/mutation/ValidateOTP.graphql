@@ -1,0 +1,12 @@
+mutation ValidateOTP($email:String!, $otp:String!){
+    valideOTP(
+        valideOTPInputType: {
+            email: $email,
+            otp : $otp
+        }
+    ) {
+        detail
+        message
+        status
+    }
+}

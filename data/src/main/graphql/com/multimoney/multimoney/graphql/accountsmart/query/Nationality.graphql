@@ -1,0 +1,8 @@
+query Nationality($user: String!, $idBrand: Int!){
+    nationality(nationalityInput: { user: $user, idBrand: $idBrand }) {
+        result {
+            id
+            name
+        }
+    }
+}

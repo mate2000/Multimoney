@@ -1,0 +1,16 @@
+mutation ChangeEmail($pkUser:Long!,$identification:String!, $email:String!,$registerId:Int!,$changeUser:Boolean!,$idBrand:Int!,$user:String!,$idClient:Long!){
+    changeEmail(
+        changeEmailInputType: {
+            pkUser: $pkUser,
+            identification: $identification,
+            email: $email,
+            registerId: $registerId,
+            changeUser: $changeUser
+            user: $user,
+            idBrand: $idBrand,
+            idClient: $idClient
+        }
+    ) {
+        status
+    }
+}

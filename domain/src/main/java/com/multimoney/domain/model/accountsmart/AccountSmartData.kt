@@ -1,0 +1,51 @@
+package com.multimoney.domain.model.accountsmart
+
+/**
+ * This object represent the data to be sent to the API, data will be collected
+ * on every step from the smart flow.
+ */
+data class AccountSmartData(
+    var pkUser: String = "",
+    var status: Int = 0,
+    var user: String = "",
+    var idBrand: Int = 0,
+    var idGlobalRequest: Long = 0,
+    var idProfessionType: Int? = null,
+    var idCivilStatusType: Long? = null,
+    var birthday: String? = null,
+    var expirationDate: String? = null,
+    var idGender: Long? = null,
+    val strGenre: String? = null,
+    val strMaritalStatus: String? = null,
+    val stringProfessionType: String? = null,
+    val dateOfIssue: String? = null,
+    val placeOfIssueId: String? = null,
+    val strPlaceOfIssue: String? = null,
+    val strAddressLevel1: String? = null,
+    val strAddressLevel2: String? = null,
+    val strAddressLevel3: String? = null,
+    var idAddressLevel1: Long? = null,
+    var idAddressLevel2: Long? = null,
+    var idAddressLevel3: Long? = null,
+    var positionJob: String? = null,
+    var idEconomicActivity: Long? = null,
+    var institutionPension: String? = null,
+    var income: Float? = null,
+    var fullJobAddress: String? = null,
+    var addressDetail: String? = null,
+    val currentStep: String? = null,
+    val aboutCompany: String? = null,
+    val companyName: String? = null,
+    var specifiesIncomeSource: String? = null,
+    var listBeneficiaries: List<Beneficiary>? = listOf(),
+    var entrepreneurship: String? = null,
+    var legalID: String? = null,
+    var isPEP: Boolean? = null,
+    var isUSCitizen: Boolean? = null,
+    var isActivityOfArt15: Boolean? = null,
+    var isUSTaxPayer: Boolean? = null,
+    var isTaxPayer: Boolean? = null,
+    var idJobLevel1: Long? = null,
+    var idJobLevel2: Long? = null,
+    var idJobLevel3: Long? = null
+)

@@ -1,0 +1,15 @@
+mutation OnfidoCheckProcess($identification:String!, $applicantId:String!, $currentFlow:String!, $pkUser:Long!, $userRequestId: Long!, $idBrand:Int!, $user:String!){
+  onfidoCheckProcess(
+    onfidoCheckProcessInputType: {
+      identification: $identification
+      applicantId: $applicantId
+      currentFlow: $currentFlow
+      pkUser: $pkUser
+      userRequestId: $userRequestId
+      idBrand: $idBrand
+      user: $user
+    }
+  ) {
+    id
+  }
+}

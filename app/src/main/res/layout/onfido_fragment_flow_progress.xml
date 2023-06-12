@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:animateLayoutChanges="true"
+    android:importantForAccessibility="no"
+    android:backgroundTint="@color/gray_800"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:id="@+id/frameOverlayContainer"
+        android:layout_width="match_parent"
+        android:importantForAccessibility="noHideDescendants"
+        android:layout_height="match_parent" />
+
+    <View
+        android:id="@+id/accessibilityView"
+        android:layout_width="0dp"
+        android:contentDescription="@string/onfido_doc_capture_frame_accessibility"
+        android:layout_height="0dp" />
+
+    <RelativeLayout
+        android:id="@+id/progressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/onfido_capture_instructions_outer_margin"
+        android:backgroundTint="@color/gray_800"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/mainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/onfido_confirmation_buttons_activity_horizontal_margin"
+            android:layout_marginRight="@dimen/onfido_confirmation_buttons_activity_horizontal_margin"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            style="@style/OnfidoTextStyle.Title.Small"
+            android:layout_above="@id/middle"
+            android:textColor="@color/onfido_white" />
+
+        <View
+            android:id="@+id/middle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_centerInParent="true" />
+
+        <ProgressBar
+            android:id="@+id/timerProgress"
+            android:layout_width="180dp"
+            android:layout_height="10dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="false"
+            android:progressTint="@color/onfido_light_400"
+            android:progressBackgroundTint="@color/onfido_light_400_o_15"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/middle" />
+    </RelativeLayout>
+</RelativeLayout>

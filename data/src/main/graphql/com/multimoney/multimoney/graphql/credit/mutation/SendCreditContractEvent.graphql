@@ -1,0 +1,21 @@
+mutation SendCreditContractEvent($idImpresion:Long!,$idBrand : Int!,$link: String,$active: Boolean!,$statusEvicertia:String!,$statusOnfido:String!,$currentStep: String! ){
+saveCreditContract(
+creditContractInput: {
+idImpresion: $idImpresion
+idBrand: $idBrand
+link: $link
+active: $active
+statusEvicertia: $statusEvicertia
+statusOnfido: $statusOnfido
+currentStep: $currentStep
+}
+) {
+idImpresion
+idBrand
+link
+statusEvicertia
+statusOnfido
+active
+currentStep
+}
+}

@@ -1,0 +1,10 @@
+query termsAndConditionsSigned($styleDark : Boolean!, $userId: Int!,$identification : String!, $user : String!, $idBrand : Int!) {
+    termsConditionsSigned(
+        termsConditionsSignedInput: { styleDark: $styleDark,userId: $userId,identification: $identification,user : $user,idBrand: $idBrand }
+    ) {
+        tipo
+        fechaFirma
+        html
+        version
+    }
+}

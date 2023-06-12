@@ -1,0 +1,248 @@
+package com.multimoney.multimoney.presentation.ui.login.signup.personaldata
+
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Nationalities
+import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.data.util.catalog.SignUpStep.Three
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnNationalityValueChange
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnShowCloseIcon
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.BaseEvent.OnGetCountriesSuccess
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnCallQueryGetCountry
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNationalityChange
+import com.multimoney.multimoney.presentation.ui.login.signup.personaldata.SignUpPersonalDataViewModel.UIEvent.OnNextActionClick
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getUserCountry
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
+
+@Composable
+@Preview
+fun SignUpPersonalDataScreen(
+    isRestart: Boolean = true,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    viewModel: SignUpPersonalDataViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+
+    viewModel.apply {
+        isOnRestart = isRestart || sharedViewModel.uiState.shouldChangeOnRestart
+        LaunchedEffect(isOnRestart) {
+            if (isOnRestart) {
+                viewModel.executeNavigation(onNavigate = onNavigate)
+                viewModel.onUIEvent(
+                    OnCallQueryGetCountry("", onLoadingValueChange = { isLoading ->
+                        sharedViewModel.onUIEvent(
+                            SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                isLoading
+                            )
+                        )
+                    })
+                )
+                isOnRestart = false
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnChangeRestartEvent(false)
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        sharedViewModel.onUIEvent(OnShowCloseIcon(true))
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnFormValidateCompleted -> sharedViewModel.onUIEvent(OnContinueEnable(event.isFormValid))
+                is OnGetCountriesSuccess -> {
+                    sharedViewModel.apply {
+                        viewModel.onUIEvent(
+                            SignUpPersonalDataViewModel.UIEvent.OnStart(
+                                nationality = userData?.nationality ?: "",
+                                identificationType = userData?.strIdIdentification
+                                    ?: strIdIdentification,
+                                identificationValue = userData?.identification ?: "",
+                                firstName = userData?.firstName ?: "",
+                                secondName = userData?.secondName ?: "",
+                                firstLastName = userData?.firstLastName ?: "",
+                                secondLastName = userData?.secondLastName ?: "",
+                                fullName = userData?.fullName ?: "",
+                                country = context.getUserCountry(),
+                                updateNationality = { nationality, idBrand ->
+                                    sharedViewModel.onUIEvent(
+                                        OnNationalityValueChange(nationality, idBrand)
+                                    )
+                                },
+                                onLoadingValueChange = { isLoading ->
+                                    sharedViewModel.onUIEvent(
+                                        SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                            isLoading
+                                        )
+                                    )
+                                }
+                            )
+                        )
+                    }
+                }
+                is SignUpPersonalDataViewModel.BaseEvent.IsLoading -> sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnLoadingValueChange(event.isLoading)
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        sharedViewModel.apply {
+            onUIEvent(
+                SignUpViewModel.UIEvent.OnSetNavigation(
+                    nextAction = {
+                        viewModel.onUIEvent(
+                            OnNextActionClick(
+                                email = userData?.email ?: "",
+                                nextStep = Three.name,
+                                idBrand = idBrand ?: 0
+                            )
+                        )
+                        sharedViewModel.logEvents(
+                            FireBaseEvents.SingUpTwo,
+                            AdjustEventType.SIGNUP_2_2002
+                        )
+                    },
+                    nextStep = Three.id,
+                    previousStep = SignUpStep.One.id
+                )
+            )
+        }
+        viewModel.onUserDataValidationEvent.collect { result ->
+            result.onSuccess { userData ->
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
+                if (userData?.status == SignUpPersonalDataViewModel.ANOTHER_DEVICE_ALREADY_REGISTERED) {
+                    sharedViewModel.onUIEvent(
+                        SignUpViewModel.UIEvent.OnFailureWithDialog(
+                            isLoading = false,
+                            openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(
+                                userData,
+                                context
+                            ) {
+                                viewModel.onSuccessValidation(sharedViewModel, userData)
+                            }
+                        )
+                    )
+                } else {
+                    viewModel.onSuccessValidation(sharedViewModel, userData)
+                }
+            }.onLoading {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
+            }.onMessage {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = sharedViewModel.getOnUserDataValidationMessageDialog(
+                            it,
+                            context
+                        )
+                    )
+                )
+            }.onFailure {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            titleResource = string.error_empty,
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    Column(
+        Modifier
+            .padding(16.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 40.dp),
+            text = stringResource(id = string.sign_up_personal_data_nationality_header),
+            style = Typography.h6.copy(
+                color = MultimoneyTheme.colors.titleText,
+                fontWeight = FontWeight.SemiBold,
+                lineHeight = 24.sp
+            )
+        )
+        CustomDropdown(
+            modifier = Modifier
+                .wrapContentSize(Alignment.TopStart)
+                .focusable(false)
+                .padding(top = 16.dp),
+            items = viewModel.uiState.countryList,
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(
+                    OnNationalityChange(
+                        viewModel.uiState.countryList.indexOf(valueSelected),
+                        updateNationality = { nationality, idBrand ->
+                            sharedViewModel.onUIEvent(
+                                OnNationalityValueChange(nationality, idBrand)
+                            )
+                        },
+                        onLoadingValueChange = { isLoading ->
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnLoadingValueChange(
+                                    isLoading
+                                )
+                            )
+                        },
+                        onMexicoSelected = {
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnSelectMexicoEvent(
+                                    focusManager,
+                                    context
+                                )
+                            )
+                        }
+                    )
+                )
+            },
+            labelText = stringResource(id = string.sign_up_personal_data_nationality),
+            value = viewModel.uiState.nationalityValue,
+            placeHolder = stringResource(id = string.sign_up_personal_data_nationality_placeholder)
+        )
+        when (viewModel.uiState.nationalityValue) {
+            Nationalities.CostaRicaId.country -> SignUpPersonalDataCrScreen()
+            Nationalities.ElSalvadorDui.country -> SignUpPersonalDataSvScreen()
+            Nationalities.Guatemala.country -> SignUpPersonalDataGtScreen()
+        }
+    }
+}

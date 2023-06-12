@@ -1,0 +1,35 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            // All of React Native (JS, Android binaries) is installed from npm
+            url ("$rootDir/react_native_dependencies/node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/react_native_dependencies/node_modules/jsc-android/dist")
+        }
+        maven { url 'https://jitpack.io' }
+        maven {
+            url "https://nexus-public.novopayment.net/repository/maven-public/"
+            credentials {
+                username = novoDependencyUser
+                password = novoDependencyPassword
+            }
+        }
+    }
+}
+rootProject.name = "Multimoney"
+include ':app'
+include ':domain'
+include ':data'

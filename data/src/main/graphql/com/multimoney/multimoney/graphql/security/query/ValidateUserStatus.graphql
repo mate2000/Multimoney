@@ -1,0 +1,100 @@
+query ValidateUserStatus($pkUser: Long!, $identification: String!, $user: String!, $idBrand: Int!){
+    validateUserStatus(
+        userStatusInput: {
+            pkUser: $pkUser
+            identification: $identification
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        infoUser {
+            pkUser
+            idBrand
+            fullName
+            firstName
+            secondName
+            lastName
+            secondLastName
+            userName
+            email
+            phone
+            countryCode
+            birthDate
+            idClient
+            vISADirect_ID
+            vISADirect_Usuario
+            statusOnfido
+            fecha_ultimo_acceso
+            wording {
+                textOne
+                textTwo
+                cTA
+                link
+                display
+                workFlow
+            }
+        }
+        infoCredit {
+            idClient
+            idLoanClient
+            status
+            infoPreApprove {
+                idUserRequest
+                status
+                infoProducts {
+                    idProduct
+                    amountAvailable
+                    amountAvailableFormat
+                    symbolCurrency
+                }
+                idPrint
+                crosseling
+                selectedAmount
+                statusFirm
+                currentStep
+            }
+            wording {
+                textOne
+                textTwo
+                cTA
+                link
+                display
+                workFlow
+            }
+        }
+        infoVirtualCard {
+            status
+        }
+        infoBankAccount {
+            statusFirm
+            status
+            infoRequest {
+                idRequestSysde
+                idRequestGlobal
+                currentStep
+                statusRequest
+            }
+            wording {
+                textOne
+                textTwo
+                cTA
+                link
+                display
+                workFlow
+            }
+        }
+        infoCrypto {
+            status
+            statusFirm
+            profileEnable
+            wording {
+                textOne
+                textTwo
+                cTA
+                link
+                display
+                workFlow
+            }
+        }
+    }
+}

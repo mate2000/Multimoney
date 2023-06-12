@@ -1,0 +1,15 @@
+mutation SaveRegisterCoreLog($user: String!, $idBrand:Int!, $process: String!, $parameters: String!, $result:String!){
+      saveRegisterCoreLog(
+        saveRegisterCoreLogDto: {
+              user: $user,
+              idBrand: $idBrand,
+              process: $process,
+              parameters: $parameters,
+              result: $result
+          }
+      ) {
+        status
+        message
+        detail
+      }
+}

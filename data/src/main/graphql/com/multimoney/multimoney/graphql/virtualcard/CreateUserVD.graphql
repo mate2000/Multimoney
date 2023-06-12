@@ -1,0 +1,29 @@
+mutation CreateUserVD(
+    $identification: String!,
+    $firstName: String!,
+    $secondName: String!,
+    $lastName: String!,
+    $secondLastName: String!,
+    $email: String!,
+    $callerId: String!,
+    $user: String!,
+    $idBrand: Int!
+)
+{
+    createUserVD(
+        createUserVDInput: {
+            identification: $identification,
+            firstName: $firstName,
+            secondName: $secondName,
+            lastName: $lastName,
+            secondLastName: $secondLastName,
+            email: $email,
+            callerId: $callerId,
+            user: $user,
+            idBrand: $idBrand
+        }
+    ) {
+        userName
+        password
+    }
+}

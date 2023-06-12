@@ -1,0 +1,146 @@
+package com.multimoney.multimoney.presentation.util
+
+import com.multimoney.data.util.catalog.Brand
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.time.Duration
+
+private const val TIME_FORMAT = "%02d:%02d"
+private const val INTEGER_FORMAT_SEPARATOR = ","
+private const val INTEGER_FORMAT =
+    "###$INTEGER_FORMAT_SEPARATOR###$INTEGER_FORMAT_SEPARATOR###$INTEGER_FORMAT_SEPARATOR###"
+private const val DOUBLE_FORMAT_SEPARATOR = ","
+private const val DOUBLE_FORMAT =
+    "###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###$DOUBLE_FORMAT_SEPARATOR###.##"
+
+// Convert time to milli seconds
+fun Duration.format(): String {
+    val seconds = abs(inWholeSeconds)
+    val value = String.format(
+        TIME_FORMAT,
+        seconds % 3600 / 60,
+        seconds % 60
+    )
+    return value
+}
+
+// Format String to Integer decimal format
+fun String.stringToIntegerFormat(separator: String? = null): String =
+    if (isNotEmpty() && isValidAmount() && separator == null) {
+        DecimalFormat(INTEGER_FORMAT).format(toDouble())
+    } else if (isNotEmpty() && isValidAmount() && separator != null) {
+        DecimalFormat(
+            INTEGER_FORMAT.replace(
+                INTEGER_FORMAT_SEPARATOR,
+                separator
+            ),
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        ).format(toDouble())
+    } else {
+        this
+    }
+
+// Format String to Double decimal format
+fun String.stringToDoubleFormat(separator: String? = null): String =
+    if (isNotEmpty() && isValidAmount() && separator == null) {
+        DecimalFormat(
+            DOUBLE_FORMAT,
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        ).format(toDouble())
+    } else if (isNotEmpty() && isValidAmount() && separator != null) {
+        DecimalFormat(
+            DOUBLE_FORMAT.replace(DOUBLE_FORMAT_SEPARATOR, separator),
+            DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+        ).format(toDouble())
+    } else {
+        this
+    }
+
+// Using US locale to avoid crash converting to double when locale decimal separator is a comma
+fun Double.formattedTwoDecimalsNumber(): Double =
+    String.format(Locale.US, TWO_DECIMALS_FORMAT, this).toDouble()
+
+fun String.isValidAmount() = DECIMAL_FORMAT_REGEX.toRegex().matches(this)
+
+fun String.capitalized(): String {
+    return this.lowercase().replaceFirstChar {
+        if (it.isLowerCase()) {
+            it.titlecase(Locale.getDefault())
+        } else it.toString()
+    }
+}
+
+fun String.capitalizeAllWords(): String {
+    val capitalizedWords = splitByWhiteSpace().map { it.capitalized() }
+    val lastIndex = capitalizedWords.size.minus(ONE)
+    return buildString {
+        capitalizedWords.forEachIndexed { i, word ->
+            append(word)
+            if (i < lastIndex) append(WHITE_SPACE)
+        }
+    }
+}
+
+fun getMaskedAccount(
+    accountNumber: String,
+    maskedText: String = ACCOUNT_MASK,
+    prefix: String = accountNumber.take(ACCOUNT_FIRST_DIGITS)
+) = prefix.plus(maskedText)
+    .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+
+fun getMaskedVisaAccount(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
+    VISA_MASK.plus(maskedText)
+        .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+
+fun getMaskedAccountIban(accountNumber: String, maskedText: String = ACCOUNT_MASK) =
+    Brand.CostaRica.iban.plus(
+        accountNumber.take(ACCOUNT_IBAN_FIRST_DIGITS).plus(maskedText)
+            .plus(accountNumber.takeLast(ACCOUNT_LAST_DIGITS))
+    )
+
+fun formatDocumentPlaceholder(
+    originFormat: String,
+    outputFormat: Char = DOCUMENT_FORMAT_VALUE
+): String {
+    return if (originFormat.isNotBlank()) {
+        originFormat.replace(
+            originFormat.last(),
+            outputFormat,
+            false
+        )
+    } else {
+        ""
+    }
+}
+
+fun formatStringPhoneNumber(number: String, areaCode: String): String {
+    if (number.isBlank()) return number
+
+    val stringBuilder = StringBuilder()
+    val spacedNumber: String
+    if (number.length <= PHONE_NUMBER_LENGTH) {
+        spacedNumber = stringBuilder.append(number).insert(number.length / TWO, SPACE).toString()
+        return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
+    }
+    if (number.take(areaCode.length - ONE) == areaCode.takeLast(areaCode.length - ONE)) {
+        spacedNumber = stringBuilder.append(number.takeLast(PHONE_NUMBER_LENGTH))
+            .insert(PHONE_NUMBER_LENGTH / TWO, SPACE).toString()
+        return stringBuilder.clear().append(areaCode).append(SPACE).append(spacedNumber).toString()
+    }
+    return ""
+}
+
+const val ACCOUNT_IBAN_FIRST_DIGITS = 0
+const val ACCOUNT_FIRST_DIGITS = 2
+const val ACCOUNT_LAST_DIGITS = 4
+const val CARD_NUMBER_LAST_DIGITS = 4
+const val TWO_DECIMALS_FORMAT = "%.2f"
+const val EIGHT_DECIMALS_FORMAT = "%.8f"
+const val ACCOUNT_MASK = "••••"
+const val VISA_MASK = "Visa"
+const val DOCUMENT_FORMAT_VALUE = '0'
+const val SEPARATOR = " | "
+const val PHONE_NUMBER_LENGTH = 8
+const val WHITE_SPACE = " "

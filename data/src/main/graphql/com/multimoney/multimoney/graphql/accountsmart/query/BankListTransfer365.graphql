@@ -1,0 +1,6 @@
+query BankListTransfer365($idBrand: Int!, $user: String!) {
+    bankList365Type(bankList365Input: { idBrand: $idBrand, user: $user }) {
+        bankId
+        name
+    }
+}

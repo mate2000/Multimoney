@@ -1,0 +1,312 @@
+package com.multimoney.multimoney.presentation.ui.crypto.wallet
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.balance.QueryBalanceUseCase
+import com.multimoney.domain.interaction.crypto.GetHistoricalClientBalanceUseCase
+import com.multimoney.domain.model.balance.BalanceCryptoAccount
+import com.multimoney.domain.model.balance.BalanceCryptoAccountItems
+import com.multimoney.domain.model.crypto.HistoricalBalanceClient
+import com.multimoney.domain.model.util.error.HttpError
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.CARD_STATUS
+import com.multimoney.multimoney.presentation.navigation.GLOBAL_CRYPTO_BALANCE
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CREDIT
+import com.multimoney.multimoney.presentation.navigation.STATUS_CRYPTO
+import com.multimoney.multimoney.presentation.navigation.STATUS_SMART
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.crypto.CryptoProcessErrorCodes
+import com.multimoney.multimoney.presentation.util.CryptoHelper
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getCurrentDateYMDPattern
+import com.multimoney.multimoney.presentation.util.getPreviousDate
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class HomeWalletViewModel @Inject constructor(
+    private val queryGetHistoricalClientBalanceUseCase: GetHistoricalClientBalanceUseCase,
+    private val queryBalanceUseCase: QueryBalanceUseCase,
+    private val savedStateHandle: SavedStateHandle,
+    private val cryptoHelper: CryptoHelper,
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel(true) {
+
+    var uiState by mutableStateOf(UiState())
+        private set
+
+    private fun onGetUserInfo() {
+        uiState = uiState.copy(
+            user = savedStateHandle[USER] ?: "",
+            idBrand = savedStateHandle[ID_BRAND] ?: 0,
+            identification = savedStateHandle[IDENTIFICATION] ?: "",
+            globalCryptoBalance = savedStateHandle[GLOBAL_CRYPTO_BALANCE] ?: 0.0f,
+            idClient = savedStateHandle[ID_CLIENT] ?: 0,
+            idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0,
+            statusCredit = savedStateHandle[STATUS_CREDIT] ?: 0,
+            statusSmart = savedStateHandle[STATUS_SMART] ?: 0,
+            statusCrypto = savedStateHandle[STATUS_CRYPTO] ?: 0,
+            cardStatus = savedStateHandle[CARD_STATUS] ?: 0
+        )
+        viewModelScope.launch {
+            uiState = uiState.copy(isCryptoTransferEnabled = cryptoHelper.isCryptoTransferEnabled())
+        }
+    }
+
+    private fun callQueryBalanceUseCase(
+        user: String,
+        identification: String,
+        idBrand: Int,
+        idClient: Int,
+        idLoanClient: Int,
+        creditStatus: Int,
+        accountStatus: Int,
+        cryptoStatus: Int,
+        cardStatus: Int
+    ) = executeUseCase {
+        queryBalanceUseCase.invoke(
+            user = user,
+            identification = identification,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            creditStatus = creditStatus,
+            accountStatus = accountStatus,
+            cryptoStatus = cryptoStatus,
+            cardStatus = cardStatus
+        ).collectLatest { result ->
+            result.onSuccess { balance ->
+                balance?.let {
+                    uiState = uiState.copy(
+                        areCoinsLoading = false,
+                        balanceCryptoAccount = it.balanceCryptoAccount
+                    )
+                }
+            }
+            result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(areCoinsLoading = true)
+            }
+        }
+    }
+
+    private fun callQueryGetHistoricalBalanceUseCase(
+        user: String,
+        idBrand: Int,
+        identification: String,
+        baseAsset: String = ""
+    ) = executeUseCase {
+        queryGetHistoricalClientBalanceUseCase.invoke(
+            user,
+            idBrand,
+            identification,
+            baseAsset = baseAsset,
+            startDate = getPreviousDate(uiState.startDate ?: 1),
+            endDate = getCurrentDateYMDPattern()
+        ).collectLatest { result ->
+            result.onSuccess { historicBalance ->
+                historicBalance?.let {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        clientCryptoBalanceHistory = it.historicalBalanceClient
+                    )
+                }
+            }
+            result.onFailure {
+                if (it.errorCode == CryptoProcessErrorCodes.Maintenance.status) {
+                    navigateToMaintenance()
+                    return@onFailure
+                }
+                onFailure(it)
+            }
+            result.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onGetBalanceClient() {
+        callQueryBalanceUseCase(
+            user = uiState.user ?: "",
+            identification = uiState.identification ?: "",
+            idBrand = uiState.idBrand ?: 0,
+            idClient = uiState.idClient ?: 0,
+            idLoanClient = uiState.idLoanClient ?: 0,
+            creditStatus = uiState.statusCredit ?: 0,
+            accountStatus = uiState.statusSmart ?: 0,
+            cryptoStatus = uiState.statusCrypto ?: 0,
+            cardStatus = uiState.cardStatus ?: 0
+        )
+    }
+
+    private fun onSetDateRange(startDate: Long) {
+        uiState = uiState.copy(startDate = startDate)
+        callQueryGetHistoricalBalanceUseCase(
+            uiState.user ?: "",
+            uiState.idBrand ?: 0,
+            uiState.identification ?: ""
+        )
+    }
+
+    private fun navigateToMaintenance() {
+        navigateTo(Screen.MaintenanceAlertScreen.route)
+    }
+
+    private fun onFailure(error: HttpError) {
+        uiState = uiState.copy(
+            isLoading = false,
+            openDialog = DialogParameters(
+                description = error.getError() ?: "",
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    private fun onNavigateToCryptoDetail(cryptoItem: BalanceCryptoAccountItems) {
+        navigateTo(
+            "${Screen.CryptoWalletDetailsScreen.baseRoute}/${uiState.idBrand}/${uiState.identification}/${uiState.user}/${
+                encodeData(
+                    cryptoItem
+                )
+            }"
+        )
+    }
+
+    private fun onNavigateToBuyCrypto() {
+        navigateTo("${Screen.PurchaseCryptoFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}")
+    }
+
+    private fun onNavigateToSellCrypto() {
+        navigateTo(
+            "${Screen.CryptoSellFlow.baseRoute}/${Screen.CryptoWalletScreen.baseRoute}"
+        )
+    }
+
+    private fun onNavigateToSendCrypto() {
+        navigateTo(Screen.CryptoSendFlow.baseRoute)
+    }
+
+    private fun onNavigateToReceiveCrypto() {
+        navigateTo("${Screen.CryptoReceiveFlowScreen.baseRoute}/${uiState.user}/${uiState.idBrand}")
+    }
+
+    private fun registerAdjustFirstPressPurchaseEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressPurchaseFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressPurchaseFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.PURCHASE_CRYPTO_FIRST_TIME_PRESS_BUY_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSellEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSellFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSellFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SELL_CRYPTO_FIRST_TIME_PRESS_SELL_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressSendEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressSendFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressSendFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.SEND_CRYPTO_FIRST_TIME_PRESS_SEND_BUTTON
+            )
+        }
+    }
+
+    private fun registerAdjustFirstPressReceiveEvent() = viewModelScope.launch {
+        if (dataStorePreferences.isAdjustCryptoPressReceiveFirstTime().firstOrNull() == false) {
+            dataStorePreferences.setAdjustCryptoPressReceiveFirstTime(true)
+            registerAdjustEvent(
+                adjustEventType = AdjustEventType.RECEIVE_CRYPTO_FIRST_TIME_PRESS_RECEIVE_BUTTON
+            )
+        }
+    }
+
+    data class UiState(
+        val user: String? = null,
+        val idBrand: Int? = null,
+        val identification: String? = null,
+        val idClient: Int? = null,
+        val idLoanClient: Int? = null,
+        val statusCredit: Int? = null,
+        val statusSmart: Int? = null,
+        val statusCrypto: Int? = null,
+        val cardStatus: Int? = null,
+        val globalCryptoBalance: Float? = null,
+        val balanceCryptoAccount: BalanceCryptoAccount? = null,
+        val isLoading: Boolean = false,
+        val areCoinsLoading: Boolean = false,
+        val error: String? = null,
+        val clientCryptoBalanceHistory: List<HistoricalBalanceClient> = emptyList(),
+        val openDialog: DialogParameters = DialogParameters(),
+        val startDate: Long? = null,
+        val isCryptoTransferEnabled: Boolean = false
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is UIEvent.OnSetDateRange -> onSetDateRange(event.startDate)
+            is UIEvent.OnNavigateBack -> navigateBack(Screen.HomeScreen.route, false)
+            is UIEvent.OnGetUserInfo -> onGetUserInfo()
+            is UIEvent.OnNavigateToCryptoDetailScreen -> onNavigateToCryptoDetail(event.cryptoItem)
+            is UIEvent.OnGetBalanceClient -> onGetBalanceClient()
+            is UIEvent.OnNavigateToBuyCrypto -> onNavigateToBuyCrypto()
+            is UIEvent.OnNavigateToSendCrypto -> onNavigateToSendCrypto()
+            is UIEvent.OnNavigateToSellCrypto -> onNavigateToSellCrypto()
+            is UIEvent.OnNavigateToReceiveCrypto -> onNavigateToReceiveCrypto()
+            UIEvent.OnRegisterAdjustPressPurchaseFirstTime -> registerAdjustFirstPressPurchaseEvent()
+            UIEvent.OnRegisterAdjustPressReceiveFirstTime -> registerAdjustFirstPressReceiveEvent()
+            UIEvent.OnRegisterAdjustPressSellFirstTime -> registerAdjustFirstPressSellEvent()
+            UIEvent.OnRegisterAdjustPressSendFirstTime -> registerAdjustFirstPressSendEvent()
+        }
+    }
+
+    sealed interface UIEvent {
+        object OnGetUserInfo : UIEvent
+        object OnNavigateBack : UIEvent
+        object OnGetBalanceClient : UIEvent
+        data class OnSetDateRange(val startDate: Long) : UIEvent
+        data class OnNavigateToCryptoDetailScreen(val cryptoItem: BalanceCryptoAccountItems) :
+            UIEvent
+
+        object OnNavigateToBuyCrypto : UIEvent
+        object OnNavigateToSendCrypto : UIEvent
+        object OnNavigateToSellCrypto : UIEvent
+        object OnNavigateToReceiveCrypto : UIEvent
+        object OnRegisterAdjustPressPurchaseFirstTime : UIEvent
+        object OnRegisterAdjustPressSellFirstTime : UIEvent
+        object OnRegisterAdjustPressSendFirstTime : UIEvent
+        object OnRegisterAdjustPressReceiveFirstTime : UIEvent
+    }
+
+    companion object {
+        const val SHOW_COIN_SEARCH_THRESHOLD = 3
+    }
+}

@@ -1,0 +1,14 @@
+query AddressLevel1($user: String!, $idBrand: Int!){
+    addressLevel1(
+        addressLevel1Input: {
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        result {
+            id
+            name
+            code
+        }
+    }
+}

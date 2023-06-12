@@ -1,0 +1,28 @@
+mutation UpdateSmartAccountStatus(
+    $user: String!
+    $idBrand: Int!
+    $identificationNumber: String!
+    $newState: String!
+    $typeState: String!
+    $idAccountSysde: Long!
+    $idAccountRequest: Long!
+) {
+    updateSmartAccountStatus(
+        updateSmartAccountStatusInput: {
+            user: $user
+            idBrand: $idBrand
+            identificationNumber: $identificationNumber
+            newState: $newState
+            typeState: $typeState
+            idAccountSysde: $idAccountSysde
+            idAccount_Request: $idAccountRequest
+        }
+    ) {
+        result {
+            requestID
+            message
+            status
+            urlFirmDocument: url_Firm_Document
+        }
+    }
+}

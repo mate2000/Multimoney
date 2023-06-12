@@ -1,0 +1,430 @@
+package com.multimoney.multimoney.presentation.ui.credit.payment.cards
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.domain.interaction.security.MutationSaveRegisterCoreLogUseCase
+import com.multimoney.domain.interaction.virtualcard.MutationCreateUserVDUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryGetParametersMobileByCategoryUseCase
+import com.multimoney.domain.interaction.virtualcard.QueryListCardVDUseCase
+import com.multimoney.domain.model.metrics.BaseEventDataDto
+import com.multimoney.domain.model.security.InfoUser
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.domain.model.util.parametercorelog.VisaDirectIncludeCardParameters
+import com.multimoney.domain.model.virtualcard.CardVisaDirect
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.ADD_CARD_RESPONSE
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.INFO_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENABLED
+import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MAXIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.MINIMUM_PAYMENT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCallQueryGetClientCards
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnCardSelected
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnHandleAddCardResponse
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnResumeTimer
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.credit.payment.cards.PaymentCardListViewModel.UIEvent.OnStopTimer
+import com.multimoney.multimoney.presentation.util.MMCountDownTimer
+import com.multimoney.multimoney.presentation.util.SAVE_CORE_LOG
+import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_APPLICATION_NAME
+import com.multimoney.multimoney.presentation.util.VisaUtils.SEARCH_KEY_ENDPOINT
+import com.multimoney.multimoney.presentation.util.VisaUtils.VISA_DIRECT_CATEGORY
+import com.multimoney.multimoney.presentation.util.catalog.AddVisaCardErrors
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.RegisterCoreLogProcess
+import com.multimoney.multimoney.presentation.util.getAddCardErrorFromValue
+import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.toJson
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+@HiltViewModel
+class PaymentCardListViewModel @Inject constructor(
+    val countDownTimer: MMCountDownTimer,
+    savedStateHandle: SavedStateHandle,
+    private val queryListCardVDUseCase: QueryListCardVDUseCase,
+    private val mutationCreateUserVDUseCase: MutationCreateUserVDUseCase,
+    private val queryGetParametersMobileByCategoryUseCase: QueryGetParametersMobileByCategoryUseCase,
+    private val mutationSaveRegisterCoreLogUseCase: MutationSaveRegisterCoreLogUseCase,
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel(true) {
+
+    // uiState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    // Stateless
+    private var identification: String? = null
+    private var creditNumber: String? = null
+    private var idClient: Int? = null
+    private var idLoanClient: Int? = null
+    private var idCurrency: Int? = null
+    private var minimumPayment: Float? = null
+    private var minimumPaymentLabel: String? = null
+    private var maximumPayment: Float? = null
+    private var maximumPaymentLabel: String = ""
+    private var paymentDate: String? = ""
+    private var infoUser: InfoUser? = null
+    private var isAutopayEnabled: Boolean? = null
+    var reactApplicationName: String = ""
+    var reactUserName: String = ""
+    var reactUserPass: String = ""
+    var reactEndPoint: String = ""
+
+    init {
+        infoUser = savedStateHandle[INFO_USER]
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
+        idClient = savedStateHandle[ID_CLIENT]
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT]
+        idCurrency = savedStateHandle[ID_CURRENCY]
+        minimumPayment = savedStateHandle[MINIMUM_PAYMENT]
+        minimumPaymentLabel = savedStateHandle[MINIMUM_PAYMENT_LABEL]
+        maximumPayment = savedStateHandle[MAXIMUM_PAYMENT]
+        maximumPaymentLabel = savedStateHandle[MAXIMUM_PAYMENT_LABEL] ?: ""
+        paymentDate = savedStateHandle[PAYMENT_DATE] ?: ""
+        isAutopayEnabled = savedStateHandle[IS_AUTOPAY_ENABLED]
+    }
+
+    private fun onCallQueryGetClientCardsUseCase() {
+        executeUseCase {
+            queryListCardVDUseCase.invoke(
+                user = infoUser?.email.orEmpty(),
+                idBrand = infoUser?.idBrand ?: 0,
+                identification = identification ?: ""
+            ).collectLatest { result ->
+                result.onSuccess { cardsList ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        cardVDList = cardsList?.filter { it?.verified == true },
+                        isCardListEmpty = cardsList?.filter { it?.verified == true }.isNullOrEmpty()
+                    )
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        ),
+                        cardVDList = listOf(),
+                        isCardListEmpty = true
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
+    }
+
+    private fun onCallMutationCreateUserVDUseCase() = executeUseCase {
+        mutationCreateUserVDUseCase.invoke(
+            identification = identification.orEmpty(),
+            firstName = infoUser?.firstName.orEmpty(),
+            secondName = infoUser?.secondName.orEmpty(),
+            lastName = infoUser?.lastName.orEmpty(),
+            secondLastName = infoUser?.secondLastName.orEmpty(),
+            email = infoUser?.email.orEmpty(),
+            callerId = infoUser?.countryCode.plus(infoUser?.phone.orEmpty()),
+            user = infoUser?.userName.orEmpty(),
+            idBrand = infoUser?.idBrand ?: 0
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(isLoading = false)
+                reactUserName = it?.userName ?: ""
+                reactUserPass = it?.password ?: ""
+                onCallGetParametersMobileByCategoryUseCase()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onCallGetParametersMobileByCategoryUseCase() = executeUseCase {
+        queryGetParametersMobileByCategoryUseCase.invoke(
+            idBrand = infoUser?.idBrand ?: 0,
+            category = VISA_DIRECT_CATEGORY
+        ).collectLatest { result ->
+            result.onSuccess { parameters ->
+                uiState = uiState.copy(
+                    isLoading = false
+                )
+                if (parameters?.isNotEmpty() == true) {
+                    val applicationName = parameters.find {
+                        it?.searchKey.equals(
+                            SEARCH_KEY_APPLICATION_NAME
+                        )
+                    }
+                    reactApplicationName = applicationName?.value ?: ""
+
+                    val endpoint = parameters.find {
+                        it?.searchKey.equals(
+                            SEARCH_KEY_ENDPOINT
+                        )
+                    }
+                    reactEndPoint = endpoint?.value ?: ""
+                }
+                onCallQueryGetClientCardsUseCase()
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun onStart() {
+        if (infoUser?.visaDirectUser.isNullOrEmpty() && infoUser?.visaDirectId.isNullOrEmpty()) {
+            onCallMutationCreateUserVDUseCase()
+        } else {
+            reactUserName = infoUser?.visaDirectUser ?: ""
+            reactUserPass = infoUser?.visaDirectId ?: ""
+            onCallGetParametersMobileByCategoryUseCase()
+        }
+    }
+
+    private fun onHandleAddCardResponse(response: String, isError: Boolean) {
+        if (isError) {
+            setErrorAlertResultAddCard(response, response.getAddCardErrorFromValue())
+        } else {
+            logEvents(AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005)
+            onNavigateToVisaVerifyInformation(response)
+        }
+    }
+
+    private fun onCardSelected(cardSelected: CardVisaDirect?) =
+        navigateTo(
+            route = "${Screen.PaymentAmountCardsScreen.baseRoute}/$identification/${
+            encodeData(cardSelected)
+            }/$creditNumber/$idClient/$idLoanClient/$minimumPayment/$minimumPaymentLabel/$maximumPayment/$maximumPaymentLabel/$idCurrency/$paymentDate/${
+            encodeData(
+                infoUser
+            )
+            }/$isAutopayEnabled"
+        )
+
+    private fun onNavigateBack() =
+        navigateBack(popTo = Screen.PaymentOptionsScreen.route, isRestart = false)
+
+    private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+
+    private fun onResumeTimer() {
+        countDownTimer.resumeTimer()
+    }
+
+    private fun onStopTimer() {
+        countDownTimer.stopTimer()
+    }
+
+    private fun onNavigateToVisaVerifyInformation(response: String) {
+        navigateTo(
+            route = Screen.VisaVerifyInformationScreen.baseRoute
+                .plus(
+                    getNavParam(IDENTIFICATION, identification)
+                )
+                .plus(
+                    getNavParam(ID_CARD, "")
+                )
+                .plus(
+                    getNavParam(USER, infoUser?.email.orEmpty())
+                )
+                .plus(
+                    getNavParam(ID_BRAND, infoUser?.idBrand ?: 0)
+                )
+                .plus(
+                    getNavParam(PREVIOUS_SCREEN, Screen.PaymentCardsListScreen.baseRoute)
+                )
+                .plus(
+                    getNavParam(ADD_CARD_RESPONSE, response)
+                )
+                .plus(
+                    getNavParam(USER_NAME, infoUser?.userName.orEmpty())
+                )
+        )
+    }
+
+    private fun setErrorAlertResultAddCard(
+        response: String,
+        addVisaCardErrors: AddVisaCardErrors
+    ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            mutationSaveRegisterCoreLogUseCase.invoke(
+                infoUser?.email,
+                infoUser?.idBrand ?: 0,
+                RegisterCoreLogProcess.VISA_DIRECT_INCLUDE_CARD.process,
+                Gson().toJson(
+                    VisaDirectIncludeCardParameters(
+                        applicationName = reactApplicationName,
+                        userName = reactUserName,
+                        userPassword = reactUserPass,
+                        endpoint = reactEndPoint
+                    )
+                ),
+                response
+            ).collectLatest { result ->
+                result.onSuccess {
+                    Timber.d(SAVE_CORE_LOG)
+                }
+            }
+        }
+        uiState = uiState.copy(
+            isAlertResultVisible = true,
+            isAlertResultVisaError = true,
+            isAlertResultSuccess = false,
+            alertResultIconResource = R.drawable.ic_error_symbol,
+            alertResultTitleResource = addVisaCardErrors.title,
+            alertResultDescriptionResource = addVisaCardErrors.description,
+            alertResultButtonResource = R.string.payment_schedule_error_alert_button_two,
+            isLoading = false
+        )
+    }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = infoUser?.email,
+            idBrand = infoUser?.idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient,
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005 -> {
+                getAddACardEvent(baseAdjustEvent)
+            }
+            AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007 -> {
+                getStartAddACardEvent(baseAdjustEvent)
+            }
+            AdjustEventType.SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008 -> {
+                getFinishAddACardEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getAddACardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddCardEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_FIRST_ADD_CARD_8005,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddCardEventRegister(false)
+            }
+        }
+
+    private fun getStartAddACardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustFlowAddCardEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CTA_FIRST_START_FLOW_CARD_8007,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFlowAddCardEventRegister(false)
+            }
+        }
+
+    private fun getFinishAddACardEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustFinishFlowAddCardEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_CTA_FIRST_FINISH_FLOW_CARD_8008,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFinishFlowAddCardEventRegister(false)
+            }
+        }
+
+    data class UIState(
+        // Interactions
+        val cardVDList: List<CardVisaDirect?>? = null,
+        val isCardListEmpty: Boolean = true,
+        val isLoading: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters(),
+        val isVisaAnimationVisible: Boolean = false,
+        val isAlertResultSuccess: Boolean = true,
+        val isAlertResultVisaError: Boolean = false,
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = 0,
+        val alertResultTitleResource: Int = R.string.empty,
+        val alertResultDescription: String = "",
+        val alertResultDescriptionResource: Int = R.string.empty,
+        val alertResultButtonResource: Int = R.string.empty
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnNavigateBack -> onNavigateBack()
+            is OnNavigateBackHome -> onNavigateBackHome()
+            is OnCallQueryGetClientCards -> onCallQueryGetClientCardsUseCase()
+            is OnCardSelected -> onCardSelected(uiEvent.cardSelected)
+            is OnStart -> onStart()
+            is OnHandleAddCardResponse -> onHandleAddCardResponse(uiEvent.response, uiEvent.isError)
+            is OnStopTimer -> onStopTimer()
+            is OnResumeTimer -> onResumeTimer()
+        }
+    }
+
+    sealed class UIEvent {
+        object OnCallQueryGetClientCards : UIEvent()
+
+        class OnCardSelected(val cardSelected: CardVisaDirect?) : UIEvent()
+        object OnNavigateBack : UIEvent()
+        object OnNavigateBackHome : UIEvent()
+        object OnStart : UIEvent()
+        object OnStopTimer : UIEvent()
+        object OnResumeTimer : UIEvent()
+        data class OnHandleAddCardResponse(val response: String, val isError: Boolean) : UIEvent()
+    }
+}

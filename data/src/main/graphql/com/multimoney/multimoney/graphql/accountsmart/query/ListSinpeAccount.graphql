@@ -1,0 +1,41 @@
+query listSinpeAccount(
+    $user: String!,
+    $idBrand: Int!,
+    $identification: String!,
+    $country: String!,
+    $idAccount: Long!,
+    $accountNumber: String!,
+    $isFavorite: Boolean,
+    $option: String
+) {
+    listSinpeAccount(
+        listSinpeAccountInput: {
+            user: $user,
+            idBrand: $idBrand,
+            identification: $identification,
+            country: $country,
+            id_account: $idAccount,
+            account_number: $accountNumber,
+            isFavorite: $isFavorite,
+            option: $option
+        }
+    ) {
+        result {
+            accountId: id_Cuenta
+            country: pais
+            bank: banco
+            clientIdentification: cliente_Identificacion
+            sinpeAccount: cuenta_Sinpe
+            active: activo
+            currencyId: id_Moneda
+            currency: moneda
+            idBank: id_Banco
+            idBankCore: id_Banco_CORE
+            accountTypeCore: tipo_Cuenta_CORE
+            regularExpression: expresion_Regular
+            isFavorite: es_Favorita
+            nameAccount: nombre_Cuenta
+            accountType: tipo_Cuenta
+        }
+    }
+}

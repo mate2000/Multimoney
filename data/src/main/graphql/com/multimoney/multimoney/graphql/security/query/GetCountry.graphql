@@ -1,0 +1,10 @@
+query GetCountry($user:String!){
+    getCountry(
+        getCountryInput: { user: $user}
+    ) {
+        idBrand
+        nombre
+        prefijoPais
+        descripcionPais
+    }
+}

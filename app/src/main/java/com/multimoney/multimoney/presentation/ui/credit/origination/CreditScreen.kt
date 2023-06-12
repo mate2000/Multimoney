@@ -1,0 +1,297 @@
+package com.multimoney.multimoney.presentation.ui.credit.origination
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.CreditStep
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.Companion.CREDIT_INDICATOR_TOTAL_STEPS
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnNavigateToHome
+import com.multimoney.multimoney.presentation.ui.credit.origination.CreditViewModel.UIEvent.OnSetCloseDialogTexts
+import com.multimoney.multimoney.presentation.ui.credit.origination.account.CrosselingAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.origination.additionalinformation.AdditionalInformationScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.companyaddress.CompanyAddressScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.CreditBankScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.creditbank.crosseling.CreditCrosselingBankScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.homeaddress.HomeAddressScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.ibanaccount.IbanAccountScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.jobinfo.JobInfoScreen
+import com.multimoney.multimoney.presentation.ui.credit.origination.montlyincome.MonthlyIncomeScreen
+import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryTertiaryUnderLined
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
+import com.multimoney.multimoney.presentation.uielement.StepProgressBar
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun CreditScreen(
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    viewModel: CreditViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is CreditViewModel.BaseEvent.OnShowBottomSheet -> {
+                    coroutineScope.launch {
+                        bottomSheetState.show()
+                    }
+                }
+                is CreditViewModel.BaseEvent.OnHideBottomSheet -> {
+                    coroutineScope.launch {
+                        bottomSheetState.hide()
+                    }
+                }
+            }
+        }
+    }
+    // Navigation
+    LaunchedEffect(true) {
+        viewModel.executeNavigation(
+            onNavigate = onNavigate,
+            onPopAndNavigate = onPopAndNavigate,
+            onPopBackStack = onPopBackStack
+        )
+    }
+
+    if (viewModel.idBrand.isNotEmpty()) {
+        viewModel.onUIEvent(
+            OnSetCloseDialogTexts(
+                string.crosseling_close_dialog_title,
+                stringResource(
+                    id = string.crosseling_close_dialog_description
+                )
+            )
+        )
+    }
+
+    if (viewModel.uiState.loadContent) {
+        if (viewModel.uiState.lastStep != 1) {
+            val stringId = viewModel.getLoadingString()
+            LoadingMultiMoney(textRes = stringId)
+            LaunchedEffect(true) {
+                viewModel.queryCreditSteps()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MultimoneyTheme.colors.background)
+            ) {
+                Column {
+                    TopNavBar(
+                        isLeftButtonVisible = viewModel.uiState.currentStep != CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id,
+                        isRightButtonVisible = viewModel.uiState.currentStep > CreditStep.One.id || viewModel.crosseling,
+                        onLeftButtonClick = { viewModel.onUIEvent(OnBackClick(focusManager)) },
+                        onRightButtonClick = { viewModel.onUIEvent(OnCloseClick(focusManager)) }
+                    )
+                    if (viewModel.crosseling.not()) {
+                        if (viewModel.uiState.currentStep > CreditStep.One.id && viewModel.uiState.currentStep < CreditStep.Eight.id) {
+                            StepProgressBar(
+                                steps = if (viewModel.idBrand.toInt() == Brand.CostaRica.id || viewModel.idBrand.toInt() == Brand.Guatemala.id) CREDIT_INDICATOR_TOTAL_STEPS - 1 else CREDIT_INDICATOR_TOTAL_STEPS,
+                                currentStep = if (viewModel.idBrand.toInt() == Brand.CostaRica.id && viewModel.uiState.currentStep > CreditStep.Four.id) viewModel.uiState.currentStep - 2 else viewModel.uiState.currentStep - 1,
+                                modifier = Modifier.padding(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = 16.dp
+                                )
+                            )
+                        }
+                    }
+                }
+                if (viewModel.crosseling && viewModel.uiState.currentStep == CreditStep.Two.id) {
+                    GetCreditContent(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        focusManager = focusManager,
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
+                } else {
+                    GetCreditContent(
+                        viewModel = viewModel,
+                        onNavigate = onNavigate,
+                        focusManager = focusManager,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    )
+                }
+            }
+        }
+    }
+
+    if (viewModel.uiState.isAlertResultVisible) {
+        AlertResult(
+            titleString = stringResource(id = string.save_credit_operation_error_title),
+            descriptionString = stringResource(id = string.save_credit_operation_error_subtitle),
+            buttonTextResource = string.save_credit_operation_error_action,
+            isLeftButtonVisible = false,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
+            onButtonClick = {
+                context.openWhatsAppDeepLink(viewModel.whatsAppLink)
+                viewModel.onUIEvent(OnNavigateToHome)
+            }
+        )
+    }
+
+    if (viewModel.uiState.showSVProcessSendSuccessfully) {
+        AlertResult(
+            isLeftButtonVisible = false,
+            iconResource = drawable.ic_success_symbol,
+            titleResource = string.credit_request_sent_successfully,
+            descriptionResource = string.credit_request_info_verification_wait,
+            buttonTextResource = string.understood,
+            onRightButtonClick = { viewModel.onUIEvent(OnNavigateToHome) },
+            onButtonClick = { viewModel.onUIEvent(OnNavigateToHome) }
+        )
+    }
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    BackHandler {
+        viewModel.onUIEvent(OnBackClick(focusManager))
+    }
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = viewModel.uiState.openDialog.description,
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction,
+            onDismissAction = viewModel.uiState.openDialog.dismissAction
+        )
+    }
+
+    if (viewModel.uiState.isBottomSheetVisible) {
+        AdditionalInformationBottomSheet(
+            coroutineScope = coroutineScope,
+            modalBottomSheetState = bottomSheetState
+        ) {
+            viewModel.onHideBottomSheet()
+        }
+    }
+}
+
+@Composable
+fun GetCreditContent(
+    viewModel: CreditViewModel = hiltViewModel(),
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    focusManager: FocusManager,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        GetStepContent(
+            step = viewModel.uiState.currentStep,
+            onNavigate = onNavigate,
+            viewModel = viewModel
+        )
+
+        Column {
+            CustomButton(
+                onClick = { viewModel.onUIEvent(OnContinueClick(focusManager)) },
+                text = stringResource(id = R.string.button_continue),
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
+                buttonType = PrimaryPrimary,
+                enable = viewModel.uiState.isContinueEnabled
+            )
+            if (viewModel.uiState.isCurrentLocationButtonVisible) {
+                CustomButton(
+                    text = stringResource(id = R.string.credit_home_address_select_current_location),
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    onClick = {
+                        // active the location to select de current location
+                    },
+                    buttonType = PrimaryTertiaryUnderLined
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun GetStepContent(
+    step: Int,
+    onNavigate: (NavEvent.Navigate) -> Unit,
+    viewModel: CreditViewModel
+) {
+    when (step) {
+        CreditStep.One.id -> CreditAmountScreen(
+            onNavigate = onNavigate,
+            sharedViewModel = viewModel
+        )
+        CreditStep.Two.id -> if (viewModel.crosseling && viewModel.uiState.crosselingNewAccount.not()) {
+            CrosselingAccountScreen(sharedViewModel = viewModel)
+        } else {
+            if (viewModel.idBrand.toInt() == Brand.CostaRica.id) {
+                IbanAccountScreen(sharedViewModel = viewModel)
+            } else {
+                if (viewModel.crosseling) {
+                    CreditCrosselingBankScreen(sharedViewModel = viewModel)
+                } else {
+                    CreditBankScreen(sharedViewModel = viewModel)
+                }
+            }
+        }
+        CreditStep.Three.id -> MonthlyIncomeScreen(sharedViewModel = viewModel)
+        CreditStep.Four.id -> JobInfoScreen(sharedViewModel = viewModel)
+        CreditStep.Five.id -> CompanyAddressScreen(sharedViewModel = viewModel)
+        CreditStep.Six.id -> HomeAddressScreen(sharedViewModel = viewModel)
+        else -> AdditionalInformationScreen(sharedViewModel = viewModel)
+    }
+}

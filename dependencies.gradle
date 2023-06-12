@@ -1,0 +1,365 @@
+ext {
+    // Global versions:
+    compile_sdk_version = 33
+    min_sdk_version = 24
+    target_sdk_version = 32
+
+    // Common dependencies:
+    core_ktx_version = "1.8.0"
+    serialization_json_version = "1.0.1"
+
+    kotlin_version = "7.1.0"
+
+    common = [
+            core_ktlx         : "androidx.core:core-ktx:$core_ktx_version",
+            serialization_json: "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_json_version"
+    ]
+
+    // Activity
+    activity_version = "1.4.0"
+
+    activity = [
+            compose: "androidx.activity:activity-compose:$activity_version"
+    ]
+
+    // Lifecycle
+    lifecycle_version = "2.4.1"
+
+    lifecycle = [
+            runtime               : "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version",
+            compiler              : "androidx.lifecycle:lifecycle-compiler:$lifecycle_version",
+            view_model            : "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
+            view_model_compose    : "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version",
+            view_model_saved_state: "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
+    ]
+
+    // Navigation
+    navigation_version = "2.6.0-alpha04"
+
+    navigation = [
+            compose: "androidx.navigation:navigation-compose:${navigation_version}",
+            test   : "androidx.navigation:navigation-testing:${navigation_version}"
+    ]
+
+    // Constraint Layout
+    constraint_layout_version = "1.1.0-alpha05"
+
+    constraint_layout = [
+            compose: "androidx.constraintlayout:constraintlayout-compose:$constraint_layout_version"
+    ]
+
+    // Compose
+    compose_version = "1.4.0-alpha04"
+    compose_compiler_version = "1.4.0"
+    coil_version = "2.2.2"
+
+    compose = [
+            ui            : "androidx.compose.ui:ui:$compose_version",
+            util          : "androidx.compose.ui:ui-util:$compose_version",
+            material      : "androidx.compose.material:material:$compose_version",
+            tooling       : "androidx.compose.ui:ui-tooling:$compose_version",
+            foundation    : "androidx.compose.foundation:foundation:$compose_version",
+            livedata      : "androidx.compose.runtime:runtime-livedata:${compose_version}",
+            test          : "androidx.compose.ui:ui-test-junit4:$compose_version",
+            extended_icons: "androidx.compose.material:material-icons-extended:$compose_version",
+            coil          : "io.coil-kt:coil-compose:$coil_version"
+    ]
+
+    // Room
+    room_version = "2.4.1"
+
+    room = [
+            runtime : "androidx.room:room-runtime:${room_version}",
+            compiler: "androidx.room:room-compiler:${room_version}",
+            ktx     : "androidx.room:room-ktx:${room_version}",
+            testing : "androidx.room:room-testing:${room_version}"
+    ]
+
+    // Hilt
+    hilt_version = "2.44.2"
+    hilt_androidx_version = "1.0.0"
+
+    hilt = [
+            plugin    : "com.google.dagger:hilt-android-gradle-plugin:${hilt_version}",
+            android   : "com.google.dagger:hilt-android:${hilt_version}",
+            compiler  : "com.google.dagger:hilt-android-compiler:${hilt_version}",
+            navigation: "androidx.hilt:hilt-navigation-compose:${hilt_androidx_version}",
+            common    : "androidx.hilt:hilt-common:${hilt_androidx_version}",
+            work      : "androidx.hilt:hilt-work:${hilt_androidx_version}"
+    ]
+
+    // Work Manager
+    workmanager_version = "2.7.1"
+
+    work_manager = [
+            runtime: "androidx.work:work-runtime-ktx:${workmanager_version}"
+    ]
+
+    // Coroutines
+    coroutines_version = '1.3.9'
+
+    coroutines = [
+            android: "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutines_version}"
+    ]
+
+    // Apollo
+    apollo_version = '3.3.0'
+
+    apollo = [
+            runtime     : "com.apollographql.apollo3:apollo-runtime:${apollo_version}",
+            cache       : "com.apollographql.apollo3:apollo-normalized-cache:${apollo_version}",
+            cache_sqlite: "com.apollographql.apollo3:apollo-normalized-cache-sqlite:${apollo_version}"
+    ]
+
+    // OkHttp3
+    okhttp3_version = '4.10.0'
+
+    okhttp3 = [
+            interceptor: "com.squareup.okhttp3:logging-interceptor:${okhttp3_version}"
+    ]
+
+    // Preferences
+    data_store_version = "1.0.0"
+
+    preferences = [
+            data_store: "androidx.datastore:datastore-preferences:${data_store_version}"
+    ]
+
+    // Sentry
+    sentry_version = "5.6.1"
+
+    sentry = [
+            android: "io.sentry:sentry-android:${sentry_version}"
+    ]
+
+    // Chart
+    mp_android_chart_version = "v3.1.0"
+
+    chart = [
+            mp_android_chart: "com.github.PhilJay:MPAndroidChart:${mp_android_chart_version}"
+    ]
+
+    // Google Services
+    google_services_version = "4.3.10"
+    google_services_ads_version = "17.0.1"
+    google_services_auth_version = "20.1.0"
+    google_services_auth_api_phone_version = "18.0.1"
+    google_services_base_version = "18.2.0"
+    tag_manager_version = "18.0.2"
+
+    google_services = [
+            plugin        : "com.google.gms:google-services:${google_services_version}",
+            base          : "com.google.android.gms:play-services-base:${google_services_base_version}",
+            ads           : "com.google.android.gms:play-services-ads-identifier:${google_services_ads_version}",
+            auth          : "com.google.android.gms:play-services-auth:$google_services_auth_version",
+            auth_api_phone: "com.google.android.gms:play-services-auth-api-phone:$google_services_auth_api_phone_version",
+            tag_manager   : "com.google.android.gms:play-services-tagmanager:${tag_manager_version}"
+    ]
+
+    // Google Zxing
+    google_zxing_version = "3.4.0"
+    google_zxing = "com.google.zxing:core:$google_zxing_version"
+
+    // Firebase
+    firebase_version = "29.1.0"
+    firebase_instalations_version = "17.0.0"
+    firebase_perf_classpath_version = "1.4.1"
+    firebase_crashlytics_classpath_version = "2.8.1"
+
+    firebase = [
+            bom                  : "com.google.firebase:firebase-bom:${firebase_version}",
+            config               : "com.google.firebase:firebase-config-ktx",
+            perf                 : "com.google.firebase:firebase-perf-ktx",
+            perf_classpath       : "com.google.firebase:perf-plugin:${firebase_perf_classpath_version}",
+            dynamic_links        : "com.google.firebase:firebase-dynamic-links-ktx",
+            messaging            : "com.google.firebase:firebase-messaging-ktx",
+            crashlytics          : "com.google.firebase:firebase-crashlytics-ktx",
+            crashlytics_classpath: "com.google.firebase:firebase-crashlytics-gradle:${firebase_crashlytics_classpath_version}",
+            analytics            : "com.google.firebase:firebase-analytics-ktx",
+            installations        : "com.google.firebase:firebase-installations:${firebase_instalations_version}"
+    ]
+
+    // Timber
+    timber_version = "5.0.1"
+
+    timber = [
+            timber: "com.jakewharton.timber:timber:${timber_version}"
+    ]
+
+    // OnFido
+    onfido_version = "12.3.0"
+
+    onfido = [
+            capture: "com.onfido.sdk.capture:onfido-capture-sdk:${onfido_version}"
+    ]
+
+    // Adjust
+    adjust_version = "4.28.9"
+    adjust_installreferrer_version = "2.2"
+
+    adjust = [
+            android        : "com.adjust.sdk:adjust-android:${adjust_version}",
+            webbridge      : "com.adjust.sdk:adjust-android-webbridge:${adjust_version}",
+            installreferrer: "com.android.installreferrer:installreferrer:${adjust_installreferrer_version}"
+    ]
+
+    // Lottie
+    lottie_version = "5.0.3"
+
+    lottieDependency = [
+            lottie: "com.airbnb.android:lottie-compose:$lottie_version"
+    ]
+
+    // Cognito
+    cognito_version = "1.37.3"
+
+    cognito = [
+            core: "com.amplifyframework:core:$cognito_version",
+            auth: "com.amplifyframework:aws-auth-cognito:$cognito_version"
+    ]
+
+    // Desugar
+    desugar_version = "1.1.5"
+
+    desugar = [
+            jdk: "com.android.tools:desugar_jdk_libs:$desugar_version"
+    ]
+
+    // Togisoft
+    togisoft_version = "1.1.4"
+
+    togisoft = [
+            country_code_picker: "com.github.togisoft:jetpack_compose_country_code_picker:$togisoft_version"
+    ]
+
+    // LibPhoneNumber
+    libphonenumber_version = "8.12.46"
+
+    libphonenumber = [
+            libphonenumber: "com.googlecode.libphonenumber:libphonenumber:$libphonenumber_version"
+    ]
+
+    // Biometric
+    biometric_version = "1.2.0-alpha04"
+
+    biometric = [
+            biometric: "androidx.biometric:biometric-ktx:$biometric_version"
+    ]
+
+    // Gson
+    gson_version = "2.8.9"
+
+    gson = [
+            gson: "com.google.code.gson:gson:${gson_version}"
+    ]
+
+    // Accompanist
+    accompanist_version = "0.25.1"
+
+    accompanist = [
+            flowlayout          : "com.google.accompanist:accompanist-flowlayout:$accompanist_version",
+            pager               : "com.google.accompanist:accompanist-pager:$accompanist_version",
+            pager_indicator     : "com.google.accompanist:accompanist-pager-indicators:$accompanist_version",
+            system_ui_controller: "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    ]
+
+    // DexGuard
+    dexguard_version = "9.3.8"
+    dexguard_classpath_version = "1.3.8"
+
+    dexguard = [
+            classpath: "com.guardsquare:dexguard-gradle-plugin:$dexguard_classpath_version"
+    ]
+
+    // Shimmer
+    shimmer_version = "1.0.3"
+    shimmer = [
+            shimmer: "com.valentinilk.shimmer:compose-shimmer:$shimmer_version"
+    ]
+
+    // Slider
+    slider_version = "282dd44ed970911b4834f497af98cf115c637848"
+    slider = [
+            slider: "com.github.SmartToolFactory:Compose-Colorful-Sliders:$slider_version"
+    ]
+
+    // VISA
+    appcompat_version = "28.0.0"
+    visa_version = "master"
+    appcompat = [
+            appcompat: "com.android.support:appcompat-v7:$appcompat_version"
+    ]
+    visa = [
+            visa: "com.github.Akrostechnologies:react-native-visa-sensory-branding:$visa_version"
+    ]
+
+    // HtmlText
+    htmlText_version = "1.0.2"
+    htmlText = [
+            htmlText: "com.github.ireward:compose-html:$htmlText_version"
+    ]
+
+    // Paging 3
+    paging3_version = "3.1.1"
+    compose_paging3_version = "1.0.0-alpha14"
+
+    paging3 = [
+            paging3_runtime: "androidx.paging:paging-runtime:$paging3_version",
+            paging3_compose: "androidx.paging:paging-compose:$compose_paging3_version",
+            common         : "androidx.paging:paging-common-ktx:$paging3_version"
+    ]
+
+    // Novo payment
+    novo_payment_version = "1.4.0"
+
+    novo = [
+            novo_dev    : "com.novopayment.sdk.android:vts-sandbox:$novo_payment_version",
+            novo_staging: "com.novopayment.sdk.android:vts-sandbox:$novo_payment_version",
+            novo_prod   : "com.novopayment.sdk.android:vts:$novo_payment_version"
+    ]
+
+    // CameraX
+    cameraX_version = "1.2.1"
+    cameraX = [
+            core   : "androidx.camera:camera-core:$cameraX_version",
+            cameraX: "androidx.camera:camera-camera2:$cameraX_version",
+            lifecycle: "androidx.camera:camera-lifecycle:$cameraX_version",
+            view   : "androidx.camera:camera-view:$cameraX_version"
+    ]
+
+    // ML Kit Barcode Scanning
+    mlkit_version = "17.0.3"
+    mlKit = [
+            barcode: "com.google.mlkit:barcode-scanning:$mlkit_version"
+    ]
+
+    // Common Test
+    junit_version = "4.13.2"
+    ext_junit_version = "1.1.3"
+    espresso_version = "3.4.0"
+    robolectric_version = "4.6"
+    mockito_core_version = "4.3.1"
+
+    common_test = [
+            junit       : "junit:junit:$junit_version",
+            ext_junit   : "androidx.test.ext:junit:$ext_junit_version",
+            espresso    : "androidx.test.espresso:espresso-core:$espresso_version",
+            robolectric : "org.robolectric:robolectric:$robolectric_version",
+            mockito_core: "org.mockito:mockito-core:$mockito_core_version"
+    ]
+
+    react_native_version = "0.69.0"
+
+    react_native = [
+            react_native   : "com.facebook.react:react-native:$react_native_version"
+    ]
+
+    webkit_version = "r174650"
+
+    webkit = [
+            webkit   : "org.webkit:android-jsc:$webkit_version"
+    ]
+
+    android_core_splash_version = "1.0.0"
+    android_core_splash = "androidx.core:core-splashscreen:$android_core_splash_version"
+}

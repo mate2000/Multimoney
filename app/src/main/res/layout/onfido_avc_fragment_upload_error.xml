@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/gray_800"
+    android:orientation="vertical"
+    tools:context=".component.active.video.capture.presentation.uploaderror.AVCUploadErrorFragment">
+
+    <com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:backgroundTint="@color/gray_800">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                style="@style/OnfidoIconStyle.Error"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                style="@style/OnfidoTextStyle.Title.Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:text="@string/onfido_avc_connection_error_title"
+                android:textColor="@color/white" />
+
+            <TextView
+                style="@style/OnfidoTextStyle.Subtitle.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:gravity="center"
+                android:text="@string/onfido_avc_connection_error_subtitle"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView>
+
+    <com.onfido.android.sdk.capture.ui.widget.Button
+        android:id="@+id/retryUploadButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/onfido_button_horizontal_margin"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:onfidoButtonText="@string/onfido_avc_connection_error_button_primary_retry_upload" />
+
+    <com.onfido.android.sdk.capture.ui.widget.Button
+        android:id="@+id/restartRecordingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/onfido_button_horizontal_margin"
+        app:onfidoButtonText="@string/onfido_avc_connection_error_button_secondary_restart_recording"
+        app:onfidoButtonType="secondary" />
+
+    <include layout="@layout/onfido_watermark_layout" />
+
+</LinearLayout>

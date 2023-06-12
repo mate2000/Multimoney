@@ -1,0 +1,15 @@
+query PaymentAmount($amount: Decimal!,$months: String!,$idProduct: String!,$currencySymbol: String!,$user: String!,$idBrand: Int!){
+    paymentAmount(
+        paymentAmountInput: {
+            amount: $amount
+            months: $months
+            idProduct: $idProduct
+            currencySymbol: $currencySymbol
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        paymentAmount
+        paymentAmountLabel
+    }
+}

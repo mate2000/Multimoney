@@ -1,0 +1,43 @@
+query EmploymentSituation(
+    $pkUser: Int!,
+    $user: String!
+    $idBrand: Int!,
+    $idUserRequest: Int!
+){
+    employmentSituation(
+        employmentSituationInput: {
+            pkUser: $pkUser,
+            user: $user,
+            idBrand: $idBrand,
+            idUserRequest: $idUserRequest
+        }
+    ) {
+        pk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+        fk_Suv_Cat_Pregunta_Solicitud_Credito
+        fk_Suv_Cat_Opcion_Pregunta_Solicitud_Credito
+        tipo_Control
+        descripcion
+        es_Catalogo_Core
+        pk_Identificador_Catalogo
+        es_Catalogo_Sucursal
+        utiliza_Valor
+        valor_Catalogo
+        llave_Formulario
+        monto_Maximo
+        subOpciones {
+            tipo_Control
+            descripcion
+            pk_Identificador_Catalogo
+            utiliza_Valor
+            valor_Catalogo
+            fk_Identificador_Catalogo
+            interno
+            valor
+        }
+        fk_Identificador_Catalogo
+        grupo
+        evento
+        interno
+        valor
+    }
+}

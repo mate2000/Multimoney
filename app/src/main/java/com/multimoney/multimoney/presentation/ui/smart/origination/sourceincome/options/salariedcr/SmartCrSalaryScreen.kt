@@ -1,0 +1,246 @@
+package com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.multimoney.data.util.catalog.SmartSteps
+import com.multimoney.domain.model.accountsmart.GeneralEconomicActivity
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnCallMutationUpdateGlobalRequestUseCase
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueEnable
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnContinueVisible
+import com.multimoney.multimoney.presentation.ui.smart.SmartViewModel.UIEvent.OnSetNavigation
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SmartAddressFields
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.SourceIncomeViewModel.BaseEvent
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCallQueryProfessionUseCase
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnCompanyNameChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnJobPositionChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnLoadCurrentStepData
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnPaymentAmountChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIEvent.OnProfessionChange
+import com.multimoney.multimoney.presentation.ui.smart.origination.sourceincome.options.salariedcr.SmartCrSalaryViewModel.UIState
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomDropdown
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.util.getCurrencySymbol
+import com.multimoney.multimoney.presentation.util.transformation.formatDecimalMoney
+
+@Composable
+fun SmartCrSalaryScreen(
+    viewModel: SmartCrSalaryViewModel = hiltViewModel(),
+    sharedViewModel: SmartViewModel,
+    sourceIncomeSharedViewModel: SourceIncomeViewModel,
+    economicActivity: GeneralEconomicActivity? = null
+) {
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(true) {
+        sourceIncomeSharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is BaseEvent.OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && viewModel.isFormValid())
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnLoadCurrentStepData(sharedViewModel.accountSmartData))
+        sharedViewModel.onUIEvent(
+            OnContinueEnable(
+                viewModel.isFormValid() && sourceIncomeSharedViewModel.isFormValid()
+            )
+        )
+        sharedViewModel.onUIEvent(OnContinueVisible(true))
+
+        viewModel.onUIEvent(
+            OnCallQueryProfessionUseCase(
+                sharedViewModel.user,
+                sharedViewModel.idBrandAsInt
+            )
+        )
+
+        sharedViewModel.onUIEvent(
+            OnSetNavigation(
+                nextAction = {
+                    sharedViewModel.onUIEvent(
+                        OnCallMutationUpdateGlobalRequestUseCase(
+                            accountSmartData = sharedViewModel.accountSmartData?.copy(
+                                idEconomicActivity = economicActivity?.id?.toLong(),
+                                idProfessionType = viewModel.uiState.professionSmartList.find {
+                                    it?.name == viewModel.uiState.profession
+                                }?.id,
+                                idJobLevel1 = sourceIncomeSharedViewModel.uiState.divisionOneSelected?.id?.toLongOrNull(),
+                                idJobLevel2 = sourceIncomeSharedViewModel.uiState.divisionTwoSelected?.id?.toLongOrNull(),
+                                idJobLevel3 = sourceIncomeSharedViewModel.uiState.divisionThreeSelected?.id?.toLongOrNull(),
+                                fullJobAddress = sourceIncomeSharedViewModel.uiState.address,
+                                income = viewModel.uiState.paymentAmount.toFloatOrNull() ?: 0f,
+                                companyName = viewModel.uiState.companyName,
+                                positionJob = viewModel.uiState.jobPosition,
+                                currentStep = SmartSteps.Search.getNameById(sharedViewModel.uiState.currentStep)
+                            )
+                        )
+                    )
+                },
+                overridePreviousAction = { sourceIncomeSharedViewModel.goBackToMainOptions() },
+                nextStep = sourceIncomeSharedViewModel.getNextStep(sharedViewModel.idBrandAsInt),
+                previousStep = sourceIncomeSharedViewModel.getPreviousStep(sharedViewModel.idBrandAsInt)
+            )
+        )
+
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnFormValidateCompleted -> sharedViewModel.onUIEvent(
+                    OnContinueEnable(event.isFormValid && sourceIncomeSharedViewModel.isFormValid())
+                )
+            }
+        }
+    }
+
+    BackHandler {
+        sourceIncomeSharedViewModel.goBackToMainOptions()
+    }
+
+    ShowCustomDialog(viewModel.uiState)
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
+        Text(
+            text = buildAnnotatedString {
+                withStyle(
+                    style = Typography.h6.toSpanStyle()
+                        .copy(
+                            color = MultimoneyTheme.colors.text,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                ) {
+                    append(stringResource(id = string.smart_account_formal_title))
+                }
+            },
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        CustomOutlinedTextField(
+            value = viewModel.uiState.companyName,
+            onValueChange = { viewModel.onUIEvent(OnCompanyNameChange(it)) },
+            labelText = stringResource(string.smart_salaried_company_name),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            isRequiredMessage = stringResource(string.smart_salaried_company_name_required),
+            modifier = Modifier.padding(top = 24.dp)
+        )
+
+        CustomOutlinedTextField(
+            value = viewModel.uiState.jobPosition,
+            onValueChange = { viewModel.onUIEvent(OnJobPositionChange(it)) },
+            labelText = stringResource(string.smart_salaried_profession_cr),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            isRequiredMessage = stringResource(string.smart_salaried_profession_required),
+            modifier = Modifier.padding(top = 16.dp)
+        )
+
+        CustomDropdown(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .wrapContentSize(Alignment.TopStart)
+                .focusable(false),
+            items = viewModel.uiState.professionSmartList.map { professionStatus ->
+                professionStatus?.name ?: ""
+            },
+            value = viewModel.uiState.profession,
+            onValueChange = { valueSelected, _ ->
+                viewModel.onUIEvent(OnProfessionChange(valueSelected))
+            },
+            labelText = stringResource(id = string.smart_account_formal_select_occupation),
+            placeHolder = stringResource(id = string.select)
+        )
+
+        CustomOutlinedTextField(
+            value = viewModel.uiState.paymentAmount,
+            onValueChange = {
+                viewModel.onUIEvent(OnPaymentAmountChange(it))
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }),
+            labelText = stringResource(id = string.smart_account_formal_monthly),
+            modifier = Modifier
+                .padding(top = 16.dp),
+            placeHolder = stringResource(id = string.smart_account_formal_placeholder),
+            customTransformation = formatDecimalMoney(
+                stringResource(
+                    id = sharedViewModel.idBrandAsInt.getCurrencySymbol()
+                )
+            ),
+            leadingIcon = R.drawable.ic_quick_action_money
+        )
+
+        SmartAddressFields(
+            sourceIncomeSharedViewModel = sourceIncomeSharedViewModel,
+            user = sharedViewModel.user,
+            idBrand = sharedViewModel.idBrandAsInt,
+            focusManager = focusManager
+        )
+    }
+}
+
+@Composable
+fun ShowCustomDialog(uiState: UIState) {
+    if (uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(uiState.openDialog.titleResource),
+            message = stringResource(uiState.openDialog.descriptionResource).ifEmpty { uiState.openDialog.description },
+            positiveButtonText = stringResource(uiState.openDialog.positiveResource),
+            openDialogCustom = uiState.openDialog.isActive,
+            onPositiveAction = uiState.openDialog.positiveAction
+        )
+    }
+}

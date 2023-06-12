@@ -1,0 +1,16 @@
+query BanksAmpliation($user: String!, $idBrand: Int!) {
+    listBanks(listBanksInput: {user: $user, idBrand: $idBrand}) {
+        id
+        bank: banco
+        sinpeBit: bit_SINPE
+        intSubOrigin:p_Int_Sub_Origen
+        innerBit:bit_Interno
+        sinpeLenth:tin_Length_SINPE
+        innerMask:str_Mask_Interno
+        state:bit_Estado
+        suvMtrUser:fk_Suv_Mtr_Usuario
+        suvCatBrand:fk_Suv_Cat_Marca
+        subOrigin:subOrigen
+        codeACH:cODIGO_ACH
+    }
+}

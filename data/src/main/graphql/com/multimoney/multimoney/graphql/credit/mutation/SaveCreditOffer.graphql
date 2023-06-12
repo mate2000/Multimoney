@@ -1,0 +1,46 @@
+mutation SaveCreditOffer(
+    $pkUser: Long!,
+    $idUserRequest: Long!,
+    $idBrand: Int!
+){
+  saveCreditOffer(
+        saveCreditOfferInput: {
+            pkUser:$pkUser,
+            idUserRequest: $idUserRequest,
+            idBrand: $idBrand
+        }
+  ) {
+        idUserRequest
+        products {
+            iD_PRODUCTO
+            lIMITE_CREDITO
+            tRACTO
+            mINIMO_DESEMBOLSO
+            mAXIMO_DESEMBOLSO
+            dESCRIPCION_PROMOCION
+            pK_PSE_CAT_PROMOCION_PLAZO
+            pLAZO
+            mONEDA
+            eS_PROMOCIONAL
+            cICLO
+            tASA_INTERES_NORMAL
+            sTR_TASA_INTERES_NORMAL
+            cUOTA
+            cUOTA_AUTORIZA
+            cOMISION_DESEMBOLSO
+            sTR_COMISION_DESEMBOLSO
+            fECHA_PAGO
+            nOMBRE_MONEDA
+            sTR_MINIMO_DESEMBOLSO
+            sTR_MAXIMO_DESEMBOLSO
+            cUOTA_ORIGINAL
+            mensaje_Plazo
+            mensaje_Condiciones
+            nombre_Usuario
+            cuota_Real
+            pLAZO_NUMERICO
+            bIT_REQUIERE_FORMALIZACION
+        }
+        rejectedBlaze
+    }
+}

@@ -1,0 +1,552 @@
+package com.multimoney.multimoney.presentation.ui.home.product.credit.uisections
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.Wording
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.BlackTransparency20
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency10
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.IsPaymentExpired
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnProgressCalculation
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditOfferApproved
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessCreateAccountFailure
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnFidoIncomplete
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoMaxAttempts
+import com.multimoney.multimoney.presentation.ui.home.product.credit.uisections.CreditProcessStarted.CreditProcessOnfidoReject
+import com.multimoney.multimoney.presentation.uielement.BalanceTextView
+import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeChip
+import com.multimoney.multimoney.presentation.uielement.CustomRoundedLinearProgress
+import com.multimoney.multimoney.presentation.util.getCardDateFormat
+
+/**
+ * Composable to handle the status non-preapproved for GT and SV
+ */
+@Composable
+fun CardNonPreApprovedCredit(
+    textOne: String? = "",
+    textTwo: String? = ""
+) {
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            CustomInformativeChip(
+                text = stringResource(id = string.home_my_products_title_credit),
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+                shape = RoundedCornerShape(12.dp),
+                background = if (isSystemInDarkTheme()) {
+                    BlackTransparency20
+                } else {
+                    WhiteTransparency10
+                }
+            )
+            Text(
+                text = if (textOne.isNullOrEmpty()) {
+                    stringResource(
+                        id = string.home_product_sv_non_pre_approved_credit_description
+                    )
+                } else {
+                    textOne
+                },
+                modifier = Modifier.padding(top = 20.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+            if (textTwo.isNullOrEmpty().not()) {
+                Text(
+                    text = textTwo ?: "",
+                    modifier = Modifier.padding(top = 4.dp),
+                    style = Typography.caption,
+                    color = MultimoneyTheme.colors.text
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Composable to handle the status credit rejected
+ */
+@Composable
+@Preview
+fun CardGtSvCreditRejected(
+    wording: Wording? = Wording(
+        textOne = "",
+        textTwo = "",
+        cTA = "",
+        link = "",
+        display = false
+    )
+) {
+    val notDefinedValue = stringResource(id = string.not_defined)
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            CustomInformativeChip(
+                text = stringResource(id = string.home_my_products_title_credit),
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+                shape = RoundedCornerShape(12.dp),
+                background = if (isSystemInDarkTheme()) {
+                    BlackTransparency20
+                } else {
+                    WhiteTransparency10
+                }
+            )
+            Text(
+                text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
+                modifier = Modifier.padding(top = 20.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.creditNotApprovedText
+            )
+            Text(
+                text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
+                modifier = Modifier.padding(top = 4.dp),
+                style = Typography.caption,
+                color = MultimoneyTheme.colors.text
+            )
+        }
+    }
+}
+
+/**
+ * Composable to handle the status without credit GT
+ */
+@Composable
+@Preview
+fun CardGTWithoutCredit(action: () -> Unit = {}) {
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                action()
+            }
+    ) {
+        Text(
+            text = stringResource(id = R.string.home_product_gt_with_out_credit_title),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = stringResource(id = R.string.home_product_gt_with_out_credit_description),
+            modifier = Modifier.padding(top = 8.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+        CustomImage(
+            modifier = Modifier
+                .padding(top = 40.dp)
+                .align(Alignment.CenterHorizontally),
+            drawableResource = drawable.ic_chevron_up
+        )
+        Text(
+            text = stringResource(id = string.home_product_gt_with_out_credit_action),
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .align(Alignment.CenterHorizontally),
+            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+// Credit In Process
+/**
+ * Composable function handle to status of the credit pre approved
+ */
+@Composable
+@Preview
+fun CreditPreApproved(
+    amount: String? = "0.0",
+    idBrand: Int = Brand.ElSalvador.id,
+    action: () -> Unit = {},
+    wording: Wording? = Wording("", "", "")
+) {
+    val notDefinedValue = stringResource(id = R.string.not_defined)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                action()
+            }
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = string.home_my_products_title_credit),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = if (isSystemInDarkTheme()) {
+                BlackTransparency20
+            } else {
+                WhiteTransparency10
+            }
+        )
+        Text(
+            text = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: "",
+            modifier = Modifier.padding(top = 20.dp),
+            style = Typography.h6.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: "",
+            modifier = Modifier.padding(top = 4.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.creditNotApprovedText
+        )
+        CustomImage(
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .align(Alignment.CenterHorizontally),
+            drawableResource = drawable.ic_chevron_up
+        )
+        Text(
+            text = wording?.cTA?.filter { wording.cTA != notDefinedValue } ?: "",
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .align(Alignment.CenterHorizontally),
+            style = Typography.body2.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+    }
+}
+
+@Composable
+@Preview
+fun CardWithCreditInProcess(
+    type: CreditProcessStarted? = CreditProcessOnfidoReject,
+    idBrand: Int = Brand.ElSalvador.id,
+    wording: Wording? = Wording("", "", "")
+) {
+    val notDefinedValue = stringResource(id = R.string.not_defined)
+    val chipText = R.string.home_product_process_credit_label
+    val title: String = wording?.textOne?.filter { wording.textOne != notDefinedValue } ?: ""
+    val description: String = wording?.textTwo?.filter { wording.textTwo != notDefinedValue } ?: ""
+    var startIcon = drawable.ic_time
+
+    val backgroundShip: Color = if (isSystemInDarkTheme()) {
+        BlackTransparency20
+    } else {
+        WhiteTransparency10
+    }
+    when (type) {
+        CreditProcessOnfidoMaxAttempts -> {
+            startIcon = drawable.ic_warning
+        }
+        CreditProcessOnFidoIncomplete -> {
+            startIcon = drawable.ic_warning
+        }
+        CreditProcessOnfidoReject -> {
+            startIcon = drawable.ic_warning
+        }
+        CreditProcessCreateAccountFailure -> {
+            startIcon = drawable.ic_warning
+        }
+        CreditOfferApproved -> {
+            startIcon = 0
+        }
+        else -> Unit
+    }
+
+    Column(
+        modifier = Modifier
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            CustomInformativeChip(
+                text = stringResource(id = chipText),
+                textStyle = Typography.body2.copy(
+                    fontWeight = FontWeight.SemiBold,
+                    color = MultimoneyTheme.colors.text
+                ),
+                modifier = Modifier.padding(top = 12.dp),
+                shape = RoundedCornerShape(12.dp),
+                background = backgroundShip,
+                startIcon = startIcon,
+                startIconTint = MultimoneyTheme.colors.iconColor
+            )
+            Text(
+                text = title,
+                modifier = Modifier.padding(top = 14.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+            Text(
+                text = description,
+                modifier = Modifier.padding(top = 8.dp),
+                style = Typography.caption,
+                color = MultimoneyTheme.colors.text
+            )
+        }
+    }
+}
+
+/**
+ * Composable function show the status of evicertia firmed and onfido pending
+ */
+@Composable
+@Preview
+fun CardCreditFirmedAndOnfidoPending(
+    textOne: String? = "",
+    textTwo: String? = ""
+) {
+    val backgroundShip: Color = if (isSystemInDarkTheme()) {
+        BlackTransparency20
+    } else {
+        WhiteTransparency10
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+    ) {
+        CustomInformativeChip(
+            text = stringResource(id = R.string.home_product_process_credit_label),
+            textStyle = Typography.body2.copy(
+                fontWeight = FontWeight.SemiBold,
+                color = MultimoneyTheme.colors.text
+            ),
+            modifier = Modifier.padding(top = 12.dp),
+            shape = RoundedCornerShape(12.dp),
+            background = backgroundShip,
+            startIcon = drawable.ic_time,
+            startIconTint = MultimoneyTheme.colors.iconColor
+        )
+        Text(
+            text = textOne.orEmpty(),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        Text(
+            text = textTwo.orEmpty(),
+            modifier = Modifier.padding(top = 8.dp, bottom = 73.dp),
+            style = Typography.caption,
+            color = MultimoneyTheme.colors.text
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun OngoingCredit(
+    viewModel: ProductViewModel
+) {
+    viewModel.onUIEvent(OnProgressCalculation)
+    viewModel.onUIEvent(IsPaymentExpired)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 12.dp, start = 24.dp, end = 24.dp)
+    ) {
+        Text(
+            text = stringResource(id = viewModel.uiState.onGoingCreditCardTitle),
+            modifier = Modifier.padding(top = 14.dp),
+            style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+            color = MultimoneyTheme.colors.text
+        )
+        if (viewModel.uiState.isCreditAvailable && viewModel.uiState.canExpandCredit) {
+            viewModel.balanceCredit?.getFirstSummary()?.let {
+                BalanceTextView(
+                    modifier = Modifier.padding(bottom = 10.dp),
+                    balanceText = it.availableBalanceLabel ?: "",
+                    currencyStyle = Typography.h4.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    currencyDecimalStyle = Typography.body2.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.padding(bottom = 30.dp))
+        }
+        CustomRoundedLinearProgress(
+            progress = viewModel.productProgress,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            Text(
+                text = stringResource(
+                    id = R.string.home_product_remaining,
+                    viewModel.getCreditBalanceLabel(viewModel.balanceCredit?.balanceCredit)
+                ),
+                modifier = Modifier.padding(top = 4.dp),
+                style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                color = MultimoneyTheme.colors.text
+            )
+        }
+        // Check if user has a payment available to show quota information
+        if (viewModel.uiState.paymentAvailable) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = if (viewModel.uiState.isCreditAvailable && viewModel.uiState.canExpandCredit) {
+                            0.dp
+                        } else {
+                            40.dp
+                        },
+                        bottom = 14.dp
+                    )
+            ) {
+                Column {
+                    Text(
+                        text = stringResource(
+                            id = if (viewModel.uiState.idBrand.toIntOrNull() == Brand.Mexico.id) {
+                                string.home_product_fee_mx
+                            } else {
+                                string.home_product_fee
+                            }
+                        ),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Text(
+                        text = viewModel.getQuota(viewModel.balanceCredit?.balanceCredit),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Column {
+                    Text(
+                        text = stringResource(id = viewModel.isExpiredTitle),
+                        modifier = Modifier.padding(top = 4.dp),
+                        style = Typography.body1.copy(fontWeight = FontWeight.SemiBold),
+                        color = MultimoneyTheme.colors.text
+                    )
+                    Chip(
+                        enabled = false,
+                        colors = ChipDefaults.chipColors(
+                            disabledBackgroundColor = MultimoneyTheme.colors.productChipBackground,
+                            disabledContentColor = MultimoneyTheme.colors.text
+                        ),
+                        modifier = Modifier
+                            .height(28.dp)
+                            .padding(top = 2.dp),
+                        leadingIcon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if ((
+                                            viewModel.balanceCredit?.getFirstSummary()?.daysExpired
+                                                ?: 0
+                                            ) > 0
+                                        ) MultimoneyTheme.colors.dotIndicatorExpired else MultimoneyTheme.colors.tipActionColor
+                                    )
+                            )
+                        },
+                        onClick = {
+                            // Empty on purpose
+                        },
+                        content = {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text(
+                                    text = getCardDateFormat(viewModel.balanceCredit?.getFirstSummary()?.paymentDateLabel),
+                                    style = Typography.body1.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        platformStyle = PlatformTextStyle(
+                                            includeFontPadding = false
+                                        )
+                                    )
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+sealed class CreditProcessStarted {
+    object CreditStartProcessIncomplete : CreditProcessStarted()
+    object CreditOfferApproved : CreditProcessStarted()
+    object CreditProcessOnFidoIncomplete : CreditProcessStarted()
+    object CreditManualProcess : CreditProcessStarted()
+    object CreditProcessFirmReject : CreditProcessStarted()
+    object CreditProcessFirmMaxAttempts : CreditProcessStarted()
+    object CreditProcessOnfidoReject : CreditProcessStarted()
+    object CreditProcessOnfidoMaxAttempts : CreditProcessStarted()
+    object CreditProcessCreateAccountFailure : CreditProcessStarted()
+}

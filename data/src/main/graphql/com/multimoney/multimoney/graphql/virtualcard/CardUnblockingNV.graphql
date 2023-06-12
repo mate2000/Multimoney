@@ -1,0 +1,16 @@
+mutation CardUnblockingNV($observations: String!, $clientId: Int!, $userApp: String!,$cardToken: String!,$source: String!,$idLoan: Int!,$user: String!,$idBrand: Int!){
+    cardUnblockingNV(
+        cardUnblockingNVInput: {
+            observations: $observations
+            clientId: $clientId
+            userApp: $userApp
+            cardToken: $cardToken
+            source: $source
+            idPrestamo: $idLoan
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        processedAt
+    }
+}

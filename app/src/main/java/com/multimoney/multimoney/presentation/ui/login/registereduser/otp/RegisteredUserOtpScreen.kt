@@ -1,0 +1,284 @@
+package com.multimoney.multimoney.presentation.ui.login.registereduser.otp
+
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.common.api.Status
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.BaseEvent.OnOpenWhatsApp
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TIMER_DURATION
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.Companion.TOTAL_DIGITS
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallCountryContact
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallMutationSendPinProcess
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnGetOtpFromMessage
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnInitializeTimer
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtherPhoneNumberClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtpValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIState
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.model.RegisteredUserOtpState
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInformativeText
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.OtpTextField
+import com.multimoney.multimoney.presentation.uielement.SystemBroadcastReceiver
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+
+@Composable
+fun RegisteredUserOtpScreen(
+    onPopBackStack: (NavEvent.PopBackStack) -> Unit = {},
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: RegisteredUserOtpViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+
+    // Create start activity result for SMS Retrieve
+    val launchSmsActivityResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            when (result.resultCode) {
+                Activity.RESULT_OK -> {
+                    data?.apply {
+                        getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)?.let {
+                            viewModel.onUIEvent(OnGetOtpFromMessage(it))
+                        }
+                    }
+                }
+            }
+        }
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(OnCallCountryContact)
+        viewModel.onUIEvent(OnStart)
+    }
+
+    LaunchedEffect(true) {
+        viewModel.apply {
+            executeNavigation(onPopAndNavigate = onPopAndNavigate, onPopBackStack = onPopBackStack)
+            onUIEvent(OnInitializeTimer(RegisteredUserOtpState.OTP_SENT_FIRST_TIME, TIMER_DURATION))
+            onUIEvent(OnCallMutationSendPinProcess)
+            baseEvent.collect { event ->
+                when (event) {
+                    is OnOpenWhatsApp -> {
+                        context.openWhatsAppDeepLink(event.linkWhatsapp)
+                    }
+                }
+            }
+        }
+    }
+
+    // Start SMS Retriever client
+    SmsRetriever.getClient(LocalContext.current).startSmsUserConsent(null)
+
+    SystemBroadcastReceiver(SmsRetriever.SMS_RETRIEVED_ACTION) { intent ->
+        val extras = intent?.extras
+        val status = extras?.get(SmsRetriever.EXTRA_STATUS) as Status
+        when (status.statusCode) {
+            CommonStatusCodes.SUCCESS -> {
+                val messageIntent =
+                    extras.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+                launchSmsActivityResult.launch(messageIntent)
+            }
+        }
+    }
+
+    viewModel.apply {
+        RegisteredUserOtpContent(
+            uiState = uiState,
+            viewModel = viewModel,
+            onOtpValueChange = { value -> onUIEvent(OnOtpValueChange(value)) },
+            onOtherPhoneNumberClick = { onUIEvent(OnOtherPhoneNumberClick) },
+            getPhaseResourceString = { getPhaseResourceString() },
+            onCallMutationSendPinProcess = { onUIEvent(OnCallMutationSendPinProcess) },
+            onBackClick = { onUIEvent(OnBackClick) },
+            onContinueClick = { onUIEvent(OnContinueClick) }
+        )
+    }
+}
+
+@Composable
+fun RegisteredUserOtpContent(
+    uiState: UIState = UIState(),
+    viewModel: RegisteredUserOtpViewModel,
+    onOtpValueChange: (String) -> Unit = {},
+    onOtherPhoneNumberClick: () -> Unit = {},
+    getPhaseResourceString: () -> Int = { string.empty },
+    onCallMutationSendPinProcess: () -> Unit = {},
+    onBackClick: () -> Unit = {},
+    onContinueClick: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .background(MultimoneyTheme.colors.background)
+            .fillMaxSize()
+    ) {
+        TopNavBar(
+            isRightButtonVisible = false,
+            onLeftButtonClick = { onBackClick() }
+        )
+        Column(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    style = Typography.h6.copy(
+                        color = MultimoneyTheme.colors.text,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    text = stringResource(
+                        id = uiState.titleResource,
+                        uiState.titleOtpMethod
+                    ),
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth()
+                )
+
+                Text(
+                    style = Typography.body2.copy(color = MultimoneyTheme.colors.labelText),
+                    text = stringResource(id = uiState.subtitleResource),
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                )
+
+                CustomInformativeText(
+                    modifier = Modifier.padding(top = 8.dp),
+                    leadingIcon = R.drawable.ic_informative_400,
+                    text = stringResource(id = uiState.disclaimerResource),
+                    textStyle = Typography.body2.copy(color = MultimoneyTheme.colors.labelText)
+                )
+
+                if (uiState.isOtherPhoneNumberVisible) {
+                    ClickableText(
+                        text = AnnotatedString(stringResource(id = string.registered_user_otp_other_phone_number)),
+                        modifier = Modifier.padding(top = 24.dp),
+                        style = Typography.body2.copy(
+                            textDecoration = TextDecoration.Underline,
+                            color = MultimoneyTheme.colors.textLink
+                        ),
+                        onClick = { onOtherPhoneNumberClick() }
+                    )
+                }
+
+                // Fields
+                OtpTextField(
+                    value = uiState.otp,
+                    onValueChange = { onOtpValueChange(it) },
+                    isValueFromSms = uiState.isOtpFromSms,
+                    digits = TOTAL_DIGITS,
+                    placeHolder = stringResource(id = string.registered_user_otp_code_placeholder),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = string.registered_user_otp_code_required),
+                    isError = uiState.otpError.first,
+                    errorMessage = stringResource(id = uiState.otpError.second)
+                )
+
+                when (uiState.otpState) {
+                    RegisteredUserOtpState.OTP_SENT_FIRST_TIME, RegisteredUserOtpState.OTP_REQUESTED -> {
+                        Row {
+                            Text(
+                                text = stringResource(id = getPhaseResourceString()),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 32.dp),
+                                style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
+                            )
+                            Text(
+                                text = uiState.remainingTimeText,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(top = 32.dp)
+                                    .width(45.dp),
+                                style = Typography.body2.copy(
+                                    color = MultimoneyTheme.colors.timerColor,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            )
+                            Text(
+                                text = stringResource(id = string.sign_in_otp_expiration_time_phase_seconds),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 32.dp),
+                                style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
+                            )
+                        }
+                    }
+                    RegisteredUserOtpState.REQUEST_OTP -> ClickableText(
+                        text = AnnotatedString(stringResource(id = getPhaseResourceString())),
+                        modifier = Modifier.padding(top = 32.dp),
+                        style = Typography.body2.copy(
+                            textDecoration = TextDecoration.Underline,
+                            color = MultimoneyTheme.colors.textLink
+                        ),
+                        onClick = { onCallMutationSendPinProcess() }
+                    )
+                }
+            }
+            CustomButton(
+                onClick = { onContinueClick() },
+                enable = uiState.isFormValid,
+                text = stringResource(id = string.button_continue),
+                modifier = Modifier
+                    .padding(bottom = 20.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+            )
+        }
+    }
+    LoadingIndicator(uiState.isLoading)
+    if (uiState.dialogParameters.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = uiState.dialogParameters.titleResource).ifEmpty { uiState.dialogParameters.title },
+            message = stringResource(id = uiState.dialogParameters.descriptionResource).ifEmpty { uiState.dialogParameters.description },
+            positiveButtonText = stringResource(id = uiState.dialogParameters.positiveResource),
+            negativeButtonText = stringResource(id = uiState.dialogParameters.negativeResource),
+            openDialogCustom = uiState.dialogParameters.isActive,
+            onPositiveAction = uiState.dialogParameters.positiveAction,
+            onNegativeAction = uiState.dialogParameters.negativeAction
+        )
+    }
+    BackHandler {
+        onBackClick()
+    }
+}

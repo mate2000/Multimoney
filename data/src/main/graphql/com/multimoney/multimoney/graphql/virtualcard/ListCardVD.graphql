@@ -1,0 +1,26 @@
+query ListCardVD(
+  $identification:String!,
+  $user:String!,
+  $idBrand:Int!
+)
+{
+  listCardVD(
+    listCardVDInput: {
+      identification: $identification,
+      user: $user,
+      idBrand: $idBrand
+    }
+  ) {
+    idCard
+    creationDate
+    verified
+    detail
+    cardMasked
+    verificationValue
+    expirationMonth
+    expirationYear
+    cardTokenId
+    currencyDescription
+    country
+  }
+}

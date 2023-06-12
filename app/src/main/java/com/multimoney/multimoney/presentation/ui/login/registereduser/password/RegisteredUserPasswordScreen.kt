@@ -1,0 +1,351 @@
+package com.multimoney.multimoney.presentation.ui.login.registereduser.password
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.drawable
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.BaseEvent.OnOpenBiometricDialog
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCallPasswordSave
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnConfirmPasswordValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnFingerprintCheckedChanged
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnIsBiometricAvailable
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnPasswordValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.password.RegisteredUserPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption
+import com.multimoney.multimoney.presentation.uielement.CustomButton
+import com.multimoney.multimoney.presentation.uielement.CustomButtonType.PrimaryPrimary
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomModalWarningBottomSheet
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.TopNavBar
+import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.getDeviceName
+import com.multimoney.multimoney.presentation.util.getDeviceType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RegisteredUserPasswordScreen(
+    onPopAndNavigate: (NavEvent.PopAndNavigate) -> Unit = {},
+    viewModel: RegisteredUserPasswordViewModel = hiltViewModel()
+) {
+    // Properties
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val fragmentActivity = LocalContext.current as FragmentActivity
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded)
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+
+    viewModel.onUIEvent(
+        RegisteredUserPasswordViewModel.UIEvent.OnInitializeDialogTexts(
+            biometricPromptTitle = stringResource(id = string.biometric_dialog_title),
+            biometricPromptDescription = stringResource(id = string.biometric_dialog_description),
+            biometricPromptNegative = stringResource(id = string.cancel),
+            biometricDialogSuccessDescription = stringResource(id = string.dialog_success_biometric_description),
+            biometricDialogFailureDescription = stringResource(id = string.dialog_failure_biometric_description)
+        )
+    )
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(RegisteredUserPasswordViewModel.UIEvent.OnValidatePasswordStructure)
+
+        viewModel.onUIEvent(
+            RegisteredUserPasswordViewModel.UIEvent.OnSetupDeviceInfo(
+                getDeviceName(fragmentActivity) ?: "",
+                getDeviceType(fragmentActivity).value ?: ""
+            )
+        )
+        viewModel.executeNavigation(onPopAndNavigate = onPopAndNavigate)
+        viewModel.apply {
+            onUIEvent(
+                OnIsBiometricAvailable(biometricHelper.isBiometricAvailable(context))
+            )
+        }
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnOpenBiometricDialog -> viewModel.onUIEvent(
+                    OnShowBiometricPromptForEncryption(
+                        fragmentActivity = fragmentActivity,
+                        userEmail = viewModel.userData?.email ?: "",
+                        userName = "${viewModel.userData?.firstName} ${viewModel.userData?.firstLastName}"
+                    )
+                )
+            }
+        }
+    }
+
+    // Content
+    RegisteredUserPasswordContent(
+        viewModel = viewModel,
+        onCloseClick = { viewModel.onUIEvent(OnCloseClick(focusManager = focusManager)) },
+        onPasswordChange = { viewModel.onUIEvent(OnPasswordValueChange(it)) },
+        onConfirmPasswordChange = { viewModel.onUIEvent(OnConfirmPasswordValueChange(it)) },
+        viewModel.biometricHelper.isBiometricAvailable(context),
+        onFingerprintCheckedChanged = { value, showDialog ->
+            viewModel.onUIEvent(OnFingerprintCheckedChanged(value, showDialog))
+        },
+        onContinueClick = {
+            viewModel.onUIEvent(OnCallPasswordSave)
+        },
+        bottomSheetState,
+        coroutineScope
+    )
+
+    LoadingIndicator(viewModel.uiState.isLoading)
+
+    BackHandler {
+        when {
+            bottomSheetState.isVisible -> {
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+            }
+            else -> viewModel.onUIEvent(OnCloseClick(focusManager = focusManager))
+        }
+    }
+
+    // Dialog
+    if (viewModel.uiState.openDialogCustom.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource).ifEmpty { viewModel.uiState.openDialogCustom.title },
+            message = stringResource(id = viewModel.uiState.openDialogCustom.descriptionResource).ifEmpty { viewModel.uiState.openDialogCustom.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeResource),
+            onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialogCustom.negativeAction,
+            onDismissAction = viewModel.uiState.openDialogCustom.dismissAction,
+            openDialogCustom = viewModel.uiState.openDialogCustom.isActive
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun RegisteredUserPasswordContent(
+    viewModel: RegisteredUserPasswordViewModel,
+    onCloseClick: () -> Unit = {},
+    onPasswordChange: (String) -> Unit = {},
+    onConfirmPasswordChange: (String) -> Unit = {},
+    isBiometricAvailable: Boolean = false,
+    onFingerprintCheckedChanged: (Boolean, Boolean) -> Unit = { _, _ -> },
+    onContinueClick: () -> Unit = {},
+    bottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
+) {
+    val focusManager = LocalFocusManager.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MultimoneyTheme.colors.background),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            TopNavBar(
+                isLeftButtonVisible = false,
+                onRightButtonClick = onCloseClick
+            )
+            Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp)) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = Typography.h6.toSpanStyle().copy(
+                                color = MultimoneyTheme.colors.labelText,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        ) {
+                            append(stringResource(id = string.sign_up_password_title))
+                        }
+                    },
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth(),
+                    lineHeight = 24.sp
+                )
+                CustomOutlinedTextField(
+                    value = viewModel.uiState.password,
+                    onValueChange = {
+                        onPasswordChange(it)
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(onNext = {
+                        focusManager.clearFocus()
+                    }),
+                    labelText = stringResource(id = string.sign_up_label_password),
+                    isPassword = true,
+                    modifier = Modifier.padding(top = 24.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = string.sign_up_password_required),
+                    isError = viewModel.uiState.passwordError.first,
+                    errorMessage = if (viewModel.uiState.passwordError.first) {
+                        if (viewModel.uiState.passwordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.password)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.passwordError.second)
+                        }
+                    } else {
+                        null
+                    }
+                )
+                CustomOutlinedTextField(
+                    value = viewModel.uiState.confirmPassword,
+                    onValueChange = {
+                        onConfirmPasswordChange(
+                            it
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                    }),
+                    labelText = stringResource(id = string.sign_up_label_confirm_password),
+                    isPassword = true,
+                    modifier = Modifier.padding(top = 16.dp),
+                    isRequired = true,
+                    isRequiredMessage = stringResource(id = string.sign_up_password_required),
+                    isError = viewModel.uiState.confirmPasswordError.first,
+                    errorMessage = if (viewModel.uiState.confirmPasswordError.first) {
+                        if (viewModel.uiState.confirmPasswordError.second == R.string.sign_up_password_requirement_forbidden_words) {
+                            stringResource(
+                                id = R.string.sign_up_password_requirement_forbidden_words,
+                                viewModel.getForbiddenWords(viewModel.uiState.confirmPassword)
+                            )
+                        } else {
+                            stringResource(id = viewModel.uiState.confirmPasswordError.second)
+                        }
+                    } else {
+                        null
+                    }
+                )
+                FlowRow(
+                    Modifier.padding(top = 8.dp)
+                ) {
+                    PasswordRequirementLabels(
+                        text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
+                        state = viewModel.uiState.eightCharactersMinimumState
+                    )
+                    PasswordRequirementLabels(
+                        text = stringResource(id = string.sign_up_password_requirement_one_uppercase),
+                        state = viewModel.uiState.oneUppercaseState
+                    )
+                    PasswordRequirementLabels(
+                        text = stringResource(id = string.sign_up_password_requirement_one_lowercase),
+                        state = viewModel.uiState.oneLowercaseState
+                    )
+                    PasswordRequirementLabels(
+                        text = stringResource(id = string.sign_up_password_requirement_one_number),
+                        state = viewModel.uiState.oneNumberState
+                    )
+                    PasswordRequirementLabels(
+                        text = stringResource(id = string.sign_up_password_requirement_one_characer),
+                        state = viewModel.uiState.oneCharacterState
+                    )
+                }
+                if (isBiometricAvailable) {
+                    CustomCheckBox(
+                        checked = viewModel.uiState.isFingerprintChecked,
+                        onCheckedChange = {
+                            onFingerprintCheckedChanged(it, it)
+                        },
+                        text = stringResource(
+                            id = if (viewModel.userData?.idBrand == Brand.Mexico.id) string.sign_in_activate_fingerprint_mx else string.sign_in_activate_fingerprint
+                        ),
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                }
+            }
+        }
+
+        CustomButton(
+            onClick = onContinueClick,
+            text = stringResource(id = string.button_continue),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 32.dp, top = 16.dp)
+                .fillMaxWidth()
+                .height(48.dp),
+            buttonType = PrimaryPrimary,
+            enable = viewModel.uiState.isContinueEnabled
+        )
+    }
+    CustomModalWarningBottomSheet(
+        titleResource = if (viewModel.idBrand == Brand.CostaRica.id) {
+            R.string.password_security_bottom_sheet_general_title_cr
+        } else {
+            R.string.password_security_bottom_sheet_general_title
+        },
+        descriptionText = buildAnnotatedString {
+            withStyle(
+                style = Typography.subtitle1.toSpanStyle().copy(
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append(stringResource(id = string.password_security_bottom_sheet_general_description))
+            }
+            withStyle(
+                style = Typography.subtitle1.toSpanStyle()
+            ) {
+                append(stringResource(id = string.password_security_bottom_sheet_signup_description))
+            }
+        },
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope
+    )
+}
+
+@Composable
+fun PasswordRequirementLabels(modifier: Modifier = Modifier, text: String, state: Boolean?) {
+    CustomPasswordRequirementLabel(
+        modifier,
+        text = text,
+        successIcon = drawable.ic_check,
+        errorIcon = drawable.ic_error_password,
+        state = state
+    )
+}

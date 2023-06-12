@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_800">
+
+    <com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/watermarkLayout"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/trademark"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/onfido_message_screen_text_margin_horizontal"
+            android:layout_marginRight="@dimen/onfido_message_screen_text_margin_horizontal"
+            android:orientation="vertical">
+
+            <com.onfido.android.sdk.capture.ui.widget.CircularImageView
+                android:id="@+id/videoConfirmationIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:onfidoCircularIcon="@drawable/onfido_ic_thick_white" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/OnfidoTextStyle.Title.Large"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/onfido_outro_title_margin_top"
+                android:layout_marginBottom="@dimen/onfido_outro_title_margin_bottom"
+                android:gravity="center"
+                android:text="@string/onfido_outro_title"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/subtitle"
+                style="@style/OnfidoTextStyle.Body.Compact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/onfido_liveness_info_text_spacing"
+                android:gravity="center"
+                android:text="@string/onfido_outro_body"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+    </com.onfido.android.sdk.capture.ui.widget.ShadowedScrollView>
+
+    <com.onfido.android.sdk.capture.ui.widget.Button
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/watermarkLayout"
+        android:layout_marginHorizontal="@dimen/onfido_button_horizontal_margin"
+        app:onfidoButtonText="@string/onfido_outro_button_primary" />
+
+    <include layout="@layout/onfido_watermark_layout" />
+
+</RelativeLayout>

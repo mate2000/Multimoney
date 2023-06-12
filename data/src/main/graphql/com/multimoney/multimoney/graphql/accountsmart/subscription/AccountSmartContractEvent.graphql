@@ -1,0 +1,11 @@
+subscription AccountSmartContractEvent($idBrand: Int!, $idRequestSysde: Long!){
+    accountSmartContractEvent(input: {idBrand: $idBrand, idRequestSysde: $idRequestSysde}){
+        idRequestSysde
+        idBrand
+        link
+        statusEvicertia
+        statusOnfido
+        active
+        currentStep
+    }
+}

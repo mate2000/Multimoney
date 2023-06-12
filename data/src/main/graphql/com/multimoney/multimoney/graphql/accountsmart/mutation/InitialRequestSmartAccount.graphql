@@ -1,0 +1,14 @@
+mutation InitialRequestSmartAccount($pkUser: Long!,$idBrand: Int!,$user: String!){
+    initialRequestSmartAccount(globalRequestInput: {pkUser: $pkUser, idBrand: $idBrand, user: $user}){
+        result {
+            idGlobalRequest
+            accountExists
+            idSysdeRequest
+        }
+        status
+        message
+        haveError: _HaveError
+        errorMessage: _ErrorMessage
+        fullError: _FullError
+    }
+}

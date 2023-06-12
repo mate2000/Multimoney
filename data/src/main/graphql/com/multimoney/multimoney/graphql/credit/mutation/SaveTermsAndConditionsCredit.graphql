@@ -1,0 +1,21 @@
+mutation SaveTermsAndConditionsCredit(
+    $user: String!,
+    $idBrand: Int!,
+    $pkUser: Long!,
+    $currentFlow: String!,
+    $identification: String!
+){
+  saveTermsAndConditionsCredit(
+        termsAndConditionsCreditInput: {
+            user: $user,
+            idBrand: $idBrand,
+            pkUser: $pkUser,
+            currentFlow: $currentFlow,
+            identification: $identification
+        }
+  ) {
+        status
+        message
+        detail
+    }
+}

@@ -1,0 +1,22 @@
+query GetPaxosChargesQuery(
+    $user: String!,
+    $idBrand: Int!,
+    $key: String!,
+    $transaction: String!
+) {
+    cryptoChargeList(cryptoChargeListInput: {
+        user: $user,
+        idBrand: $idBrand,
+        key: $key,
+        transaction: $transaction
+    }) {
+        id,
+        transaction,
+        key,
+        startAmount,
+        finalAmount,
+        value,
+        type
+
+    }
+}

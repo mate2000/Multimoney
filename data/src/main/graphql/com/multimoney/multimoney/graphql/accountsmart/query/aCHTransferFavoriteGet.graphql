@@ -1,0 +1,40 @@
+query aCHTransferFavoriteGet(
+    $user: String,
+    $idBrand: Int,
+    $accountForAchTransferId : Int!
+) {
+    aCHTransferFavoriteGet(
+        aCHTransferFavoriteGetInput: {
+        user: $user,
+        idBrand: $idBrand,
+        accountForAchTransferId : $accountForAchTransferId
+        }
+    ) {
+        status
+        message
+        result {
+            accountForAchTransferId
+            accountNumber
+            description
+            titularName
+            notificationEmail
+            identificacionNumber
+            isFavorite
+            typeAccountId
+            destinationBankId
+            typeAccountDescription
+            destinationBankDescription
+            status
+            destinationIdentificationBank
+            transferState
+            accountTypeCode
+            aCHTypeAccountCode
+            aCHPurposeType
+            aPIACHAccountCode
+            identificationNumberAccount
+            identificationTypeAccount
+            destinationAccountCurrencyId
+            destinationAccountCurrency
+        }
+    }
+}

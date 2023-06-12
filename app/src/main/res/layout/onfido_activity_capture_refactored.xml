@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:importantForAccessibility="no"
+    android:backgroundTint="@color/gray_800"
+    android:background="@color/gray_800"
+    android:visibility="gone"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:id="@+id/contentLayout"
+        android:layout_width="match_parent"
+        android:importantForAccessibility="noHideDescendants"
+        android:layout_height="match_parent">
+
+        <com.onfido.android.sdk.capture.ui.camera.view.CameraSourcePreview
+            android:id="@+id/cameraPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/onfido_dark_500" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:backgroundTint="@color/gray_800"
+        android:background="@color/gray_800"
+        android:id="@+id/overlayContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentInsetLeft="@dimen/onfido_toolbar_title_space_left"
+        app:contentInsetStartWithNavigation="@dimen/onfido_toolbar_title_space_left"
+        android:minHeight="?attr/actionBarSize" />
+</RelativeLayout>

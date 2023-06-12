@@ -1,0 +1,154 @@
+query Balance(
+    $user: String!,
+    $identification: String!,
+    $idBrand: Int!,
+    $idClient: Long!,
+    $idLoanClient: Int!,
+    $creditStatus: Int!,
+    $accountStatus: Int!,
+    $cryptoStatus: Int!,
+    $cardStatus: Int!
+){
+    balanceCredit(
+        balanceCreditInput: {
+            idBrand: $idBrand
+            idClient: $idClient
+            status: $creditStatus
+        }
+    ) {
+        pagare
+        moneda
+        resumen {
+            id_Moneda
+            moneda
+            saldo_Actual
+            saldo_Actual_Label
+            saldo_Disponible
+            saldo_Disponible_Label
+            pago_Minimo
+            fec_Pago
+            pago_Minimo_Label
+            fecha_Pago_Label
+            cuota_Mensual
+            cuota_Mensual_Label
+            dias_Vencidos
+            pagos_Vencidos
+            cuenta_Iban
+            saldo_Monto_Cancelar
+            dias_Vencidos
+            estado_Ampli
+            producto_Activo
+            aplica_Debito_Aut
+            debito_Aut_Activo
+            vDDebito_Aut_Activo
+            aplica_Crear_Tarjeta
+            aplica_Ampli_Comercio
+        }
+        limite_credito
+        limite_credito_label
+        moneda_Default
+        plazo
+        aplica_Debito_Aut
+        debito_Aut_Activo
+        expired_Debito_Aut_Card
+    }
+    balanceAccountSmart(
+        checkAccountInput:{
+            identification : $identification
+            status: $accountStatus
+            user: $user
+            idBrand: $idBrand
+        }
+    ) {
+        accounts {
+            code
+            message
+            totalBalance
+            averageBalance
+            accountNumber
+            tokenNumber
+            productType
+            currencyCode
+            email
+            phoneNumber
+            accountStatus
+            customerId
+            gainedInterest
+            activeBroker
+            ibanAccountNumber
+            idCurrencyAccount
+            fullNameCustomer
+            visaDirectId
+            visaDirectUser
+            totalInterest
+            tokenNumber,
+            month,
+            rate
+        }
+        request {
+            statusFirm
+            statusOnfido
+            idRequestSysde
+            idRequestGlobal
+        }
+    }
+    balanceCryptoAccount(
+        balanceCryptoInput: {
+            identification: $identification
+            status: $cryptoStatus
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        status
+        message
+        outOfService
+        globalBalance
+        investedBalance
+        percentageInvested
+        items {
+            asset
+            available
+            trading
+            descriptionCurrency
+            balanceDollars
+            investedBalanceCurrency
+            percentageInvestedCurrency
+            priceOfTheDay
+            url_image
+            crypto_network
+        }
+    }
+    balanceCardInformation(
+        balanceCardInformationInput: {
+            idClient: $idClient
+            identification: $identification
+            idLoanClient: $idLoanClient
+            user: $user
+            idBrand: $idBrand
+            status: $cardStatus
+        }
+    ) {
+        cardInfo {
+            cardToken
+            cardNumber
+            expDate
+            holderName
+            status
+            blockType {
+                code
+                msg
+            }
+            cvalidation
+            type
+        }
+        sALDO_FLOTANTE
+        pERMITE_DESBLOQUEO
+        eSTADO
+        cOMISION_DESEMBOLSO
+        tASA_INTERES
+        pLAZO
+        nOMBRE_COMPLETO
+        rEMISION
+    }
+}

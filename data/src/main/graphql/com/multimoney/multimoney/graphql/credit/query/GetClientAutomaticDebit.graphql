@@ -1,0 +1,19 @@
+query GetClientAutomaticDebit($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long! ){
+    getClientAutomaticDebit(
+        getClientAutomaticDebitInput: {
+            user: $user
+            idBrand: $idBrand
+            idClient: $idClient
+            idLoanClient: $idLoanClient
+        }
+    ) {
+        id
+        id_Banco
+        origen
+        descripcion_banco
+        numeroCuenta
+        fechaDebito
+        id_Moneda
+        id_Moneda_Destino
+    }
+}

@@ -1,0 +1,37 @@
+query CreditExtensionMessage($idClient:Long!, $currency:String!, $user: String!, $idBrand: Int!, $amountRequest: Decimal!,$idLoanClient: Long!,$quotaMax: Decimal!,
+    $idProductBase: Int!,
+    $cicle: Int!){
+    creditExtensionMessage(
+        creditExtensionMessageInput: {
+            idClient: $idClient
+            currency: $currency
+            user: $user
+            idBrand: $idBrand
+            amountRequest:$amountRequest
+            modelCreditExtensionConfigurator: {
+                idLoanClient: $idLoanClient
+                quotaMax: $quotaMax
+                idProductBase: $idProductBase
+                cicle: $cicle
+            }
+        }
+    ) {
+        pkPromotionMonth
+        product {
+            pkPromotion
+            datePayActuality
+            strDatePayActuality
+            rateInterestNormal
+            strRateInterestNormal
+            comissionDisbursement
+            strComissionDisbursement
+            month
+            quota
+            quotaTotal
+            strQuota
+            strQuotaTotal
+            cicle
+            descriptionPromotionTerm
+        }
+    }
+}

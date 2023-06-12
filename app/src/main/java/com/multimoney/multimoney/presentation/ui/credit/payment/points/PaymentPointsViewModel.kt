@@ -1,0 +1,191 @@
+package com.multimoney.multimoney.presentation.ui.credit.payment.points
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.credit.QueryGetPaymentPointsUseCase
+import com.multimoney.domain.model.credit.PaymentPoint
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.PAYMENT_AMOUNT_LABEL
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_ADDRESS_DESCRIPTION
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_NAME
+import com.multimoney.multimoney.presentation.navigation.navgraph.POINT_SCHEDULE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnCloseScreenClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnDialogPositiveButtonClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnGetPaymentPoints
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnItemPointClick
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.payment.points.PaymentPointsViewModel.UIEvent.OnQueryValueChange
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.encodeURLToUTF
+import com.multimoney.multimoney.presentation.util.getNavParam
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+
+@HiltViewModel
+class PaymentPointsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val queryGetPaymentPointsUseCase: QueryGetPaymentPointsUseCase
+) : BaseViewModel(true) {
+
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    // Stateless
+    var idBrand: Int? = null
+    private var paymentAmountLabel: String? = ""
+    private var creditNumber: String? = ""
+    private var previousScreen: String = ""
+
+    init {
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        paymentAmountLabel = savedStateHandle[PAYMENT_AMOUNT_LABEL] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER] ?: ""
+        previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
+    }
+
+    private fun onItemPointClick(
+        pointName: String,
+        pointAddress: String,
+        pointAddressDescription: String,
+        pointSchedule: String
+    ) = navigateTo(
+        route = Screen.PaymentLocationDetailsScreen.baseRoute
+            .plus(
+                getNavParam(
+                    POINT_NAME,
+                    pointName
+                )
+            )
+            .plus(
+                getNavParam(
+                    POINT_ADDRESS,
+                    pointAddress.encodeURLToUTF()
+                )
+            )
+            .plus(
+                getNavParam(
+                    POINT_ADDRESS_DESCRIPTION,
+                    pointAddressDescription.encodeURLToUTF()
+                )
+            )
+            .plus(getNavParam(POINT_SCHEDULE, pointSchedule))
+            .plus(getNavParam(PAYMENT_AMOUNT, paymentAmountLabel))
+            .plus(getNavParam(CREDIT_NUMBER, creditNumber))
+            .plus(getNavParam(ID_BRAND, idBrand))
+    )
+
+    private fun onQueryValueChange(value: String) {
+        uiState = uiState.copy(
+            queryValue = value
+        )
+    }
+
+    private fun onNavigateBack() =
+        navigateBack(
+            popTo = if (previousScreen == Screen.PaymentOptionsScreen.baseRoute) {
+                Screen.PaymentOptionsScreen.route
+            } else {
+                Screen.HomeScreen.route
+            }, isRestart = false
+        )
+
+    fun onNavigateHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+
+    private fun onCloseScreen() {
+        uiState = uiState.copy(
+            dialogParameters = uiState.dialogParameters.copy(
+                titleResource = if (idBrand == Brand.CostaRica.id) {
+                    string.payment_points_dialog_title
+                } else {
+                    string.payment_points_dialog_title_sv
+                },
+                descriptionResource = string.payment_points_dialog_description,
+                positiveResource = string.payment_points_dialog_positive_button,
+                negativeResource = string.payment_points_dialog_negative_button,
+                isActive = mutableStateOf(true),
+                positiveAction = { onUIEvent(OnDialogPositiveButtonClick) }
+            )
+        )
+    }
+
+    private fun onGetPaymentPoints() =
+        executeUseCase {
+            queryGetPaymentPointsUseCase.invoke(
+                idBrand = idBrand ?: 0
+            ).collectLatest { result ->
+                result.onSuccess {
+                    uiState = uiState.copy(
+                        pointsItemsList = it ?: listOf(),
+                        isLoading = false
+                    )
+                }.onFailure {
+                    uiState = uiState.copy(
+                        pointsItemsList = listOf(),
+                        isLoading = false
+                    )
+                }.onLoading {
+                    onLoadingValueChange(true)
+                }
+            }
+        }
+
+    private fun onLoadingValueChange(isLoading: Boolean) {
+        uiState = uiState.copy(isLoading = isLoading)
+    }
+
+    data class UIState(
+        // Interactions
+        val queryValue: String = "",
+        val pointsItemsList: List<PaymentPoint?> = listOf(),
+        val dialogParameters: DialogParameters = DialogParameters(),
+        val isLoading: Boolean = false
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnNavigateBack -> onNavigateBack()
+            is OnDialogPositiveButtonClick -> onNavigateHome()
+            is OnCloseScreenClick -> onCloseScreen()
+            is OnQueryValueChange -> onQueryValueChange(uiEvent.value)
+            is OnGetPaymentPoints -> onGetPaymentPoints()
+            is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
+            is OnItemPointClick -> onItemPointClick(
+                uiEvent.pointName,
+                uiEvent.pointAddress,
+                uiEvent.pointAddressDescription,
+                uiEvent.pointSchedule
+            )
+        }
+    }
+
+    sealed class UIEvent {
+        object OnNavigateBack : UIEvent()
+        object OnCloseScreenClick : UIEvent()
+        data class OnQueryValueChange(val value: String) : UIEvent()
+        object OnGetPaymentPoints : UIEvent()
+        object OnDialogPositiveButtonClick : UIEvent()
+        data class OnItemPointClick(
+            val pointName: String,
+            val pointAddress: String,
+            val pointAddressDescription: String,
+            val pointSchedule: String
+        ) : UIEvent()
+
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+    }
+}

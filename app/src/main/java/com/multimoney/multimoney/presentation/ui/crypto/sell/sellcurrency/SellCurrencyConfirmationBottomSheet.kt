@@ -1,0 +1,129 @@
+package com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.crypto.ConfirmationBottomSheetContent
+import com.multimoney.multimoney.presentation.util.calculateAmountToReceive
+import com.multimoney.multimoney.presentation.util.calculateConvertedAmount
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
+import com.multimoney.multimoney.presentation.util.roundToEightDecimalPlaces
+import com.multimoney.multimoney.presentation.util.toCurrencyFormat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SellConfirmationBottomSheet(
+    modalBottomSheetState: ModalBottomSheetState,
+    coroutineScope: CoroutineScope,
+    viewModel: SellCurrencyScreenViewModel
+) {
+    // Update fees instantly with current amount when bottom sheet is open
+    LaunchedEffect(key1 = viewModel.uiState.isConfirmationBottomSheetOpen) {
+        viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnUpdateFees)
+    }
+    Column(modifier = Modifier
+        .wrapContentSize()
+        .background(color = MultimoneyTheme.colors.creditDetailBackground)
+    ) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_title),
+                style = Typography.subtitle1.copy(
+                    color = MultimoneyTheme.colors.text,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Image(
+                modifier = Modifier.clickable {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnCloseSellConfirmationBottomSheet)
+                        modalBottomSheetState.hide()
+                    }
+                },
+                painter = painterResource(id = R.drawable.ic_close_bottom_sheet),
+                contentDescription = null
+            )
+        }
+        ConfirmationBottomSheetContent(
+            amount = viewModel.uiState.amountInCurrency
+                .roundToEightDecimalPlaces().plus(" ${viewModel.asset}"),
+            evaluatedAmount = buildAnnotatedString {
+                append(stringResource(
+                    id = R.string.crypto_sell_flow_confirmation_sell_screen_evaluate_amount,
+                    if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
+                        CurrencyType.Dollar.stringName.lowercase()
+                    } else {
+                        CurrencyType.Colon.stringName.lowercase()
+                    }
+                ))
+                append(WHITE_SPACE)
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    if (viewModel.idCurrencyAccount == CurrencyType.Dollar.id) {
+                        append(viewModel.uiState.amountInUsd.toCurrencyFormat())
+                    } else {
+                        append(calculateConvertedAmount(
+                            amountInUsd = viewModel.uiState.amountInUsd,
+                            exchangeRate = viewModel.uiState.exchangeRate
+                        ))
+                    }
+                }
+            },
+            showTotalToReceive = true,
+            showBottomExchangeInfo = false,
+            amountToReceive = calculateAmountToReceive(
+                amountInUsd = viewModel.uiState.amountInUsd,
+                totalFee = viewModel.uiState.pricesQuoteAndCommissions?.totalFee
+            ),
+            convertedAmountToRecieve = viewModel.uiState.convertedCurrentAmountMinusConvertedFee,
+            showAssetImage = false,
+            buttonText = stringResource(id = R.string.crypto_sell_flow_confirmation_sell_screen_btn_text),
+            asset = viewModel.asset,
+            assetImageUrl = viewModel.assetImageUrl,
+            secondsRemaining = viewModel.uiState.remainingTimeText,
+            idCurrency = viewModel.idCurrencyAccount,
+            isLoading = viewModel.uiState.isLoading,
+            exchangeRate = viewModel.uiState.exchangeRate.toCurrencyFormat(
+                symbol = CurrencyType.Colon.symbol
+            ),
+            accountInfoLabel = R.string.crypto_sell_flow_confirmation_sell_screen_acc_info_text,
+            isPurchase = false,
+            idBrand = viewModel.idBrand,
+            onConfirm = {
+                coroutineScope.launch {
+                    modalBottomSheetState.hide()
+                }
+                viewModel.onUIEvent(SellCurrencyScreenViewModel.UIEvent.OnSellCryptoCurrency)
+            }
+        )
+    }
+}

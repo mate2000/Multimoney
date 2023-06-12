@@ -1,0 +1,299 @@
+package com.multimoney.multimoney.presentation.ui.login.signup.phone
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.domain.interaction.security.MutationPhoneValidationUseCase
+import com.multimoney.domain.interaction.security.QueryGetCountryPhoneCodesUseCase
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.phone.SignUpPhoneViewModel.BaseEvent.OnFormValidateCompleted
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.validateMobilePhoneNumber
+import com.togitech.ccp.data.CountryData
+import com.togitech.ccp.data.utils.getLibCountries
+import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
+import javax.inject.Inject
+import kotlinx.coroutines.flow.collectLatest
+
+@HiltViewModel
+class SignUpPhoneViewModel @Inject constructor(
+    private val queryGetCountryPhoneCodesUseCase: QueryGetCountryPhoneCodesUseCase,
+    private val mutationPhoneValidationUseCase: MutationPhoneValidationUseCase
+) : BaseViewModel(false) {
+
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    private var onLoadingValueChange: (isLoading: Boolean) -> Unit = {}
+    private var onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit = { _, _ -> }
+
+    private fun onSetupShareEvents(
+        onLoadingValueChange: (isLoading: Boolean) -> Unit,
+        onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+    ) {
+        this.onLoadingValueChange = onLoadingValueChange
+        this.onFailureWithDialog = onFailureWithDialog
+    }
+
+    private fun onSetupDefaultCountry(idBrand: Int, identification: String?) {
+        uiState = uiState.copy(idBrand = idBrand, identification = identification)
+        uiState = when (uiState.idBrand) {
+            Brand.Guatemala.id -> uiState.copy(currentBrand = Brand.Guatemala)
+            Brand.ElSalvador.id -> uiState.copy(currentBrand = Brand.ElSalvador)
+            else -> uiState.copy(currentBrand = Brand.CostaRica)
+        }
+        val defaultCountry =
+            getLibCountries.find { it.countryCode == uiState.currentBrand.countryCode }
+        if (defaultCountry != null) {
+            uiState =
+                uiState.copy(countriesList = mutableListOf(defaultCountry))
+        }
+        uiState = uiState.copy(selectedCountry = uiState.countriesList?.first())
+    }
+
+    private fun onStart(
+        phoneCode: String,
+        phoneNumber: String,
+        signUpStartData: () -> Unit,
+        onFailure: () -> Unit
+    ) {
+        uiState = uiState.copy(phoneCode = phoneCode, phoneNumber = phoneNumber)
+        signUpStartData.invoke()
+        callQueryGetCountryPhoneCodes(uiState.idBrand, onFailure)
+        emitBaseEvent(OnFormValidateCompleted(phoneNumber.isNotBlank()))
+    }
+
+    private fun isFormValid() {
+        val isPhoneValid = when {
+            uiState.phoneCode.isBlank() || uiState.phoneNumber.isBlank() -> false
+            validateMobilePhoneNumber(
+                uiState.phoneNumber,
+                uiState.idBrand
+            ).not() -> false
+            else -> true
+        }
+        if (isPhoneValid) {
+            onCallMutationPhoneValidation()
+        } else {
+            emitBaseEvent(OnFormValidateCompleted(false))
+        }
+    }
+
+    private fun onUserPhoneValueChanged(
+        phoneNumber: String,
+        countryCode: String,
+        updateUserInfoPhone: () -> Unit
+    ) {
+        uiState =
+            uiState.copy(
+                phoneNumber = phoneNumber,
+                phoneNumberError = Triple(false, string.error_empty, "")
+            )
+        isFormValid()
+        updateUserInfoPhone.invoke()
+    }
+
+    private fun onCountryCodeValueChanged(
+        phoneCode: String,
+        countryCode: String,
+        updateUserCountryCode: () -> Unit
+    ) {
+        uiState = uiState.copy(
+            phoneCode = phoneCode,
+            phoneNumber = "",
+            phoneNumberError = Triple(false, string.error_empty, "")
+        )
+        isFormValid()
+        updateUserCountryCode.invoke()
+    }
+
+    private fun isPhoneValid() {
+        if (validateMobilePhoneNumber(
+                uiState.phoneNumber,
+                uiState.idBrand
+            ).not()
+        ) uiState = uiState.copy(phoneNumberError = Triple(true, string.sign_up_phone_not_valid, ""))
+    }
+
+    private fun clearPhoneError() {
+        uiState = uiState.copy(phoneNumberError = Triple(false, string.error_empty, ""))
+    }
+
+    private fun onNextActionClick(
+        onUserDataValueChange: () -> Unit,
+        onCallMutationUpdateUserRegisterUseCase: () -> Unit
+    ) {
+        onUserDataValueChange()
+        onCallMutationUpdateUserRegisterUseCase()
+    }
+
+    fun getNextStep(isPhoneVerified: Boolean, isOnFidoVerified: Boolean) =
+        if (isPhoneVerified.not()) {
+            SignUpStep.Four
+        } else if (isOnFidoVerified.not()) {
+            SignUpStep.Five
+        } else {
+            SignUpStep.Six
+        }
+
+    private fun callQueryGetCountryPhoneCodes(idBrand: Int, onFailure: () -> Unit) =
+        executeUseCase {
+            queryGetCountryPhoneCodesUseCase.invoke(idBrand = idBrand).collectLatest { result ->
+                result.onSuccess { response ->
+                    uiState = uiState.copy(countriesList = mutableListOf())
+                    val list = response.countryPhoneCodes.flatMap { fromApi ->
+                        getLibCountries.filter { fromApi.isoCode.lowercase(Locale.getDefault()) == it.countryCode }
+                    }
+                    uiState = uiState.copy(
+                        countriesList = list.toMutableList(),
+                        selectedCountry = list.toMutableList().first()
+                    )
+                }.onFailure {
+                    onFailure.invoke()
+                }
+            }
+        }
+
+    private fun onCallMutationPhoneValidation() {
+        executeUseCase {
+            mutationPhoneValidationUseCase.invoke(
+                uiState.phoneNumber, uiState.identification, uiState.idBrand
+            ).collectLatest {
+                it.onSuccess {
+                    onLoadingValueChange(false)
+                    emitBaseEvent(
+                        OnFormValidateCompleted(true)
+                    )
+                }.onMessage { phoneError ->
+                    onLoadingValueChange(false)
+                    uiState = uiState.copy(
+                        phoneNumberError = Triple(
+                            true,
+                            string.sign_up_phone_not_valid,
+                            phoneError?.message ?: ""
+                        )
+                    )
+                    emitBaseEvent(
+                        OnFormValidateCompleted(false)
+                    )
+                }.onFailure { error ->
+                    onFailureWithDialog(
+                        false, DialogParameters(
+                            description = error.getError().orEmpty()
+                        )
+                    )
+                }.onLoading {
+                    onLoadingValueChange(true)
+                }
+            }
+        }
+    }
+
+    private fun onSetUpIdBrand(idBrand: Int) {
+        uiState = uiState.copy(idBrand = idBrand)
+    }
+
+    private fun onQueryError() {
+        uiState = uiState.copy(isAlertResultVisible = true)
+    }
+
+    data class UIState(
+        // Fields
+        val phoneCode: String = "",
+        val phoneNumber: String = "",
+        val phoneNumberError: Triple<Boolean, Int, String> = Triple(
+            false,
+            string.sign_up_phone_not_valid,
+            ""
+        ),
+        val countriesList: MutableList<CountryData>? = null,
+        val countryCode: String? = null,
+        val idBrand: Int = 0,
+        val identification: String? = "",
+        val selectedCountry: CountryData? = null,
+        val isAlertResultVisible: Boolean = false,
+        val currentBrand: Brand = Brand.CostaRica
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is UIEvent.OnValidatePhone -> isPhoneValid()
+            is UIEvent.OnUserPhoneValueChanged -> onUserPhoneValueChanged(
+                event.phoneNumber,
+                event.countryCode,
+                event.updateUserInfoPhone
+            )
+            is UIEvent.OnCountryCodeValueChanged -> onCountryCodeValueChanged(
+                event.phoneCode,
+                event.countryCode,
+                event.updateUserCountryCode
+            )
+            is UIEvent.OnNextActionClick -> onNextActionClick(
+                event.onUserDataValueChange,
+                event.onCallMutationUpdateUserRegisterUseCase
+            )
+            is UIEvent.OnClearPhoneError -> clearPhoneError()
+            is UIEvent.OnStart -> onStart(
+                event.phoneCode,
+                event.phoneNumber,
+                event.signUpStartData,
+                event.onFailure
+            )
+            is UIEvent.OnSetUpIdBrand -> onSetUpIdBrand(event.idBrand)
+            is UIEvent.OnQueryError -> onQueryError()
+            is UIEvent.OnSetupDefaultCountry -> onSetupDefaultCountry(event.idBrand, event.identification)
+            is UIEvent.OnSetupSharedEvents -> onSetupShareEvents(event.onLoadingValueChange, event.onFailureWithDialog)
+
+        }
+    }
+
+    sealed class UIEvent {
+        data class OnValidatePhone(val countryCode: String) : UIEvent()
+        data class OnUserPhoneValueChanged(
+            val phoneNumber: String,
+            val countryCode: String,
+            val updateUserInfoPhone: () -> Unit
+        ) : UIEvent()
+
+        data class OnCountryCodeValueChanged(
+            val phoneCode: String,
+            val countryCode: String,
+            val updateUserCountryCode: () -> Unit
+        ) : UIEvent()
+
+        data class OnNextActionClick(
+            val onUserDataValueChange: () -> Unit,
+            val onCallMutationUpdateUserRegisterUseCase: () -> Unit
+        ) : UIEvent()
+
+        data class OnStart(
+            val phoneCode: String,
+            val countryCode: String,
+            val phoneNumber: String,
+            val signUpStartData: () -> Unit,
+            val onFailure: () -> Unit
+        ) : UIEvent()
+
+        object OnClearPhoneError : UIEvent()
+        object OnQueryError : UIEvent()
+        data class OnSetUpIdBrand(val idBrand: Int) : UIEvent()
+        data class OnSetupDefaultCountry(val idBrand: Int, val identification: String?) : UIEvent()
+        data class OnSetupSharedEvents(
+            val onLoadingValueChange: (isLoading: Boolean) -> Unit,
+            val onFailureWithDialog: (isLoading: Boolean, dialogParameter: DialogParameters) -> Unit
+        ) : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnFormValidateCompleted(val isFormValid: Boolean) : BaseEvent()
+    }
+}

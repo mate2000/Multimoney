@@ -1,0 +1,17 @@
+query GetCompanyNameByIdentification (
+    $identification: String!,
+    $idBrand: Int!,
+    $user: String!
+) {
+    getCompanyNameByIdentification(
+        dataCompanyInformationInput: {
+            identification: $identification
+            idBrand: $idBrand
+            user: $user
+        }
+    ) {
+        nombre
+        message
+        status
+    }
+}

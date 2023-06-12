@@ -1,0 +1,19 @@
+mutation ResendMicroDepositVD(
+    $identification: String!,
+    $idCard: String!,
+    $user: String!,
+    $idBrand: Int!
+)
+{
+    resendMicroDepositVD(
+        resendMicroDepositVDInput: {
+            identification: $identification,
+            idCard: $idCard,
+            user: $user,
+            idBrand: $idBrand,
+        }
+    ) {
+        status
+        message
+    }
+}

@@ -1,0 +1,405 @@
+package com.multimoney.multimoney.presentation.ui.login.signup.password
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.FragmentActivity
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.flowlayout.FlowRow
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.SignUpStep
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.login.signup.SignUpViewModel.UIEvent.OnUpdatePassword
+import com.multimoney.multimoney.presentation.uielement.CustomCheckBox
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
+import com.multimoney.multimoney.presentation.uielement.CustomPasswordRequirementLabel
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.getDeviceName
+import com.multimoney.multimoney.presentation.util.getDeviceType
+import com.multimoney.multimoney.util.firebase.FireBaseEvents
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+@Preview
+fun SignUpPasswordScreen(
+    viewModel: SignUpPasswordViewModel = hiltViewModel(),
+    sharedViewModel: SignUpViewModel = hiltViewModel()
+) {
+    // Properties
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+    val fragmentActivity = LocalContext.current as FragmentActivity
+
+    BackHandler {
+        when {
+            sharedViewModel.uiState.bottomSheetVisibleState.isVisible -> {
+
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnHidePasswordBottomSheet)
+            }
+            else -> sharedViewModel.onUIEvent(OnCloseClick(focusManager))
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(
+            SignUpPasswordViewModel.UIEvent.OnSetupDeviceInfo(
+                getDeviceName(fragmentActivity) ?: "",
+                getDeviceType(fragmentActivity).value ?: ""
+            )
+        )
+
+        viewModel.onUIEvent(SignUpPasswordViewModel.UIEvent.OnValidatePasswordStructure(
+            pkUser = sharedViewModel.userData?.pkUser?.toInt() ?: 0,
+            user = sharedViewModel.userData?.email ?: "",
+            idBrand = sharedViewModel.idBrand ?: 0,
+        ))
+    }
+
+    viewModel.onUIEvent(
+        SignUpPasswordViewModel.UIEvent.OnInitializeDialogTexts(
+            biometricPromptTitle = stringResource(
+                id = when (sharedViewModel.idBrand) {
+                    Brand.CostaRica.id -> string.active_biometric_title_cr
+                    Brand.Mexico.id -> string.active_biometric_title_mx
+                    else -> string.active_biometric_title
+                }
+            ),
+            biometricPromptDescription = stringResource(
+                id = when (sharedViewModel.idBrand) {
+                    Brand.CostaRica.id -> string.active_biometric_message_cr
+                    Brand.Mexico.id -> string.active_biometric_message_mx
+                    else -> string.active_biometric_message
+                }
+            ),
+            biometricPromptNegative = stringResource(id = string.cancel),
+            biometricDialogSuccessDescription = stringResource(
+                id = when(sharedViewModel.idBrand) {
+                    Brand.Mexico.id -> string.dialog_success_biometric_description_mx
+                    else -> string.dialog_success_biometric_description
+                }
+            ),
+            biometricDialogFailureDescription = stringResource(
+                id = when(sharedViewModel.idBrand) {
+                    Brand.Mexico.id -> string.dialog_failure_biometric_description_mx
+                    else -> string.dialog_failure_biometric_description
+                }
+            ),
+            idBrand = sharedViewModel.idBrand
+        )
+    )
+
+    LaunchedEffect(context) {
+        viewModel.apply {
+            onUIEvent(
+                SignUpPasswordViewModel.UIEvent.OnIsBiometricAvailable(
+                    biometricHelper.isBiometricAvailable(
+                        context
+                    )
+                )
+            )
+            sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowCloseIcon(false))
+        }
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is SignUpPasswordViewModel.BaseEvent.OnOpenBiometricDialog -> viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnShowBiometricPromptForEncryption(
+                        fragmentActivity = fragmentActivity,
+                        userEmail = sharedViewModel.userData?.email ?: "",
+                        userName = "${sharedViewModel.userData?.firstName ?: ""} ${sharedViewModel.userData?.firstLastName ?: ""}",
+                        onNextStep = { sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnNextStep) }
+                    )
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onUIEvent(
+            SignUpPasswordViewModel.UIEvent.OnValidForm(
+                onContinueEnable = { isEnabled ->
+                    sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnContinueEnable(isEnabled))
+                }
+            )
+        )
+        sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnShowPasswordBottomSheet)
+        sharedViewModel.apply {
+            onUIEvent(
+                SignUpViewModel.UIEvent.OnSetNavigation(nextAction = {
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnCallPasswordSave(
+                            pkUser = userData?.pkUser ?: "0",
+                            user = userData?.email ?: "",
+                            idBrant = idBrand ?: 0
+                        )
+                    )
+                    sharedViewModel.onUIEvent(OnUpdatePassword(viewModel.uiState.password))
+                    sharedViewModel.logEvents(FireBaseEvents.SignUpFive, AdjustEventType.SIGNUP_5_2007)
+                }, nextStep = SignUpStep.Seven.id, previousStep = SignUpStep.Three.id)
+            )
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.onPasswordSaveEvents.collect { event ->
+            event.onSuccess {
+                sharedViewModel.apply {
+                    userData?.currentStep = SignUpStep.Five.name
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnCallCognitoSignUp(
+                            email = userData?.email ?: "",
+                            firstName = userData?.firstName ?: "",
+                            secondName = userData?.secondName ?: "",
+                            lastName = userData?.firstLastName ?: "",
+                            phone = "${userData?.countryCode ?: ""}${userData?.phoneNumber ?: ""}",
+                            identification = userData?.identification ?: "",
+                            pkUser = userData?.pkUser ?: "",
+                            status = userData?.userStatus ?: "",
+                            idBrand = idBrand ?: 0,
+                            onSuccess = {
+                                onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(false))
+                            },
+                            onFailureWithDialog = { dialog ->
+                                onUIEvent(
+                                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                                        false,
+                                        dialog
+                                    )
+                                )
+                            }
+                        )
+                    )
+                }
+            }.onMessage {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it?.messageError?.message ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
+            }.onFailure {
+                sharedViewModel.onUIEvent(
+                    SignUpViewModel.UIEvent.OnFailureWithDialog(
+                        false,
+                        DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                )
+            }.onLoading {
+                sharedViewModel.onUIEvent(SignUpViewModel.UIEvent.OnLoadingValueChange(true))
+            }
+        }
+    }
+
+    Column(Modifier.padding(16.dp)) {
+        Text(
+            text = buildAnnotatedString {
+                withStyle(
+                    style = Typography.h6.toSpanStyle()
+                        .copy(
+                            color = MultimoneyTheme.colors.labelText,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                ) {
+                    append(stringResource(id = viewModel.uiState.titleResource))
+                }
+            },
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth(),
+            lineHeight = 24.sp
+        )
+        CustomOutlinedTextField(
+            value = viewModel.uiState.password,
+            onValueChange = {
+                viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnPasswordValueChange(
+                        it,
+                        onContinueEnable = { isEnable ->
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    isEnable
+                                )
+                            )
+                        }
+                    )
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(onNext = {
+                focusManager.clearFocus()
+            }),
+            labelText = stringResource(id = string.sign_up_label_password),
+            isPassword = true,
+            modifier = Modifier
+                .padding(top = 24.dp),
+            isRequired = true,
+            isRequiredMessage = stringResource(id = string.sign_up_password_required),
+            isError = viewModel.uiState.passwordError.first,
+            errorMessage = if (viewModel.uiState.passwordError.first) {
+                if (viewModel.uiState.passwordError.second == string.sign_up_password_requirement_forbidden_words) {
+                    stringResource(
+                        id = string.sign_up_password_requirement_forbidden_words,
+                        viewModel.getForbiddenWords(viewModel.uiState.password)
+                    )
+                } else {
+                    stringResource(id = viewModel.uiState.passwordError.second)
+                }
+            } else {
+                null
+            }
+        )
+        CustomOutlinedTextField(
+            value = viewModel.uiState.confirmPassword,
+            onValueChange = {
+                viewModel.onUIEvent(
+                    SignUpPasswordViewModel.UIEvent.OnConfirmPasswordValueChange(
+                        it,
+                        onContinueEnable = { isEnable ->
+                            sharedViewModel.onUIEvent(
+                                SignUpViewModel.UIEvent.OnContinueEnable(
+                                    isEnable
+                                )
+                            )
+                        }
+                    )
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                focusManager.clearFocus()
+            }),
+            labelText = stringResource(id = string.sign_up_label_confirm_password),
+            isPassword = true,
+            modifier = Modifier
+                .padding(top = 16.dp),
+            isRequired = true,
+            isRequiredMessage = stringResource(id = string.sign_up_password_required),
+            isError = viewModel.uiState.confirmPasswordError.first,
+            errorMessage = if (viewModel.uiState.confirmPasswordError.first) {
+                if (viewModel.uiState.confirmPasswordError.second == string.sign_up_password_requirement_forbidden_words) {
+                    stringResource(
+                        id = string.sign_up_password_requirement_forbidden_words,
+                        viewModel.getForbiddenWords(viewModel.uiState.confirmPassword)
+                    )
+                } else {
+                    stringResource(id = viewModel.uiState.confirmPasswordError.second)
+                }
+            } else {
+                null
+            }
+        )
+        FlowRow(
+            Modifier
+                .padding(top = 8.dp)
+        ) {
+            PasswordRequirementLabels(
+                text = stringResource(id = string.sign_up_password_requirement_eight_characters_minimum),
+                state = viewModel.uiState.eightCharactersMinimumState
+            )
+            PasswordRequirementLabels(
+                text = stringResource(id = string.sign_up_password_requirement_one_uppercase),
+                state = viewModel.uiState.oneUppercaseState
+            )
+            PasswordRequirementLabels(
+                text = stringResource(id = string.sign_up_password_requirement_one_lowercase),
+                state = viewModel.uiState.oneLowercaseState
+            )
+            PasswordRequirementLabels(
+                text = stringResource(id = string.sign_up_password_requirement_one_number),
+                state = viewModel.uiState.oneNumberState
+            )
+            PasswordRequirementLabels(
+                text = stringResource(id = string.sign_up_password_requirement_one_characer),
+                state = viewModel.uiState.oneCharacterState
+            )
+        }
+        if (viewModel.biometricHelper.isBiometricAvailable(context)) {
+            CustomCheckBox(
+                checked = viewModel.uiState.isFingerprintChecked,
+                onCheckedChange = {
+                    viewModel.onUIEvent(
+                        SignUpPasswordViewModel.UIEvent.OnFingerprintCheckedChanged(
+                            it,
+                            it,
+                            sharedViewModel.idBrand ?: 0
+                        )
+                    )
+                },
+                text = stringResource(
+                    id = when(sharedViewModel.idBrand) {
+                        Brand.Mexico.id -> string.sign_in_activate_fingerprint_mx
+                        else -> string.sign_in_activate_fingerprint
+                    }
+                ),
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
+    }
+
+    // Dialog
+    if (viewModel.uiState.openDialogCustom.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialogCustom.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialogCustom.descriptionResource).ifEmpty { viewModel.uiState.openDialogCustom.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialogCustom.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialogCustom.negativeResource),
+            onPositiveAction = viewModel.uiState.openDialogCustom.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialogCustom.negativeAction,
+            onDismissAction = viewModel.uiState.openDialogCustom.dismissAction,
+            openDialogCustom = viewModel.uiState.openDialogCustom.isActive
+        )
+    }
+}
+
+@Composable
+fun PasswordRequirementLabels(modifier: Modifier = Modifier, text: String, state: Boolean?) {
+    CustomPasswordRequirementLabel(
+        modifier,
+        text = text,
+        successIcon = R.drawable.ic_check,
+        errorIcon = R.drawable.ic_error_password,
+        state = state
+    )
+}

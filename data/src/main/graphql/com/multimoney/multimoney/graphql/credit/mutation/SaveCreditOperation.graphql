@@ -1,0 +1,14 @@
+mutation SaveCreditOperation($idUserRequest:Long!, $pkUser:Long!, $user:String!, $idBrand:Int!){
+  saveCreditOperation(
+    saveCreditOperationInput: {
+      idUserRequest: $idUserRequest
+      pkUser: $pkUser
+      user: $user
+      idBrand: $idBrand
+    }
+  ) {
+    idPrint
+    showFinalScreen
+    showOutSchedule
+  }
+}

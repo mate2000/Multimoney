@@ -1,0 +1,39 @@
+mutation ProccessPaymentList(
+  $user: String!,
+  $idBrand: Int!,
+  $id_Cliente: Long!,
+  $identificacion: String!,
+  $numeroCuentaOrigen: String!,
+  $numeroCuentaDestino: String!,
+  $id_Moneda: String!,
+  $nombreCliente: String!,
+  $descripcion: String!,
+  $cuentaDestino: [PaymentAccountsInput!]!,
+  $monto: Decimal!
+) {
+  proccessPaymentList(
+    proccessPaymentListInput: {
+      user: $user
+      idBrand: $idBrand
+      id_Cliente: $id_Cliente
+      identificacion: $identificacion
+      numeroCuentaOrigen: $numeroCuentaOrigen
+      numeroCuentaDestino: $numeroCuentaDestino
+      id_Moneda: $id_Moneda
+      nombreCliente: $nombreCliente
+      descripcion: $descripcion
+      cuentaDestino: $cuentaDestino
+      monto: $monto
+    }
+  ) {
+    cODIGO_RECHAZO_SINPE
+    mOTIVO_RECHAZO_SINPE
+    mENSAJE_RESPUESTA
+    mENSAJE_RESPUESTA_INTERNO
+    nUMERO_REFERENCIA_INTERNO
+    nUM_REF_SINPE
+    status
+    message
+    detail
+  }
+}

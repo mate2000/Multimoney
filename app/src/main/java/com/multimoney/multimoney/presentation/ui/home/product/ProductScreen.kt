@@ -1,0 +1,939 @@
+package com.multimoney.multimoney.presentation.ui.home.product
+
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.model.security.MiniCardsItem
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
+import com.multimoney.multimoney.presentation.theme.Typography
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency30
+import com.multimoney.multimoney.presentation.theme.WhiteTransparency90
+import com.multimoney.multimoney.presentation.ui.crypto.purchase.selectaccount.ConfirmationBottomSheet
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentToastEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.BaseEvent.OnUpdateWhatsAppLink
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnCallMutationDeactivateClientAutomaticDebit
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductPageChange
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowCardIssuanceError
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.BaseEvent.OnShowTbdToastEvent
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.DEFAULT_PRODUCT_PAGES
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.Companion.INITIAL_PRODUCT_PAGE
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnCreateMultimoneyVisa
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnDeleteAutomaticPayment
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMarket
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoMovements
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToCryptoWallet
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToDisbursement
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToHomeMultimoneyVisa
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToProfileScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToReleaseTransaction
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToScheduleAutomaticPaymentScreen
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNavigateToSmartOriginationFlow
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnNoVoConfig
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSaveFirebaseToke
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnSetUserData
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateCollapsedPage
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateExpandedPage
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsBackPressed
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnUpdateIsExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.OnVisaCardExpiredDialog
+import com.multimoney.multimoney.presentation.ui.home.product.ProductViewModel.UIEvent.UpdateCryptoFlag
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditContent
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditCtaFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooter
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.credit.CreditHeaderExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoContent
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoCtaFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooter
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.CryptoHeaderExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.crypto.ZERO_MOVEMENTS
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartContent
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartCtaFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooter
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartFooterExpanded
+import com.multimoney.multimoney.presentation.ui.home.product.smart.SmartHeaderExpanded
+import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomDotsIndicator
+import com.multimoney.multimoney.presentation.uielement.CustomImage
+import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
+import com.multimoney.multimoney.presentation.uielement.MotionLayoutMM
+import com.multimoney.multimoney.presentation.util.NavEvent
+import com.multimoney.multimoney.presentation.util.capitalizeAllWords
+import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
+import com.multimoney.multimoney.presentation.util.catalog.ProductType
+import com.multimoney.multimoney.presentation.util.isCTABlocked
+import com.multimoney.multimoney.presentation.util.openIntent
+import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun ProductScreen(
+    sharedViewModel: HomeViewModel,
+    onNavigate: (NavEvent.Navigate) -> Unit = {},
+    viewModel: ProductViewModel = hiltViewModel()
+) {
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val deleteAutomaticPaymentToastText = stringResource(id = R.string.automatic_payment_edit_bottom_sheet_delete_toast)
+
+    viewModel.onUIEvent(
+        OnSetUserData(
+            idBrand = sharedViewModel.uiState.idBrand,
+            balanceCredit = sharedViewModel.uiState.balance,
+            pkUser = sharedViewModel.uiState.pkUser,
+            identification = sharedViewModel.uiState.identification,
+            email = sharedViewModel.uiState.email,
+            userName = sharedViewModel.uiState.userName,
+            validateUserStatus = sharedViewModel.uiState.validateUserStatus,
+            configurationVersion = sharedViewModel.uiState.configurationVersion,
+            productPageList = sharedViewModel.uiState.productPageList,
+            smartMovements = sharedViewModel.uiState.smartMovementsList,
+            creditMovements = sharedViewModel.uiState.creditMovementsList
+        )
+    )
+
+    LaunchedEffect(sharedViewModel.uiState.idBrand) {
+        viewModel.onUIEvent(OnSaveFirebaseToke)
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.executeNavigation(onNavigate = onNavigate)
+        viewModel.onUIEvent(OnNoVoConfig)
+        viewModel.onUIEvent(ProductViewModel.UIEvent.OnGetCryptoMovements)
+    }
+
+    LaunchedEffect(key1 = sharedViewModel.uiState.balance) {
+        viewModel.onUIEvent(
+            OnVisaCardExpiredDialog(
+                idBrand = sharedViewModel.uiState.idBrand,
+                balance = sharedViewModel.uiState.balance
+            )
+        )
+    }
+
+    // BaseEvent from ProductViewModel
+    LaunchedEffect(true) {
+        viewModel.baseEvent.collect { event ->
+            when (event) {
+                is OnShowCardIssuanceError -> sharedViewModel.onUIEvent(UIEvent.OnShowCardIssuanceError)
+                is OnShowTbdToastEvent -> Toast.makeText(context, "TBD", Toast.LENGTH_SHORT).show()
+                is ProductViewModel.BaseEvent.OnShowDisclaimer -> {
+                    bottomSheetState.show()
+                }
+            }
+        }
+    }
+
+    // BaseEvent from HomeViewModel
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.baseEvent.collect { event ->
+            when (event) {
+                is HomeViewModel.BaseEvent.OnQuickActionClicked -> {
+                    coroutineScope.launch {
+                        viewModel.onUIEvent(
+                            ProductViewModel.UIEvent.OnQuickActionClicked(
+                                event.flow,
+                                onLoadingValueChange = {
+                                    sharedViewModel.onUIEvent(
+                                        UIEvent.OnLoadingValueChanged(
+                                            it
+                                        )
+                                    )
+                                }
+                            )
+                        )
+                    }
+                }
+
+                is HomeViewModel.BaseEvent.OnMiniCardsClicked -> {
+                    viewModel.onUIEvent(
+                        ProductViewModel.UIEvent.OnMiniCardsClicked(
+                            miniCard = event.miniCard,
+                            openIntent = event.openIntent
+                        )
+                    )
+                }
+
+                is HomeViewModel.BaseEvent.OnEditAutomaticPaymentEvent -> {
+                    viewModel.onUIEvent(OnNavigateToScheduleAutomaticPaymentScreen(true))
+                }
+
+                is HomeViewModel.BaseEvent.OnDeleteAutomaticPaymentEvent -> {
+                    viewModel.onUIEvent(
+                        OnDeleteAutomaticPayment {
+                            // This event will be executed if the id brand is different to Mexico
+                            if (viewModel.uiState.idBrand.toIntOrNull() != Brand.Mexico.id) {
+                                sharedViewModel.onUIEvent(
+                                    OnCallMutationDeactivateClientAutomaticDebit
+                                )
+                            } else {
+                                // If the id brand is equals to Mexico, a WhatsApp chat will be open through a deep link
+                                sharedViewModel.onUIEvent(
+                                    UIEvent.OnContactUs(
+                                        openWhatsAppIntent = { contactLink ->
+                                            // Setting the contact link depending on what's saved on the data store preferences
+                                            context.openWhatsAppDeepLink(contactLink) {
+                                                // In case of failure, a message dialog will be displayed
+                                                sharedViewModel.onUIEvent(UIEvent.OnFailureWithDialog(
+                                                    false,
+                                                    sharedViewModel.defaultDialogParameters.copy(
+                                                        isActive = mutableStateOf(true)
+                                                    )
+                                                ))
+                                            }
+                                        },
+                                        onFailureWithDialog = { isLoading, dialogParameters ->
+                                            sharedViewModel.onUIEvent(UIEvent.OnFailureWithDialog(
+                                                isLoading,
+                                                dialogParameters
+                                            ))
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                    )
+                }
+
+                is OnDeleteAutomaticPaymentToastEvent -> {
+                    Toast.makeText(context, deleteAutomaticPaymentToastText, Toast.LENGTH_LONG).show()
+                }
+
+                is OnUpdateWhatsAppLink -> {
+                    viewModel.whatsAppLink = event.whatsAppLink
+                }
+            }
+        }
+    }
+
+    // Set crypto Empty State
+    val cryptoMovements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+    LaunchedEffect(key1 = sharedViewModel.uiState.balance?.balanceCryptoAccount?.items) {
+        val cryptoCurrencies = sharedViewModel.uiState.balance?.balanceCryptoAccount?.items
+        sharedViewModel.onUIEvent(
+            UIEvent.OnSetCryptoEmptyState(
+                cryptoCurrencies.isNullOrEmpty().not() || cryptoMovements.itemCount > 0
+            )
+        )
+    }
+
+    // execute adjust maintenance event if paxos is in maintenance
+    LaunchedEffect(sharedViewModel.uiState.balance?.balanceCryptoAccount?.outOfService ?: false) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnRegisterAdjustPaxosInMaintenance
+        )
+    }
+
+    LaunchedEffect(key1 = sharedViewModel.uiState.notificationRoute) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnValidateNotificationRoute(
+                sharedViewModel.uiState.notificationRoute
+            ) { sharedViewModel.restartNotificationRoutePreference() }
+        )
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.onUIEvent(
+            ProductViewModel.UIEvent.OnValidateNotificationRoute(
+                sharedViewModel.uiState.notificationRoute
+            ) { sharedViewModel.restartNotificationRoutePreference() }
+        )
+    }
+
+    // Pager
+    val headerExpandedPagerState = rememberPagerState()
+    val contentPagerState = rememberPagerState()
+    val contentExpandedPagerState = rememberPagerState()
+    val footerPagerState = rememberPagerState()
+    val footerExpandedPagerState = rememberPagerState()
+    val ctaFooterExpandedPagerState = rememberPagerState()
+
+    LaunchedEffect(key1 = true) {
+        sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+    }
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
+        footerPagerState.scrollToPage(contentPagerState.currentPage)
+        viewModel.onUIEvent(OnUpdateCollapsedPage(contentPagerState.currentPage))
+        if (viewModel.uiState.productPageList?.isNotEmpty() == true && viewModel.uiState.isExpanded.not()) {
+            val currentProductPage = viewModel.uiState.productPageList?.getOrNull(contentPagerState.currentPage)
+            if (currentProductPage?.enabled == true) {
+                val currentExpandedProductPageIndex =
+                    viewModel.uiState.expandedProductPageList?.indexOfFirst { it.index == currentProductPage.index }
+                        ?: INITIAL_PRODUCT_PAGE
+                viewModel.onUIEvent(OnUpdateExpandedPage(currentExpandedProductPageIndex))
+                contentExpandedPagerState.scrollToPage(currentExpandedProductPageIndex)
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = contentPagerState.currentPage) {
+        viewModel.onUIEvent(OnUpdateCollapsedPage(contentPagerState.currentPage))
+        footerPagerState.scrollToPage(contentPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentExpandedPagerState.currentPage) {
+        if (viewModel.uiState.productPageList?.isNotEmpty() == true && viewModel.uiState.isExpanded) {
+            val currentProductPageIndex =
+                viewModel.uiState.expandedProductPageList?.get(contentExpandedPagerState.currentPage)?.index
+                    ?: INITIAL_PRODUCT_PAGE
+            viewModel.onUIEvent(OnUpdateCollapsedPage(currentProductPageIndex))
+            contentPagerState.scrollToPage(currentProductPageIndex)
+        }
+    }
+    LaunchedEffect(key1 = contentExpandedPagerState.currentPage) {
+        viewModel.onUIEvent(OnUpdateExpandedPage(contentExpandedPagerState.currentPage))
+        headerExpandedPagerState.scrollToPage(contentExpandedPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentExpandedPagerState.currentPage) {
+        viewModel.onUIEvent(OnUpdateExpandedPage(contentExpandedPagerState.currentPage))
+        footerExpandedPagerState.scrollToPage(contentExpandedPagerState.currentPage)
+    }
+
+    LaunchedEffect(key1 = contentExpandedPagerState.currentPage) {
+        viewModel.onUIEvent(OnUpdateExpandedPage(contentExpandedPagerState.currentPage))
+        ctaFooterExpandedPagerState.scrollToPage(contentExpandedPagerState.currentPage)
+    }
+
+    /*
+    When activating smart in CR a new smart card is added. If the origination occurred from the Crypto card
+    and we come back to the home to display Crypto home, we have to update the card index
+     */
+    LaunchedEffect(key1 = true) {
+        if (viewModel.uiState.idBrand == Brand.CostaRica.id.toString() &&
+            viewModel.uiState.wasSmartActive.not() && viewModel.uiState.originationLaunchedFromCrypto
+        ) {
+            val newPage = viewModel.uiState.collapsedPage.plus(1)
+            viewModel.onUIEvent(OnUpdateCollapsedPage(newPage))
+            contentPagerState.scrollToPage(newPage)
+            viewModel.onUIEvent(OnUpdateExpandedPage(newPage))
+            contentExpandedPagerState.scrollToPage(newPage)
+            viewModel.onUIEvent(UpdateCryptoFlag(false))
+        }
+    }
+
+    if (sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded.not()) {
+        ProductScreenSkeleton()
+    } else {
+        MotionLayoutMM(
+            header = {
+                ProductHeader(viewModel = viewModel, sharedViewModel = sharedViewModel)
+            },
+            headerExpanded = { backPressed ->
+                ProductHeaderExpanded(
+                    state = headerExpandedPagerState,
+                    viewModel = viewModel,
+                    backPressed = backPressed
+                )
+            },
+            content = { modifier ->
+                ProductContent(
+                    modifier = modifier,
+                    state = contentPagerState,
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+            },
+            contentExpanded = { modifier ->
+                ProductContentExpanded(
+                    modifier = modifier,
+                    state = contentExpandedPagerState,
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+            },
+            footer = {
+                ProductFooter(
+                    state = footerPagerState,
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+            },
+            footerExpanded = {
+                ProductFooterExpanded(
+                    state = footerExpandedPagerState,
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+            },
+            ctaFooterExpanded = {
+                ProductCtaFooterExpanded(
+                    state = ctaFooterExpandedPagerState,
+                    viewModel = viewModel,
+                    sharedViewModel = sharedViewModel
+                )
+            },
+            isExpanded = viewModel.uiState.isExpanded,
+            updateIsExpanded = { isExpanded ->
+                if (isExpanded != viewModel.uiState.isExpanded) {
+                    viewModel.onUIEvent(OnUpdateIsExpanded(isExpanded))
+                }
+            },
+            homeState = sharedViewModel.uiState.homeState,
+            updateHomeState = { homeState ->
+                sharedViewModel.onUIEvent(UIEvent.OnSetHomeState(homeState))
+            },
+            isSwipeEnabled = if (viewModel.uiState.productPageList?.isNotEmpty() == true) {
+                viewModel.uiState.productPageList?.get(contentPagerState.currentPage)?.enabled ?: false
+            } else {
+                false
+            },
+            isBackPressed = viewModel.uiState.isBackPressed,
+            updateIsBackPressed = { isBackPressed ->
+                viewModel.onUIEvent(OnUpdateIsBackPressed(isBackPressed))
+            },
+            isExpandedByClick = sharedViewModel.uiState.isExpandedByClick,
+            updateIsExpandedByClick = { isExpandedByClick ->
+                sharedViewModel.onUIEvent(OnUpdateIsExpandedByClick(isExpandedByClick))
+            }
+        )
+    }
+
+    LoadingIndicator(sharedViewModel.uiState.isLoading && viewModel.uiState.isExpanded)
+
+    if (viewModel.uiState.openDialog.isActive.value) {
+        CustomDialog(
+            title = stringResource(id = viewModel.uiState.openDialog.titleResource),
+            message = stringResource(id = viewModel.uiState.openDialog.descriptionResource).ifEmpty { viewModel.uiState.openDialog.description },
+            positiveButtonText = stringResource(id = viewModel.uiState.openDialog.positiveResource),
+            negativeButtonText = stringResource(id = viewModel.uiState.openDialog.negativeResource),
+            openDialogCustom = viewModel.uiState.openDialog.isActive,
+            onPositiveAction = viewModel.uiState.openDialog.positiveAction,
+            onNegativeAction = viewModel.uiState.openDialog.negativeAction
+        )
+    }
+    ConfirmationBottomSheet(
+        modalBottomSheetState = bottomSheetState,
+        coroutineScope = coroutineScope,
+        onCheckedChange = {
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnDisclaimerChecked(it))
+        },
+        onContinueClicked = {
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToPurchaseCryptoFlow)
+            viewModel.onUIEvent(ProductViewModel.UIEvent.OnUpdateShouldShowDisclaimer(viewModel.uiState.dontShowAgainChecked))
+            coroutineScope.launch {
+                bottomSheetState.hide()
+            }
+        },
+        checked = viewModel.uiState.dontShowAgainChecked
+    )
+
+    BackHandler(viewModel.uiState.isExpanded) {
+        viewModel.onUIEvent(OnUpdateIsBackPressed(true))
+    }
+}
+
+@Composable
+fun TipsAndOffer(
+    modifier: Modifier,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    val context = LocalContext.current
+    val poppinsRegularFontFamily = FontFamily(
+        Font(R.font.poppins_regular)
+    )
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Text(
+                    text = viewModel.uiState.userStatus?.wording?.textOne ?: "",
+                    style = Typography.h6.copy(
+                        fontFamily = poppinsRegularFontFamily,
+                        fontSize = 20.sp,
+                        lineHeight = 24.sp,
+                        letterSpacing = 0.15.sp
+                    ),
+                    color = MultimoneyTheme.colors.labelText
+                )
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = viewModel.uiState.userStatus?.wording?.textTwo?.capitalizeAllWords() ?: "",
+                    style = Typography.h5.copy(
+                        fontSize = 24.sp,
+                        lineHeight = 32.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MultimoneyTheme.colors.labelText
+                )
+            }
+            Row(modifier = Modifier.padding(end = 16.dp)) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_notification),
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            // todo action
+                        },
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.iconColor
+                )
+                Icon(
+                    painter = painterResource(R.drawable.ic_profile),
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .size(32.dp)
+                        .clickable {
+                            viewModel.onUIEvent(OnNavigateToProfileScreen)
+                        },
+                    contentDescription = "",
+                    tint = MultimoneyTheme.colors.iconColor
+                )
+            }
+        }
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+        ) {
+            sharedViewModel.uiState.miniCardList?.let { miniCardList ->
+                items(items = miniCardList, itemContent = {
+                    when {
+                        it.flow == MiniCardActionFlow.PAYOUT.flow && viewModel.uiState.canExpandCredit.not() -> Unit
+                        else -> TipAndOfferItem(it) {
+                            sharedViewModel.onUIEvent(
+                                UIEvent.OnOpenMiniCardActionFlow(
+                                    miniCard = it,
+                                    openIntent = { intent ->
+                                        context.openIntent(
+                                            intent = intent,
+                                            onFailure = {
+                                                viewModel.onUIEvent(ProductViewModel.UIEvent.OnIntentFailure)
+                                            }
+                                        )
+                                    }
+                                )
+                            )
+                        }
+                    }
+                })
+            }
+        }
+    }
+}
+
+@Composable
+fun ProductHeader(
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    Column {
+        TipsAndOffer(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 20.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            viewModel = viewModel,
+            sharedViewModel = sharedViewModel
+        )
+        Text(
+            text = stringResource(id = viewModel.getProductScreenTitle()),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, top = 24.dp)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            style = Typography.body1.copy(
+                fontWeight = FontWeight.SemiBold
+            ),
+            color = MultimoneyTheme.colors.labelText
+        )
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductHeaderExpanded(
+    state: PagerState,
+    viewModel: ProductViewModel,
+    backPressed: () -> Unit
+) {
+    if (viewModel.uiState.expandedProductPageList.isNullOrEmpty().not()) {
+        HorizontalPager(
+            count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+            state = state,
+            userScrollEnabled = false
+        ) {
+            when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
+                ProductType.Credit.value -> CreditHeaderExpanded { backPressed() }
+                ProductType.Smart.value -> SmartHeaderExpanded { backPressed() }
+                ProductType.Crypto.value -> CryptoHeaderExpanded { backPressed() }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductContent(
+    modifier: Modifier,
+    state: PagerState,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    val context = LocalContext.current
+    val pagerCount = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES
+    Column(modifier = modifier) {
+        HorizontalPager(
+            modifier = Modifier.padding(top = 8.dp),
+            count = pagerCount,
+            state = state
+        ) { page ->
+            // verify if the user has crypto or crypto movements to show the card empty state
+            val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
+            val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+            val profileEnable =
+                !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+
+            if (viewModel.uiState.productPageList.isNullOrEmpty().not()) {
+                when (viewModel.uiState.productPageList?.getOrNull(page)?.product) {
+                    ProductType.Credit.value -> CreditContent(viewModel = viewModel)
+                    ProductType.Smart.value -> SmartContent(
+                        viewModel = viewModel,
+                        viewModel.uiState.productPageList?.getOrNull(page)?.productSmartIndex ?: 0
+                    )
+
+                    ProductType.Crypto.value -> CryptoContent(
+                        userStatus = viewModel.uiState.userStatus,
+                        cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                        cryptoEmptyState = profileEnable,
+                        clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                        openSmartCryptoAction = {
+                            viewModel.onUIEvent(
+                                OnNavigateToSmartOriginationFlow(
+                                    comingFromCrypto = true,
+                                    smartStep = viewModel.uiState.smartContent.second,
+                                    onIntent = {
+                                        context.openWhatsAppDeepLink(
+                                            viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                        )
+                                    }
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomDotsIndicator(
+                totalDots = pagerCount,
+                selectedIndex = state.currentPage,
+                selectedColor = WhiteTransparency90,
+                unSelectedColor = WhiteTransparency30,
+                dotSize = 8.dp
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductContentExpanded(
+    modifier: Modifier,
+    state: PagerState,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    val context = LocalContext.current
+    val pagerCount = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES
+    Column(modifier = modifier) {
+        HorizontalPager(
+            modifier = Modifier.padding(top = 8.dp),
+            count = pagerCount,
+            state = state
+        ) { page ->
+            // verify if the user has crypto or crypto movements to show the card empty state
+            val cryptoCurrencies = viewModel.balanceCredit?.balanceCryptoAccount?.items
+            val movements = viewModel.uiState.cryptoCurrencyMovements.collectAsLazyPagingItems()
+            val profileEnable = !cryptoCurrencies.isNullOrEmpty() || movements.itemCount > ZERO_MOVEMENTS
+
+            when (viewModel.uiState.expandedProductPageList?.getOrNull(page)?.product) {
+                ProductType.Credit.value -> CreditContent(viewModel = viewModel)
+                ProductType.Smart.value -> SmartContent(
+                    viewModel = viewModel,
+                    viewModel.uiState.expandedProductPageList?.getOrNull(page)?.productSmartIndex ?: 0
+                )
+
+                ProductType.Crypto.value -> CryptoContent(
+                    userStatus = viewModel.uiState.userStatus,
+                    cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
+                    cryptoEmptyState = profileEnable,
+                    clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                    openSmartCryptoAction = {
+                        viewModel.onUIEvent(
+                            OnNavigateToSmartOriginationFlow(
+                                comingFromCrypto = true,
+                                smartStep = viewModel.uiState.smartContent.second,
+                                onIntent = {
+                                    context.openWhatsAppDeepLink(
+                                        viewModel.uiState.userStatus?.infoBankAccount?.wording?.link ?: ""
+                                    )
+                                }
+                            )
+                        )
+                    }
+                )
+            }
+        }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            CustomDotsIndicator(
+                totalDots = pagerCount,
+                selectedIndex = state.currentPage,
+                selectedColor = WhiteTransparency90,
+                unSelectedColor = WhiteTransparency30,
+                dotSize = 8.dp
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductFooter(
+    state: PagerState,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    HorizontalPager(
+        count = viewModel.uiState.productPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+        state = state,
+        userScrollEnabled = false
+    ) {
+        when (viewModel.uiState.productPageList?.getOrNull(viewModel.uiState.collapsedPage)?.product) {
+            ProductType.Credit.value -> CreditFooter(
+                uiState = viewModel.uiState,
+                balance = viewModel.balanceCredit,
+                configurationVersion = viewModel.configurationVersion,
+                onNavigateToDisbursement = { viewModel.onUIEvent(OnNavigateToDisbursement) },
+                onNavigateToVisaActivateScreen = {
+                    viewModel.onUIEvent(
+                        OnNavigateToHomeMultimoneyVisa
+                    )
+                },
+                onCreateMultimoneyVisa = {
+                    viewModel.onUIEvent(
+                        OnCreateMultimoneyVisa(onLoadingValueChange = {
+                            sharedViewModel.onUIEvent(
+                                UIEvent.OnLoadingValueChanged(
+                                    it
+                                )
+                            )
+                        })
+                    )
+                }
+            )
+
+            ProductType.Smart.value -> SmartFooter()
+            ProductType.Crypto.value -> CryptoFooter()
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductFooterExpanded(
+    state: PagerState,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    HorizontalPager(
+        count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+        state = state,
+        userScrollEnabled = false
+    ) {
+        when (viewModel.uiState.expandedProductPageList?.getOrNull(viewModel.uiState.expandedPage)?.product) {
+            ProductType.Credit.value -> CreditFooterExpanded(
+                viewModel = viewModel,
+                sharedViewModel = sharedViewModel
+            )
+
+            ProductType.Smart.value -> SmartFooterExpanded(
+                viewModel = viewModel,
+                viewModel.uiState.expandedProductPageList?.getOrNull(viewModel.uiState.expandedPage)?.productSmartIndex ?: 0
+            )
+
+            ProductType.Crypto.value -> CryptoFooterExpanded(
+                userStatus = viewModel.uiState.userStatus,
+                balance = viewModel.balanceCredit,
+                cryptoMovements = viewModel.uiState.cryptoCurrencyMovements,
+                onShowAllClick = { viewModel.onUIEvent(OnNavigateToCryptoMovements) },
+                actionMarket = {
+                    if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToMaintenanceAlert)
+                    } else {
+                        viewModel.onUIEvent(OnNavigateToCryptoMarket)
+                    }
+                },
+                actionWallet = {
+                    if (viewModel.balanceCredit?.balanceCryptoAccount?.outOfService == true) {
+                        viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToMaintenanceAlert)
+                    } else {
+                        viewModel.onUIEvent(OnNavigateToCryptoWallet)
+                    }
+                },
+                onNavigateToReleaseTransaction = {
+                    viewModel.onUIEvent(
+                        OnNavigateToReleaseTransaction(it)
+                    )
+                },
+                registerAdjustEvent = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustCryptoHomeFistTime)
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun ProductCtaFooterExpanded(
+    state: PagerState,
+    viewModel: ProductViewModel,
+    sharedViewModel: HomeViewModel
+) {
+    HorizontalPager(
+        count = viewModel.uiState.expandedProductPageList?.count() ?: DEFAULT_PRODUCT_PAGES,
+        state = state,
+        userScrollEnabled = false
+    ) {
+        when (viewModel.uiState.expandedProductPageList?.get(viewModel.uiState.expandedPage)?.product) {
+            ProductType.Credit.value -> CreditCtaFooterExpanded(
+                viewModel = viewModel,
+                sharedViewModel = sharedViewModel
+            )
+
+            ProductType.Smart.value -> SmartCtaFooterExpanded(
+                viewModel = viewModel,
+                viewModel.uiState.expandedPage
+            ) {
+                sharedViewModel.onUIEvent(UIEvent.OnLoadingValueChanged(it))
+            }
+
+            ProductType.Crypto.value -> CryptoCtaFooterExpanded(
+                isNotEmptyState = sharedViewModel.uiState.cryptoIsNotEmptyState,
+                isOutOfService = viewModel.balanceCredit?.balanceCryptoAccount?.outOfService ?: false,
+                isAccountStatusBlocked = viewModel.balanceCredit?.balanceAccountSmart?.all {
+                    it?.accountStatus?.isCTABlocked() ?: false
+                } ?: false,
+                onBuyActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnPurchaseButtonClicked)
+                },
+                onSendActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSendFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSendCryptoFlow)
+                },
+                onSellActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressSellFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToSellCryptoFlow)
+                },
+                onGiveActionClicked = {
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnRegisterAdjustPressReceiveFirstTime)
+                    viewModel.onUIEvent(ProductViewModel.UIEvent.OnNavigateToGiveCryptoFlow)
+                },
+                isSendAndGiveEnable = sharedViewModel.uiState.isCryptoTransferEnabled
+            )
+        }
+    }
+}
+
+@Composable
+fun TipAndOfferItem(
+    miniCardsItem: MiniCardsItem,
+    onClick: () -> Unit
+) {
+    TipBox {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .clickable {
+                    onClick()
+                }
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(miniCardsItem.imageUrl),
+                contentDescription = "",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(26.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+
+@Composable
+fun TipBox(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(152.dp, 140.dp)
+            .padding(end = 12.dp)
+    ) {
+        CustomImage(
+            drawableResource = R.drawable.ic_tip_background,
+            contentScale = ContentScale.FillBounds
+        )
+        content()
+    }
+}

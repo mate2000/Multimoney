@@ -1,0 +1,42 @@
+package com.multimoney.multimoney
+
+import android.app.Application
+import com.multimoney.multimoney.presentation.util.NfcHelper
+import com.multimoney.multimoney.util.AdjustHelper
+import com.multimoney.multimoney.util.CognitoHelper
+import com.multimoney.multimoney.util.SentryHelper
+import com.novopayment.sdk.vts.NovoVTS
+import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
+
+@HiltAndroidApp
+open class MultimoneyApplication : Application() {
+
+    @Inject
+    lateinit var sentryHelper: SentryHelper
+
+    @Inject
+    lateinit var adjustHelper: AdjustHelper
+
+    @Inject
+    lateinit var cognitoHelper: CognitoHelper
+
+    @Inject
+    lateinit var nfcHelper: NfcHelper
+
+    override fun onCreate() {
+        super.onCreate()
+        initThirdPartySdks()
+        // Initialize Adjust callback
+        registerActivityLifecycleCallbacks(adjustHelper.AdjustLifecycleCallbacks())
+    }
+
+    open fun initThirdPartySdks() {
+        sentryHelper.initSentry()
+        adjustHelper.initAdjust()
+        cognitoHelper.initCognito()
+        if (nfcHelper.isNfcSupported()) {
+            NovoVTS.initialize(applicationContext = applicationContext)
+        }
+    }
+}

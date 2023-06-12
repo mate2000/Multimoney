@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/onfidoColorPrimary"
+    android:orientation="vertical">
+
+    <ScrollView
+        style="@style/OnfidoShadowedScrollStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/userConsentTextView"
+            style="@style/OnfidoTextStyle.Body.Regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginStart="@dimen/onfido_activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/onfido_activity_horizontal_margin"
+            android:paddingTop="@dimen/onfido_welcome_title_top_margin"
+            android:paddingBottom="@dimen/onfido_activity_horizontal_margin"
+            tools:text="@tools:sample/lorem/random" />
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/userConsentFooterContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/onfido_activity_horizontal_margin"
+        android:layout_marginRight="@dimen/onfido_activity_horizontal_margin"
+        android:orientation="vertical"
+        android:paddingTop="8dp">
+
+        <com.onfido.android.sdk.capture.ui.widget.Button
+            android:id="@+id/userConsentAcceptButton"
+            style="@style/OnfidoFlatButton.NoMargin"
+            android:layout_marginBottom="@dimen/onfido_confirmation_buttons_middle_margin"
+            app:onfidoButtonText="@string/onfido_user_consent_button_primary" />
+
+        <com.onfido.android.sdk.capture.ui.widget.Button
+            android:id="@+id/userConsentDoNotAcceptButton"
+            style="@style/OnfidoFlatButton.NoMargin"
+            app:onfidoButtonText="@string/onfido_user_consent_button_secondary"
+            app:onfidoButtonType="secondary" />
+
+        <include layout="@layout/onfido_watermark_layout" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,16 @@
+package com.multimoney.data.mapper.security
+
+import com.multimoney.data.networking.graphql.apollomodel.CatalogTypeIndentificationQuery
+import com.multimoney.domain.model.security.CatalogDocument
+import com.multimoney.domain.model.security.CatalogType
+
+private fun CatalogTypeIndentificationQuery.CatalogTypeIndentification.mapToDomainModel() =
+    CatalogDocument(
+        description = descripcion,
+        format = formato,
+        idDocument = pk_Suv_Cat_Catalogo.toString().toInt(),
+        value = valor
+    )
+
+fun CatalogTypeIndentificationQuery.Data.mapToDomainModel() =
+    CatalogType(catalogDocument = catalogTypeIndentification.map { it.mapToDomainModel() })

@@ -1,0 +1,10 @@
+query GetToken{
+    token {
+        access_token,
+        expires_in,
+        token_type,
+        status,
+        message,
+        detail,
+    }
+}

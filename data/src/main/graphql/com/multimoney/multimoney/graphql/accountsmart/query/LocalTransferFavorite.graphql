@@ -1,0 +1,32 @@
+query localTransferFavorite(
+    $idBrand: Int,
+    $user: String,
+    $isFavorite: Boolean,
+    $idCustomer: Long
+){
+    localTransferFavorite(localTransferFavoriteInput: {
+        idBrand: $idBrand
+        user: $user
+        isFavorite: $isFavorite
+        idCustomer: $idCustomer
+    }) {
+        status
+        message
+        result {
+            idFavorite
+            idCustomer
+            idAccounType
+            accountNumber
+            accountName
+            email
+            activo
+            phoneNumber
+            idCurrencyAccount
+            currencyAccount
+            ibanNumber
+            isFavorite
+            areaCode
+            identification
+        }
+    }
+}

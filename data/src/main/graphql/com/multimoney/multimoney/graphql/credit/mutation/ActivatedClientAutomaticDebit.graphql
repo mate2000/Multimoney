@@ -1,0 +1,18 @@
+mutation ActivatedClientAutomaticDebit($user: String!, $idBrand: Int!, $idClient: Long!, $idLoanClient: Long!, $origin: String!, $idAccount: Long!, $idCurrency: Int!) {
+  activatedClientAutomaticDebit(
+    clientAutomaticDebitInput: {
+      user: $user
+      idBrand: $idBrand
+      idClient: $idClient
+      idLoanClient: $idLoanClient
+      origen: $origin
+      id: $idAccount
+      id_Moneda: $idCurrency
+    }
+  ) {
+    isUpdate
+    status
+    message
+    detail
+  }
+}

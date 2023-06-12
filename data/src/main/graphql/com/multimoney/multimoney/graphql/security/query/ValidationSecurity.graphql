@@ -1,0 +1,15 @@
+query ValidationSecurity($pkUser:Int!, $password:String!, $user:String!,$idBrand:Int!, $actionSecurity:Int!){
+    validateSecurity(
+        validateSecurityInput: {
+            pkUser: $pkUser,
+            password: $password,
+            user: $user,
+            idBrand: $idBrand,
+            actionSecurity: $actionSecurity
+        }
+    ) {
+        status
+        message
+        detail
+    }
+}

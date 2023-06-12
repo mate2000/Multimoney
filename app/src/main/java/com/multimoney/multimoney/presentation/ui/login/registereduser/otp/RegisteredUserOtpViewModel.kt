@@ -1,0 +1,489 @@
+package com.multimoney.multimoney.presentation.ui.login.registereduser.otp
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.data.util.catalog.FlowOriginChangeProfileInfo
+import com.multimoney.domain.interaction.profile.QueryCountryContactUseCase
+import com.multimoney.domain.interaction.security.MutationSendPinProcessUseCase
+import com.multimoney.domain.interaction.security.QueryValidatePinUseCase
+import com.multimoney.domain.model.profile.CountryContact
+import com.multimoney.domain.model.security.UserData
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.OTP_METHOD
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.USER_DATA
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnBackClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallCountryContact
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnCallMutationSendPinProcess
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnContinueClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnGetOtpFromMessage
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnInitializeTimer
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtherPhoneNumberClick
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnOtpValueChange
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.RegisteredUserOtpViewModel.UIEvent.OnStart
+import com.multimoney.multimoney.presentation.ui.login.registereduser.otp.model.RegisteredUserOtpState
+import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
+import com.multimoney.multimoney.presentation.util.ResendOtp
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.catalog.SendOtpMethod
+import com.multimoney.multimoney.presentation.util.format
+import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.tickerFlow
+import com.multimoney.multimoney.presentation.util.toJson
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit.SECONDS
+
+@HiltViewModel
+class RegisteredUserOtpViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val mutationSendPinProcessUseCase: MutationSendPinProcessUseCase,
+    private val queryValidatePinUseCase: QueryValidatePinUseCase,
+    private val queryCountryContactUseCase: QueryCountryContactUseCase,
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel(false) {
+
+    // UIState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    // Stateless
+    private var idBrand: Int = 0
+    private var otpMethod: String = ""
+    var userData: UserData? = null
+    var countryContact: CountryContact? = null
+
+    init {
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        userData = savedStateHandle.get<UserData>(USER_DATA)
+        otpMethod = savedStateHandle[OTP_METHOD] ?: ""
+    }
+
+    private fun onStart() {
+        uiState = when (otpMethod) {
+            SendOtpMethod.Email.value -> uiState.copy(
+                subtitleResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_subtitle_cr
+                } else {
+                    R.string.registered_user_otp_subtitle
+                },
+                disclaimerResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_disclaimer_cr
+                } else {
+                    R.string.registered_user_otp_disclaimer
+                },
+                titleResource = R.string.registered_user_otp_title_email,
+                titleOtpMethod = userData?.maskedMail.orEmpty(),
+                isOtherPhoneNumberVisible = false
+            )
+            else -> uiState.copy(
+                subtitleResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_subtitle_cr
+                } else {
+                    R.string.registered_user_otp_subtitle
+                },
+                disclaimerResource = if (idBrand == Brand.CostaRica.id) {
+                    R.string.registered_user_otp_disclaimer_cr
+                } else {
+                    R.string.registered_user_otp_disclaimer
+                },
+                titleResource = R.string.registered_user_otp_title_sms,
+                titleOtpMethod = userData?.maskedPhoneNumber.orEmpty(),
+                isOtherPhoneNumberVisible = true
+            )
+        }
+    }
+
+    private fun getContactInfo() =
+        executeUseCase {
+            queryCountryContactUseCase.invoke(
+                user = userData?.email ?: "",
+                idBrand = idBrand
+            ).collectLatest { result ->
+                result.onSuccess { contactInfo ->
+                    countryContact = contactInfo
+                }
+            }
+        }
+
+    private fun getOtpFromMessage(message: String) {
+        val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
+        if (otpMatcher.find()) {
+            uiState = uiState.copy(
+                otp = otpMatcher.group(0)?.toString() ?: "",
+                isOtpFromSms = true,
+                otpError = Pair(false, R.string.error_empty)
+            )
+        }
+    }
+
+    private fun isTimerTick() = uiState.remainingTime.inWholeSeconds > 0 && uiState.isTimerRunning
+
+    private fun onTimerTick() {
+        val newRemainingTime = uiState.remainingTime.minus(TIMER_DELAY.seconds)
+        uiState = uiState.copy(
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format()
+        )
+    }
+
+    private fun initializeTimer(
+        otpState: RegisteredUserOtpState = uiState.otpState,
+        totalTime: Long = TIMER_DURATION
+    ) {
+        val newRemainingTime = totalTime.seconds
+        uiState = uiState.copy(
+            otpState = otpState,
+            isTimerRunning = true,
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format(),
+            otp = ""
+        )
+    }
+
+    private fun onTimerFinish() {
+        val newRemainingTime = uiState.remainingTime.plus(TIMER_DURATION.seconds)
+        uiState = uiState.copy(
+            isTimerRunning = false,
+            remainingTime = newRemainingTime,
+            remainingTimeText = newRemainingTime.format(),
+            otpState = RegisteredUserOtpState.REQUEST_OTP
+        )
+    }
+
+    fun getPhaseResourceString() = when (uiState.otpState) {
+        RegisteredUserOtpState.OTP_SENT_FIRST_TIME -> R.string.sign_in_otp_expiration_time_phase_one
+        RegisteredUserOtpState.REQUEST_OTP -> if (uiState.otpResend == ResendOtp.SMS.option) R.string.sign_up_otp_sms else R.string.sign_up_otp_call
+        RegisteredUserOtpState.OTP_REQUESTED -> R.string.sign_in_otp_expiration_time_phase_three
+    }
+
+    private fun registerAdjustEvents() {
+        if (uiState.otpState == RegisteredUserOtpState.OTP_REQUESTED) {
+            if (uiState.otpResend == ResendOtp.SMS.option) {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_RESEND_OTP_2013,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            } else {
+                registerAdjustEvent(
+                    adjustEventType = AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_BY_CALL_2014,
+                    isLoggedIn = false,
+                    data = userData?.toJson() ?: "",
+                    applyAdjust = false
+                )
+            }
+        }
+    }
+
+    private fun isFormValid() = uiState.otp.trim()
+        .isNotEmpty() && uiState.otp.trim().length == TOTAL_DIGITS
+
+    private fun callMutationSendPinProcess() = executeUseCase {
+        uiState = uiState.copy(isTimerRunning = false)
+        mutationSendPinProcessUseCase.invoke(
+            userData?.identification.orEmpty(),
+            userData?.firstName.orEmpty(),
+            userData?.email.orEmpty(),
+            userData?.phoneNumber.orEmpty(),
+            if (otpMethod == SendOtpMethod.Email.value) {
+                SendOtpMethod.Email.apiValue
+            } else {
+                SendOtpMethod.Sms.apiValue
+            },
+            userData?.pkUser.orEmpty(),
+            idBrand,
+            userData?.email.orEmpty(),
+            FlowOriginChangeProfileInfo.NORMAL.value
+        ).collectLatest { result ->
+            result.onSuccess { sendPinProcess ->
+                uiState = uiState.copy(otpResend = sendPinProcess?.nextType, isLoading = false)
+                initializeTimer(
+                    totalTime = sendPinProcess?.pinExpirationTime?.toLong() ?: TIMER_DURATION
+                )
+                registerAdjustEvents()
+                setOtpRequestedState()
+                onExecuteTimer()
+            }.onMessage {
+                when (it?.messageError?.status) {
+                    STATUS_NO_PHONE -> uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            title = it.messageError.message.orEmpty(),
+                            description = it.messageError.detail.orEmpty(),
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.common_go_back,
+                            positiveAction = {
+                                onBackClick()
+                            }
+                        )
+                    )
+                    STATUS_NO_EMAIL -> uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            title = it.messageError.message.orEmpty(),
+                            description = it.messageError.detail.orEmpty(),
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.contact_support,
+                            positiveAction = {
+                                emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
+                            }
+                        )
+                    )
+                    else -> uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            description = it?.messageError?.message.orEmpty(),
+                            isActive = mutableStateOf(true),
+                            positiveResource = R.string.contact,
+                            positiveAction = {
+                                onUserBlocked()
+                            },
+                            negativeResource = R.string.cancel,
+                            negativeAction = {
+                                navigateToSignIn()
+                            }
+                        )
+                    )
+                }
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    dialogParameters = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                uiState = uiState.copy(isLoading = true)
+            }
+        }
+    }
+
+    private fun setOtpRequestedState() {
+        uiState = uiState.copy(
+            isTimerRunning = true,
+            otpState = RegisteredUserOtpState.OTP_REQUESTED
+        )
+    }
+
+    private fun onUserBlocked() {
+        navigateToSignIn()
+        emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
+    }
+
+    private fun navigateToSignIn() = popAndNavigateTo(
+        route = Screen.SignInScreen.route,
+        popTo = Screen.SignUpScreen.route
+    )
+
+    private fun onOtpValueChange(value: String) {
+        uiState = uiState.copy(
+            otp = value,
+            isOtpFromSms = false,
+            otpError = Pair(false, R.string.error_empty)
+        )
+        uiState = uiState.copy(isFormValid = isFormValid())
+    }
+
+    private fun onExecuteTimer() {
+        tickerFlow(
+            period = TIMER_DELAY.seconds,
+            initialDelay = TIMER_DELAY.seconds,
+            duration = uiState.remainingTime.toLong(SECONDS).seconds
+        )
+            .takeWhile { uiState.isTimerRunning }
+            .map {
+                LocalDateTime.now()
+            }
+            .distinctUntilChanged { old, new ->
+                old.second == new.second
+            }
+            .onEach {
+                if (isTimerTick()) {
+                    onTimerTick()
+                } else if (uiState.isTimerRunning) {
+                    onTimerFinish()
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun onBackClick() = navigateBack(
+        popTo = Screen.RegisteredUserOtpOptionsScreen.route,
+        isRestart = false
+    )
+
+    private fun onContinueClick() {
+        executeUseCase {
+            queryValidatePinUseCase.invoke(
+                idBrand = idBrand,
+                appSource = APP_SOURCE,
+                pkUser = userData?.pkUser ?: "",
+                pinSecurity = uiState.otp,
+                telephone = userData?.phoneNumber,
+                userCreate = userData?.firstName ?: ""
+            ).collectLatest { result ->
+                result.onSuccess {
+                    viewModelScope.launch {
+                        if (
+                            dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister().first()
+                        ) {
+                            registerAdjustEvent(
+                                AdjustEventType.SIGNUP_ALREADY_BEEN_CUSTOMERS_OTP_SUCCESS_CONFIRMATION_2012,
+                                isLoggedIn = false,
+                                data = userData?.toJson() ?: ""
+                            )
+                            dataStorePreferences.isAdjustSingUpAlreadyCustomerOTPEventRegister(false)
+                        }
+                    }
+                    popAndNavigateTo(
+                        route = Screen.RegisteredUserPassword.baseRoute.plus(
+                            getNavParam(USER_DATA, encodeData(userData)).plus(
+                                getNavParam(ID_BRAND, idBrand)
+                            )
+                        ),
+                        popTo = Screen.SignUpScreen.route
+                    )
+                }.onMessage {
+                    if (it?.messageError?.status == STATUS_REGISTERED_FAILED_CODE) {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            dialogParameters = DialogParameters(
+                                description = it.messageError.message.orEmpty(),
+                                isActive = mutableStateOf(true),
+                                positiveResource = R.string.contact,
+                                positiveAction = {
+                                    onUserBlocked()
+                                },
+                                negativeResource = R.string.cancel,
+                                negativeAction = {
+                                    navigateToSignIn()
+                                }
+                            )
+                        )
+                    } else {
+                        uiState =
+                            uiState.copy(
+                                otpError = Pair(true, R.string.sign_up_otp_code_not_valid),
+                                isLoading = false
+                            )
+                    }
+                }.onFailure {
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        dialogParameters = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    uiState = uiState.copy(isLoading = true)
+                }
+            }
+        }
+    }
+
+    private fun onOtherPhoneNumberClick() {
+        uiState = uiState.copy(
+            isLoading = false,
+            dialogParameters = DialogParameters(
+                titleResource = R.string.registered_user_otp_other_phone_number_title,
+                descriptionResource = R.string.registered_user_otp_other_phone_number_subtitle,
+                isActive = mutableStateOf(true),
+                positiveResource = R.string.contact,
+                positiveAction = {
+                    emitBaseEvent(BaseEvent.OnOpenWhatsApp(countryContact?.whatsappLink ?: ""))
+                }
+            )
+        )
+    }
+
+    data class UIState(
+        // Fields
+        val otp: String = "",
+        val otpResend: String? = "",
+        val otpError: Pair<Boolean, Int> = Pair(false, R.string.sign_up_otp_code_not_valid),
+
+        // Interactions
+        val titleResource: Int = R.string.empty,
+        val subtitleResource: Int = R.string.empty,
+        val disclaimerResource: Int = R.string.empty,
+        val titleOtpMethod: String = "",
+        val isOtherPhoneNumberVisible: Boolean = false,
+        val otpState: RegisteredUserOtpState = RegisteredUserOtpState.OTP_SENT_FIRST_TIME,
+        val remainingTime: Duration = TIMER_DURATION.seconds,
+        val isTimerRunning: Boolean = false,
+        val remainingTimeText: String = remainingTime.format(),
+        val isOtpFromSms: Boolean = false,
+        val isFormValid: Boolean = false,
+        val dialogParameters: DialogParameters = DialogParameters(),
+        val isLoading: Boolean = false
+    )
+
+    fun onUIEvent(event: UIEvent) {
+        when (event) {
+            is OnStart -> onStart()
+            is OnOtpValueChange -> onOtpValueChange(event.value)
+            is OnBackClick -> onBackClick()
+            is OnContinueClick -> onContinueClick()
+            is OnGetOtpFromMessage -> getOtpFromMessage(event.message)
+            is OnCallMutationSendPinProcess -> callMutationSendPinProcess()
+            is OnInitializeTimer -> initializeTimer(event.otpState, event.time)
+            is OnOtherPhoneNumberClick -> onOtherPhoneNumberClick()
+            is OnCallCountryContact -> getContactInfo()
+        }
+    }
+
+    sealed class UIEvent {
+        object OnStart : UIEvent()
+        data class OnOtpValueChange(val value: String) : UIEvent()
+        data class OnGetOtpFromMessage(val message: String) : UIEvent()
+        data class OnInitializeTimer(val otpState: RegisteredUserOtpState, val time: Long) : UIEvent()
+        object OnCallMutationSendPinProcess : UIEvent()
+        object OnBackClick : UIEvent()
+        object OnContinueClick : UIEvent()
+        object OnOtherPhoneNumberClick : UIEvent()
+        object OnCallCountryContact : UIEvent()
+    }
+
+    sealed class BaseEvent {
+        data class OnOpenWhatsApp(val linkWhatsapp: String) : BaseEvent()
+    }
+
+    companion object {
+        const val TOTAL_DIGITS = 4
+        const val TIMER_DURATION = 0L
+        const val TIMER_DELAY = 1L
+        const val APP_SOURCE = 2
+        const val STATUS_NO_PHONE = 3108
+        const val STATUS_NO_EMAIL = 3109
+        const val STATUS_REGISTERED_FAILED_CODE = 2104
+    }
+}

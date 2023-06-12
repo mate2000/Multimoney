@@ -1,0 +1,33 @@
+query ExchangeRate(
+    $user: String!
+    $identification: String!
+    $idBrand: Int!
+    $idOriginCurrency: String!
+    $idDestinationCurrency: String!
+    $amount: Decimal!
+    $abbreviation: String!,
+    $isTransfer: Boolean!
+) {
+    getExchangeRate(
+        getExchangeRateInput: {
+            user: $user
+            identification: $identification
+            identificacionNumber: $identification
+            idBrand: $idBrand
+            amount: $amount
+            idOriginCurrency: $idOriginCurrency
+            idDestinationCurrency: $idDestinationCurrency,
+            abreviatura_Moneda: $abbreviation,
+            isTransfer: $isTransfer
+        }
+    ) {
+        result {
+            amount
+            exchangeRate
+            convertedAmount
+            amount_label
+            exchangeRate_label
+            convertedAmount_label
+        }
+    }
+}

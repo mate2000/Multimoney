@@ -1,0 +1,482 @@
+package com.multimoney.multimoney.presentation.ui.credit.disbursement.account
+
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.multimoney.data.util.DataStorePreferences
+import com.multimoney.data.util.catalog.Brand
+import com.multimoney.domain.interaction.credit.MutationProcessCreditExtensionDetailUseCase
+import com.multimoney.domain.interaction.credit.QueryGetClientBankAccountUseCase
+import com.multimoney.domain.interaction.credit.QueryGetExchangeRateCreditUseCase
+import com.multimoney.domain.model.accountsmart.SmartAccountID
+import com.multimoney.domain.model.credit.ClientBankAccount
+import com.multimoney.domain.model.metrics.BaseEventDataDto
+import com.multimoney.domain.model.util.error.MessageError
+import com.multimoney.domain.model.util.onFailure
+import com.multimoney.domain.model.util.onLoading
+import com.multimoney.domain.model.util.onMessage
+import com.multimoney.domain.model.util.onSuccess
+import com.multimoney.multimoney.R
+import com.multimoney.multimoney.R.string
+import com.multimoney.multimoney.presentation.base.BaseViewModel
+import com.multimoney.multimoney.presentation.navigation.ID_BRAND
+import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.CREDIT_NUMBER
+import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
+import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.ID_USER_REQUEST
+import com.multimoney.multimoney.presentation.navigation.navgraph.NEXT_PAYMENT_DATE
+import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
+import com.multimoney.multimoney.presentation.navigation.navgraph.QUOTA_TOTAL
+import com.multimoney.multimoney.presentation.navigation.navgraph.SELECTED_AMOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.USER
+import com.multimoney.multimoney.presentation.navigation.util.encodeData
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetClientBankAccount
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCallQueryGetExchangeRateCredit
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnClientBankAccountSelected
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnCloseClick
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnDisclaimerClick
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnHideDisbursementBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnLoadingValueChange
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnMessageProcessCreditExtension
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBack
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateBackHome
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToDisbursementAddAccount
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnNavigateToVoucher
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnProcessCreditExtension
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnShowDisbursementBottomSheet
+import com.multimoney.multimoney.presentation.ui.credit.disbursement.account.DisbursementAccountViewModel.UIEvent.OnSuccessProcessCreditExtension
+import com.multimoney.multimoney.presentation.ui.credit.origination.amount.CreditAmountViewModel
+import com.multimoney.multimoney.presentation.util.API_DATE_FORMAT
+import com.multimoney.multimoney.presentation.util.BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS
+import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
+import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
+import com.multimoney.multimoney.presentation.util.formattedTwoDecimalsNumber
+import com.multimoney.multimoney.presentation.util.getCardDateFormat
+import com.multimoney.multimoney.presentation.util.getCurrencyFromId
+import com.multimoney.multimoney.presentation.util.getNavParam
+import com.multimoney.multimoney.presentation.util.stringToDoubleFormat
+import com.multimoney.multimoney.presentation.util.toJson
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+@OptIn(ExperimentalMaterialApi::class)
+class DisbursementAccountViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val queryGetClientBankAccountUseCase: QueryGetClientBankAccountUseCase,
+    private val queryGetExchangeRateCreditUseCase: QueryGetExchangeRateCreditUseCase,
+    private val mutationProcessCreditExtensionDetailUseCase: MutationProcessCreditExtensionDetailUseCase,
+    private val dataStorePreferences: DataStorePreferences
+) : BaseViewModel(true) {
+
+    // uiState
+    var uiState by mutableStateOf(UIState())
+        private set
+
+    // Stateless
+    private var user: String = ""
+    private var idBrand: Int = 0
+    private var idClient: Int = 0
+    private var idLoanClient: Long = 0L
+    private var identification: String? = null
+    private var nextPaymentDate: String? = null
+    private var quotaTotal: String? = null
+    private var selectedAmount: String? = null
+    private var pkUser: Int? = null
+    private var idCurrency: Int?
+    private var idUserRequest: Int? = null
+    private var creditNumber: String? = null
+    private var fkFlowControl: Int? = null
+
+    init {
+        user = savedStateHandle[USER] ?: ""
+        idBrand = savedStateHandle[ID_BRAND] ?: 0
+        idClient = savedStateHandle[ID_CLIENT] ?: 0
+        idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0L
+        nextPaymentDate = savedStateHandle[NEXT_PAYMENT_DATE]
+        quotaTotal = savedStateHandle[QUOTA_TOTAL]
+        selectedAmount = savedStateHandle[SELECTED_AMOUNT]
+        pkUser = savedStateHandle.get<String>(PK_USER)?.toInt()
+        idCurrency = savedStateHandle[ID_CURRENCY]
+        idUserRequest = savedStateHandle[ID_USER_REQUEST]
+        identification = savedStateHandle[IDENTIFICATION] ?: ""
+        creditNumber = savedStateHandle[CREDIT_NUMBER]
+        fkFlowControl = savedStateHandle[FK_FLOW_CONTROL] ?: 0
+
+        getTextResources()
+    }
+
+    private fun getTextResources() {
+        uiState = uiState.copy(
+            titleResource = when (idBrand) {
+                Brand.CostaRica.id -> string.disbursement_account_cr_title
+                else -> string.disbursement_account_sv_title
+            }
+        )
+    }
+
+    private fun onCallQueryGetClientBankAccountUseCase() {
+        executeUseCase {
+            queryGetClientBankAccountUseCase.invoke(
+                user = user,
+                idBrand = idBrand,
+                idClient = idClient,
+                idLoan = idLoanClient.toInt(),
+                process = DISBURSEMENT_PROCESS
+            ).collectLatest { result ->
+                result.onSuccess { clientBankAccountList ->
+                    onUIEvent(OnLoadingValueChange(false))
+                    uiState = uiState.copy(
+                        clientBankAccountList = clientBankAccountList
+                    )
+                }.onFailure {
+                    onUIEvent(OnLoadingValueChange(false))
+                    uiState = uiState.copy(
+                        openDialog = DialogParameters(
+                            description = it.getError() ?: "",
+                            isActive = mutableStateOf(true)
+                        )
+                    )
+                }.onLoading {
+                    onUIEvent(OnLoadingValueChange(true))
+                }
+            }
+        }
+    }
+
+    fun shouldDisplayExchangeRate() =
+        when (idBrand) {
+            Brand.CostaRica.id -> uiState.clientBankAccountSelected?.idCurrency != idCurrency
+            else -> false
+        }
+
+    private fun onClientBankAccountSelected(clientBankAccount: ClientBankAccount?) {
+        uiState = uiState.copy(clientBankAccountSelected = clientBankAccount)
+        if (shouldDisplayExchangeRate()) {
+            onUIEvent(OnCallQueryGetExchangeRateCredit)
+        } else {
+            onUIEvent(OnShowDisbursementBottomSheet)
+        }
+    }
+
+    private fun onSuccessProcessCreditExtension(referenceNumber: String?) {
+        onUIEvent(OnLoadingValueChange(false))
+        onUIEvent(OnHideDisbursementBottomSheet)
+        if (idBrand == Brand.CostaRica.id) {
+            onUIEvent(OnNavigateToVoucher(referenceNumber))
+        } else {
+            uiState = uiState.copy(
+                isAlertResultVisible = true,
+                alertResultIconResource = R.drawable.ic_success_symbol,
+                alertResultTitleResource = string.disbursement_account_process_success_title,
+                alertResultDescriptionResource = string.disbursement_account_process_success_description,
+                alertButtonTextResource = string.understood
+            )
+        }
+    }
+
+    private fun onMessageProcessCreditExtension(error: MessageError?) {
+        onUIEvent(OnLoadingValueChange(false))
+        onUIEvent(OnHideDisbursementBottomSheet)
+        error?.let {
+            uiState = uiState.copy(
+                isAlertResultVisible = true,
+                alertResultIconResource = R.drawable.ic_error_symbol,
+                alertResultTitle = it.message ?: "",
+                alertResultDescription = it.detail ?: "",
+                alertButtonTextResource = R.string.disbursement_account_process_error_button
+            )
+        }
+    }
+
+    private fun onProcessCreditExtension() = executeUseCase {
+        mutationProcessCreditExtensionDetailUseCase.invoke(
+            user = identification ?: "",
+            pkUser = pkUser ?: 0,
+            idBrand = idBrand,
+            idFlowControl = fkFlowControl ?: 0,
+            currency = idCurrency?.getCurrencyFromId()?.disbursementValue ?: "",
+            accountNumber = creditNumber ?: "",
+            bankAccount = uiState.clientBankAccountSelected?.accountNumber ?: "",
+            idBankAccount = uiState.clientBankAccountSelected?.id ?: "",
+            idLoanForm = ID_LOAN_FORM_HARDCODED,
+            loanForm = LOAN_FORM_HARDCODED,
+            idLoanClient = idLoanClient.toInt(),
+            phoneNumber = dataStorePreferences.getUserPhoneNumber().first(),
+            userEmail = user
+        ).collectLatest { result ->
+            result.onSuccess {
+                onUIEvent(OnSuccessProcessCreditExtension(it?.reference))
+            }.onMessage {
+                onUIEvent(OnMessageProcessCreditExtension(it?.messageError))
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }.onLoading {
+                onUIEvent(OnLoadingValueChange(true))
+            }
+        }
+    }
+
+    private fun onCallQueryGetExchangeRate() = executeUseCase {
+        queryGetExchangeRateCreditUseCase.invoke(
+            idBrand,
+            user,
+            identification ?: "",
+            idCurrency?.toString() ?: "",
+            uiState.clientBankAccountSelected?.idCurrency?.toString() ?: "",
+            selectedAmount?.toDoubleOrNull() ?: 0.0
+
+        ).collectLatest { result ->
+            result.onSuccess {
+                uiState = uiState.copy(
+                    exchangeRateLabel = it?.result?.exchangeRate ?: 0.0,
+                    exchangeConvertedAmount = it?.result?.convertedAmount ?: 0.0
+                )
+                onUIEvent(OnLoadingValueChange(false))
+                onUIEvent(OnShowDisbursementBottomSheet)
+            }.onFailure {
+                uiState = uiState.copy(
+                    isLoading = false,
+                    openDialog = DialogParameters(
+                        description = it.getError() ?: "",
+                        isActive = mutableStateOf(true)
+                    )
+                )
+            }
+            result.onLoading { onUIEvent(OnLoadingValueChange(true)) }
+        }
+    }
+
+    private fun onLoadingValueChange(loading: Boolean) {
+        uiState = uiState.copy(isLoading = loading)
+    }
+
+    private fun onShowPaymentBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Expanded))
+    }
+
+    private fun onHideDisbursementBottomSheet() {
+        uiState = uiState.copy(bottomSheetVisibleState = ModalBottomSheetState(ModalBottomSheetValue.Hidden))
+    }
+
+    private fun onNavigateToVoucher(referenceNumber: String?) {
+        logEvents(AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022)
+        navigateTo(
+            route = "${Screen.DisbursementVoucherScreen.baseRoute}/${encodeData(uiState.clientBankAccountSelected)}/${
+            if (shouldDisplayExchangeRate()) {
+                getCurrentAmountExchangedFormatted()
+            } else {
+                getCurrentAmountFormatted()
+            }
+            }/${getExchangeRateFormatted()}/${shouldDisplayExchangeRate()}/${referenceNumber ?: ""}/${getCurrentAmountFormatted()}"
+        )
+    }
+
+    fun logEvents(adjustEventType: AdjustEventType) {
+        viewModelScope.launch {
+            getAdjustEvent(adjustEventType).invoke()
+        }
+    }
+
+    private fun getAdjustEvent(adjustEventType: AdjustEventType): suspend () -> Unit {
+        val baseAdjustEvent = BaseEventDataDto(
+            user = user,
+            idBrand = idBrand,
+            idClient = idClient,
+            idLoanClient = idLoanClient.toInt(),
+            identification = identification
+        )
+        return when (adjustEventType) {
+            AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022 -> {
+                getSuccessDisbursementEvent(baseAdjustEvent)
+            }
+            AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003 -> {
+                getAddAccountEvent(baseAdjustEvent)
+            }
+            else -> suspend {}
+        }
+    }
+
+    private fun getAddAccountEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustAddAccountEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustAddAccountEventRegister(false)
+            }
+        }
+
+    private fun getSuccessDisbursementEvent(baseAdjustEvent: BaseEventDataDto) =
+        suspend {
+            if (dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister().first()) {
+                registerAdjustEvent(
+                    AdjustEventType.DISBURSEMENT_FIRST_FINISH_PROCESS_SUCCESS_5022,
+                    applyAdjust = false,
+                    data = baseAdjustEvent.toJson()
+                )
+                dataStorePreferences.isAdjustFirstDisbursementSuccessEventRegister(false)
+            }
+        }
+
+    private fun onNavigateBack() = navigateBack(popTo = Screen.DisbursementAmountScreen.route, isRestart = false)
+
+    private fun onNavigateBackHome() = navigateBack(popTo = Screen.HomeScreen.route, isRestart = false)
+
+    private fun onNavigateToDisbursementAddAccount() {
+        logEvents(AdjustEventType.SETTINGS_FIRST_ADD_ACCOUNT_8003)
+        if (idBrand == Brand.CostaRica.id) {
+            navigateTo(
+                route = "${Screen.AddIbanAccountScreen.baseRoute}/$user/$idBrand/$identification/${Screen.DisbursementAccountScreen.baseRoute}/$idClient/$idLoanClient".plus(
+                    getNavParam(SMART_ACCOUNT, encodeData(SmartAccountID()))
+                )
+            )
+        } else {
+            navigateTo(
+                route = "${Screen.DisbursementAddAccountScreen.baseRoute}/$idBrand/$pkUser/$user/$idUserRequest/$idClient/$idLoanClient/$idCurrency"
+            )
+        }
+    }
+
+    private fun onMaxAccountNumberDialog() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = string.disbursement_account_max_number_title,
+                descriptionResource = if (idBrand == Brand.CostaRica.id) {
+                    string.disbursement_account_max_number_description_cr
+                } else {
+                    string.disbursement_account_max_number_description
+                },
+                positiveResource = string.understood,
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    fun getCurrentAmountFormatted() =
+        "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
+        selectedAmount?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        }"
+
+    fun getCurrentAmountExchangedFormatted() =
+        "${uiState.clientBankAccountSelected?.idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
+        uiState.exchangeConvertedAmount.formattedTwoDecimalsNumber().toString()
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        }"
+
+    fun getExchangeRateFormatted() =
+        "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
+        uiState.exchangeRateLabel.toString()
+            .stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString())
+        }"
+
+    fun getQuotaTotalFormatted() =
+        "${idCurrency?.getCurrencyFromId()?.symbol ?: ""}${
+        quotaTotal?.stringToDoubleFormat(CreditAmountViewModel.CURRENCY_SEPARATOR.toString()) ?: ""
+        }"
+
+    fun getQuotaNextDateFormatted() =
+        getCardDateFormat(nextPaymentDate, BAR_DIVIDER_FORMAT_YEAR_TWO_DIGITS, API_DATE_FORMAT)
+
+    fun onCloseClick() {
+        uiState = uiState.copy(
+            openDialog = DialogParameters(
+                titleResource = if (idBrand == Brand.CostaRica.id) string.credit_amount_disbursement_exit_confirm_title_cr
+                else string.credit_amount_disbursement_exit_confirm_title_sv,
+                descriptionResource = string.credit_amount_disbursement_exit_confirm_description,
+                negativeResource = string.common_leave,
+                positiveResource = string.button_continue,
+                negativeAction = { onNavigateBackHome() },
+                isActive = mutableStateOf(true)
+            )
+        )
+    }
+
+    data class UIState(
+        // Interactions
+        val titleResource: Int = string.empty,
+        val clientBankAccountList: List<ClientBankAccount?>? = null,
+        val clientBankAccountSelected: ClientBankAccount? = null,
+        val isLoading: Boolean = false,
+        val openDialog: DialogParameters = DialogParameters(),
+        val bottomSheetVisibleState: ModalBottomSheetState = ModalBottomSheetState(ModalBottomSheetValue.Hidden),
+        val isAlertResultVisible: Boolean = false,
+        val alertResultIconResource: Int = R.drawable.ic_error_symbol,
+        val alertResultTitle: String = "",
+        val alertResultDescription: String = "",
+        val alertResultTitleResource: Int = string.empty,
+        val alertResultDescriptionResource: Int = string.empty,
+        val alertButtonTextResource: Int = string.empty,
+        val exchangeRateLabel: Double = 0.0,
+        val exchangeConvertedAmount: Double = 0.0
+    )
+
+    fun onUIEvent(uiEvent: UIEvent) {
+        when (uiEvent) {
+            is OnNavigateBack -> onNavigateBack()
+            is OnNavigateBackHome -> onNavigateBackHome()
+            is OnCallQueryGetClientBankAccount -> onCallQueryGetClientBankAccountUseCase()
+            is OnClientBankAccountSelected -> onClientBankAccountSelected(uiEvent.clientBankAccount)
+            is OnNavigateToDisbursementAddAccount -> onNavigateToDisbursementAddAccount()
+            is OnLoadingValueChange -> onLoadingValueChange(uiEvent.isLoading)
+            is OnShowDisbursementBottomSheet -> onShowPaymentBottomSheet()
+            is OnHideDisbursementBottomSheet -> onHideDisbursementBottomSheet()
+            is OnCallQueryGetExchangeRateCredit -> onCallQueryGetExchangeRate()
+            is OnSuccessProcessCreditExtension -> onSuccessProcessCreditExtension(uiEvent.reference)
+            is OnMessageProcessCreditExtension -> onMessageProcessCreditExtension(uiEvent.error)
+            is OnProcessCreditExtension -> onProcessCreditExtension()
+            is OnDisclaimerClick -> onMaxAccountNumberDialog()
+            is OnNavigateToVoucher -> onNavigateToVoucher(uiEvent.reference)
+            is OnCloseClick -> onCloseClick()
+        }
+    }
+
+    sealed class UIEvent {
+        object OnCallQueryGetClientBankAccount : UIEvent()
+        class OnClientBankAccountSelected(val clientBankAccount: ClientBankAccount?) : UIEvent()
+        data class OnNavigateToVoucher(val reference: String?) : UIEvent()
+        object OnNavigateBack : UIEvent()
+        object OnNavigateBackHome : UIEvent()
+        object OnNavigateToDisbursementAddAccount : UIEvent()
+        data class OnLoadingValueChange(val isLoading: Boolean) : UIEvent()
+        object OnShowDisbursementBottomSheet : UIEvent()
+        object OnHideDisbursementBottomSheet : UIEvent()
+        object OnCallQueryGetExchangeRateCredit : UIEvent()
+        data class OnSuccessProcessCreditExtension(val reference: String?) : UIEvent()
+        object OnProcessCreditExtension : UIEvent()
+        data class OnMessageProcessCreditExtension(val error: MessageError?) : UIEvent()
+        object OnDisclaimerClick : UIEvent()
+        object OnCloseClick : UIEvent()
+    }
+
+    companion object {
+        private const val ID_LOAN_FORM_HARDCODED =
+            4 // TODO Change to 1-4 depending on preferences user previously selected (new HU)
+        private const val LOAN_FORM_HARDCODED =
+            "Transferencia" // TODO Change to Transferencia-PEX depending on preferences user previously selected (new HU)
+        const val MAX_ACCOUNT_NUMBER = 3
+        private const val DISBURSEMENT_PROCESS =
+            "DESEMBOLSO"
+    }
+}

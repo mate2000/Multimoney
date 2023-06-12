@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:paddingLeft="@dimen/onfido_activity_horizontal_margin"
+    android:paddingTop="@dimen/onfido_document_selection_icon_margin_vertical"
+    android:paddingRight="@dimen/onfido_activity_horizontal_margin"
+    android:paddingBottom="@dimen/onfido_document_selection_icon_margin_vertical">
+
+    <FrameLayout
+        android:id="@+id/iconContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <View
+            android:layout_width="@dimen/onfido_document_selection_icon_dimen"
+            android:layout_height="@dimen/onfido_document_selection_icon_dimen"
+            android:background="@drawable/onfido_circle" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <LinearLayout
+        style="@style/OnfidoDocumentTypeDescription"
+        android:layout_toLeftOf="@+id/arrow"
+        android:layout_toRightOf="@+id/iconContainer">
+
+        <TextView
+            android:id="@+id/documentName"
+            style="@style/OnfidoTextStyle.Body.Regular"
+            android:lineSpacingExtra="@dimen/onfido_document_selection_button_line_height_extra"
+            android:textColor="@color/white"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/documentDescription"
+            android:textColor="@color/white"
+            style="@style/OnfidoTextStyle.Body.Regular"
+            android:lineSpacingExtra="@dimen/onfido_document_selection_button_line_height_extra"
+            tools:text="Description" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/onfido_arrow_right_grey"
+        app:tint="@color/onfidoPrimaryButtonColor" />
+</RelativeLayout>

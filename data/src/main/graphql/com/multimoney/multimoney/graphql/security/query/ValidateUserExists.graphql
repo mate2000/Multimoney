@@ -1,0 +1,33 @@
+query ValidateUserExists($email:String!, $deviceId:String!){
+  validateUserExists(
+    validateUserExistsInput: {
+      email: $email,
+      deviceId: $deviceId
+    }
+  ) {
+    status
+    message
+    detail
+    pkUser
+    userName
+    email
+    phoneNumber
+    fullName
+    firstName
+    secondName
+    lastName
+    secondLastName
+    contactMeans
+    nationality
+    identification
+    strIdIdentification
+    idIdentification
+    countryCode
+    currentStep
+    isNewUser
+    maskedMail
+    maskedPhoneNumber
+    userStatus
+    idBrand
+  }
+}

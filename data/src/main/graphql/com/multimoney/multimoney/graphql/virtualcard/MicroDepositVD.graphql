@@ -1,0 +1,21 @@
+mutation MicroDepositVD(
+    $identification: String!,
+    $idCard: String!,
+    $code: String!,
+    $user: String!,
+    $idBrand: Int!,
+)
+{
+    microDepositVD(
+        microDepositVDInput: {
+            identification: $identification,
+            idCard: $idCard,
+            code: $code,
+            user: $user,
+            idBrand: $idBrand,
+        }
+    ) {
+        status
+        message
+    }
+}

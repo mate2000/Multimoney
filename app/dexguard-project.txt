@@ -38,3 +38,6 @@
 
 # Class Encryption
 -encryptclasses com.multimoney.**
+
+# Keep all the Visa classes
+-keep class com.visa.cbp.sdk.** { *; }

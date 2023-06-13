@@ -22,10 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
@@ -218,31 +221,42 @@ fun RegisteredUserOtpContent(
 
                 when (uiState.otpState) {
                     RegisteredUserOtpState.OTP_SENT_FIRST_TIME, RegisteredUserOtpState.OTP_REQUESTED -> {
-                        Row {
-                            Text(
-                                text = stringResource(id = getPhaseResourceString()),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(top = 32.dp),
-                                style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
-                            )
-                            Text(
-                                text = uiState.remainingTimeText,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(top = 32.dp)
-                                    .width(45.dp),
-                                style = Typography.body2.copy(
+                        val phaseResourceString = stringResource(id = getPhaseResourceString())
+                        val expirationTimeText = stringResource(id = string.sign_in_otp_expiration_time_phase_seconds)
+
+                        val annotatedString = buildAnnotatedString {
+                            append(AnnotatedString(
+                                phaseResourceString,
+                                SpanStyle(
+                                    color = MultimoneyTheme.colors.textSubhead,
+                                    fontSize = 14.sp
+                                )
+                            ))
+                            append(" ")
+                            append(AnnotatedString(
+                                uiState.remainingTimeText,
+                                SpanStyle(
                                     color = MultimoneyTheme.colors.timerColor,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
-                            )
-                            Text(
-                                text = stringResource(id = string.sign_in_otp_expiration_time_phase_seconds),
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(top = 32.dp),
-                                style = Typography.body2.copy(color = MultimoneyTheme.colors.textSubhead)
-                            )
+                            ))
+                            append(" ")
+                            append(AnnotatedString(
+                                expirationTimeText,
+                                SpanStyle(
+                                    color = MultimoneyTheme.colors.textSubhead,
+                                    fontSize = 14.sp
+                                )
+                            ))
                         }
+
+                        Text(
+                            text = annotatedString,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 32.dp)
+                        )
                     }
                     RegisteredUserOtpState.REQUEST_OTP -> ClickableText(
                         text = AnnotatedString(stringResource(id = getPhaseResourceString())),

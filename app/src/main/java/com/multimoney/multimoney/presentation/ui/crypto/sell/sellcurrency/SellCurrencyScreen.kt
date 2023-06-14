@@ -260,7 +260,6 @@ fun SellCurrencyScreenContent(
                     quoteAmount = viewModel.uiState.quoteAmount,
                     baseAmount = viewModel.uiState.baseAmount,
                     isHQR = viewModel.uiState.pricesQuoteAndCommissions?.isHQR?:true,
-                    idBrand = viewModel.idBrand,
                     isTransformationCurrency = viewModel.uiState.isTransformationCurrency,
                     isError = viewModel.uiState.focusError,
                     isLoading = viewModel.uiState.isLoading,

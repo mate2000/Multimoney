@@ -27,14 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.multimoney.data.util.catalog.Brand
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.TIMER_UNIT_INDICATOR
 import com.multimoney.multimoney.presentation.ui.crypto.sell.sellcurrency.WHITE_SPACE
 import com.multimoney.multimoney.presentation.uielement.CryptoCurrencyInputLayout
-import com.multimoney.multimoney.presentation.util.CryptoConstants
 import com.multimoney.multimoney.presentation.util.calculateAssetEstimated
 import com.multimoney.multimoney.presentation.util.calculateDollarEstimated
 import com.multimoney.multimoney.presentation.util.calculateDollarEstimatedWithoutFormat
@@ -163,7 +161,6 @@ fun AmountInputSection(
     quoteAmount: MutableState<String>,
     baseAmount: MutableState<String>,
     isHQR: Boolean = true,
-    idBrand: Int = Brand.Default.id,
     isTransformationCurrency: MutableState<Boolean>,
     keyboardController: SoftwareKeyboardController?,
     focusRequester: FocusRequester,
@@ -210,10 +207,11 @@ fun AmountInputSection(
                     )
                 } else {
                     // if empty, set empty string to show hint
-                    baseAmountText.value = if (quoteAmountText.value.isEmpty()) "" else calculateAssetEstimated(
-                        quoteAmount = quoteAmountText.value,
-                        currencyPrice = currencyPrice
-                    )
+                    baseAmountText.value =
+                        if (quoteAmountText.value.isEmpty()) "" else calculateAssetEstimated(
+                            quoteAmount = quoteAmountText.value,
+                            currencyPrice = currencyPrice
+                        )
                 }
             }
         )
@@ -226,7 +224,11 @@ fun AmountInputSection(
             Text(
                 text = if (isTransformationCurrencyValue.value.not()) {
                     stringResource(
-                        id = getCryptoStringResource(idBrand, isHQR, asset),
+                        id = if (isHQR) {
+                            R.string.crypto_purchase_flow_exchange_reference_edittext
+                        } else {
+                            R.string.crypto_purchase_flow_paxg_btc_exchance_reference_edittext_cr_sv
+                        },
                         calculateAssetEstimated(
                             quoteAmount = quoteAmountText.value,
                             currencyPrice = currencyPrice
@@ -235,7 +237,11 @@ fun AmountInputSection(
                     )
                 } else {
                     stringResource(
-                        id = R.string.crypto_purchase_flow_exchange_reference_edittext_dollars,
+                        id = if (isHQR) {
+                            R.string.crypto_purchase_flow_exchange_reference_edittext_dollars
+                        } else {
+                            R.string.crypto_purchase_flow_exchange_reference_edittext_dollars_cr_sv
+                        },
                         calculateDollarEstimated(
                             baseAmount = baseAmountText.value,
                             currencyPrice = currencyPrice
@@ -313,15 +319,3 @@ fun TitleSection(
         }
     }
 }
-
-private fun getCryptoStringResource(idBrand: Int, isHQR: Boolean, asset: String) =
-    if ((asset == CryptoConstants.PAXG ||
-         asset == CryptoConstants.BTC &&
-         idBrand == Brand.CostaRica.id ||
-         idBrand == Brand.ElSalvador.id) &&
-        isHQR.not()
-    ) {
-        R.string.crypto_purchase_flow_paxg_btc_exchance_reference_edittext_cr_sv
-    } else {
-        R.string.crypto_purchase_flow_exchange_reference_edittext
-    }

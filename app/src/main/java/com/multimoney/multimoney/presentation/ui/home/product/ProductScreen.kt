@@ -649,6 +649,7 @@ fun ProductContent(
                         cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
                         cryptoEmptyState = profileEnable,
                         clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                        cardsExpanded = viewModel.uiState.isExpanded,
                         openSmartCryptoAction = {
                             viewModel.onUIEvent(
                                 OnNavigateToSmartOriginationFlow(
@@ -716,6 +717,7 @@ fun ProductContentExpanded(
                     cryptoBalance = viewModel.balanceCredit?.balanceCryptoAccount,
                     cryptoEmptyState = profileEnable,
                     clientBalanceHistory = sharedViewModel.uiState.cryptoHistoricalBalance,
+                    cardsExpanded = viewModel.uiState.isExpanded,
                     openSmartCryptoAction = {
                         viewModel.onUIEvent(
                             OnNavigateToSmartOriginationFlow(

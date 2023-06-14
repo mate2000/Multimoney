@@ -315,9 +315,9 @@ fun TitleSection(
 }
 
 private fun getCryptoStringResource(idBrand: Int, isHQR: Boolean, asset: String) =
-    if ((asset == CryptoConstants.PAXG  &&
-         idBrand == Brand.CostaRica.id  ||
-         asset == CryptoConstants.BTC   &&
+    if ((asset == CryptoConstants.PAXG ||
+         asset == CryptoConstants.BTC &&
+         idBrand == Brand.CostaRica.id ||
          idBrand == Brand.ElSalvador.id) &&
         isHQR.not()
     ) {

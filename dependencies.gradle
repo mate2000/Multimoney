@@ -211,7 +211,7 @@ ext {
     ]
 
     // Cognito
-    cognito_version = "1.38.5"
+    cognito_version = "1.37.3"
 
     cognito = [
             core: "com.amplifyframework:core:$cognito_version",

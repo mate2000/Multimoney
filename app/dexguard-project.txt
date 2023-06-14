@@ -41,3 +41,11 @@
 
 # Keep all the Visa classes
 -keep class com.visa.cbp.sdk.** { *; }
+-keep class com.amazonaws.mobile.** { *; }
+-keep class com.onfido.android.sdk.** { *; }
+-keep class com.nimbusds.jose.** { *; }
+-keep class androidx.compose.ui.tooling.animation.** { *; }
+-keep class androidx.navigation.dynamicfeatures.** { *; }
+-keep class androidx.constraintlayout.motion.** { *; }
+-keep class androidx.navigation.dynamicfeatures.** { *; }
+-keep class kotlinx.coroutines.internal.** { *; }

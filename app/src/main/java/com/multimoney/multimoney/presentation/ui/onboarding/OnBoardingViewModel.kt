@@ -51,6 +51,11 @@ class OnBoardingViewModel @Inject constructor(
                 subtitle = newValues[STEP_SUBTITLE],
                 icon = newValues[STEP_ICON]
             )
+        } else {
+            navigateToNextScreen(
+                screen = Screen.SignUpScreen.baseRoute,
+                context = context
+            )
         }
     }
 

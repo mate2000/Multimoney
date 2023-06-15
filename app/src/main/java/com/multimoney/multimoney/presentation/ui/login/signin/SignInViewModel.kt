@@ -96,7 +96,9 @@ class SignInViewModel @Inject constructor(
         this.deviceType = deviceType
         this.forceDeviceChange = forceDeviceChange
         onUserPasswordValueChange("")
-        viewModelScope.launch(Dispatchers.IO) { ipAddress = getIPAddress() ?: "" }
+        viewModelScope.launch(Dispatchers.IO) {
+            ipAddress = getIPAddress() ?: ""
+        }
         viewModelScope.launch {
             dataStorePreferences.setAuthToken("")
             dataStorePreferences.isSignUpFlow(true)
@@ -371,22 +373,10 @@ class SignInViewModel @Inject constructor(
             result.onSuccess { userData ->
                 setContactInfo(userData?.idBrand)
                 if (userData?.isNewUser == false) {
-                    val titleResource = if (uiState.country == SIM_CODE_COSTA_RICA) {
-                        string.sign_in_dialog_user_exists_title_cr
-                    } else {
-                        string.sign_in_dialog_user_exists_title
-                    }
-
-                    val descriptionResource = if (uiState.country == SIM_CODE_COSTA_RICA) {
-                        string.sign_in_dialog_user_exists_description_cr
-                    } else {
-                        string.sign_in_dialog_user_exists_description
-                    }
-
                     uiState = uiState.copy(
                         openDialog = DialogParameters(
-                            titleResource = titleResource,
-                            descriptionResource = descriptionResource,
+                            titleResource = string.sign_in_dialog_user_exists_title,
+                            descriptionResource = string.sign_in_dialog_user_exists_description,
                             positiveResource = string.button_continue,
                             negativeResource = string.common_return,
                             positiveAction = { onNavigateToSignUp() },
@@ -786,7 +776,7 @@ class SignInViewModel @Inject constructor(
             data = EmailDto(uiState.userEmail).toJson()
         )
         popAndNavigateTo(
-            "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}/${uiState.userPassword}/$deviceId/$uniqueId/$ipAddress/$deviceType/$deviceName/$appVersion/$deviceBrand/$deviceModel/$isEmulator",
+            "${Screen.SignInOTPScreen.baseRoute}/${uiState.userEmail}",
             Screen.SignInOTPScreen.baseRoute
         )
     }

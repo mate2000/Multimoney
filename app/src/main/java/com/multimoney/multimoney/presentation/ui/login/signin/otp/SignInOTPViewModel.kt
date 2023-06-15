@@ -16,18 +16,8 @@ import com.multimoney.domain.model.util.onMessage
 import com.multimoney.domain.model.util.onSuccess
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.base.BaseViewModel
-import com.multimoney.multimoney.presentation.navigation.APP_VERSION
-import com.multimoney.multimoney.presentation.navigation.DEVICE_BRAND
-import com.multimoney.multimoney.presentation.navigation.DEVICE_ID
-import com.multimoney.multimoney.presentation.navigation.DEVICE_MODEL
-import com.multimoney.multimoney.presentation.navigation.DEVICE_NAME
-import com.multimoney.multimoney.presentation.navigation.DEVICE_TYPE
 import com.multimoney.multimoney.presentation.navigation.FORCE_CHANGE_DEVICE
-import com.multimoney.multimoney.presentation.navigation.IP_ADDRESS
-import com.multimoney.multimoney.presentation.navigation.IS_EMULATOR
-import com.multimoney.multimoney.presentation.navigation.PASSWORD
 import com.multimoney.multimoney.presentation.navigation.Screen
-import com.multimoney.multimoney.presentation.navigation.UNIQUE_ID
 import com.multimoney.multimoney.presentation.navigation.navgraph.EMAIL
 import com.multimoney.multimoney.presentation.ui.home.profile.personalinfo.validateotp.ValidateOTPViewModel
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnCallMutationRequestChangeDevice
@@ -55,6 +45,12 @@ import com.multimoney.multimoney.presentation.util.openWhatsAppDeepLink
 import com.multimoney.multimoney.presentation.util.tickerFlow
 import com.multimoney.multimoney.presentation.util.toJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.util.regex.Pattern
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -63,12 +59,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.util.regex.Pattern
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @HiltViewModel
 class SignInOTPViewModel @Inject constructor(
@@ -79,16 +69,6 @@ class SignInOTPViewModel @Inject constructor(
 ) : BaseViewModel(false) {
 
     private var email: String = ""
-    private var password: String = ""
-    private var deviceId = ""
-    private var uniqueId = ""
-    private var ipAddress = ""
-    private var deviceType = ""
-    private var deviceName = ""
-    private var appVersion = ""
-    private var deviceBrand = ""
-    private var deviceModel = ""
-    private var isEmulator = ""
     var whatsAppLink: String? = ""
 
     // UIState
@@ -97,16 +77,6 @@ class SignInOTPViewModel @Inject constructor(
 
     init {
         email = savedStateHandle[EMAIL] ?: ""
-        password = savedStateHandle[PASSWORD] ?: ""
-        deviceId = savedStateHandle[DEVICE_ID] ?: ""
-        uniqueId = savedStateHandle[UNIQUE_ID] ?: ""
-        ipAddress = savedStateHandle[IP_ADDRESS] ?: ""
-        deviceType = savedStateHandle[DEVICE_TYPE] ?: ""
-        deviceName = savedStateHandle[DEVICE_NAME] ?: ""
-        appVersion = savedStateHandle[APP_VERSION] ?: ""
-        deviceBrand = savedStateHandle[DEVICE_BRAND] ?: ""
-        deviceModel = savedStateHandle[DEVICE_MODEL] ?: ""
-        isEmulator = savedStateHandle[IS_EMULATOR] ?: ""
     }
 
     private fun initializeTimer(
@@ -274,6 +244,7 @@ class SignInOTPViewModel @Inject constructor(
                         )
                         onNavigateToLogin()
                     }
+
                     WRONG_CODE -> {
                         uiState =
                             uiState.copy(
@@ -281,6 +252,7 @@ class SignInOTPViewModel @Inject constructor(
                                 isLoading = false
                             )
                     }
+
                     EXPIRED_CODE -> {
                         uiState =
                             uiState.copy(
@@ -327,6 +299,7 @@ class SignInOTPViewModel @Inject constructor(
                     dialogTextResource = R.string.sign_in_verify_otp_blocked_subtitle
                 )
             }
+
             else -> {
                 uiState.copy(
                     weSentYouACodeTextResource = R.string.sign_in_we_sent_you_a_code_template,
@@ -378,6 +351,7 @@ class SignInOTPViewModel @Inject constructor(
             is OnOpenWhatsappLink -> openWhatsAppLink(
                 uiEvent.context
             )
+
             is OnShowBlockedDialog -> onShowBlockedDialog()
             is OnSetupResources -> onSetupResources(uiEvent.context)
             is OnGetWhatsAppLink -> onGetWhatsAppLink()
@@ -416,7 +390,6 @@ class SignInOTPViewModel @Inject constructor(
         const val PHASE_THREE = 3
         const val PHASE_FOUR = 4
         const val PHASE_FIVE = 5
-        const val PHASE_SIX = 6
         const val FOUR_DIGITS = 4
     }
 }

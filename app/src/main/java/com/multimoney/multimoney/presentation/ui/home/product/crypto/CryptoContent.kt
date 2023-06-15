@@ -22,6 +22,7 @@ fun CryptoContent(
     cryptoBalance: BalanceCryptoAccount?,
     clientBalanceHistory: List<HistoricalBalanceClient>,
     cryptoEmptyState: Boolean,
+    cardsExpanded: Boolean,
     openSmartCryptoAction: () -> Unit = {}
 ) {
     when (userStatus?.infoBankAccount?.status) {
@@ -50,7 +51,15 @@ fun CryptoContent(
                             type = ProductBackGroundType.ComplementaryTwo,
                             isActionEnabled = false
                         ) {
-                            CryptoCardMaintenanceState()
+                            if (cardsExpanded) {
+                                CryptoCardWithBalance(
+                                    cryptoBalance = 0.0,
+                                    isEmptyStateDisable = false,
+                                    investedBalance = 0.0
+                                )
+                            } else {
+                                CryptoCardMaintenanceState()
+                            }
                         }
                     } else {
                         // show card with balance and gains/loses

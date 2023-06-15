@@ -1,7 +1,5 @@
 package com.multimoney.multimoney.presentation.ui.home.product.crypto.uisections
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +9,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -102,15 +99,9 @@ fun CryptoCardSmartInProcess(
 }
 
 @Composable
-fun CryptoCardMaintenanceState(
-    onClick: () -> Unit = {}
-) {
+fun CryptoCardMaintenanceState() {
     Column(
         modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onClick.invoke() }
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 24.dp)

@@ -1860,7 +1860,7 @@
     <string name="password_security_bottom_sheet_general_title" translatable="false">Por tu seguridad,\nNO compartas tu\ncontraseña</string>
     <string name="password_security_bottom_sheet_general_title_cr" translatable="false">Por tu seguridad,\nNO compartás tu\ncontraseña</string>
     <string name="password_security_bottom_sheet_general_description" translatable="false">Nunca te solicitaremos tu contraseña\nfuera de la aplicación.\n</string>
-    <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, con\nella autorizarás todas tus transferencias.</string>
+    <string name="password_security_bottom_sheet_signup_description" translatable="false">Nadie más debe de pedírtela.\nTu contraseña es personal y privada, \ncon ella autorizarás todas tus transferencias.</string>
 
     <!-- Crosseling-->
     <string name="crosseling_account_sv_title" translatable="false">¿Dónde quieres recibir tu crédito?</string>

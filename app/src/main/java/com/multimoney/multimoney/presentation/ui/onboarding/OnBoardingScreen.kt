@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -93,7 +94,7 @@ fun OnBoardingScreen(
                 textAlign = TextAlign.Left,
                 modifier = Modifier
                     .weight(
-                        0.15f,
+                        0.20f,
                         false
                     ),
                 style = Typography.h3.copy(

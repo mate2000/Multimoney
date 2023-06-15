@@ -199,7 +199,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object SignInOTPScreen : Screen(
-        "sign_in_otp_screen/{$EMAIL}/{$PASSWORD}/{$DEVICE_ID}/{$UNIQUE_ID}/{$IP_ADDRESS}/{$DEVICE_TYPE}/{$DEVICE_NAME}/{$APP_VERSION}/{$DEVICE_BRAND}/{$DEVICE_MODEL}/{$IS_EMULATOR}",
+        "sign_in_otp_screen/{$EMAIL}",
         "sign_in_otp_screen"
     )
 

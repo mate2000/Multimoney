@@ -104,7 +104,7 @@ class RequestForgotPasswordViewModel @Inject constructor(
                 result.onSuccess {
                     idBrand = it?.idBrand ?: Brand.Default.id
                     pkUser = it?.pkUser.orEmpty()
-                    uiState = uiState.copy(isAlertResultVisible = true, isLoading = false)
+                    onResetPassword()
                 }.onMessage {
                     idBrand = it?.idBrand ?: Brand.Default.id
                     pkUser = it?.pkUser.orEmpty()

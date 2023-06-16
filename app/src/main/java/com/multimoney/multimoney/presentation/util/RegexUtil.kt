@@ -6,7 +6,8 @@ fun matchRegex(value: String, regex: Regex) = value.matches(regex)
 
 fun getRegex(regex: String) = regex.toRegex()
 
-const val OTP_MESSAGE_REGEX = "(|^)\\d{${SignUpOtpViewModel.TOTAL_DIGITS}}"
+const val OTP_FOUR_DIGITS_MESSAGE_REGEX = "(|^)\\d{4}"
+const val OTP_SIX_DIGITS_MESSAGE_REGEX = "(|^)\\d{6}"
 const val ONE_UPPERCASE_LETTER_REGEX = "(.*[A-Z].*)"
 const val ONE_LOWERCASE_LETTER_REGEX = "(.*[a-z].*)"
 const val ONE_NUMBER_REGEX = "(.*\\d.*)"

@@ -31,7 +31,7 @@ import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewM
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnShowBlockedDialog
 import com.multimoney.multimoney.presentation.ui.login.signin.otp.SignInOTPViewModel.UIEvent.OnValidateOTP
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel
-import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
+import com.multimoney.multimoney.presentation.util.OTP_SIX_DIGITS_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.SIM_CODE_EL_SALVADOR
 import com.multimoney.multimoney.presentation.util.SIM_CODE_GUATEMALA
@@ -107,7 +107,7 @@ class SignInOTPViewModel @Inject constructor(
     }
 
     private fun getOtpFromMessage(message: String) {
-        val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
+        val otpMatcher = Pattern.compile(OTP_SIX_DIGITS_MESSAGE_REGEX).matcher(message)
         if (otpMatcher.find()) {
             uiState = uiState.copy(
                 otp = otpMatcher.group(0)?.toString() ?: "",

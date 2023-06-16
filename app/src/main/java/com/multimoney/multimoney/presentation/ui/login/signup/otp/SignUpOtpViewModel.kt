@@ -29,7 +29,7 @@ import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewM
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.SignUpOtpViewModel.UIEvent.OnValidateForm
 import com.multimoney.multimoney.presentation.ui.login.signup.otp.model.SignUpOtpState
-import com.multimoney.multimoney.presentation.util.OTP_MESSAGE_REGEX
+import com.multimoney.multimoney.presentation.util.OTP_FOUR_DIGITS_MESSAGE_REGEX
 import com.multimoney.multimoney.presentation.util.ResendOtp
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
@@ -86,7 +86,7 @@ class SignUpOtpViewModel @Inject constructor(
     }
 
     private fun getOtpFromMessage(message: String) {
-        val otpMatcher = Pattern.compile(OTP_MESSAGE_REGEX).matcher(message)
+        val otpMatcher = Pattern.compile(OTP_FOUR_DIGITS_MESSAGE_REGEX).matcher(message)
         if (otpMatcher.find()) {
             uiState = uiState.copy(
                 otp = otpMatcher.group(0)?.toString() ?: "",

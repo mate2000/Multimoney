@@ -40,7 +40,7 @@
 -encryptclasses com.multimoney.**
 
 # Keep all the Visa classes
--keep class com.visa.cbp.sdk.** { *; }
+-keep class com.visa.cbp.** { *; }
 -keep class com.amazonaws.mobile.** { *; }
 -keep class com.onfido.android.sdk.** { *; }
 -keep class com.nimbusds.jose.** { *; }

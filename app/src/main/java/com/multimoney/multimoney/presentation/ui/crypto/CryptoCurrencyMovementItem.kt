@@ -116,7 +116,7 @@ fun CryptoCurrencyMovementItem(
                     )
                 }
             }
-            if (cryptoCurrencyMovement.held) {
+            if (cryptoCurrencyMovement.held and !cryptoCurrencyMovement.monthLimitExceeded) {
                 OutlinedButton(
                     modifier = Modifier.padding(vertical = 8.dp),
                     shape = RoundedCornerShape(50),

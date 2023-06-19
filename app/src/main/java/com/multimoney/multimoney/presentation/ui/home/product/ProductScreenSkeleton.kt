@@ -39,8 +39,6 @@ fun ProductScreenSkeleton() {
                     )
                 }
                 Row(Modifier.padding(end = 16.dp)) {
-                    ShimmerItemView(modifier = Modifier.size(width = 28.dp, height = 28.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
                     ShimmerItemView(
                         modifier = Modifier
                             .size(width = 28.dp, height = 28.dp)

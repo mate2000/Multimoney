@@ -40,15 +40,16 @@ import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.Tra
 import com.multimoney.multimoney.presentation.util.catalog.PaymentMethodType.VisaDirect
 import com.multimoney.multimoney.presentation.util.catalog.PhoneCountryCode
 import com.multimoney.multimoney.presentation.util.catalog.SourceIncomeType
+import com.multimoney.multimoney.presentation.util.catalog.VisaDirectResponse
 import com.novopayment.sdk.vts.module.payment.apdu.PaymentService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.Locale
 import kotlin.time.Duration
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
 
 fun Context.getUserCountry(): String {
     try {
@@ -314,12 +315,12 @@ val Int.boolean
 fun getNavParam(param: String, value: Any?) = "?$param=$value"
 
 fun getDeviceManufacture(): String = (
-        if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
-            Build.MODEL
-        } else {
-            "${Build.MANUFACTURER} ${Build.MODEL}"
-        }
-        ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    if (Build.MODEL.startsWith(Build.MANUFACTURER, ignoreCase = true)) {
+        Build.MODEL
+    } else {
+        "${Build.MANUFACTURER} ${Build.MODEL}"
+    }
+    ).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
 
 fun Context.getAndroidId(): String {
     return Secure.getString(
@@ -462,7 +463,7 @@ fun String.capitalizedAllWords(): String =
     splitByWhiteSpace().joinToString(WHITE_SPACE_SEPARATOR.toString()) { it.capitalized() }
 
 fun String.getAddCardErrorFromValue(): AddVisaCardErrors =
-    when (this) {
+    when (Gson().fromJson(this, VisaDirectResponse::class.java).apiStatus) {
         AddVisaCardErrors.SystemMalfunction.value -> AddVisaCardErrors.SystemMalfunction
         AddVisaCardErrors.UnableToInclude.value -> AddVisaCardErrors.UnableToInclude
         AddVisaCardErrors.InvalidCardAccountValidation.value -> AddVisaCardErrors.InvalidCardAccountValidation
@@ -553,4 +554,3 @@ private const val RADIX = 16
 private const val START_INDEX = 1
 private const val NEGATIVE_ONE_IN_BYTE = 0xff
 private const val TWO_HUNDRED_FIFTY_SIX_IN_BYTES = 0x100
-

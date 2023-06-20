@@ -24,7 +24,9 @@ import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSma
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.BaseSmartEditAmountViewModel.AmountUIEvent.OnStart
 import com.multimoney.multimoney.presentation.ui.smart.common.editamount.SmartAmountBody
 import com.multimoney.multimoney.presentation.uielement.AlertResult
+import com.multimoney.multimoney.presentation.uielement.CustomContactIcon
 import com.multimoney.multimoney.presentation.uielement.CustomDialog
+import com.multimoney.multimoney.presentation.uielement.CustomInfoButton
 import com.multimoney.multimoney.presentation.uielement.LoadingIndicator
 import com.multimoney.multimoney.presentation.uielement.LoadingMultiMoney
 import com.multimoney.multimoney.presentation.uielement.SmartPaymentBottomSheet
@@ -138,6 +140,26 @@ private fun Transfer365AmountBottomSheet(viewModel: Transfer365AmountViewModel =
         fromTitle = stringResource(
             viewModel.amountUIState.originAccountDisplay?.sheetTitleResource ?: R.string.empty
         ),
+        toContactInfo = {
+            if (viewModel.transfer365Account.isFavorite) {
+                CustomInfoButton(
+                    title = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
+                    subtitle = viewModel.amountUIState.destinyAccountDisplay?.sheetSubtitle.orEmpty(),
+                    endIcon = null,
+                    startIcon = null,
+                    composableIcon = {
+                        CustomContactIcon(
+                            modifier = it,
+                            name = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle.orEmpty(),
+                            color = MultimoneyTheme.colors.coloredInitialChar.random()
+                        )
+                    },
+                    enable = false,
+                    readOnly = true,
+                    titleIcon = R.drawable.ic_star_filled
+                )
+            }
+        },
         fromIcon = viewModel.amountUIState.originAccountDisplay?.icon,
         toTitle = viewModel.amountUIState.destinyAccountDisplay?.sheetTitle ?: stringResource(
             viewModel.amountUIState.destinyAccountDisplay?.sheetTitleResource ?: R.string.empty

@@ -511,16 +511,6 @@ fun TipsAndOffer(
             }
             Row(modifier = Modifier.padding(end = 16.dp)) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_notification),
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clickable {
-                            // todo action
-                        },
-                    contentDescription = "",
-                    tint = MultimoneyTheme.colors.iconColor
-                )
-                Icon(
                     painter = painterResource(R.drawable.ic_profile),
                     modifier = Modifier
                         .padding(start = 16.dp)

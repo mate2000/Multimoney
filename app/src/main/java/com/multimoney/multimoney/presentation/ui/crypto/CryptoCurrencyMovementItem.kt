@@ -43,8 +43,12 @@ fun CryptoCurrencyMovementItem(
     onReleaseTransactionClick: (CryptoCurrencyMovement?) -> Unit = {},
 ) {
     cryptoCurrencyMovement?.let { movement ->
-        val icon = if (movement.side == MovementSide.BUY.side)
-            R.drawable.ic_gains_crypto else R.drawable.ic_crypto_subtract
+        val icon = when (movement.side) {
+            MovementSide.BUY.side ->  R.drawable.ic_gains_crypto
+            MovementSide.DEP.side -> R.drawable.ic_gains_crypto
+            MovementSide.SELL.side -> R.drawable.ic_crypto_subtract
+            else -> R.drawable.ic_crypto_subtract
+        }
 
         Column {
             if (cryptoCurrencyMovement.held) {
@@ -95,8 +99,12 @@ fun CryptoCurrencyMovementItem(
                     ) {
                         Icon(
                             painter = painterResource(id = icon),
-                            tint = if (movement.side == MovementSide.BUY.side) MultimoneyTheme.colors.cryptoGainsColor else
-                                MultimoneyTheme.colors.cryptoLossesColor,
+                            tint = when (movement.side) {
+                                MovementSide.BUY.side -> MultimoneyTheme.colors.cryptoGainsColor
+                                MovementSide.DEP.side -> MultimoneyTheme.colors.cryptoGainsColor
+                                MovementSide.SELL.side -> MultimoneyTheme.colors.cryptoLossesColor
+                                else -> MultimoneyTheme.colors.cryptoLossesColor
+                            },
                             contentDescription = null
                         )
                         Text(
@@ -150,5 +158,6 @@ fun CryptoCurrencyMovementItem(
 
 enum class MovementSide(val side: String) {
     BUY("BUY"),
-    SELL("SELL")
+    SELL("SELL"),
+    DEP("CRYPTO_DEP")
 }

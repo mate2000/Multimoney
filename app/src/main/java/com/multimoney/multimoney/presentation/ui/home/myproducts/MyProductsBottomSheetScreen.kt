@@ -42,7 +42,7 @@ import com.multimoney.multimoney.presentation.theme.Secondary500
 import com.multimoney.multimoney.presentation.theme.Typography
 import com.multimoney.multimoney.presentation.theme.WhiteTransparency16
 import com.multimoney.multimoney.presentation.ui.home.HomeViewModel
-import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnMyProductClick
+import com.multimoney.multimoney.presentation.ui.home.HomeViewModel.UIEvent.OnUpdateIsExpandedByClick
 import com.multimoney.multimoney.presentation.uielement.CustomModalBottomSheet
 import com.multimoney.multimoney.presentation.util.catalog.ProductPage
 import com.multimoney.multimoney.presentation.util.catalog.ProductType
@@ -165,10 +165,10 @@ private fun MyProductSection(
                     label = stringResource(id = productPage.resourceText),
                     backGroundColor = backGroundColor,
                     action = {
-                        shareViewModel.onUIEvent(OnMyProductClick(true))
                         coroutineScope.launch {
                             modalBottomSheetState.hide()
                             productScreenPagerState?.scrollToPage(productPage.index)
+                            shareViewModel.onUIEvent(OnUpdateIsExpandedByClick(true))
                         }
                     }
                 )

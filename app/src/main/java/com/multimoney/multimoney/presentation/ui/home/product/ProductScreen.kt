@@ -297,8 +297,12 @@ fun ProductScreen(
     val footerExpandedPagerState = rememberPagerState()
     val ctaFooterExpandedPagerState = rememberPagerState()
 
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+    LaunchedEffect(key1 = viewModel.uiState.isExpanded) {
+        if (viewModel.uiState.isExpanded) {
+            sharedViewModel.onUIEvent(OnMyProductPageChange(contentExpandedPagerState))
+        } else {
+            sharedViewModel.onUIEvent(OnMyProductPageChange(contentPagerState))
+        }
     }
     LaunchedEffect(key1 = contentPagerState.currentPage) {
         footerPagerState.scrollToPage(contentPagerState.currentPage)

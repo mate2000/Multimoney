@@ -60,7 +60,7 @@ import com.multimoney.multimoney.presentation.uielement.TopNavBar
 import com.multimoney.multimoney.presentation.util.NavEvent
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.OTPMessageStatus
-import com.multimoney.multimoney.presentation.util.separatePhoneNumber
+import com.multimoney.multimoney.presentation.util.getMaskedPhoneNumber
 
 @Preview
 @Composable
@@ -264,7 +264,7 @@ fun ValidateOTPContent(viewModel: ValidateOTPViewModel) {
             text = stringResource(
                 id = viewModel.uiState.enterTheCodeTextResource,
                 if (viewModel.uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) {
-                    separatePhoneNumber(viewModel.uiState.destination?.replace(" ", "") ?: "")
+                    getMaskedPhoneNumber(viewModel.uiState.destination?.replace(" ", "") ?: "")
                 } else {
                     viewModel.uiState.destination?.replace(" ", "") ?: ""
                 }

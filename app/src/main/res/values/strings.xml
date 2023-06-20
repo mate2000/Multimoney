@@ -1717,8 +1717,8 @@
     <string name="request_forgot_password_subtitle" translatable="false">Te enviaremos un código de verificación a tu correo para recuperar tu contraseña.</string>
     <string name="request_forgot_password_email_required" translatable="false">El correo electrónico es requerido</string>
     <string name="request_forgot_password_email_not_valid" translatable="false">El correo ingresado no es válido</string>
-    <string name="request_forgot_password_success_title" translatable="false">Hemos enviado un correo a\n </string>
-    <string name="request_forgot_password_success_description" translatable="false">\ncon un código de verificación para restablecer tu contraseña</string>
+    <string name="request_forgot_password_success_title" translatable="false">Si este es tu email registrado, te enviaremos un código de verificación a\n </string>
+    <string name="request_forgot_password_success_description" translatable="false">\npara restablecer tu contraseña</string>
     <string name="request_forgot_password_success_button" translatable="false">Cambiar contraseña</string>
 
     <!-- Process Forgot Password -->

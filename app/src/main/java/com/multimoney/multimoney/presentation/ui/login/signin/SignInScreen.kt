@@ -3,6 +3,7 @@ package com.multimoney.multimoney.presentation.ui.login.signin
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,10 +19,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -104,6 +107,7 @@ fun SignInScreen(
     SignInContent(viewModel, fragmentActivity, context)
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignInContent(
     viewModel: SignInViewModel,
@@ -111,6 +115,7 @@ fun SignInContent(
     context: Context
 ) {
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // View
     Column(
@@ -119,6 +124,7 @@ fun SignInContent(
             .background(MultimoneyTheme.colors.background)
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
+            .clickable { keyboardController?.hide() }
     ) {
         // Welcome section
         CustomImage(

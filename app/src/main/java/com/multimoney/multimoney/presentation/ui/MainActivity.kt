@@ -7,9 +7,12 @@ import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.GoogleApiAvailability
@@ -68,7 +71,13 @@ class MainActivity : AppCompatActivity(), SignOutCommunicator, ProviderInstaller
         isSessionAlreadyOpened = dataStorePreferences.isSessionDuplicated()
         setContent {
             MultimoneyTheme {
-                Navigation(notificationState)
+                // this is to block the font scaling on the app when the user changes the font size
+                CompositionLocalProvider(
+                    LocalDensity provides Density(LocalDensity.current.density, 1f)
+                ) {
+                    Navigation(notificationState)
+                }
+
                 LaunchedEffect(key1 = true) {
                     dataStorePreferences.isSignUpFlow(true)
                     obtainNotificationRoute(intent?.getStringExtra(ROUTE_KEY) ?: "")

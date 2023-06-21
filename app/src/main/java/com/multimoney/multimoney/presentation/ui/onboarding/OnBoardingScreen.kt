@@ -119,7 +119,7 @@ fun OnBoardingScreen(
                     .fillMaxWidth()
                     .weight(0.035f),
                 buttonType = CustomButtonType.PrimaryPrimary,
-                text = stringResource(id = R.string.registration),
+                text = stringResource(id = R.string.button_continue),
                 onClick = {
                     viewModel.onUIEvent(
                         OnNavigateToNextScreen(Screen.SignUpScreen.baseRoute, context),
@@ -127,42 +127,6 @@ fun OnBoardingScreen(
                     )
                 }
             )
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp)
-                    .weight(0.05f),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = stringResource(id = R.string.onboarding_account_already_created),
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier.wrapContentSize(),
-                    fontFamily = PoppinsFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    fontSize = 14.sp
-                )
-                ClickableText(
-                    text = AnnotatedString(stringResource(id = R.string.sign_in)),
-                    style = TextStyle(
-                        fontFamily = PoppinsFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MultimoneyTheme.colors.textLink,
-                        fontSize = 14.sp,
-                        textDecoration = TextDecoration.Underline
-                    ),
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(start = 4.dp),
-                    onClick = {
-                        viewModel.onUIEvent(
-                            OnNavigateToNextScreen(Screen.SignInScreen.baseRoute, context),
-                            context
-                        )
-                    }
-                )
-            }
         }
     }
 }

@@ -122,6 +122,7 @@ fun SignInPasswordScreen(
         }
         CustomButton(
             onClick = {
+                focusManager.clearFocus()
                 viewModel.provideFireBaseEventHelper.logEvent(FireBaseEvents.LoginPassword)
                 viewModel.onUIEvent(OnCallCognitoSignIn)
             },

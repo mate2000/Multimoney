@@ -203,7 +203,7 @@ fun SendingTypeOptionsCR(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitleAndIconResource: Pair<Int, Int?>
+    smartAccountTitleAndIconResource: Pair<Int, Int?>?
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),
@@ -221,7 +221,7 @@ fun SendingTypeOptionsCR(
         onEndIconClick = onMyContactsClick,
         onClick = onMyContactsClick
     )
-    smartAccountTitleAndIconResource.let { (title, icon) ->
+    smartAccountTitleAndIconResource?.let { (title, icon) ->
         CustomInfoButton(
             title = stringResource(id = title),
             modifier = modifier,

@@ -5,16 +5,16 @@ import androidx.navigation.NavType
 import com.google.gson.Gson
 import com.multimoney.domain.model.accountsmart.SmartAccountID
 
-class SmartAccountIDNavType : NavType<SmartAccountID>(isNullableAllowed = true) {
+class SmartAccountIDNavType : NavType<SmartAccountID?>(isNullableAllowed = true) {
     override fun get(bundle: Bundle, key: String): SmartAccountID? {
         return bundle.getParcelable(key)
     }
 
-    override fun parseValue(value: String): SmartAccountID {
-        return Gson().fromJson(value, SmartAccountID::class.java)
+    override fun parseValue(value: String): SmartAccountID? {
+        return if(value == "null") null else Gson().fromJson(value, SmartAccountID::class.java)
     }
 
-    override fun put(bundle: Bundle, key: String, value: SmartAccountID) {
+    override fun put(bundle: Bundle, key: String, value: SmartAccountID?) {
         bundle.putParcelable(key, value)
     }
 }

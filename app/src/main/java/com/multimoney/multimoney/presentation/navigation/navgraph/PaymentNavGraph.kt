@@ -71,6 +71,8 @@ const val ACCOUNT_DETAIL = "account_detail"
 const val ADD_CARD_RESPONSE = "add_card_response"
 const val INFO_USER = "info_user"
 const val IS_AUTOPAY_ENABLED = "is_autopay_enabled"
+const val HAS_COLONS_SMART_ACCOUNT = "has_colons_smart_account"
+const val HAS_DOLLAR_SMART_ACCOUNT = "has_dolLar_smart_account"
 
 // Payment maps location parameters
 const val POINT_NAME = "point_name"

@@ -54,7 +54,11 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 navArgument(ID_BRAND) { type = NavType.IntType },
                 navArgument(IDENTIFICATION) { type = NavType.StringType },
                 navArgument(SMART_ACCOUNT) { type = SmartAccountIDNavType() },
-                navArgument(SECOND_SMART_ACCOUNT) { type = SmartAccountIDNavType() },
+                navArgument(SECOND_SMART_ACCOUNT) {
+                    type = SmartAccountIDNavType()
+                    nullable = true
+                    defaultValue = null
+                },
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(PREVIOUS_SCREEN) { type = NavType.StringType }
             )
@@ -184,7 +188,15 @@ fun NavGraphBuilder.smartTransferNavGraph(navController: NavHostController) {
                 },
                 navArgument(USER) { type = NavType.StringType },
                 navArgument(ID_BRAND) { type = NavType.IntType },
-                navArgument(ID_CLIENT) { type = NavType.StringType }
+                navArgument(ID_CLIENT) { type = NavType.StringType },
+                navArgument(HAS_COLONS_SMART_ACCOUNT) {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
+                navArgument(HAS_DOLLAR_SMART_ACCOUNT) {
+                    type = NavType.BoolType
+                    defaultValue = false
+                },
             )
         ) {
             SelectSmartAccountContainer(

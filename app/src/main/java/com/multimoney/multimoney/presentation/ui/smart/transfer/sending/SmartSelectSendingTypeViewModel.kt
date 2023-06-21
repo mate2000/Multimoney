@@ -58,7 +58,9 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
         previousScreen = savedStateHandle[PREVIOUS_SCREEN] ?: ""
     }
 
-    fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?> {
+    fun getTitleAndIconSmartAccountResources(): Pair<Int, Int?>? {
+        if (secondSmartAccount == null) return null
+
         val result = when (selectedSmartAccount?.currencyID?.getCurrencyFromId()?.value) {
             CurrencyType.Dollar.value -> {
                 Pair(

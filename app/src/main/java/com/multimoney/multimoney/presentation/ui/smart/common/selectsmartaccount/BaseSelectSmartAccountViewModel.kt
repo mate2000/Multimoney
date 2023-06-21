@@ -10,6 +10,8 @@ import com.multimoney.multimoney.presentation.base.BaseViewModel
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNTS_ID_LIST
 import com.multimoney.multimoney.presentation.navigation.Screen
+import com.multimoney.multimoney.presentation.navigation.navgraph.HAS_COLONS_SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.HAS_DOLLAR_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
@@ -37,6 +39,9 @@ open class BaseSelectSmartAccountViewModel(
     protected var selectedSmartAccount: SmartAccountID? = null
     protected var secondSmartAccount: SmartAccountID? = null
 
+    var hasColonsAccount: Boolean = false
+    var hasDollarAccount: Boolean = false
+
     init {
         user = savedStateHandle[USER] ?: ""
         idBrand = savedStateHandle[ID_BRAND] ?: 0
@@ -44,6 +49,8 @@ open class BaseSelectSmartAccountViewModel(
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: ""
         identification = savedStateHandle[IDENTIFICATION] ?: ""
         smartAccountIDs = savedStateHandle.get<Array<SmartAccountID>>(SMART_ACCOUNTS_ID_LIST)?.toList()
+        hasColonsAccount = savedStateHandle[HAS_COLONS_SMART_ACCOUNT] ?: false
+        hasDollarAccount = savedStateHandle[HAS_DOLLAR_SMART_ACCOUNT] ?: false
     }
 
     protected fun onNavigateBack() {

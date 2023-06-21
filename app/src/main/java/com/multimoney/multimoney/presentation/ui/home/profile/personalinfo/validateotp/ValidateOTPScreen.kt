@@ -402,7 +402,7 @@ fun requestOTP(viewModel: ValidateOTPViewModel) {
             viewModel.uiState.pkUser ?: "",
             viewModel.uiState.idBrand ?: 0,
             viewModel.uiState.email ?: "",
-            FlowOriginChangeProfileInfo.CHANGE.value
+            if (viewModel.uiState.changingField == FieldToChange.PHONE.value) FlowOriginChangeProfileInfo.CHANGE.value else FlowOriginChangeProfileInfo.NORMAL.value
         )
     )
 }

@@ -30,6 +30,10 @@ class PasswordValidationHelper @Inject constructor(private val queryValidatePass
         value: String
     ): Pair<Boolean, Int> {
         return when {
+            containForbiddenWords(value, forbiddenWords) -> {
+                Pair(true, R.string.sign_up_password_requirement_forbidden_words)
+            }
+
             haveMoreThanThreeConsecutiveLetterOrNumber(value) || haveMoreThanThreeSequentialLetterOrNumber(
                 value
             ) -> {
@@ -37,10 +41,6 @@ class PasswordValidationHelper @Inject constructor(private val queryValidatePass
                     true,
                     R.string.sign_up_password_requirement_max_three_characters_or_number_consecutive
                 )
-            }
-
-            containForbiddenWords(value, forbiddenWords) -> {
-                Pair(true, R.string.sign_up_password_requirement_forbidden_words)
             }
 
             else -> {

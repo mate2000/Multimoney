@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount
 
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen

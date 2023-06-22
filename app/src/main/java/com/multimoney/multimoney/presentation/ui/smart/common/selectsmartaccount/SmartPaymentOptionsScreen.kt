@@ -43,8 +43,7 @@ fun SmartPaymentOptionsScreen(
         PaymentOptions(
             onAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected(it)) },
             screenTitle = viewModel.uiState.screenTitle,
-            hasColonsAccount = viewModel.hasColonsAccount,
-            hasDollarAccount = viewModel.hasDollarAccount
+            hasCurrencyIdAccount = { viewModel.hasCurrencyIdAccount(it) }
         )
     }
 
@@ -65,8 +64,7 @@ fun SmartPaymentOptionsScreen(
 fun PaymentOptions(
     onAccountClick: (CurrencyType) -> Unit,
     @StringRes screenTitle: Int,
-    hasColonsAccount: Boolean,
-    hasDollarAccount: Boolean
+    hasCurrencyIdAccount: (CurrencyType) -> Boolean?
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
@@ -77,7 +75,7 @@ fun PaymentOptions(
                 color = MultimoneyTheme.colors.text
             )
         )
-        if (hasColonsAccount) {
+       if (hasCurrencyIdAccount(CurrencyType.Colon) == true) {
             CustomInfoButton(
                 title = stringResource(id = R.string.payment_account_colon),
                 modifier = Modifier
@@ -88,8 +86,7 @@ fun PaymentOptions(
                 onClick = { onAccountClick(CurrencyType.Colon) }
             )
         }
-
-        if (hasDollarAccount) {
+        if (hasCurrencyIdAccount(CurrencyType.Dollar) == true) {
             CustomInfoButton(
                 title = stringResource(id = R.string.payment_account_dollar),
                 modifier = Modifier

@@ -247,4 +247,8 @@ class SmartSelectSendingTypeViewModel @Inject constructor(
     sealed class BaseEvent {
         object OnShowTbdToastEvent : BaseEvent()
     }
+
+    companion object {
+        const val DEFAULT_CURRENCY_ID = 0
+    }
 }

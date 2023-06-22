@@ -70,6 +70,10 @@ open class BaseSelectSmartAccountViewModel(
         }
     }
 
+    fun hasCurrencyIdAccount(currencyType: CurrencyType) : Boolean? {
+        return smartAccountIDs?.any { it.currencyID == currencyType.id }
+    }
+
     data class UIState(
         val openDialog: DialogParameters = DialogParameters(),
         var isLoading: Boolean = false,

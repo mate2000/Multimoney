@@ -42,7 +42,8 @@ fun SmartPaymentOptionsScreen(
         topNavBar()
         PaymentOptions(
             onAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected(it)) },
-            screenTitle = viewModel.uiState.screenTitle
+            screenTitle = viewModel.uiState.screenTitle,
+            hasCurrencyIdAccount = { viewModel.hasCurrencyIdAccount(it) }
         )
     }
 
@@ -62,7 +63,8 @@ fun SmartPaymentOptionsScreen(
 @Composable
 fun PaymentOptions(
     onAccountClick: (CurrencyType) -> Unit,
-    @StringRes screenTitle: Int
+    @StringRes screenTitle: Int,
+    hasCurrencyIdAccount: (CurrencyType) -> Boolean?
 ) {
     Column(Modifier.padding(horizontal = 16.dp)) {
         Text(
@@ -73,24 +75,27 @@ fun PaymentOptions(
                 color = MultimoneyTheme.colors.text
             )
         )
-        CustomInfoButton(
-            title = stringResource(id = R.string.payment_account_colon),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-            endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_payment_colon,
-            onClick = { onAccountClick(CurrencyType.Colon) }
-        )
-
-        CustomInfoButton(
-            title = stringResource(id = R.string.payment_account_dollar),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-            endIcon = R.drawable.ic_right_chevron,
-            startIcon = R.drawable.ic_payment_dollar,
-            onClick = { onAccountClick(CurrencyType.Dollar) }
-        )
+       if (hasCurrencyIdAccount(CurrencyType.Colon) == true) {
+            CustomInfoButton(
+                title = stringResource(id = R.string.payment_account_colon),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                endIcon = R.drawable.ic_right_chevron,
+                startIcon = R.drawable.ic_payment_colon,
+                onClick = { onAccountClick(CurrencyType.Colon) }
+            )
+        }
+        if (hasCurrencyIdAccount(CurrencyType.Dollar) == true) {
+            CustomInfoButton(
+                title = stringResource(id = R.string.payment_account_dollar),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                endIcon = R.drawable.ic_right_chevron,
+                startIcon = R.drawable.ic_payment_dollar,
+                onClick = { onAccountClick(CurrencyType.Dollar) }
+            )
+        }
     }
 }

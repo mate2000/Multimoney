@@ -1,6 +1,7 @@
 package com.multimoney.multimoney.presentation.ui.smart.transfer.iban.smartaccount
 
 import androidx.lifecycle.SavedStateHandle
+import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.util.encodeData
@@ -23,7 +24,7 @@ class SelectSmartAccountViewModel @Inject constructor(
     override fun onSelectSmartAccount(currencyType: CurrencyType) {
         super.onSelectSmartAccount(currencyType)
         navigateTo(
-            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$user/$idBrand/$identification/${encodeData(selectedSmartAccount)}/${encodeData(secondSmartAccount)}/$idClient/${Screen.SmartSelectAccountScreen.baseRoute}"
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$user/$idBrand/$identification/${encodeData(selectedSmartAccount ?: SmartAccountID())}/${encodeData(secondSmartAccount ?: SmartAccountID())}/$idClient/${Screen.SmartSelectAccountScreen.baseRoute}"
         )
     }
 }

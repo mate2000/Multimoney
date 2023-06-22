@@ -58,6 +58,7 @@ import com.multimoney.multimoney.presentation.navigation.CROSSELING
 import com.multimoney.multimoney.presentation.navigation.ID_BRAND
 import com.multimoney.multimoney.presentation.navigation.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.PHONE_NUMBER
+import com.multimoney.multimoney.presentation.navigation.SECOND_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.Screen
 import com.multimoney.multimoney.presentation.navigation.USER_NAME
@@ -122,6 +123,7 @@ import com.multimoney.multimoney.presentation.util.PAGE_SIZE
 import com.multimoney.multimoney.presentation.util.ShareHelper
 import com.multimoney.multimoney.presentation.util.catalog.AdjustEventType
 import com.multimoney.multimoney.presentation.util.catalog.CreditSubscriptionStep
+import com.multimoney.multimoney.presentation.util.catalog.CurrencyType
 import com.multimoney.multimoney.presentation.util.catalog.DialogParameters
 import com.multimoney.multimoney.presentation.util.catalog.FirebaseNotificationRoute
 import com.multimoney.multimoney.presentation.util.catalog.MiniCardActionFlow
@@ -1033,7 +1035,20 @@ class ProductViewModel @Inject constructor(
                     )
                 }
             )
-            navigateTo("${Screen.SmartSelectAccountScreen.baseRoute}/$smartIds/$email/${uiState.idBrand}/$identification/${infoCredit?.idClient}")
+
+            val hasColonsAccount = balanceCredit?.balanceAccountSmart?.any { it?.currencyCode == CurrencyType.Colon.value}
+            val hasDollarAccount = balanceCredit?.balanceAccountSmart?.any { it?.currencyCode == CurrencyType.Dollar.value}
+
+            navigateTo(
+                Screen.SmartSelectAccountScreen.baseRoute +
+                    "/$smartIds" +
+                    "/$email" +
+                    "/${uiState.idBrand}" +
+                    "/$identification" +
+                    "/${infoCredit?.idClient}" +
+                    "/$hasColonsAccount" +
+                    "/$hasDollarAccount"
+            )
         }
     }
 
@@ -1048,16 +1063,20 @@ class ProductViewModel @Inject constructor(
         )
         val secondAccount =
             balanceCredit?.balanceAccountSmart?.find { accounts -> accounts?.tokenNumber != account?.tokenNumber }
-        val secondAccountSend = encodeData(
-            SmartAccountID(
-                tokenAccount = secondAccount?.tokenNumber,
-                currencyID = secondAccount?.idCurrencyAccount,
-                accountNumber = secondAccount?.accountNumber,
-                totalBalance = secondAccount?.totalBalance,
-                ibanAccountNumber = secondAccount?.ibanAccountNumber,
-                customerId = account?.customerId
+        val secondAccountSend: String? = if (secondAccount != null) {
+            encodeData(
+                SmartAccountID(
+                    tokenAccount = secondAccount.tokenNumber,
+                    currencyID = secondAccount.idCurrencyAccount,
+                    accountNumber = secondAccount.accountNumber,
+                    totalBalance = secondAccount.totalBalance,
+                    ibanAccountNumber = secondAccount.ibanAccountNumber,
+                    customerId = account?.customerId
+                )
             )
-        )
+        } else {
+            null
+        }
 
         viewModelScope.launch {
             if (dataStorePreferences.isAdjustSmartSendingBtnEventRegistered().first()) {
@@ -1067,8 +1086,14 @@ class ProductViewModel @Inject constructor(
         }
 
         navigateTo(
-            "${Screen.SmartSelectSendingTypeScreen.baseRoute}/$userName/${uiState.idBrand}/$identification" +
-                    "/${encodeData(smartAccount)}/$secondAccountSend/$idClient/${Screen.HomeScreen.route}"
+            "${Screen.SmartSelectSendingTypeScreen.baseRoute}" +
+                    "/$userName" +
+                    "/${uiState.idBrand}" +
+                    "/$identification" +
+                    "/${encodeData(smartAccount)}" +
+                    "/$idClient" +
+                    "/${Screen.HomeScreen.route}" +
+                    "?$SECOND_SMART_ACCOUNT=$secondAccountSend"
         )
     }
 

@@ -19,6 +19,8 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.EVICERTIA_STAT
 import com.multimoney.multimoney.presentation.navigation.navgraph.EXCHANGE_RATE_LABEL
 import com.multimoney.multimoney.presentation.navigation.navgraph.FIRST_NAME
 import com.multimoney.multimoney.presentation.navigation.navgraph.FK_FLOW_CONTROL
+import com.multimoney.multimoney.presentation.navigation.navgraph.HAS_COLONS_SMART_ACCOUNT
+import com.multimoney.multimoney.presentation.navigation.navgraph.HAS_DOLLAR_SMART_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CARD
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
@@ -556,12 +558,12 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     // Smart Transfer Screens
 
     object SmartSelectSendingTypeScreen : Screen(
-        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}/{$SECOND_SMART_ACCOUNT}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}",
+        "smart_select_sending_type_screen/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$SMART_ACCOUNT}/{$ID_CLIENT}/{$PREVIOUS_SCREEN}?$SECOND_SMART_ACCOUNT={$SECOND_SMART_ACCOUNT}",
         "smart_select_sending_type_screen"
     )
 
     object SmartSelectAccountScreen : Screen(
-        "smart_select_account_screen/{$SMART_ACCOUNTS_ID_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}",
+        "smart_select_account_screen/{$SMART_ACCOUNTS_ID_LIST}/{$USER}/{$ID_BRAND}/{$IDENTIFICATION}/{$ID_CLIENT}/{$HAS_COLONS_SMART_ACCOUNT}/{$HAS_DOLLAR_SMART_ACCOUNT}",
         "smart_select_account_screen"
     )
 

@@ -20,11 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.multimoney.data.util.catalog.Brand
-import com.multimoney.domain.model.accountsmart.SmartAccountID
 import com.multimoney.multimoney.R
 import com.multimoney.multimoney.presentation.theme.MultimoneyTheme
 import com.multimoney.multimoney.presentation.theme.Typography
-import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.Companion.DEFAULT_CURRENCY_ID
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnCloseClick
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnContactPermissionPermanentlyDenied
 import com.multimoney.multimoney.presentation.ui.smart.transfer.sending.SmartSelectSendingTypeViewModel.UIEvent.OnIBANAccountSelected
@@ -154,7 +152,6 @@ fun SendingTypeOptionsContent(
                             onMyContactsClick = { permissionFlow() },
                             onMySmartAccountClick = { viewModel.onUIEvent(OnSmartAccountSelected) },
                             onIBANAccountsClick = { viewModel.onUIEvent(OnIBANAccountSelected) },
-                            secondarySmartAccount = viewModel.secondSmartAccount,
                             smartAccountTitleAndIconResource = viewModel.getTitleAndIconSmartAccountResources()
                         )
                     }
@@ -206,8 +203,7 @@ fun SendingTypeOptionsCR(
     onMyContactsClick: () -> Unit,
     onMySmartAccountClick: () -> Unit,
     onIBANAccountsClick: () -> Unit,
-    smartAccountTitleAndIconResource: Pair<Int, Int?>,
-    secondarySmartAccount: SmartAccountID?
+    smartAccountTitleAndIconResource: Pair<Int, Int?>?
 ) {
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_favorites_cr),
@@ -225,17 +221,15 @@ fun SendingTypeOptionsCR(
         onEndIconClick = onMyContactsClick,
         onClick = onMyContactsClick
     )
-    if ((secondarySmartAccount?.currencyID ?: DEFAULT_CURRENCY_ID) > DEFAULT_CURRENCY_ID) {
-        smartAccountTitleAndIconResource.let { (title, icon) ->
-            CustomInfoButton(
-                title = stringResource(id = title),
-                modifier = modifier,
-                endIcon = R.drawable.ic_right_chevron,
-                startIcon = icon,
-                onEndIconClick = onMySmartAccountClick,
-                onClick = onMySmartAccountClick
-            )
-        }
+    smartAccountTitleAndIconResource?.let { (title, icon) ->
+        CustomInfoButton(
+            title = stringResource(id = title),
+            modifier = modifier,
+            endIcon = R.drawable.ic_right_chevron,
+            startIcon = icon,
+            onEndIconClick = onMySmartAccountClick,
+            onClick = onMySmartAccountClick
+        )
     }
     CustomInfoButton(
         title = stringResource(R.string.payment_select_sending_type_iban_accounts),

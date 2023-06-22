@@ -40,6 +40,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.BALANCE_CARD_I
 import com.multimoney.multimoney.presentation.navigation.navgraph.IDENTIFICATION
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_CLIENT
 import com.multimoney.multimoney.presentation.navigation.navgraph.ID_LOAN_CLIENT
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_PAYMENT_MODE
 import com.multimoney.multimoney.presentation.navigation.navgraph.PK_USER
 import com.multimoney.multimoney.presentation.navigation.navgraph.PREVIOUS_SCREEN
 import com.multimoney.multimoney.presentation.navigation.navgraph.USER
@@ -132,6 +133,7 @@ class VisaCardViewModel @Inject constructor(
     private var isSignOut = false
     private var numAttemptsToStartPayment: Int = 0
     var applyCommerce: Boolean = false
+    var isPaymentMode: Boolean = false
 
     init {
         idBrand = savedStateHandle.get<Int>(ID_BRAND)?.toInt() ?: 0
@@ -144,12 +146,22 @@ class VisaCardViewModel @Inject constructor(
         idClient = savedStateHandle[ID_CLIENT] ?: 0
         idLoanClient = savedStateHandle[ID_LOAN_CLIENT] ?: 0
         applyCommerce = savedStateHandle[APPLY_COMMERCE] ?: false
+        isPaymentMode = savedStateHandle[IS_PAYMENT_MODE] ?: false
     }
 
     private fun onStart() {
         blockUnblock(balanceCardInformation?.status == CardType.Blocked.status)
         viewModelScope.launch {
             isBiometricActive = dataStorePreferences.isBiometricsEnabled().first()
+            if (isPaymentMode) {
+                if (nfcHelper.isNfcEnabled().not()) {
+                    showDialogEnableNFC()
+                } else if (uiState.isCardTokenize.not()) {
+                    onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
+                } else {
+                    startPaymentProcess()
+                }
+            }
         }
     }
 
@@ -247,17 +259,21 @@ class VisaCardViewModel @Inject constructor(
         if (nfcHelper.isNfcEnabled()) {
             checkIfMultimoneyIsTheDefaultPaymentMethod()
         } else {
-            uiState = uiState.copy(
-                dialogParameters = DialogParameters(
-                    titleResource = if (idBrand == CostaRica.id) string.visa_nfc_required_dialog_title else string.visa_nfc_required_dialog_title_sv,
-                    descriptionResource = string.visa_nfc_required_dialog_description,
-                    positiveResource = string.activate,
-                    negativeResource = string.cancel,
-                    positiveAction = { emitBaseEvent(OnOpenNfcConfig) },
-                    isActive = mutableStateOf(true)
-                )
-            )
+            showDialogEnableNFC()
         }
+    }
+
+    private fun showDialogEnableNFC() {
+        uiState = uiState.copy(
+            dialogParameters = DialogParameters(
+                titleResource = if (idBrand == CostaRica.id) string.visa_nfc_required_dialog_title else string.visa_nfc_required_dialog_title_sv,
+                descriptionResource = string.visa_nfc_required_dialog_description,
+                positiveResource = string.activate,
+                negativeResource = string.cancel,
+                positiveAction = { emitBaseEvent(OnOpenNfcConfig) },
+                isActive = mutableStateOf(true)
+            )
+        )
     }
 
     private fun checkIfMultimoneyIsTheDefaultPaymentMethod() {
@@ -279,9 +295,13 @@ class VisaCardViewModel @Inject constructor(
 
     private fun onHandleTapAndPayIntentResult(result: ActivityResult) {
         if (nfcHelper.isNfcEnabled() && NovoVTS.isDefaultPaymentService()) {
-            viewModelScope.launch {
-                delay(DELAY_TO_START_PAYMENT)
-                startNovoPayment()
+            if (uiState.isCardTokenize) {
+                viewModelScope.launch {
+                    delay(DELAY_TO_START_PAYMENT)
+                    startNovoPayment()
+                }
+            } else {
+                onUIEvent(OnOpenDialogConfirmToStartTokenizationProcess)
             }
         }
     }

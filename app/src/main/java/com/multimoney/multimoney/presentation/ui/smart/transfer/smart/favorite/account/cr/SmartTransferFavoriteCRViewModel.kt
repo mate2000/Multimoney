@@ -197,7 +197,8 @@ class SmartTransferFavoriteCRViewModel @Inject constructor(
             idCurrency = selectedAccount?.idCurrency.toString(),
             currency = selectedAccount?.currency,
             ibanNumber = selectedAccount?.ibanNumber,
-            areaCode = selectedAccount?.areaCode
+            areaCode = selectedAccount?.areaCode,
+            isFavorite = selectedAccount?.isFavorite ?: false
         )
         navigateTo(
             "${Screen.MyContactsTransferAmountScreen.baseRoute}/" +

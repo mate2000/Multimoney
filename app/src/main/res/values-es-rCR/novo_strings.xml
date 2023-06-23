@@ -62,5 +62,5 @@
 
     <string name="text_loading_novo_sdk">Cargando</string>
     <string name="title_payment_transaction_device_not_enrollment_fail_novo_sdk">Tu MultiMoney Visa no está vinculada a tu dispositivo</string>
-    <string name="message_payment_transaction_device_not_enrollment_fail_novo_sdk">Vinculá tu MultiMoney Visa a tu dispositivo para poder utilizarla.</string>
+    <string name="message_payment_transaction_device_not_enrollment_fail_novo_sdk">Vinculá tu MultiMoney Visa a tu dispositivo para poder utilizarla. Code: {code}</string>
 </resources>

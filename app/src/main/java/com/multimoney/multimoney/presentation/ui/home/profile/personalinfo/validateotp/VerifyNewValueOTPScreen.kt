@@ -402,9 +402,8 @@ fun requestSecondOTP(viewModel: ValidateOTPViewModel) {
             viewModel.uiState.firstName ?: "",
             (if (viewModel.uiState.changingField == FieldToChange.EMAIL.value) viewModel.uiState.newValue else viewModel.uiState.email)
                 ?: "",
-            (if (viewModel.uiState.changingField == FieldToChange.PHONE.value) (viewModel.uiState.newPhoneNumberCode.plus(
-                viewModel.uiState.newValue
-            ).replace(" ", "")
+            (if (viewModel.uiState.changingField == FieldToChange.PHONE.value) (
+                    viewModel.uiState.newValue?.replace(" ", "")
                     ) else viewModel.uiState.phoneNumber) ?: "",
             if (viewModel.uiState.changingField == FieldToChange.PHONE.value) SEND_PHONE_METHOD else SEND_EMAIL_METHOD,
             viewModel.uiState.pkUser ?: "",

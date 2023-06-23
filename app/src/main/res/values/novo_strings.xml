@@ -46,8 +46,8 @@
     <string name="dialog_payment_text_description_novo_sdk"> Paga con tu celular acercándolo a la terminal. Sostenlo durante 4 segundos hasta que la transacción sea aprobada.</string>
     <string name="dialog_payment_label_timer_novo_sdk"> Tiempo restante para realizar el pago </string>
     <string name='dialog_payment_title_card_novo_sdk'> Método de pago seleccionado </string>
-    <string name="loading_novo_sdk">Cargando...</string>
-    <string name='title_loading_payment_activity_novo_sdk'> Mantené el celular cerca de la terminal de pago (POS)... </string>
+    <string name="loading_novo_sdk">Cargando…</string>
+    <string name='title_loading_payment_activity_novo_sdk'> Mantené el celular cerca de la terminal de pago (POS)… </string>
 
     <!-- Success / Failed -->
     <string name='action_payment_activity_novo_sdk'>ENTENDIDO</string>
@@ -62,4 +62,6 @@
     <string name='notification_message_failed_novo_sdk'>La comunicación ha fallado. Volvé a intentarlo de nuevo. Code: {code}</string>
 
     <string name="text_loading_novo_sdk">Cargando</string>
+    <string name="title_payment_transaction_device_not_enrollment_fail_novo_sdk">Tu MultiMoney Visa no está vinculada a tu dispositivo</string>
+    <string name="message_payment_transaction_device_not_enrollment_fail_novo_sdk">Vincula tu MultiMoney Visa  a tu dispositivo para poder utilizarla.</string>
 </resources>

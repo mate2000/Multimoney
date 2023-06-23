@@ -96,7 +96,7 @@ class ValidateOTPViewModel @Inject constructor(
             idBrand = savedStateHandle[ID_BRAND],
             identification = savedStateHandle[IDENTIFICATION],
             email = savedStateHandle[EMAIL],
-            phoneNumber = savedStateHandle[PHONE_NUMBER],
+            phoneNumberWithCode = savedStateHandle[PHONE_NUMBER],
             pkUser = savedStateHandle[PK_USER],
             idClient = savedStateHandle[ID_CLIENT],
             firstName = savedStateHandle[FIRST_NAME],
@@ -107,6 +107,11 @@ class ValidateOTPViewModel @Inject constructor(
             newValue = savedStateHandle[NEW_VALUE],
             newPhoneNumberCode = savedStateHandle[PHONE_NUMBER_CODE]
         )
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                phoneNumber = dataStorePreferences.getUserPhoneNumber().first()
+            )
+        }
         getTextResources()
     }
 
@@ -126,7 +131,7 @@ class ValidateOTPViewModel @Inject constructor(
                 Brand.CostaRica.id -> R.string.profile_error_changing_phone
                 else -> R.string.profile_error_changing_phone_sv
             },
-            destination = if (uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) uiState.phoneNumber else uiState.email,
+            destination = if (uiState.sendMethod == SignUpOtpViewModel.SEND_METHOD_PHONE) uiState.phoneNumberWithCode else uiState.email,
 
             enterTheCodeTextResource = when (uiState.idBrand) {
                 Brand.CostaRica.id -> R.string.profile_enter_the_code_sent_to_template
@@ -319,7 +324,7 @@ class ValidateOTPViewModel @Inject constructor(
             appSource = APP_SOURCE,
             pkUser = uiState.pkUser ?: "",
             pinSecurity = uiState.otp,
-            telephone = uiState.phoneNumber?.replace(" ", ""),
+            telephone = uiState.phoneNumberWithCode?.replace(" ", ""),
             userCreate = uiState.userName ?: ""
         )
             .collectLatest { result ->
@@ -333,7 +338,7 @@ class ValidateOTPViewModel @Inject constructor(
             appSource = APP_SOURCE,
             pkUser = uiState.pkUser ?: "",
             pinSecurity = uiState.otp,
-            telephone = uiState.phoneNumber,
+            telephone = uiState.phoneNumberWithCode,
             userCreate = uiState.userName ?: ""
         )
             .collectLatest { result ->
@@ -446,7 +451,7 @@ class ValidateOTPViewModel @Inject constructor(
     }
 
     private fun navigateToConfirmChange() {
-        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumber}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
+        navigateTo("${Screen.ProfileVerifyNewValueOTPScreen.baseRoute}/${uiState.idClient}/${uiState.changingField}/${uiState.newValue}/${uiState.identification}/${uiState.firstName}/${uiState.lastName}/${uiState.email}/${uiState.phoneNumberWithCode}/${uiState.pkUser}/${uiState.idBrand}/${uiState.userName}/${uiState.newPhoneNumberCode}/${uiState.sendMethod}")
     }
 
     private fun navigateToProfile(phoneNumber: String? = null, email: String? = null) {
@@ -460,7 +465,7 @@ class ValidateOTPViewModel @Inject constructor(
                 .plus(
                     getNavParam(
                         PHONE_NUMBER,
-                        phoneNumber ?: uiState.phoneNumber?.ifEmpty { 0 }.toString()
+                        phoneNumber ?: uiState.phoneNumberWithCode?.ifEmpty { 0 }.toString()
                     )
                 )
                 .plus(getNavParam(IDENTIFICATION, uiState.identification))
@@ -550,6 +555,7 @@ class ValidateOTPViewModel @Inject constructor(
         val pkUser: String? = null,
         val idClient: Int? = null,
         val userName: String? = null,
+        val phoneNumberWithCode: String? = null,
         val phoneNumber: String? = null,
         val newPhoneNumberCode: String? = null,
         val firstName: String? = null,

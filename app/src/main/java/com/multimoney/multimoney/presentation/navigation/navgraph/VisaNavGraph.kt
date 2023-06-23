@@ -29,6 +29,7 @@ const val CALLER_ID = "caller_id"
 const val ACCOUNT_TOKEN_CREDIT = "account_token_credit"
 const val VISA_DIRECT_USER = "visa_direct_user"
 const val APPLY_COMMERCE = "apply_commerce"
+const val IS_PAYMENT_MODE = "is_for_payment"
 
 fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
     navigation(
@@ -71,7 +72,8 @@ fun NavGraphBuilder.visaNavGraph(navController: NavHostController) {
                 navArgument(ID_CLIENT) { type = NavType.IntType },
                 navArgument(ID_LOAN_CLIENT) { type = NavType.IntType },
                 navArgument(BALANCE_CARD_INFORMATION) { type = BalanceCardInformationNavType() },
-                navArgument(APPLY_COMMERCE) { type = NavType.BoolType }
+                navArgument(APPLY_COMMERCE) { type = NavType.BoolType },
+                navArgument(IS_PAYMENT_MODE) { type = NavType.BoolType }
             )
         ) { navBackStackEntry ->
             VisaCardScreen(

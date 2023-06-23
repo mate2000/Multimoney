@@ -34,6 +34,7 @@ import com.multimoney.multimoney.presentation.navigation.navgraph.IS_AUTOPAY_ENA
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_BANK_ACCOUNT
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_EDIT_PAYMENT_SCHEDULE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_MULTI_CURRENCY
+import com.multimoney.multimoney.presentation.navigation.navgraph.IS_PAYMENT_MODE
 import com.multimoney.multimoney.presentation.navigation.navgraph.IS_SMART_EVICERTIA
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_CURRENCY
 import com.multimoney.multimoney.presentation.navigation.navgraph.ITEM_CRYPTO_MARKET
@@ -377,7 +378,7 @@ sealed class Screen(val route: String, val baseRoute: String = "") {
     )
 
     object VisaCardScreen : Screen(
-        "visa_card_screen?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$PHONE_NUMBER={$PHONE_NUMBER}?$BALANCE_CARD_INFORMATION={$BALANCE_CARD_INFORMATION}?$AVAILABLE_BALANCE_LABEL={$AVAILABLE_BALANCE_LABEL}?$ID_CLIENT={$ID_CLIENT}?$ID_LOAN_CLIENT={$ID_LOAN_CLIENT}?$APPLY_COMMERCE={$APPLY_COMMERCE}",
+        "visa_card_screen?$ID_BRAND={$ID_BRAND}?$PK_USER={$PK_USER}?$IDENTIFICATION={$IDENTIFICATION}?$EMAIL={$EMAIL}?$PHONE_NUMBER={$PHONE_NUMBER}?$BALANCE_CARD_INFORMATION={$BALANCE_CARD_INFORMATION}?$AVAILABLE_BALANCE_LABEL={$AVAILABLE_BALANCE_LABEL}?$ID_CLIENT={$ID_CLIENT}?$ID_LOAN_CLIENT={$ID_LOAN_CLIENT}?$APPLY_COMMERCE={$APPLY_COMMERCE}?$IS_PAYMENT_MODE={$IS_PAYMENT_MODE}",
         "visa_card_screen"
     )
 

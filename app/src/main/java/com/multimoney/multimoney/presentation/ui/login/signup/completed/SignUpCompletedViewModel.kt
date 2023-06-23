@@ -63,68 +63,70 @@ class SignUpCompletedViewModel @Inject constructor(
             deviceId = dataStorePreferences.getDeviceId().first()
             uniqueId = dataStorePreferences.getUniqueId().first()
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            ipAddress = getIPAddress() ?: ""
-        }
         this.deviceName = deviceName
         this.deviceType = deviceType
     }
 
     private fun callCognitoSignIn() {
-        val attrs = mapOf(
-            SignInViewModel.DEVICE_ID to deviceId,
-            SignInViewModel.BRAND to deviceBrand,
-            SignInViewModel.UNIQUE_ID to uniqueId,
-            SignInViewModel.MODEL to deviceModel,
-            SignInViewModel.DEVICE_NAME to deviceName,
-            SignInViewModel.APP_VERSION to appVersion,
-            SignInViewModel.IS_EMULATOR to isEmulator.toString(),
-            SignInViewModel.IP_ADDRESS to ipAddress,
-            SignInViewModel.FORCE to forceDeviceChange.toString()
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            ipAddress = getIPAddress() ?: ""
 
-        val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
+            val attrs = mapOf(
+                SignInViewModel.DEVICE_ID to deviceId,
+                SignInViewModel.BRAND to deviceBrand,
+                SignInViewModel.UNIQUE_ID to uniqueId,
+                SignInViewModel.MODEL to deviceModel,
+                SignInViewModel.DEVICE_NAME to deviceName,
+                SignInViewModel.APP_VERSION to appVersion,
+                SignInViewModel.IS_EMULATOR to isEmulator.toString(),
+                SignInViewModel.IP_ADDRESS to ipAddress,
+                SignInViewModel.FORCE to forceDeviceChange.toString()
+            )
 
-        Amplify.Auth.signIn(
-            email,
-            password,
-            options,
-            { authSignInResult ->
-                if (authSignInResult.isSignInComplete) {
-                    Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
-                        val session = authSessionSuccess as AWSCognitoAuthSession
-                        when (session.identityId.type) {
-                            AuthSessionResult.Type.SUCCESS -> {
-                                // Get user attributes in order to save user name for welcome message
-                                Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
-                                    viewModelScope.launch {
-                                        // If isBiometricActive false that means the userName has to be saved
-                                        val payload =
-                                            CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
-                                        saveUserData(
-                                            payload,
-                                            session.userPoolTokens.value?.idToken.orEmpty(),
-                                            authUserAttribute
-                                        )
-                                        navigateToHome()
-                                    }
-                                }, {
-                                    onNavigateToSignIn()
-                                })
+            val options = AWSCognitoAuthSignInOptions.builder().metadata(attrs).build()
+
+            Amplify.Auth.signIn(
+                email,
+                password,
+                options,
+                { authSignInResult ->
+                    if (authSignInResult.isSignInComplete) {
+                        Amplify.Auth.fetchAuthSession({ authSessionSuccess ->
+                            val session = authSessionSuccess as AWSCognitoAuthSession
+                            when (session.identityId.type) {
+                                AuthSessionResult.Type.SUCCESS -> {
+                                    // Get user attributes in order to save user name for welcome message
+                                    Amplify.Auth.fetchUserAttributes({ authUserAttribute ->
+                                        viewModelScope.launch {
+                                            // If isBiometricActive false that means the userName has to be saved
+                                            val payload =
+                                                CognitoJWTParser.getPayload(session.userPoolTokens.value?.idToken)
+                                            saveUserData(
+                                                payload,
+                                                session.userPoolTokens.value?.idToken.orEmpty(),
+                                                authUserAttribute
+                                            )
+                                            navigateToHome()
+                                        }
+                                    }, {
+                                        onNavigateToSignIn()
+                                    })
+                                }
+
+                                AuthSessionResult.Type.FAILURE -> onNavigateToSignIn()
                             }
-                            AuthSessionResult.Type.FAILURE -> onNavigateToSignIn()
-                        }
-                    }, {
+                        }, {
+                            onNavigateToSignIn()
+                        })
+                    } else {
                         onNavigateToSignIn()
-                    })
-                } else {
+                    }
+                },
+                {
                     onNavigateToSignIn()
                 }
-            },
-            {
-                onNavigateToSignIn()
-            }
-        )
+            )
+        }
     }
 
     private suspend fun saveUserData(

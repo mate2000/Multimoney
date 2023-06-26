@@ -33,6 +33,7 @@ import com.multimoney.multimoney.presentation.uielement.CustomImage
 import com.multimoney.multimoney.presentation.uielement.CustomOutlinedTextField
 import com.multimoney.multimoney.presentation.util.capitalized
 import com.multimoney.multimoney.presentation.util.capitalizedAllWords
+import com.multimoney.multimoney.presentation.util.catalog.SvDocuments
 import com.multimoney.multimoney.presentation.util.transformation.MaskVisualTransformation
 
 @Composable
@@ -76,7 +77,11 @@ fun SignUpPersonalDataSvScreen(
                 )
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
+                keyboardType = if (viewModel.uiState.identificationValueType == SvDocuments.DuiDocument.document) {
+                    KeyboardType.Number
+                } else {
+                    KeyboardType.Text
+                },
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {

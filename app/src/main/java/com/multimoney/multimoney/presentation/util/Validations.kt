@@ -71,7 +71,7 @@ fun validDui(personalDocumentValue: String) =
     }
 
 fun validCarne(sizeRequired: Int, errorMessage: Int, personalDocumentLength: Int) =
-    if (personalDocumentLength == sizeRequired) {
+    if (personalDocumentLength <= sizeRequired) {
         Pair(false, R.string.error_empty)
     } else {
         Pair(true, errorMessage)

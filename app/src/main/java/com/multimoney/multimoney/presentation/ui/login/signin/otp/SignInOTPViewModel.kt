@@ -242,6 +242,7 @@ class SignInOTPViewModel @Inject constructor(
                             applyAdjust = false,
                             data = EmailDto(email).toJson()
                         )
+                        dataStorePreferences.isBiometricsEnabled(false)
                         onNavigateToLogin()
                     }
 

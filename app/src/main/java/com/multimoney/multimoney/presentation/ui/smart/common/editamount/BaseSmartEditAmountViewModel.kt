@@ -433,9 +433,9 @@ abstract class BaseSmartEditAmountViewModel : BaseViewModel(true) {
                     R.string.smart_transfer_abandon_dialog_message_sv
                 },
                 isActive = mutableStateOf(true),
-                positiveResource = R.string.cancel,
-                negativeResource = R.string.button_continue,
-                negativeAction = { onNavigateToHome() }
+                positiveResource = R.string.smart_transfer_abandon_dialog_positive_button,
+                negativeResource = R.string.smart_transfer_abandon_dialog_negative_button,
+                positiveAction = { onNavigateToHome() }
             )
         )
     }

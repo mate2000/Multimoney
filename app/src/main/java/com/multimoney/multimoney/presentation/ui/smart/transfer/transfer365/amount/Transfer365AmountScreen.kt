@@ -82,7 +82,7 @@ fun Transfer365AmountScreen(
             negativeButtonText = stringResource(id = viewModel.amountUIState.openDialog.negativeResource),
             openDialogCustom = viewModel.amountUIState.openDialog.isActive,
             onDismissAction = viewModel.amountUIState.openDialog.dismissAction,
-            onNegativeAction = viewModel.amountUIState.openDialog.negativeAction
+            onPositiveAction = viewModel.amountUIState.openDialog.positiveAction
         )
     }
 
